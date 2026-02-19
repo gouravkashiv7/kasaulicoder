@@ -59,7 +59,7 @@ const WhoWeArePricing = () => {
               className="flex flex-1 justify-end gap-8 items-center"
             >
               <nav className="hidden md:flex items-center gap-8">
-                {["Home", "Who We Are", "Pricing", "Projects"].map(
+                {["Home", "About", "Who We Are", "Pricing", "Projects"].map(
                   (item, i) => (
                     <Link
                       key={item}
@@ -77,9 +77,12 @@ const WhoWeArePricing = () => {
                   ),
                 )}
               </nav>
-              <button className="flex min-w-25 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-background-dark text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all">
+              <Link
+                href="/register"
+                className="flex min-w-25 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-background-dark text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all"
+              >
                 Register
-              </button>
+              </Link>
             </motion.div>
           </header>
 
@@ -343,11 +346,12 @@ const WhoWeArePricing = () => {
                         </li>
                       ))}
                     </ul>
-                    <button
-                      className={`w-full py-3 px-6 rounded-lg font-bold transition-all ${plan.buttonBg || `border-2 ${plan.buttonBorder}`} ${plan.featured ? "uppercase tracking-wider shadow-xl" : ""}`}
+                    <Link
+                      href="/register"
+                      className={`w-full py-3 px-6 rounded-lg font-bold text-center transition-all ${plan.buttonBg || `border-2 ${plan.buttonBorder}`} ${plan.featured ? "uppercase tracking-wider shadow-xl" : ""}`}
                     >
                       Register Now
-                    </button>
+                    </Link>
                   </motion.div>
                 ))}
               </div>

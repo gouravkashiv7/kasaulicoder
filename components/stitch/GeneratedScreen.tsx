@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const GeneratedScreen = () => {
   useEffect(() => {
@@ -25,8 +26,18 @@ const GeneratedScreen = () => {
     <div className="bg-[#050505] text-gray-100 font-sans selection:bg-primary selection:text-black overflow-x-hidden min-h-screen">
       {/* Background Elements */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] animate-pulse-slow"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#9d00ff]/10 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+          className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] animate-pulse-slow"
+        ></motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5, delay: 0.5 }}
+          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#9d00ff]/10 rounded-full blur-[120px] animate-pulse-slow"
+        ></motion.div>
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
       </div>
 
@@ -34,20 +45,35 @@ const GeneratedScreen = () => {
         {/* Navigation */}
         <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#050505]/80 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-black text-black text-xs">
-                KC
-              </div>
-              <span className="font-bold tracking-tighter text-xl text-white">
-                Kasauli<span className="text-primary">Coder</span>
-              </span>
-            </Link>
-            <nav className="hidden md:flex items-center gap-8 bg-white/5 backdrop-blur-md px-6 py-2 rounded-full border border-white/10">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
+              <Link href="/" className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-black text-black text-xs">
+                  KC
+                </div>
+                <span className="font-bold tracking-tighter text-xl text-white">
+                  Kasauli<span className="text-primary">Coder</span>
+                </span>
+              </Link>
+            </motion.div>
+            <motion.nav
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="hidden md:flex items-center gap-8 bg-white/5 backdrop-blur-md px-6 py-2 rounded-full border border-white/10"
+            >
               <Link
                 className="text-xs font-semibold tracking-wider text-gray-300 hover:text-white uppercase transition-colors"
                 href="/"
               >
                 Vision
+              </Link>
+              <Link
+                className="text-xs font-semibold tracking-wider text-gray-300 hover:text-white uppercase transition-colors"
+                href="/about"
+              >
+                About
               </Link>
               <Link
                 className="text-xs font-semibold tracking-wider text-primary uppercase transition-colors"
@@ -61,17 +87,29 @@ const GeneratedScreen = () => {
               >
                 Lab
               </Link>
-            </nav>
-            <button className="px-5 py-2 border border-primary/50 text-primary rounded-lg hover:bg-primary hover:text-black transition-all duration-300 text-sm font-bold">
-              DASHBOARD
-            </button>
+            </motion.nav>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
+              <Link
+                href="/login"
+                className="px-5 py-2 border border-primary/50 text-primary rounded-lg hover:bg-primary hover:text-black transition-all duration-300 text-sm font-bold"
+              >
+                DASHBOARD
+              </Link>
+            </motion.div>
           </div>
         </nav>
 
         <main className="max-w-7xl mx-auto px-6 py-12">
           {/* Hero Section */}
           <header className="mb-20 text-center lg:text-left grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-[0.2em] uppercase mb-6">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -79,7 +117,7 @@ const GeneratedScreen = () => {
                 </span>
                 Project Active
               </div>
-              <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight mb-4 leading-none">
+              <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight mb-4 leading-none text-white">
                 Neural-Link{" "}
                 <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-[#9d00ff] animate-gradient">
                   Dashboard
@@ -91,15 +129,26 @@ const GeneratedScreen = () => {
                 interfaces.
               </p>
               <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-                <button className="px-8 py-4 bg-primary text-black font-bold rounded-lg hover:scale-105 transition-transform neon-glow">
+                <Link
+                  href="/register"
+                  className="px-8 py-4 bg-primary text-black font-bold rounded-lg hover:scale-105 transition-transform neon-glow"
+                >
                   Explore Interface
-                </button>
-                <button className="px-8 py-4 bg-white/5 border border-white/10 font-bold rounded-lg hover:bg-white/10 transition-colors">
+                </Link>
+                <Link
+                  href="/projects"
+                  className="px-8 py-4 bg-white/5 border border-white/10 font-bold rounded-lg hover:bg-white/10 transition-colors"
+                >
                   View Source
-                </button>
+                </Link>
               </div>
-            </div>
-            <div className="relative group">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative group"
+            >
               <div className="absolute -inset-1 bg-linear-to-r from-primary to-[#9d00ff] rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
               <div className="relative aspect-video rounded-lg overflow-hidden glass-card flex items-center justify-center">
                 <Image
@@ -110,81 +159,64 @@ const GeneratedScreen = () => {
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-[#050505] via-transparent to-transparent"></div>
               </div>
-            </div>
+            </motion.div>
           </header>
 
           {/* Overview Section */}
           <section className="mb-24">
             <div className="grid md:grid-cols-3 gap-8">
-              {/* Overview Card 1 */}
-              <div className="glass-card p-8 rounded-lg hover:border-primary/50 transition-colors">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
-                  <svg
-                    className="w-6 h-6 text-primary"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              {[
+                {
+                  title: "Real-time Processing",
+                  desc: "Latency-free data streaming through optimized WebSockets and edge-side inference nodes.",
+                  icon: "M13 10V3L4 14h7v7l9-11h-7z",
+                  color: "primary",
+                },
+                {
+                  title: "Neural Mapping",
+                  desc: "Dynamic 3D representation of thought-pattern vectors using proprietary spatial algorithms.",
+                  icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+                  color: "[#9d00ff]",
+                },
+                {
+                  title: "Quantum Encryption",
+                  desc: "End-to-end security protocols ensuring neural data integrity and absolute user privacy.",
+                  icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
+                  color: "primary",
+                },
+              ].map((card, i) => (
+                <motion.div
+                  key={card.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ y: -10 }}
+                  className={`glass-card p-8 rounded-lg hover:border-${card.color}/50 transition-colors cursor-default`}
+                >
+                  <div
+                    className={`w-12 h-12 rounded-lg bg-${card.color}/10 flex items-center justify-center mb-6`}
                   >
-                    <path
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                    ></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold mb-3">Real-time Processing</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  Latency-free data streaming through optimized WebSockets and
-                  edge-side inference nodes.
-                </p>
-              </div>
-              {/* Overview Card 2 */}
-              <div className="glass-card p-8 rounded-lg hover:border-[#9d00ff]/50 transition-colors">
-                <div className="w-12 h-12 rounded-lg bg-[#9d00ff]/10 flex items-center justify-center mb-6">
-                  <svg
-                    className="w-6 h-6 text-[#9d00ff]"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                    ></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold mb-3">Neural Mapping</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  Dynamic 3D representation of thought-pattern vectors using
-                  proprietary spatial algorithms.
-                </p>
-              </div>
-              {/* Overview Card 3 */}
-              <div className="glass-card p-8 rounded-lg hover:border-primary/50 transition-colors">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
-                  <svg
-                    className="w-6 h-6 text-primary"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                    ></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold mb-3">Quantum Encryption</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  End-to-end security protocols ensuring neural data integrity
-                  and absolute user privacy.
-                </p>
-              </div>
+                    <svg
+                      className={`w-6 h-6 text-${card.color}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d={card.icon}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                      ></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">{card.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    {card.desc}
+                  </p>
+                </motion.div>
+              ))}
             </div>
           </section>
 
@@ -277,86 +309,85 @@ const GeneratedScreen = () => {
 
           {/* Milestones Section */}
           <section className="mb-24">
-            <div className="mb-12 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-12 text-center"
+            >
               <h2 className="text-3xl font-bold mb-2">Development Roadmap</h2>
               <p className="text-gray-400">
                 Tracking the evolution of Neural-Link
               </p>
-            </div>
+            </motion.div>
             <div className="space-y-6 max-w-4xl mx-auto">
-              {/* Milestone 1 */}
-              <div className="flex items-start gap-6 group">
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 rounded-full border-2 border-primary bg-primary/20 flex items-center justify-center z-10">
-                    <div className="w-3 h-3 bg-primary rounded-full"></div>
+              {[
+                {
+                  period: "Q1 2024 • Completed",
+                  title: "Alpha Simulation Engine",
+                  desc: "Initial launch of the 3D neural pathing algorithm and core dashboard architecture.",
+                  active: false,
+                },
+                {
+                  period: "Q2 2024 • In Progress",
+                  title: "Bilateral Logic Synthesis",
+                  desc: "Integrating real-time AI logic feedback loops and multi-user visualization synchronization.",
+                  active: true,
+                },
+                {
+                  period: "Q4 2024 • Planned",
+                  title: "Mainnet Neural Node Mesh",
+                  desc: "Public deployment of the decentralized processing network and community node API.",
+                  active: false,
+                },
+              ].map((step, i) => (
+                <motion.div
+                  key={step.title}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex items-start gap-6 group"
+                >
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`w-10 h-10 rounded-full border-2 ${step.active ? "border-primary bg-primary/20" : "border-gray-700 bg-gray-800"} flex items-center justify-center z-10`}
+                    >
+                      <div
+                        className={`w-3 h-3 ${step.active ? "bg-primary animate-pulse" : "bg-gray-600"} rounded-full`}
+                      ></div>
+                    </div>
+                    {i < 2 && (
+                      <div className="w-px h-full bg-linear-to-b from-primary/50 to-transparent -mt-1"></div>
+                    )}
                   </div>
-                  <div className="w-px h-full bg-linear-to-b from-primary to-transparent -mt-1"></div>
-                </div>
-                <div className="flex-1 pb-10">
-                  <div className="glass-card p-6 rounded-lg group-hover:bg-white/5 transition-colors">
-                    <span className="text-primary text-xs font-bold uppercase tracking-widest">
-                      Q1 2024 • Completed
-                    </span>
-                    <h4 className="text-xl font-bold mt-1 mb-2">
-                      Alpha Simulation Engine
-                    </h4>
-                    <p className="text-gray-400 text-sm">
-                      Initial launch of the 3D neural pathing algorithm and core
-                      dashboard architecture.
-                    </p>
+                  <div className="flex-1 pb-10">
+                    <div
+                      className={`glass-card p-6 rounded-lg group-hover:bg-white/5 transition-colors ${step.active ? "border-l-4 border-l-primary" : ""}`}
+                    >
+                      <span
+                        className={`${step.active ? "text-primary" : "text-gray-500"} text-xs font-bold uppercase tracking-widest`}
+                      >
+                        {step.period}
+                      </span>
+                      <h4 className="text-xl font-bold mt-1 mb-2">
+                        {step.title}
+                      </h4>
+                      <p className="text-gray-400 text-sm">{step.desc}</p>
+                    </div>
                   </div>
-                </div>
-              </div>
-              {/* Milestone 2 */}
-              <div className="flex items-start gap-6 group">
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 rounded-full border-2 border-primary bg-primary/10 flex items-center justify-center z-10">
-                    <div className="w-3 h-3 bg-primary/40 rounded-full animate-pulse"></div>
-                  </div>
-                  <div className="w-px h-full bg-linear-to-b from-primary/50 to-[#9d00ff]/50 -mt-1"></div>
-                </div>
-                <div className="flex-1 pb-10">
-                  <div className="glass-card p-6 rounded-lg border-l-4 border-l-primary">
-                    <span className="text-primary text-xs font-bold uppercase tracking-widest">
-                      Q2 2024 • In Progress
-                    </span>
-                    <h4 className="text-xl font-bold mt-1 mb-2">
-                      Bilateral Logic Synthesis
-                    </h4>
-                    <p className="text-gray-400 text-sm">
-                      Integrating real-time AI logic feedback loops and
-                      multi-user visualization synchronization.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {/* Milestone 3 */}
-              <div className="flex items-start gap-6 group">
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 rounded-full border-2 border-gray-700 bg-gray-800 flex items-center justify-center z-10">
-                    <div className="w-3 h-3 bg-gray-600 rounded-full"></div>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <div className="glass-card p-6 rounded-lg">
-                    <span className="text-gray-500 text-xs font-bold uppercase tracking-widest">
-                      Q4 2024 • Planned
-                    </span>
-                    <h4 className="text-xl font-bold mt-1 mb-2">
-                      Mainnet Neural Node Mesh
-                    </h4>
-                    <p className="text-gray-400 text-sm">
-                      Public deployment of the decentralized processing network
-                      and community node API.
-                    </p>
-                  </div>
-                </div>
-              </div>
+                </motion.div>
+              ))}
             </div>
           </section>
 
           {/* Call to Action */}
-          <section className="relative rounded-4xl overflow-hidden p-12 text-center bg-[#0a0a0a] border border-white/10">
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative rounded-4xl overflow-hidden p-12 text-center bg-[#0a0a0a] border border-white/10"
+          >
             <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-[#9d00ff]/5"></div>
             <div className="relative z-10 max-w-2xl mx-auto">
               <h2 className="text-4xl font-black mb-4">Join the Collective</h2>
@@ -382,7 +413,7 @@ const GeneratedScreen = () => {
                 No SPAM • SECURE LINK • PROTOCOL 1.0
               </p>
             </div>
-          </section>
+          </motion.section>
         </main>
 
         {/* Footer */}

@@ -56,6 +56,12 @@ const InsightsArticles = () => {
               Home
             </Link>
             <Link
+              className="hover:text-primary transition-colors"
+              href="/about"
+            >
+              About
+            </Link>
+            <Link
               className="text-primary border-b-2 border-primary"
               href="/insights"
             >
@@ -68,9 +74,12 @@ const InsightsArticles = () => {
               Projects
             </Link>
           </div>
-          <button className="bg-primary text-background-dark px-4 py-2 rounded font-bold text-sm hover:shadow-[0_0_15px_rgba(0,242,255,0.4)] transition-all">
+          <Link
+            href="/login"
+            className="bg-primary text-background-dark px-4 py-2 rounded font-bold text-sm hover:shadow-[0_0_15px_rgba(0,242,255,0.4)] transition-all"
+          >
             DASHBOARD
-          </button>
+          </Link>
         </div>
       </nav>
 

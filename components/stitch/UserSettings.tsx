@@ -3,22 +3,29 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const UserSettings = () => {
   return (
     <div className="bg-[#f5f8f8] dark:bg-[#0f2223] text-slate-900 dark:text-slate-100 min-h-screen font-display">
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar Navigation */}
-        <aside className="w-64 shrink-0 border-r border-slate-200 dark:border-white/10 flex flex-col glass-panel md:flex">
-          <div className="p-6 flex items-center gap-3">
-            <div className="size-8 bg-primary rounded-lg flex items-center justify-center text-background-dark shadow-[0_0_15px_rgba(0,242,255,0.5)]">
-              <span className="material-symbols-outlined font-bold text-black">
-                terminal
-              </span>
-            </div>
-            <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-              Command
-            </h2>
+        <motion.aside
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="w-64 shrink-0 border-r border-slate-200 dark:border-white/10 flex flex-col glass-panel md:flex"
+        >
+          <div className="p-6">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="size-8 bg-primary rounded-lg flex items-center justify-center text-background-dark shadow-[0_0_15px_rgba(0,242,255,0.5)] group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined font-bold text-black">
+                  terminal
+                </span>
+              </div>
+              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                Command
+              </h2>
+            </Link>
           </div>
           <nav className="flex-1 px-4 py-6 space-y-2">
             <Link
@@ -61,12 +68,16 @@ const UserSettings = () => {
             <div className="size-2 rounded-full bg-primary animate-pulse"></div>
             <p className="text-sm text-slate-300">All nodes operational</p>
           </div>
-        </aside>
+        </motion.aside>
 
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto bg-[#f5f8f8] dark:bg-[#0b1617]">
           {/* Top Nav Bar Component */}
-          <header className="sticky top-0 z-10 glass-panel border-b border-white/5 px-8 py-4 flex items-center justify-between">
+          <motion.header
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="sticky top-0 z-10 glass-panel border-b border-white/5 px-8 py-4 flex items-center justify-between"
+          >
             <div className="flex items-center gap-4 flex-1">
               <div className="relative w-full max-w-md">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
@@ -107,7 +118,7 @@ const UserSettings = () => {
                 </div>
               </div>
             </div>
-          </header>
+          </motion.header>
 
           <div className="p-8 max-w-6xl mx-auto space-y-8">
             {/* User Profile Header */}
@@ -174,68 +185,72 @@ const UserSettings = () => {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="glass-panel rounded-xl p-6 border-l-4 border-l-primary">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-slate-400 text-sm font-medium uppercase tracking-wider">
-                    Projects Completed
-                  </p>
-                  <span className="material-symbols-outlined text-primary">
-                    rocket_launch
-                  </span>
-                </div>
-                <div className="flex items-baseline gap-3">
-                  <h3 className="text-4xl font-bold text-white">24</h3>
-                  <span className="text-primary text-sm font-bold flex items-center">
-                    +12%{" "}
-                    <span className="material-symbols-outlined text-xs">
-                      trending_up
+              {[
+                {
+                  label: "Projects Completed",
+                  value: "24",
+                  change: "+12%",
+                  icon: "rocket_launch",
+                  color: "primary",
+                },
+                {
+                  label: "Hours Logged",
+                  value: "1,240",
+                  change: "+5%",
+                  icon: "schedule",
+                  color: "blue-400",
+                },
+                {
+                  label: "Credits Remaining",
+                  value: "450",
+                  change: "-2%",
+                  icon: "token",
+                  color: "purple-500",
+                  down: true,
+                },
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className={`glass-panel rounded-xl p-6 border-l-4 border-l-${stat.color}`}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-slate-400 text-sm font-medium uppercase tracking-wider">
+                      {stat.label}
+                    </p>
+                    <span
+                      className={`material-symbols-outlined text-${stat.color}`}
+                    >
+                      {stat.icon}
                     </span>
-                  </span>
-                </div>
-              </div>
-              <div className="glass-panel rounded-xl p-6 border-l-4 border-l-blue-400">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-slate-400 text-sm font-medium uppercase tracking-wider">
-                    Hours Logged
-                  </p>
-                  <span className="material-symbols-outlined text-blue-400">
-                    schedule
-                  </span>
-                </div>
-                <div className="flex items-baseline gap-3">
-                  <h3 className="text-4xl font-bold text-white">1,240</h3>
-                  <span className="text-blue-400 text-sm font-bold flex items-center">
-                    +5%{" "}
-                    <span className="material-symbols-outlined text-xs">
-                      trending_up
+                  </div>
+                  <div className="flex items-baseline gap-3">
+                    <h3 className="text-4xl font-bold text-white">
+                      {stat.value}
+                    </h3>
+                    <span
+                      className={`text-${stat.down ? "rose-500" : stat.color} text-sm font-bold flex items-center`}
+                    >
+                      {stat.change}{" "}
+                      <span className="material-symbols-outlined text-xs">
+                        {stat.down ? "trending_down" : "trending_up"}
+                      </span>
                     </span>
-                  </span>
-                </div>
-              </div>
-              <div className="glass-panel rounded-xl p-6 border-l-4 border-l-purple-500">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-slate-400 text-sm font-medium uppercase tracking-wider">
-                    Credits Remaining
-                  </p>
-                  <span className="material-symbols-outlined text-purple-500">
-                    token
-                  </span>
-                </div>
-                <div className="flex items-baseline gap-3">
-                  <h3 className="text-4xl font-bold text-white">450</h3>
-                  <span className="text-rose-500 text-sm font-bold flex items-center">
-                    -2%{" "}
-                    <span className="material-symbols-outlined text-xs">
-                      trending_down
-                    </span>
-                  </span>
-                </div>
-              </div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
 
             {/* Plan & Enrolled Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="glass-panel rounded-xl overflow-hidden flex flex-col">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="glass-panel rounded-xl overflow-hidden flex flex-col"
+              >
                 <div className="p-6 border-b border-white/5">
                   <h2 className="text-xl font-bold text-white flex items-center gap-2">
                     <span className="material-symbols-outlined text-primary">
@@ -306,10 +321,15 @@ const UserSettings = () => {
                     Manage Subscription & Invoices
                   </a>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Recent Activity */}
-              <div className="glass-panel rounded-xl flex flex-col">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="glass-panel rounded-xl flex flex-col"
+              >
                 <div className="p-6 border-b border-white/5 flex justify-between items-center">
                   <h2 className="text-xl font-bold text-white flex items-center gap-2">
                     <span className="material-symbols-outlined text-primary">
@@ -331,123 +351,116 @@ const UserSettings = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                      <tr className="hover:bg-white/5 transition-colors group">
-                        <td className="px-6 py-4 text-white font-medium">
-                          Deployed "Project X-Alpha"
-                        </td>
-                        <td className="px-6 py-4 text-slate-400">
-                          Oct 24, 14:22
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold border border-emerald-500/30">
-                            Success
-                          </span>
-                        </td>
-                      </tr>
-                      <tr className="hover:bg-white/5 transition-colors">
-                        <td className="px-6 py-4 text-white font-medium">
-                          Billing cycle updated
-                        </td>
-                        <td className="px-6 py-4 text-slate-400">
-                          Oct 22, 09:10
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-bold border border-blue-500/30">
-                            Auto
-                          </span>
-                        </td>
-                      </tr>
-                      <tr className="hover:bg-white/5 transition-colors">
-                        <td className="px-6 py-4 text-white font-medium">
-                          Profile bio modified
-                        </td>
-                        <td className="px-6 py-4 text-slate-400">
-                          Oct 21, 18:45
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="px-2 py-0.5 rounded-full bg-white/10 text-slate-400 text-[10px] font-bold">
-                            Info
-                          </span>
-                        </td>
-                      </tr>
-                      <tr className="hover:bg-white/5 transition-colors">
-                        <td className="px-6 py-4 text-white font-medium">
-                          System security audit
-                        </td>
-                        <td className="px-6 py-4 text-slate-400">
-                          Oct 19, 11:30
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold border border-emerald-500/30">
-                            Secure
-                          </span>
-                        </td>
-                      </tr>
-                      <tr className="hover:bg-white/5 transition-colors">
-                        <td className="px-6 py-4 text-white font-medium">
-                          SSH Keys renewed
-                        </td>
-                        <td className="px-6 py-4 text-slate-400">
-                          Oct 15, 23:12
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-bold border border-amber-500/30">
-                            Success
-                          </span>
-                        </td>
-                      </tr>
+                      {[
+                        {
+                          action: 'Deployed "Project X-Alpha"',
+                          date: "Oct 24, 14:22",
+                          status: "Success",
+                          type: "success",
+                        },
+                        {
+                          action: "Billing cycle updated",
+                          date: "Oct 22, 09:10",
+                          status: "Auto",
+                          type: "info",
+                        },
+                        {
+                          action: "Profile bio modified",
+                          date: "Oct 21, 18:45",
+                          status: "Info",
+                          type: "default",
+                        },
+                        {
+                          action: "System security audit",
+                          date: "Oct 19, 11:30",
+                          status: "Secure",
+                          type: "success",
+                        },
+                        {
+                          action: "SSH Keys renewed",
+                          date: "Oct 15, 23:12",
+                          status: "Success",
+                          type: "warning",
+                        },
+                      ].map((activity, i) => (
+                        <tr
+                          key={i}
+                          className="hover:bg-white/5 transition-colors group"
+                        >
+                          <td className="px-6 py-4 text-white font-medium">
+                            {activity.action}
+                          </td>
+                          <td className="px-6 py-4 text-slate-400">
+                            {activity.date}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                                activity.type === "success"
+                                  ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                                  : activity.type === "info"
+                                    ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
+                                    : activity.type === "warning"
+                                      ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                                      : "bg-white/10 text-slate-400"
+                              }`}
+                            >
+                              {activity.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             {/* Footer Quick Links */}
             <div className="pt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
-              <button className="flex items-center gap-3 p-4 glass-panel rounded-xl hover:border-primary transition-all group">
-                <div className="size-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:text-primary">
-                  <span className="material-symbols-outlined">description</span>
-                </div>
-                <div className="text-left">
-                  <p className="text-sm font-bold text-white">API Docs</p>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-tighter">
-                    Endpoints reference
-                  </p>
-                </div>
-              </button>
-              <button className="flex items-center gap-3 p-4 glass-panel rounded-xl hover:border-primary transition-all group">
-                <div className="size-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:text-primary">
-                  <span className="material-symbols-outlined">forum</span>
-                </div>
-                <div className="text-left">
-                  <p className="text-sm font-bold text-white">Dev Community</p>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-tighter">
-                    Support & Forums
-                  </p>
-                </div>
-              </button>
-              <button className="flex items-center gap-3 p-4 glass-panel rounded-xl hover:border-primary transition-all group">
-                <div className="size-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:text-primary">
-                  <span className="material-symbols-outlined">download</span>
-                </div>
-                <div className="text-left">
-                  <p className="text-sm font-bold text-white">Resources</p>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-tighter">
-                    Assets & Plugins
-                  </p>
-                </div>
-              </button>
-              <button className="flex items-center gap-3 p-4 glass-panel rounded-xl hover:border-primary transition-all group">
-                <div className="size-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:text-primary">
-                  <span className="material-symbols-outlined">help_center</span>
-                </div>
-                <div className="text-left">
-                  <p className="text-sm font-bold text-white">Help Desk</p>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-tighter">
-                    Submit a ticket
-                  </p>
-                </div>
-              </button>
+              {[
+                {
+                  title: "API Docs",
+                  icon: "description",
+                  desc: "Endpoints reference",
+                },
+                {
+                  title: "Dev Community",
+                  icon: "forum",
+                  desc: "Support & Forums",
+                },
+                {
+                  title: "Resources",
+                  icon: "download",
+                  desc: "Assets & Plugins",
+                },
+                {
+                  title: "Help Desk",
+                  icon: "help_center",
+                  desc: "Submit a ticket",
+                },
+              ].map((link, i) => (
+                <motion.button
+                  key={link.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex items-center gap-3 p-4 glass-panel rounded-xl hover:border-primary transition-all group"
+                >
+                  <div className="size-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:text-primary">
+                    <span className="material-symbols-outlined">
+                      {link.icon}
+                    </span>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-bold text-white">{link.title}</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-tighter">
+                      {link.desc}
+                    </p>
+                  </div>
+                </motion.button>
+              ))}
             </div>
           </div>
         </main>

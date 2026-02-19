@@ -44,33 +44,41 @@ const HomeVisionHero = () => {
             </Link>
           </motion.div>
           <nav className="hidden md:flex items-center gap-10">
-            {["Vision", "Projects", "Curriculum", "Pricing"].map((item, i) => (
-              <motion.div
-                key={item}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * i }}
-              >
-                <Link
-                  className="text-sm font-medium hover:text-primary transition-colors"
-                  href={item === "Vision" ? "/" : `/${item.toLowerCase()}`}
+            {["Vision", "About", "Projects", "Curriculum", "Pricing"].map(
+              (item, i) => (
+                <motion.div
+                  key={item}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * i }}
                 >
-                  {item}
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    className="text-sm font-medium hover:text-primary transition-colors"
+                    href={item === "Vision" ? "/" : `/${item.toLowerCase()}`}
+                  >
+                    {item}
+                  </Link>
+                </motion.div>
+              ),
+            )}
           </nav>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-4"
           >
-            <button className="hidden sm:block text-sm font-bold text-slate-300 hover:text-white transition-colors">
+            <Link
+              href="/login"
+              className="hidden sm:block text-sm font-bold text-slate-300 hover:text-white transition-colors"
+            >
               Login
-            </button>
-            <button className="bg-primary text-background-dark text-sm font-bold px-6 py-2.5 rounded-lg neon-glow hover:brightness-110 transition-all">
+            </Link>
+            <Link
+              href="/register"
+              className="bg-primary text-background-dark text-sm font-bold px-6 py-2.5 rounded-lg neon-glow hover:brightness-110 transition-all"
+            >
               Join Now
-            </button>
+            </Link>
           </motion.div>
         </div>
       </header>
