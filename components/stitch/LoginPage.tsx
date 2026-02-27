@@ -3,35 +3,16 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import GlobalHeader from "./GlobalHeader";
+import GlobalFooter from "./GlobalFooter";
 
 const LoginPage = () => {
   return (
     <div className="min-h-screen bg-background-dark text-slate-100 flex flex-col font-display overflow-hidden relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,242,255,0.05)_0%,transparent_50%)]"></div>
 
-      {/* Navigation */}
-      <nav className="relative z-10 px-6 py-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Link
-              href="/"
-              className="flex items-center gap-3 group cursor-pointer"
-            >
-              <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 group-hover:border-primary transition-colors">
-                <span className="material-symbols-outlined text-primary text-2xl">
-                  terminal
-                </span>
-              </div>
-              <h2 className="text-xl font-black tracking-tighter text-slate-100">
-                Kasauli<span className="text-primary">Coder</span>
-              </h2>
-            </Link>
-          </motion.div>
-        </div>
-      </nav>
+      <GlobalHeader />
 
       <main className="flex-1 flex items-center justify-center p-6 relative z-10">
         <motion.div
@@ -123,25 +104,12 @@ const LoginPage = () => {
               </p>
             </div>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="mt-8 flex justify-center gap-6 text-sm text-slate-500"
-          >
-            <Link href="/about" className="hover:text-slate-300">
-              About
-            </Link>
-            <Link href="/contact" className="hover:text-slate-300">
-              Privacy
-            </Link>
-            <Link href="/contact" className="hover:text-slate-300">
-              Terms
-            </Link>
-          </motion.div>
         </motion.div>
       </main>
+
+      <div className="mt-auto relative z-10">
+        <GlobalFooter />
+      </div>
 
       {/* Decorative Elements */}
       <div className="absolute top-1/4 -left-20 size-64 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>

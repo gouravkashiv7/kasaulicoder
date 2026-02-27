@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: "Kasauli Coder",
   description: "Accelerating your development journey",
   icons: {
-    icon: "/favicon.png",
+    icon: "/logo.png",
   },
 };
 

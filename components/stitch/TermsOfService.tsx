@@ -3,47 +3,16 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import GlobalHeader from "./GlobalHeader";
+import GlobalFooter from "./GlobalFooter";
 
 const TermsOfService = () => {
   return (
     <div className="min-h-screen bg-background-dark text-slate-100 flex flex-col font-display overflow-hidden relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(0,242,255,0.05)_0%,transparent_50%)]"></div>
 
-      {/* Navigation */}
-      <nav className="relative z-10 px-6 py-8 border-b border-white/5 bg-background-dark/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 group-hover:border-primary transition-colors">
-              <span className="material-symbols-outlined text-primary text-2xl">
-                terminal
-              </span>
-            </div>
-            <h2 className="text-xl font-black tracking-tighter text-slate-100">
-              Kasauli<span className="text-primary">Coder</span>
-            </h2>
-          </Link>
-          <div className="hidden md:flex gap-8 text-sm font-medium">
-            <Link
-              href="/about"
-              className="hover:text-primary transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              href="/projects"
-              className="hover:text-primary transition-colors"
-            >
-              Projects
-            </Link>
-            <Link
-              href="/contact"
-              className="hover:text-primary transition-colors"
-            >
-              Contact
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <GlobalHeader />
 
       <main className="relative z-10 flex-1 py-20 px-6">
         <div className="max-w-4xl mx-auto">
@@ -129,16 +98,7 @@ const TermsOfService = () => {
         </div>
       </main>
 
-      <footer className="py-12 px-6 border-t border-white/5 bg-slate-900/30">
-        <div className="max-w-7xl mx-auto text-center text-sm text-slate-500">
-          <p>
-            Questions about our terms? Reach out at{" "}
-            <Link href="/contact" className="text-primary hover:underline">
-              legal@kasaulicoder.io
-            </Link>
-          </p>
-        </div>
-      </footer>
+      <GlobalFooter />
     </div>
   );
 };

@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 const UserSettings = () => {
   return (
-    <div className="bg-[#f5f8f8] dark:bg-[#0f2223] text-slate-900 dark:text-slate-100 min-h-screen font-display">
+    <div className="bg-background-light dark:bg-[#0f2223] text-slate-900 dark:text-slate-100 min-h-screen font-display">
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar Navigation */}
         <motion.aside
@@ -71,7 +71,7 @@ const UserSettings = () => {
         </motion.aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-[#f5f8f8] dark:bg-[#0b1617]">
+        <main className="flex-1 overflow-y-auto bg-background-light dark:bg-[#0b1617]">
           {/* Top Nav Bar Component */}
           <motion.header
             initial={{ opacity: 0, y: -20 }}

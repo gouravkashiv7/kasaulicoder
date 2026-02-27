@@ -3,68 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import GlobalHeader from "./GlobalHeader";
+import GlobalFooter from "./GlobalFooter";
 
 const ContactCommunity = () => {
   return (
     <div className="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen selection:bg-primary selection:text-background-dark">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-primary/10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                <span className="material-symbols-outlined text-background-dark text-xl">
-                  code
-                </span>
-              </div>
-              <span className="text-xl font-bold tracking-tighter">
-                KasauliCoder
-              </span>
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="hidden md:flex gap-8 text-sm font-medium"
-          >
-            <Link
-              className="hover:text-primary transition-colors"
-              href="/about"
-            >
-              About
-            </Link>
-            <Link
-              className="hover:text-primary transition-colors"
-              href="/projects"
-            >
-              Projects
-            </Link>
-            <Link
-              className="hover:text-primary transition-colors"
-              href="/insights"
-            >
-              Blog
-            </Link>
-            <Link className="text-primary" href="/contact">
-              Community
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Link
-              href="/register"
-              className="bg-primary text-background-dark px-4 py-2 rounded font-bold text-sm hover:shadow-[0_0_15px_rgba(0,242,255,0.4)] transition-all"
-            >
-              ENROLL NOW
-            </Link>
-          </motion.div>
-        </div>
-      </nav>
+      <GlobalHeader />
 
       <main>
         {/* Section 1: Registration Form */}
@@ -362,67 +307,11 @@ const ContactCommunity = () => {
                 professional training.
               </p>
             </div>
-            <footer className="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-xs text-slate-600 uppercase tracking-widest font-medium">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">
-                  copyright
-                </span>{" "}
-                {new Date().getFullYear()} KASAULICODER ACADEMY
-              </div>
-              <nav className="hidden md:flex items-center gap-8">
-                <Link
-                  className="text-slate-500 hover:text-slate-900 font-medium text-sm transition-colors"
-                  href="/"
-                >
-                  Home
-                </Link>
-                <Link
-                  className="text-slate-500 hover:text-slate-900 font-medium text-sm transition-colors"
-                  href="/about"
-                >
-                  About
-                </Link>
-                <Link
-                  className="text-slate-500 hover:text-slate-900 font-medium text-sm transition-colors"
-                  href="/privacy"
-                >
-                  Privacy
-                </Link>
-                <Link
-                  className="text-slate-500 hover:text-slate-900 font-medium text-sm transition-colors"
-                  href="/terms"
-                >
-                  Terms
-                </Link>
-                <Link
-                  className="text-primary font-medium text-sm transition-colors"
-                  href="/contact"
-                >
-                  Contact
-                </Link>
-              </nav>
-              <div className="flex gap-4">
-                <a
-                  className="w-8 h-8 rounded border border-slate-800 flex items-center justify-center hover:border-primary hover:text-primary transition-all"
-                  href="#"
-                >
-                  <span className="material-symbols-outlined text-lg">
-                    terminal
-                  </span>
-                </a>
-                <a
-                  className="w-8 h-8 rounded border border-slate-800 flex items-center justify-center hover:border-primary hover:text-primary transition-all"
-                  href="#"
-                >
-                  <span className="material-symbols-outlined text-lg">
-                    public
-                  </span>
-                </a>
-              </div>
-            </footer>
           </div>
         </section>
       </main>
+
+      <GlobalFooter />
     </div>
   );
 };

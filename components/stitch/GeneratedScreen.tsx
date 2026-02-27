@@ -4,6 +4,8 @@ import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import GlobalHeader from "./GlobalHeader";
+import GlobalFooter from "./GlobalFooter";
 
 const GeneratedScreen = () => {
   useEffect(() => {
@@ -42,65 +44,7 @@ const GeneratedScreen = () => {
       </div>
 
       <div className="relative z-10">
-        {/* Navigation */}
-        <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#050505]/80 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
-              <Link href="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-black text-black text-xs">
-                  KC
-                </div>
-                <span className="font-bold tracking-tighter text-xl text-white">
-                  Kasauli<span className="text-primary">Coder</span>
-                </span>
-              </Link>
-            </motion.div>
-            <motion.nav
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="hidden md:flex items-center gap-8 bg-white/5 backdrop-blur-md px-6 py-2 rounded-full border border-white/10"
-            >
-              <Link
-                className="text-xs font-semibold tracking-wider text-gray-300 hover:text-white uppercase transition-colors"
-                href="/"
-              >
-                Vision
-              </Link>
-              <Link
-                className="text-xs font-semibold tracking-wider text-gray-300 hover:text-white uppercase transition-colors"
-                href="/about"
-              >
-                About
-              </Link>
-              <Link
-                className="text-xs font-semibold tracking-wider text-primary uppercase transition-colors"
-                href="/projects"
-              >
-                Projects
-              </Link>
-              <Link
-                className="text-xs font-semibold tracking-wider text-gray-300 hover:text-white uppercase transition-colors"
-                href="/insights"
-              >
-                Lab
-              </Link>
-            </motion.nav>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
-              <Link
-                href="/login"
-                className="px-5 py-2 border border-primary/50 text-primary rounded-lg hover:bg-primary hover:text-black transition-all duration-300 text-sm font-bold"
-              >
-                DASHBOARD
-              </Link>
-            </motion.div>
-          </div>
-        </nav>
+        <GlobalHeader />
 
         <main className="max-w-7xl mx-auto px-6 py-12">
           {/* Hero Section */}
@@ -416,39 +360,7 @@ const GeneratedScreen = () => {
           </motion.section>
         </main>
 
-        {/* Footer */}
-        <footer className="border-t border-white/10 mt-24 py-12">
-          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-white/10 rounded flex items-center justify-center font-bold text-[10px]">
-                KC
-              </div>
-              <span className="text-sm font-semibold text-gray-400">
-                © {new Date().getFullYear()} KasauliCoder Lab.
-              </span>
-            </div>
-            <div className="flex gap-6 text-xs font-bold text-gray-500 uppercase tracking-widest">
-              <Link
-                className="hover:text-primary transition-colors"
-                href="/privacy"
-              >
-                Privacy
-              </Link>
-              <Link
-                className="hover:text-primary transition-colors"
-                href="/terms"
-              >
-                Terms
-              </Link>
-              <Link
-                className="hover:text-primary transition-colors"
-                href="/contact"
-              >
-                Contact
-              </Link>
-            </div>
-          </div>
-        </footer>
+        <GlobalFooter />
       </div>
     </div>
   );

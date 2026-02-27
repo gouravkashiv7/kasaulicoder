@@ -1,10 +1,18 @@
 "use client";
 
+import React, { useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import GlobalHeader from "./GlobalHeader";
+import GlobalFooter from "./GlobalFooter";
+import HomeUpcomingEventsStats from "./HomeUpcomingEventsStats";
+import HomeTeamWorkTestimonials from "./HomeTeamWorkTestimonials";
 
 const HomeVisionHero = () => {
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -22,86 +30,42 @@ const HomeVisionHero = () => {
 
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden">
-      {/* Header / Navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-morphism border-b border-primary/10">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Link
-              href="/"
-              className="flex items-center gap-3 group cursor-pointer"
-            >
-              <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 group-hover:border-primary transition-colors">
-                <span className="material-symbols-outlined text-primary text-2xl">
-                  terminal
-                </span>
-              </div>
-              <h2 className="text-xl font-black tracking-tighter text-slate-100">
-                Kasauli<span className="text-primary">Coder</span>
-              </h2>
-            </Link>
-          </motion.div>
-          <nav className="hidden md:flex items-center gap-10">
-            {["Vision", "About", "Projects", "Curriculum", "Pricing"].map(
-              (item, i) => (
-                <motion.div
-                  key={item}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * i }}
-                >
-                  <Link
-                    className="text-sm font-medium hover:text-primary transition-colors"
-                    href={item === "Vision" ? "/" : `/${item.toLowerCase()}`}
-                  >
-                    {item}
-                  </Link>
-                </motion.div>
-              ),
-            )}
-          </nav>
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4"
-          >
-            <Link
-              href="/login"
-              className="hidden sm:block text-sm font-bold text-slate-300 hover:text-white transition-colors"
-            >
-              Login
-            </Link>
-            <Link
-              href="/register"
-              className="bg-primary text-background-dark text-sm font-bold px-6 py-2.5 rounded-lg neon-glow hover:brightness-110 transition-all"
-            >
-              Join Now
-            </Link>
-          </motion.div>
-        </div>
-      </header>
+      <GlobalHeader />
 
       <main className="pt-20">
         {/* Hero Section */}
         <section className="relative min-h-[90vh] flex items-center justify-center px-6 overflow-hidden hero-gradient">
-          {/* Background Decorative Element */}
-          <motion.div
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 0.2, scale: 1 }}
-            transition={{ duration: 1.5 }}
-            className="absolute inset-0 z-0 pointer-events-none"
-          >
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full">
+          {/* Background Video / Image Fallback */}
+          <div className="absolute inset-0 z-0">
+            {/* Fallback Image */}
+            <div
+              className={`absolute inset-0 transition-opacity duration-1000 ${isVideoLoaded ? "opacity-0" : "opacity-20"}`}
+            >
               <Image
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsusT6goUDVPEYtFUtcweoh9GTj1LRmXHZE5N9XQJlm7ICHBiNfmsrhqsit-DuWpPKH_9VjcA2aJpZv58Lft6WMoV1Py5S_hgboLo9bG0XXyWxvbiYHeTFj4QEkWn_zENaKAezWroB8XfE228G-SGnhcuRfbT3g7sP3zw81FeWUDzEGYi51LHtbYLo4gxxrly2cRUGVOGXySZhyozxEWjEJOM1Ys0WmHhlj_eksiZTpKKSJrul5HF_9Q8Q_A8ECUdWmM6A4lsjrS8"
-                alt="Futuristic 3D AI neural network visual representation"
+                alt="Hero Fallback"
                 fill
                 className="object-cover"
+                priority
               />
             </div>
-          </motion.div>
+
+            {/* Background Video */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              onCanPlayThrough={() => setIsVideoLoaded(true)}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoaded ? "opacity-30" : "opacity-0"}`}
+            >
+              <source src="/hero_bg.mp4" type="video/mp4" />
+            </video>
+
+            {/* Overlay Gradients to ensure text readability and brand integration */}
+            <div className="absolute inset-0 bg-background-dark/40"></div>
+            <div className="absolute inset-0 bg-linear-to-b from-background-dark/20 via-transparent to-background-dark"></div>
+          </div>
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -117,37 +81,48 @@ const HomeVisionHero = () => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
               </span>
               <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-                Live Cohort Enrollment Open
+                Coders from the Himalayas!!
               </span>
             </motion.div>
             <motion.h1
               variants={itemVariants}
               className="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tight text-white"
             >
-              Learn AI by Building <br />
+              Build, Compete, <br />
               <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-cyan-400">
-                Real-World Projects
+                Get Placed
               </span>
             </motion.h1>
             <motion.p
               variants={itemVariants}
               className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed"
             >
-              Work on live AI & full-stack projects, guided by industry-level
-              workflows. Move beyond tutorials and start shipping production
-              code.
+              From the Hills to the Hub. Join the most ambitious community of
+              developers, participate in high-stakes hackathons, and land your
+              dream job.
             </motion.p>
             <motion.div
               variants={itemVariants}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap"
             >
-              <button className="w-full sm:w-auto px-8 py-4 bg-primary text-background-dark font-black rounded-xl neon-glow hover:scale-105 transition-all flex items-center justify-2">
-                Join Live Projects
-                <span className="material-symbols-outlined">rocket_launch</span>
-              </button>
-              <button className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-all backdrop-blur-sm">
-                View Plans
-              </button>
+              <Link href="/programs">
+                <button className="w-full sm:w-auto px-8 py-4 bg-primary text-background-dark font-black rounded-xl neon-glow hover:scale-105 transition-all flex items-center justify-center gap-2">
+                  Register for Hackathon
+                  <span className="material-symbols-outlined">
+                    rocket_launch
+                  </span>
+                </button>
+              </Link>
+              <Link href="/programs">
+                <button className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-all backdrop-blur-sm">
+                  Explore Programs
+                </button>
+              </Link>
+              <Link href="/contact">
+                <button className="w-full sm:w-auto px-8 py-4 bg-transparent border border-primary/30 text-primary font-bold rounded-xl hover:bg-primary/10 transition-all backdrop-blur-sm">
+                  Join as Partner
+                </button>
+              </Link>
             </motion.div>
             <motion.div
               variants={itemVariants}
@@ -171,6 +146,55 @@ const HomeVisionHero = () => {
           </motion.div>
         </section>
 
+        {/* Highlights Section */}
+        <section className="py-20 px-6 bg-background-dark border-t border-b border-white/5 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              {[
+                {
+                  title: "Hackathons",
+                  desc: "High-stakes coding battles",
+                  icon: "emoji_events",
+                },
+                {
+                  title: "Live Projects",
+                  desc: "Build real enterprise apps",
+                  icon: "rocket_launch",
+                },
+                {
+                  title: "100% Placement",
+                  desc: "Direct industry hiring",
+                  icon: "work",
+                },
+                {
+                  title: "All Tech Stacks",
+                  desc: "Agnostic modern development",
+                  icon: "layers",
+                },
+              ].map((highlight, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="p-6 rounded-2xl bg-white/5 border border-white/10 glass-morphism hover:border-primary/50 transition-colors group cursor-default"
+                >
+                  <div className="size-16 mx-auto bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300">
+                    <span className="material-symbols-outlined text-3xl text-primary">
+                      {highlight.icon}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {highlight.title}
+                  </h3>
+                  <p className="text-sm text-slate-400">{highlight.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Vision Section */}
         <section className="py-24 px-6 bg-[#0a1515]">
           <div className="max-w-7xl mx-auto">
@@ -182,33 +206,34 @@ const HomeVisionHero = () => {
                 transition={{ duration: 0.8 }}
               >
                 <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
-                  Our Vision
+                  Our Expertise
                 </h2>
                 <h3 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
-                  Bridging the Gap: <br />
-                  Theory to Industry
+                  We Build Solutions <br />
+                  That Matter
                 </h3>
                 <p className="text-lg text-slate-400 mb-8 leading-relaxed">
-                  Traditional education stops at syntax. We start at execution.
-                  Our platform is designed to immerse you in the actual
-                  environment of a high-growth tech startup.
+                  Beyond teaching, we are a powerhouse development agency. From
+                  high-converting landing pages to complex operational ERPs, we
+                  deliver scalable, high-performance web solutions across
+                  industries.
                 </p>
                 <div className="space-y-6">
                   {[
                     {
-                      icon: "schema",
-                      title: "Real-world Workflows",
-                      desc: "Master CI/CD, code reviews, and architectural patterns used by the top 1% of engineering teams.",
+                      icon: "hotel",
+                      title: "Hospitality & Hotel Operations",
+                      desc: "Complete inventory management, dynamic pricing engines, and seamless booking experiences.",
                     },
                     {
-                      icon: "groups",
-                      title: "Industry Mentorship",
-                      desc: "Direct access to engineers building AI products in Silicon Valley and global tech hubs.",
+                      icon: "school",
+                      title: "Education & School ERPs",
+                      desc: "Streamlined administration, student portals, and resource management systems for modern campuses.",
                     },
                     {
-                      icon: "auto_awesome_motion",
-                      title: "Portfolio-first Approach",
-                      desc: "Don't just get a certificate. Get a high-end portfolio of live, deployed AI applications.",
+                      icon: "storefront",
+                      title: "Retail & E-commerce",
+                      desc: "High-conversion storefronts, real-time inventory tracking, and integrated analytics dashboards.",
                     },
                   ].map((feature, i) => (
                     <motion.div
@@ -241,42 +266,52 @@ const HomeVisionHero = () => {
                 transition={{ duration: 0.8 }}
                 className="relative"
               >
-                <div className="absolute -inset-1 bg-linear-to-r from-primary/30 to-cyan-500/30 blur-2xl rounded-3xl opacity-50"></div>
-                <div className="relative glass-morphism rounded-3xl p-8 border border-white/10">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
-                    </div>
-                    <div className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">
-                      system_architecture.v2
-                    </div>
-                  </div>
-                  <div className="aspect-video rounded-xl bg-background-dark border border-white/5 p-4 overflow-hidden relative">
+                <div className="absolute -inset-1 bg-linear-to-r from-primary/30 to-purple-500/30 blur-2xl rounded-3xl opacity-50"></div>
+                <div className="relative glass-morphism rounded-3xl p-8 border border-white/10 flex flex-col gap-6">
+                  <div className="aspect-video rounded-xl overflow-hidden relative border border-white/5">
                     <Image
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7t_JfxjYDOw_7E7k4trNP12HO4iWzl6GBNMAtwTmw7VrZdfTy7LWYm99_wvo4fEAF-_nsBKhKzkWdtJBWW9lc7U21eUzNr7XOtXht9lZOFC2c7v7Nhv4FrZjNAFyizBHKy-zGi2cOuwsuwvjpTCfnQkUwvHoP1MTPc4OQpQHICBXKUwFINFMznC4TRCCz9eIvAov5z4hwWj6KHXBij0VrX-6XWFbLGf_peSzTpz7R0m4t0RBEhJZo2szsdXfxylz52knDjzj_1q0"
-                      alt="Technical architecture diagram showing AI data flow"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3tqacELC7IOG5O5GCGl4b1Pvu9Tcuvukohvh1-dCo-7cbB_23Y0k_b8Z6n6VODn_Qza4M1Sw1DKmIDcoCZY_XjsdQV_gjaEsJ9Rn9qby8jd5NkJAvtDisbTCN3EMfqD4fZq2NstWFQpiO_arauxtl3i6V4ATdpsaA7HzqwxbjpO4rEGf_w0b-dd9p9tM55Ar1D1ydB2EZG0r20ymuIxBQsLk7i0hXf7EMSOUcSyxi76YmGt6TWxjsZ_BoHecN0WXvuMAFs518bK0"
+                      alt="Modern Dashboard Interface"
                       fill
                       className="object-cover"
                     />
-                  </div>
-                  <div className="mt-8 grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
-                      <div className="text-primary font-black text-2xl mb-1">
-                        92%
+                    <div className="absolute inset-0 bg-background-dark/20"></div>
+                    <div className="absolute bottom-4 left-4 right-4 bg-background-dark/80 backdrop-blur-md p-4 rounded-lg border border-white/10 flex items-center justify-between">
+                      <div>
+                        <p className="text-white font-bold text-sm">
+                          Hotelier Pro ERP
+                        </p>
+                        <p className="text-primary text-[10px] tracking-widest uppercase mt-1">
+                          Live Dashboard
+                        </p>
                       </div>
-                      <div className="text-xs text-slate-400 uppercase font-bold tracking-tighter">
-                        Placement Rate
-                      </div>
+                      <button className="bg-primary text-background-dark text-xs font-bold px-3 py-1.5 rounded">
+                        View
+                      </button>
                     </div>
-                    <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                      <div className="text-white font-black text-2xl mb-1">
-                        15+
-                      </div>
-                      <div className="text-xs text-slate-400 uppercase font-bold tracking-tighter">
-                        Live Projects
-                      </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white/5 rounded-xl border border-white/10 p-4 relative overflow-hidden group">
+                      <Image
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNnjilOXJ2vNg1jhZIkl3rk7kWphobcBmiIDBuiHotGtlU3DsWvUK6HMkjU088hyStkEA2ODgHUM64dREkN5DPhc9vJNSB58Afe9Qc7kUl29l3FB5kS9yEsd4RZFLAueeC9P6vvt2hc0h0Ab1Ry9JFQI5FbFy6dIDd63jDfOuxsrutcyTNE77V8GQ-L_at8DN7wj_CPy5Ay0yG2SVtsNKZtmSMtyBSL48qcu_Hu3WXwS-deVMbgs-qFJ-SXcSbelHDLiQFc_B-BVA"
+                        fill
+                        className="object-cover opacity-50 group-hover:scale-110 transition-transform duration-700"
+                        alt="edu"
+                      />
+                      <p className="relative z-10 text-white font-bold text-sm drop-shadow-lg">
+                        EduConnect System
+                      </p>
+                    </div>
+                    <div className="bg-white/5 rounded-xl border border-white/10 p-4 relative overflow-hidden group">
+                      <Image
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtWew6lCblRoK84au8NTbJXud-LUukQH11GxXo9mQ2cdgB2EipW8sxGeAShmaRBTjIyHMZLC1PKU65A-f8UJQTVMfKajPUE1ovBcQVv7CY7pDr7O10Cw-_fSNKRcRgtfojWpuskNGQUSN0v4JBRcdJ-JcT_oXHV1vnBCeT5V3wJfim2NZONV2gGshMvHVx-C8uVUzANJJfjpUj1V78Kvj6qRBxtlH6Q-na2TL2V9_xmsXG68kCV5o21l4c4zhkReBLD6384OS53So"
+                        fill
+                        className="object-cover opacity-50 group-hover:scale-110 transition-transform duration-700"
+                        alt="retail"
+                      />
+                      <p className="relative z-10 text-white font-bold text-sm drop-shadow-lg">
+                        Retail Analytics
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -295,7 +330,7 @@ const HomeVisionHero = () => {
               className="text-center mb-16"
             >
               <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-                Built in our Cohorts
+                Featured Projects
               </h2>
               <p className="text-slate-400 max-w-2xl mx-auto">
                 These aren't just student projects. These are fully functional
@@ -377,6 +412,10 @@ const HomeVisionHero = () => {
           <div className="absolute bottom-0 left-0 w-full h-64 bg-linear-to-t from-primary/5 to-transparent pointer-events-none"></div>
         </section>
 
+        <HomeUpcomingEventsStats />
+
+        <HomeTeamWorkTestimonials />
+
         {/* Final CTA Section */}
         <section className="py-24 px-6">
           <motion.div
@@ -408,43 +447,7 @@ const HomeVisionHero = () => {
         </section>
       </main>
 
-      <footer className="py-12 px-6 border-t border-white/5 bg-background-dark">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-3">
-            <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30">
-              <span className="material-symbols-outlined text-primary text-xl">
-                terminal
-              </span>
-            </div>
-            <h2 className="text-lg font-black tracking-tighter text-slate-100">
-              Kasauli<span className="text-primary">Coder</span>
-            </h2>
-          </div>
-          <div className="flex gap-8 text-sm text-slate-500">
-            <Link
-              className="hover:text-primary transition-colors"
-              href="/privacy"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              className="hover:text-primary transition-colors"
-              href="/terms"
-            >
-              Terms of Service
-            </Link>
-            <Link
-              className="hover:text-primary transition-colors"
-              href="/contact"
-            >
-              Contact
-            </Link>
-          </div>
-          <div className="text-sm text-slate-500">
-            © {new Date().getFullYear()} KasauliCoder. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <GlobalFooter />
     </div>
   );
 };

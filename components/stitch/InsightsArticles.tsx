@@ -4,6 +4,8 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import GlobalHeader from "./GlobalHeader";
+import GlobalFooter from "./GlobalFooter";
 
 const InsightsArticles = () => {
   const articles = [
@@ -38,50 +40,7 @@ const InsightsArticles = () => {
 
   return (
     <div className="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen selection:bg-primary selection:text-background-dark">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-primary/10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-              <span className="material-symbols-outlined text-background-dark text-xl">
-                code
-              </span>
-            </div>
-            <span className="text-xl font-bold tracking-tighter">
-              KasauliCoder
-            </span>
-          </Link>
-          <div className="hidden md:flex gap-8 text-sm font-medium">
-            <Link className="hover:text-primary transition-colors" href="/">
-              Home
-            </Link>
-            <Link
-              className="hover:text-primary transition-colors"
-              href="/about"
-            >
-              About
-            </Link>
-            <Link
-              className="text-primary border-b-2 border-primary"
-              href="/insights"
-            >
-              Blog
-            </Link>
-            <Link
-              className="hover:text-primary transition-colors"
-              href="/projects"
-            >
-              Projects
-            </Link>
-          </div>
-          <Link
-            href="/login"
-            className="bg-primary text-background-dark px-4 py-2 rounded font-bold text-sm hover:shadow-[0_0_15px_rgba(0,242,255,0.4)] transition-all"
-          >
-            DASHBOARD
-          </Link>
-        </div>
-      </nav>
+      <GlobalHeader />
 
       <main className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
@@ -167,38 +126,9 @@ const InsightsArticles = () => {
         </div>
       </main>
 
-      <footer className="border-t border-white/5 py-12 px-6 mt-24">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary">
-              terminal
-            </span>
-            <span className="text-sm font-bold text-slate-500 italic">
-              © {new Date().getFullYear()} KASAULICODER ACADEMY
-            </span>
-          </div>
-          <div className="flex gap-8 text-xs font-bold text-slate-500 uppercase tracking-widest">
-            <Link
-              href="/privacy"
-              className="hover:text-primary transition-colors"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="/terms"
-              className="hover:text-primary transition-colors"
-            >
-              Terms
-            </Link>
-            <Link
-              href="/contact"
-              className="hover:text-primary transition-colors"
-            >
-              Contact
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <div className="mt-24">
+        <GlobalFooter />
+      </div>
     </div>
   );
 };

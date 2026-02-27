@@ -2,7 +2,10 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
+import GlobalHeader from "./GlobalHeader";
+import GlobalFooter from "./GlobalFooter";
 
 const AboutUs = () => {
   return (
@@ -10,58 +13,7 @@ const AboutUs = () => {
       <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,242,255,0.03)_0%,transparent_50%)]"></div>
 
-      {/* Navigation */}
-      <nav className="relative z-10 px-6 py-8 border-b border-white/5 bg-background-dark/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 group-hover:border-primary transition-colors">
-                <span className="material-symbols-outlined text-primary text-2xl">
-                  terminal
-                </span>
-              </div>
-              <h2 className="text-xl font-black tracking-tighter text-slate-100">
-                Kasauli<span className="text-primary">Coder</span>
-              </h2>
-            </Link>
-          </motion.div>
-          <div className="hidden md:flex gap-8 text-sm font-medium">
-            <Link
-              href="/projects"
-              className="hover:text-primary transition-colors"
-            >
-              Projects
-            </Link>
-            <Link
-              href="/insights"
-              className="hover:text-primary transition-colors"
-            >
-              Insights
-            </Link>
-            <Link
-              href="/pricing"
-              className="hover:text-primary transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/contact"
-              className="hover:text-primary transition-colors"
-            >
-              Contact
-            </Link>
-          </div>
-          <Link
-            href="/login"
-            className="bg-primary/10 text-primary border border-primary/30 px-4 py-2 rounded font-bold text-sm hover:bg-primary hover:text-background-dark transition-all"
-          >
-            LOGIN
-          </Link>
-        </div>
-      </nav>
+      <GlobalHeader />
 
       <main className="relative z-10">
         {/* Hero Section */}
@@ -243,40 +195,7 @@ const AboutUs = () => {
         </section>
       </main>
 
-      <footer className="py-12 px-6 border-t border-white/5 bg-slate-900/30 relative z-10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-3">
-            <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30">
-              <span className="material-symbols-outlined text-primary text-xl">
-                terminal
-              </span>
-            </div>
-            <p className="font-bold">
-              KasauliCoder &copy; {new Date().getFullYear()}
-            </p>
-          </div>
-          <div className="flex gap-8 text-sm text-slate-500">
-            <Link
-              href="/privacy"
-              className="hover:text-primary transition-colors"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="/terms"
-              className="hover:text-primary transition-colors"
-            >
-              Terms
-            </Link>
-            <Link
-              href="/contact"
-              className="hover:text-primary transition-colors"
-            >
-              Global Node Map
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <GlobalFooter />
     </div>
   );
 };
