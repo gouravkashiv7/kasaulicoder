@@ -14,7 +14,7 @@ const TermsOfService = () => {
 
       <GlobalHeader />
 
-      <main className="relative z-10 flex-1 py-20 px-6">
+      <main className="relative z-10 flex-1 pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

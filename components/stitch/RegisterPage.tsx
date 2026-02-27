@@ -12,7 +12,7 @@ const RegisterPage = () => {
     <div className="min-h-screen bg-background-dark text-slate-100 flex flex-col font-display overflow-hidden relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,242,255,0.05)_0%,transparent_50%)]"></div>
       <GlobalHeader />
-      <main className="flex-1 flex items-center justify-center p-6 relative z-10">
+      <main className="flex-1 flex items-center justify-center pt-24 p-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}

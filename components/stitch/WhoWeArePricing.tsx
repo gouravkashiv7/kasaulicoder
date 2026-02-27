@@ -8,7 +8,7 @@ import GlobalFooter from "./GlobalFooter";
 
 const WhoWeArePricing = () => {
   return (
-    <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen selection:bg-primary/30 font-display">
+    <div className="bg-background-dark text-slate-100 min-h-screen selection:bg-primary/30 font-display">
       <div className="relative overflow-x-hidden">
         {/* Background Accents */}
         <motion.div
@@ -27,7 +27,7 @@ const WhoWeArePricing = () => {
         <div className="layout-container flex h-full grow flex-col relative z-10">
           <GlobalHeader />
 
-          <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-12 md:py-24">
+          <main className="flex-1 max-w-7xl mx-auto w-full px-6 pt-32 pb-12 md:pb-24">
             {/* Section 1: Who We Are */}
             <section className="mb-32">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -44,25 +44,25 @@ const WhoWeArePricing = () => {
                     </span>
                     Our Mission
                   </div>
-                  <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight tracking-tight">
+                  <h1 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tight">
                     Empowering the{" "}
                     <span className="text-primary italic">Next Generation</span>{" "}
                     of AI Engineers.
                   </h1>
-                  <p className="text-lg text-slate-600 dark:text-slate-400 max-w-xl leading-relaxed">
+                  <p className="text-lg text-slate-400 max-w-xl leading-relaxed">
                     KasauliCoder is a tech-driven ecosystem designed for
                     students, job seekers, and professionals. We believe the
                     best way to master production-level AI is through hands-on
                     collaboration on real industry systems.
                   </p>
                   <div className="flex flex-wrap gap-4 pt-4">
-                    <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
+                    <div className="flex items-center gap-2 text-sm font-medium text-slate-200">
                       <span className="material-symbols-outlined text-primary">
                         groups
                       </span>
                       1000+ Collaborators
                     </div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
+                    <div className="flex items-center gap-2 text-sm font-medium text-slate-200">
                       <span className="material-symbols-outlined text-primary">
                         bolt
                       </span>
@@ -78,7 +78,7 @@ const WhoWeArePricing = () => {
                   className="relative group"
                 >
                   <div className="absolute -inset-1 bg-linear-to-r from-primary to-purple-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                  <div className="relative bg-background-light dark:bg-[#1b2728] rounded-xl overflow-hidden aspect-video border border-slate-200 dark:border-primary/20 shadow-2xl">
+                  <div className="relative bg-[#1b2728] rounded-xl overflow-hidden aspect-video border border-primary/20 shadow-2xl">
                     <div className="absolute inset-0 bg-glow-radial"></div>
                     <Image
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuCB5pdU3o0g4wJ8ccZNW-lrr8ac9VaDMdHTwyizbABNIz1tVXg72HPH-4262HcxPqsI9n3-b6d07yGUkwejgVfrRpfylghkeidYj7QcHR7kfDpQUWSbqj_P_h-lvrHphzBgYJ9AXrsBYPdHID2vrE5IBP9oJ0ADMVS9GWy-fsKm1a5jNdTtnkagwWyN5d377vjckuvgI9BMw1DTxDZIxZTcLl6L13R9swQlfqMbUedIfufP5QcX_0RWA8aywUnJBSoiHTcTP5S-Wko"
@@ -114,12 +114,12 @@ const WhoWeArePricing = () => {
                 viewport={{ once: true }}
                 className="text-center mb-16 space-y-4"
               >
-                <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white">
+                <h2 className="text-3xl md:text-5xl font-black text-white">
                   Bridge the gap between{" "}
                   <span className="text-primary">Learning</span> and{" "}
                   <span className="text-purple-500">Industry</span>.
                 </h2>
-                <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+                <p className="text-slate-400 max-w-2xl mx-auto">
                   Receive rigorous peer feedback and work on high-impact AI
                   systems used in actual production environments.
                 </p>
@@ -170,10 +170,10 @@ const WhoWeArePricing = () => {
                         {feature.icon}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                    <h3 className="text-xl font-bold text-white mb-3">
                       {feature.title}
                     </h3>
-                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    <p className="text-slate-400 text-sm leading-relaxed">
                       {feature.desc}
                     </p>
                   </motion.div>
@@ -189,11 +189,11 @@ const WhoWeArePricing = () => {
                 viewport={{ once: true }}
                 className="text-center mb-16"
               >
-                <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4">
+                <h2 className="text-3xl md:text-5xl font-black text-white mb-4">
                   Choose Your{" "}
                   <span className="text-primary italic">Career Path</span>
                 </h2>
-                <p className="text-slate-600 dark:text-slate-400">
+                <p className="text-slate-400">
                   Flexible plans designed for every stage of your development
                   journey.
                 </p>
@@ -203,7 +203,7 @@ const WhoWeArePricing = () => {
                   {
                     name: "Basic",
                     price: "₹1,000",
-                    color: "text-slate-600 dark:text-slate-400",
+                    color: "text-slate-400",
                     features: [
                       "Beginner-friendly AI projects",
                       "Limited community chat access",
@@ -250,7 +250,7 @@ const WhoWeArePricing = () => {
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 * i, duration: 0.5 }}
                     whileHover={{ y: -10 }}
-                    className={`flex flex-col glass-card rounded-xl p-8 border ${plan.featured ? "border-2 border-primary z-20 scale-105 bg-primary/5" : "border-slate-200 dark:border-slate-800"} transition-all duration-500 group relative`}
+                    className={`flex flex-col glass-card rounded-xl p-8 border ${plan.featured ? "border-2 border-primary z-20 scale-105 bg-primary/5" : "border-slate-800"} transition-all duration-500 group relative`}
                   >
                     {plan.featured && (
                       <div className="absolute top-0 right-0 bg-primary text-background-dark text-[10px] font-black px-4 py-1 rounded-bl-lg uppercase tracking-widest">
@@ -264,19 +264,17 @@ const WhoWeArePricing = () => {
                         {plan.name}
                       </h3>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-5xl font-black text-slate-900 dark:text-white">
+                        <span className="text-5xl font-black text-white">
                           {plan.price}
                         </span>
-                        <span className="text-slate-500 dark:text-slate-400 font-medium">
-                          /mo
-                        </span>
+                        <span className="text-slate-400 font-medium">/mo</span>
                       </div>
                     </div>
                     <ul className="space-y-4 mb-10 flex-1">
                       {plan.features.map((feature) => (
                         <li
                           key={feature}
-                          className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300"
+                          className="flex items-start gap-3 text-sm text-slate-300"
                         >
                           <span
                             className={`material-symbols-outlined ${plan.featured || plan.name === "Basic" ? "text-primary" : "text-purple-500"} text-lg`}

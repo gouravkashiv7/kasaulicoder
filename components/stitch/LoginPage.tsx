@@ -14,7 +14,7 @@ const LoginPage = () => {
 
       <GlobalHeader />
 
-      <main className="flex-1 flex items-center justify-center p-6 relative z-10">
+      <main className="flex-1 flex items-center justify-center pt-24 p-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}

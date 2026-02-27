@@ -15,7 +15,7 @@ const AboutUs = () => {
 
       <GlobalHeader />
 
-      <main className="relative z-10">
+      <main className="relative z-10 pt-28">
         {/* Hero Section */}
         <section className="py-24 px-6 relative overflow-hidden">
           <div className="max-w-7xl mx-auto text-center">

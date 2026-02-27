@@ -105,7 +105,7 @@ const HomeTeamWorkTestimonials = () => {
             </h2>
           </motion.div>
 
-          <div className="flex flex-nowrap overflow-x-auto gap-8 pb-12 scrollbar-hide snap-x">
+          <div className="flex flex-nowrap overflow-x-auto gap-6 sm:gap-8 pt-10 pb-12 px-4 sm:px-0 scrollbar-hide snap-x transition-all">
             {[
               {
                 name: "John Weaver",
@@ -132,9 +132,9 @@ const HomeTeamWorkTestimonials = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="min-w-87.5 md:min-w-112.5 snap-center bg-background-dark border border-slate-800 p-8 rounded-xl relative group"
+                className="min-w-[280px] sm:min-w-[350px] md:min-w-[450px] snap-center bg-background-dark border border-slate-800 p-6 sm:p-8 rounded-xl relative group"
               >
-                <div className="absolute -top-4 -right-4 w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center border border-primary/40">
+                <div className="absolute -top-4 -right-2 sm:-right-4 w-10 h-10 sm:w-12 sm:h-12 bg-primary/20 rounded-full flex items-center justify-center border border-primary/40 z-10">
                   <span className="material-symbols-outlined text-primary">
                     format_quote
                   </span>
@@ -146,7 +146,7 @@ const HomeTeamWorkTestimonials = () => {
                     </span>
                   ))}
                 </div>
-                <p className="text-slate-300 italic mb-8 leading-relaxed">
+                <p className="text-slate-300 italic mb-6 sm:mb-8 text-sm sm:text-base leading-relaxed">
                   "{testi.text}"
                 </p>
                 <div className="flex items-center gap-4">

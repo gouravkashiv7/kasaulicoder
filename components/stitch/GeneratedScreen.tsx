@@ -46,7 +46,7 @@ const GeneratedScreen = () => {
       <div className="relative z-10">
         <GlobalHeader />
 
-        <main className="max-w-7xl mx-auto px-6 py-12">
+        <main className="max-w-7xl mx-auto px-6 pt-32 pb-12">
           {/* Hero Section */}
           <header className="mb-20 text-center lg:text-left grid lg:grid-cols-2 gap-12 items-center">
             <motion.div

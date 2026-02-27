@@ -8,10 +8,10 @@ import GlobalFooter from "./GlobalFooter";
 
 const ContactCommunity = () => {
   return (
-    <div className="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen selection:bg-primary selection:text-background-dark">
+    <div className="font-display bg-background-dark text-slate-100 min-h-screen selection:bg-primary selection:text-background-dark">
       <GlobalHeader />
 
-      <main>
+      <main className="pt-28">
         {/* Section 1: Registration Form */}
         <section className="relative py-20 px-6 overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(0,242,255,0.05)_0%,transparent_50%)]"></div>

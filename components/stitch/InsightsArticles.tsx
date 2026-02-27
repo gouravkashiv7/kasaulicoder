@@ -39,10 +39,10 @@ const InsightsArticles = () => {
   ];
 
   return (
-    <div className="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen selection:bg-primary selection:text-background-dark">
+    <div className="font-display bg-background-dark text-slate-100 min-h-screen selection:bg-primary selection:text-background-dark">
       <GlobalHeader />
 
-      <main className="py-24 px-6">
+      <main className="pt-32 pb-24 px-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

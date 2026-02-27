@@ -29,10 +29,10 @@ const HomeVisionHero = () => {
   };
 
   return (
-    <div className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden">
+    <div className="bg-background-dark font-display text-slate-100 antialiased overflow-x-hidden">
       <GlobalHeader />
 
-      <main className="pt-20">
+      <main className="pt-28">
         {/* Hero Section */}
         <section className="relative min-h-[90vh] flex items-center justify-center px-6 overflow-hidden hero-gradient">
           {/* Background Video / Image Fallback */}
@@ -56,8 +56,9 @@ const HomeVisionHero = () => {
               loop
               muted
               playsInline
-              onCanPlayThrough={() => setIsVideoLoaded(true)}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoaded ? "opacity-30" : "opacity-0"}`}
+              preload="auto"
+              onLoadedData={() => setIsVideoLoaded(true)}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoaded ? "opacity-40" : "opacity-0"}`}
             >
               <source src="/hero_bg.mp4" type="video/mp4" />
             </video>
