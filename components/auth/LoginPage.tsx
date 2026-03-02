@@ -116,11 +116,11 @@ const LoginPage = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full max-w-6xl overflow-hidden glass-morphism border-white/5 dark:border-white/10 rounded-[2.5rem] shadow-2xl relative"
+          className="w-full max-w-6xl overflow-hidden glass-morphism border-white/5 dark:border-white/10 rounded-4xl sm:rounded-[2.5rem] shadow-2xl relative"
         >
-          <div className="flex flex-col lg:flex-row min-h-150">
+          <div className="flex flex-col lg:flex-row lg:min-h-150">
             {/* Left Content — Login Form */}
-            <div className="w-full lg:w-1/2 p-8 sm:p-12 lg:border-r border-foreground/10 relative z-10 flex flex-col justify-center bg-background/40 backdrop-blur-md">
+            <div className="w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 lg:border-r border-foreground/10 relative z-10 flex flex-col justify-center bg-background/40 backdrop-blur-md">
               <motion.div
                 layout
                 className={`absolute -top-px left-12 right-12 h-px bg-linear-to-r from-transparent ${loginType === "admin" ? "via-secondary" : "via-primary"} to-transparent`}
@@ -284,8 +284,8 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Right Content — Interactive Globe (Lazy Loaded) */}
-            <div className="w-full lg:w-1/2 bg-primary/3 dark:bg-primary/1 flex flex-col justify-center items-center p-8 sm:p-12 relative overflow-hidden group">
+            {/* Right Content — Interactive Globe (Lazy Loaded, hidden on mobile) */}
+            <div className="hidden lg:flex w-full lg:w-1/2 bg-primary/3 dark:bg-primary/1 flex-col justify-center items-center p-8 xl:p-12 relative overflow-hidden group">
               {/* Ambient Glow */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/20 transition-colors duration-1000"></div>
 
@@ -295,8 +295,8 @@ const LoginPage = () => {
                   KasauliCoder Ecosystem Active
                 </div>
 
-                <div className="relative aspect-square w-full max-w-110 flex items-center justify-center pointer-events-auto">
-                  <InteractiveGlobe size={440} />
+                <div className="relative aspect-square w-full max-w-88 xl:max-w-108 flex items-center justify-center pointer-events-auto">
+                  <InteractiveGlobe size={380} />
                 </div>
 
                 <div className="mt-12 flex items-center justify-center">

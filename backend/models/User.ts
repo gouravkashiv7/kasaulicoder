@@ -8,6 +8,7 @@ export interface IUser extends Document {
   userType: "student" | "professional";
   pic?: string;
   emailVerified: boolean;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,6 +26,7 @@ const UserSchema: Schema = new Schema(
     },
     pic: { type: String },
     emailVerified: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true },
 );

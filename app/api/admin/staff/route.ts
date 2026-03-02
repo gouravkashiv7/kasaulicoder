@@ -4,6 +4,7 @@ import Staff from "@/backend/models/Staff";
 import bcrypt from "bcryptjs";
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { sendStaffWelcomeEmail } from "@/backend/lib/email";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
@@ -101,6 +102,18 @@ export async function POST(req: Request) {
       image,
       isActive: true,
     });
+
+    // Send welcome email (fire-and-forget — don't block the response)
+    sendStaffWelcomeEmail({
+      toEmail: email,
+      toName: name,
+      role,
+      designation,
+      roleDescription,
+      plainPassword: password,
+    }).catch((err) =>
+      console.error("[WelcomeEmail] Failed to send welcome email:", err),
+    );
 
     return NextResponse.json(
       {

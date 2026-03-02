@@ -97,6 +97,19 @@ const AdminDashboard = () => {
   const [totalStaff, setTotalStaff] = useState(0);
   const [authError, setAuthError] = useState("");
 
+  // Users table – search / filter / sort
+  const [userSearch, setUserSearch] = useState("");
+  const [userDateFilter, setUserDateFilter] = useState<
+    "all" | "7" | "30" | "90"
+  >("all");
+  const [userTypeFilter, setUserTypeFilter] = useState<
+    "all" | "student" | "professional"
+  >("all");
+  const [userSortField, setUserSortField] = useState<
+    "userType" | "createdAt" | "name"
+  >("createdAt");
+  const [userSortDir, setUserSortDir] = useState<"asc" | "desc">("desc");
+
   // Plans state
   const [plans, setPlans] = useState<Plan[]>([]);
   const [plansLoading, setPlansLoading] = useState(false);
@@ -139,6 +152,15 @@ const AdminDashboard = () => {
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Fetch overview data on mount
   useEffect(() => {
@@ -218,6 +240,24 @@ const AdminDashboard = () => {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleUserStatus = async (id: string) => {
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        const { isActive } = await res.json();
+        setData((prev) =>
+          prev.map((u) => (u._id === id ? { ...u, isActive } : u)),
+        );
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -517,12 +557,35 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex font-display">
-      {/* Sidebar */}
+      {/* ── Mobile overlay backdrop ── */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            key="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Sidebar (desktop: fixed width; mobile: off-canvas drawer) ── */}
       <motion.aside
         initial={false}
-        animate={{ width: sidebarCollapsed ? 72 : 260 }}
+        animate={{
+          width: sidebarCollapsed ? 72 : 260,
+          x: 0, // always 0 on desktop
+        }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="fixed left-0 top-0 h-full bg-background border-r border-foreground/10 z-40 flex flex-col overflow-hidden"
+        className={`fixed left-0 top-0 h-full bg-background border-r border-foreground/10 z-40 flex flex-col overflow-hidden
+          ${
+            mobileMenuOpen
+              ? "translate-x-0"
+              : "-translate-x-full md:translate-x-0"
+          } transition-transform duration-300 md:transition-none`}
+        style={{ width: sidebarCollapsed ? 72 : 260 }}
       >
         {/* Logo area */}
         <div className="p-5 border-b border-foreground/10 flex items-center gap-3 min-h-18">
@@ -543,14 +606,24 @@ const AdminDashboard = () => {
               </motion.span>
             )}
           </AnimatePresence>
+          {/* Close button — mobile only */}
+          <button
+            className="ml-auto md:hidden text-foreground/50 hover:text-foreground"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <span className="material-symbols-outlined text-xl">close</span>
+          </button>
         </div>
 
         {/* Nav items */}
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {sidebarItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setSidebarView(item.id)}
+              onClick={() => {
+                setSidebarView(item.id);
+                setMobileMenuOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all relative group ${
                 sidebarView === item.id
                   ? "bg-primary/10 text-primary"
@@ -574,7 +647,9 @@ const AdminDashboard = () => {
               </AnimatePresence>
               {item.badge && item.badge > 0 && (
                 <span
-                  className={`${sidebarCollapsed ? "absolute top-1 right-1 " : "ml-auto "}bg-rose-500 text-white text-[10px] font-black min-w-5 h-5 rounded-full flex items-center justify-center px-1`}
+                  className={`${
+                    sidebarCollapsed ? "absolute top-1 right-1" : "ml-auto"
+                  } bg-rose-500 text-white text-[10px] font-black min-w-5 h-5 rounded-full flex items-center justify-center px-1`}
                 >
                   {item.badge}
                 </span>
@@ -612,9 +687,10 @@ const AdminDashboard = () => {
               )}
             </AnimatePresence>
           </button>
+          {/* Collapse toggle — desktop only */}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="w-full flex items-center justify-center gap-3 px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all"
+            className="hidden md:flex w-full items-center justify-center gap-3 px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all"
           >
             <span
               className="material-symbols-outlined text-xl transition-transform duration-300"
@@ -640,13 +716,36 @@ const AdminDashboard = () => {
         </div>
       </motion.aside>
 
-      {/* Main Content */}
+      {/* ── Mobile top bar ── */}
+      <div className="fixed top-0 left-0 right-0 z-20 md:hidden flex items-center gap-3 px-4 h-14 bg-background/80 backdrop-blur-lg border-b border-foreground/10">
+        <button
+          onClick={() => setMobileMenuOpen(true)}
+          className="size-9 flex items-center justify-center rounded-xl bg-foreground/5 hover:bg-foreground/10 transition-colors"
+        >
+          <span className="material-symbols-outlined text-xl text-foreground/70">
+            menu
+          </span>
+        </button>
+        <span className="text-base font-black tracking-tight text-foreground">
+          Admin<span className="text-primary">Panel</span>
+        </span>
+        {unreadCount > 0 && (
+          <span className="ml-auto bg-rose-500 text-white text-[10px] font-black min-w-5 h-5 rounded-full flex items-center justify-center px-1">
+            {unreadCount}
+          </span>
+        )}
+      </div>
+
+      {/* ── Main Content ── */}
+      {/* Mobile: full width (sidebar is drawer). Desktop: margin tracks sidebar via Framer Motion */}
       <motion.main
-        animate={{ marginLeft: sidebarCollapsed ? 72 : 260 }}
+        animate={{ marginLeft: isMobile ? 0 : sidebarCollapsed ? 72 : 260 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="flex-1 min-h-screen"
+        className="flex-1 min-h-screen w-full"
       >
-        <div className="max-w-7xl mx-auto px-8 py-10">
+        {/* Spacer for mobile fixed top bar */}
+        <div className="h-14 md:hidden" />
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
           <AnimatePresence mode="wait">
             {/* ========== OVERVIEW VIEW ========== */}
             {sidebarView === "overview" && (
@@ -657,8 +756,8 @@ const AdminDashboard = () => {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="mb-10">
-                  <h1 className="text-3xl font-black mb-2 text-foreground">
+                <div className="mb-8">
+                  <h1 className="text-2xl md:text-3xl font-black mb-2 text-foreground">
                     Dashboard Overview
                   </h1>
                   <p className="text-foreground/50">
@@ -809,8 +908,8 @@ const AdminDashboard = () => {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="mb-10">
-                  <h1 className="text-3xl font-black mb-2 text-foreground">
+                <div className="mb-6">
+                  <h1 className="text-2xl md:text-3xl font-black mb-2 text-foreground">
                     User & Staff Management
                   </h1>
                   <p className="text-foreground/50">
@@ -853,94 +952,299 @@ const AdminDashboard = () => {
                   )}
                 </div>
 
-                <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl overflow-hidden shadow-2xl">
-                  {loading ? (
-                    <div className="p-20 text-center animate-pulse text-primary font-bold">
-                      Fetching records from the mainframe...
+                {/* ── Users toolbar (search + filter) – only for Registered Users tab ── */}
+                {activeTab === "users" && (
+                  <div className="flex flex-col gap-3 mb-4">
+                    {/* Search */}
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 text-lg pointer-events-none">
+                        search
+                      </span>
+                      <input
+                        type="text"
+                        placeholder="Search by name…"
+                        value={userSearch}
+                        onChange={(e) => setUserSearch(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 rounded-xl bg-foreground/5 border border-foreground/10 text-sm text-foreground placeholder-foreground/30 focus:outline-none focus:border-primary/40 transition-colors"
+                      />
                     </div>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead>
-                          <tr className="bg-foreground/5 border-b border-foreground/10">
-                            <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">
-                              Name
-                            </th>
-                            <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">
-                              Email
-                            </th>
-                            <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">
-                              Role
-                            </th>
-                            <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">
-                              Joined
-                            </th>
-                            <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">
-                              Status
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-foreground/10">
-                          {data.map((item) => (
-                            <tr
-                              key={item._id}
-                              className="hover:bg-foreground/5 transition-colors"
+
+                    {/* Scrollable filter row */}
+                    <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                      {/* User Type filter */}
+                      <div className="flex gap-1 bg-foreground/5 rounded-xl p-1 shrink-0">
+                        {(["all", "student", "professional"] as const).map(
+                          (v) => (
+                            <button
+                              key={v}
+                              onClick={() => setUserTypeFilter(v)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
+                                userTypeFilter === v
+                                  ? v === "student"
+                                    ? "bg-primary text-primary-content shadow"
+                                    : v === "professional"
+                                      ? "bg-secondary text-white shadow"
+                                      : "bg-foreground/20 text-foreground shadow"
+                                  : "text-foreground/50 hover:text-foreground"
+                              }`}
                             >
-                              <td className="px-6 py-4 font-bold text-foreground">
-                                {item.name}
-                              </td>
-                              <td className="px-6 py-4 text-foreground/60">
-                                {item.email}
-                              </td>
-                              <td className="px-6 py-4">
-                                <span
-                                  className={`px-2 py-1 rounded text-[10px] font-black uppercase ${
-                                    item.role === "superadmin"
-                                      ? "bg-rose-500/20 text-rose-400"
-                                      : item.role === "admin"
-                                        ? "bg-amber-500/20 text-amber-400"
-                                        : "bg-primary/20 text-primary"
-                                  }`}
-                                >
-                                  {item.role}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 text-foreground/60 text-sm">
-                                {new Date(item.createdAt).toLocaleDateString()}
-                              </td>
-                              <td className="px-6 py-4">
-                                <div className="flex items-center gap-2">
-                                  <div
-                                    className={`size-2 rounded-full ${
-                                      item.isActive !== false
-                                        ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
-                                        : "bg-rose-500"
-                                    }`}
-                                  ></div>
-                                  <span className="text-xs text-foreground/80">
-                                    {item.isActive !== false
-                                      ? "Active"
-                                      : "Inactive"}
-                                  </span>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                          {data.length === 0 && (
-                            <tr>
-                              <td
-                                colSpan={5}
-                                className="px-6 py-20 text-center text-foreground/50"
-                              >
-                                No records found in this sector.
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                              {v === "all"
+                                ? "All types"
+                                : v.charAt(0).toUpperCase() + v.slice(1)}
+                            </button>
+                          ),
+                        )}
+                      </div>
+
+                      {/* Date filter */}
+                      <div className="flex gap-1 bg-foreground/5 rounded-xl p-1 shrink-0">
+                        {(["all", "7", "30", "90"] as const).map((v) => (
+                          <button
+                            key={v}
+                            onClick={() => setUserDateFilter(v)}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
+                              userDateFilter === v
+                                ? "bg-primary text-primary-content shadow"
+                                : "text-foreground/50 hover:text-foreground"
+                            }`}
+                          >
+                            {v === "all" ? "All time" : `Last ${v}d`}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Sort */}
+                      <div className="flex gap-1 bg-foreground/5 rounded-xl p-1 shrink-0">
+                        {[
+                          { field: "createdAt" as const, label: "Joined" },
+                          { field: "userType" as const, label: "Type" },
+                          { field: "name" as const, label: "Name" },
+                        ].map(({ field, label }) => (
+                          <button
+                            key={field}
+                            onClick={() => {
+                              if (userSortField === field) {
+                                setUserSortDir((d) =>
+                                  d === "asc" ? "desc" : "asc",
+                                );
+                              } else {
+                                setUserSortField(field);
+                                setUserSortDir(
+                                  field === "createdAt" ? "desc" : "asc",
+                                );
+                              }
+                            }}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap flex items-center gap-1 transition-all ${
+                              userSortField === field
+                                ? "bg-foreground/15 text-foreground"
+                                : "text-foreground/50 hover:text-foreground"
+                            }`}
+                          >
+                            {label}
+                            {userSortField === field && (
+                              <span className="material-symbols-outlined text-[14px]">
+                                {userSortDir === "asc"
+                                  ? "arrow_upward"
+                                  : "arrow_downward"}
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
+
+                {/* ── Table ── */}
+                {(() => {
+                  // compute displayed rows
+                  // Hide superadmins from the Team Members view
+                  let rows =
+                    activeTab === "staff"
+                      ? data.filter((item: any) => item.role !== "superadmin")
+                      : [...data];
+
+                  if (activeTab === "users") {
+                    // search
+                    if (userSearch.trim()) {
+                      const q = userSearch.toLowerCase();
+                      rows = rows.filter((u) =>
+                        u.name?.toLowerCase().includes(q),
+                      );
+                    }
+                    // userType filter
+                    if (userTypeFilter !== "all") {
+                      rows = rows.filter((u) => u.userType === userTypeFilter);
+                    }
+                    // date filter
+                    if (userDateFilter !== "all") {
+                      const days = parseInt(userDateFilter);
+                      const cutoff = new Date();
+                      cutoff.setDate(cutoff.getDate() - days);
+                      rows = rows.filter(
+                        (u) => new Date(u.createdAt) >= cutoff,
+                      );
+                    }
+                    // sort
+                    rows.sort((a, b) => {
+                      let va: string | number, vb: string | number;
+                      if (userSortField === "createdAt") {
+                        va = new Date(a.createdAt).getTime();
+                        vb = new Date(b.createdAt).getTime();
+                      } else if (userSortField === "userType") {
+                        va = a.userType ?? "";
+                        vb = b.userType ?? "";
+                      } else {
+                        va = a.name?.toLowerCase() ?? "";
+                        vb = b.name?.toLowerCase() ?? "";
+                      }
+                      if (va < vb) return userSortDir === "asc" ? -1 : 1;
+                      if (va > vb) return userSortDir === "asc" ? 1 : -1;
+                      return 0;
+                    });
+                  }
+
+                  const isEmpty = rows.length === 0;
+                  // users: Name, Email, User Type, Joined, Status = 5 cols
+                  // staff: Name, Email, Role, Joined, Status = 5 cols
+                  const colCount = 5;
+
+                  return (
+                    <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl overflow-hidden shadow-2xl">
+                      {loading ? (
+                        <div className="p-20 text-center animate-pulse text-primary font-bold">
+                          Fetching records from the mainframe…
+                        </div>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="bg-foreground/5 border-b border-foreground/10">
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">
+                                  Name
+                                </th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">
+                                  Email
+                                </th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">
+                                  {activeTab === "users" ? "User Type" : "Role"}
+                                </th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">
+                                  Joined
+                                </th>
+                                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">
+                                  Status
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-foreground/10">
+                              {rows.map((item) => (
+                                <tr
+                                  key={item._id}
+                                  className="hover:bg-foreground/5 transition-colors"
+                                >
+                                  <td className="px-6 py-4 font-bold text-foreground">
+                                    {item.name}
+                                  </td>
+                                  <td className="px-6 py-4 text-foreground/60 text-sm">
+                                    {item.email}
+                                  </td>
+                                  {/* For users: show userType; for staff: show role */}
+                                  {activeTab === "users" ? (
+                                    <td className="px-6 py-4">
+                                      <span
+                                        className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
+                                          item.userType === "professional"
+                                            ? "bg-secondary/20 text-secondary"
+                                            : "bg-primary/20 text-primary"
+                                        }`}
+                                      >
+                                        {item.userType ?? "—"}
+                                      </span>
+                                    </td>
+                                  ) : (
+                                    <td className="px-6 py-4">
+                                      <span
+                                        className={`px-2 py-1 rounded text-[10px] font-black uppercase ${
+                                          item.role === "superadmin"
+                                            ? "bg-rose-500/20 text-rose-400"
+                                            : item.role === "admin"
+                                              ? "bg-amber-500/20 text-amber-400"
+                                              : "bg-primary/20 text-primary"
+                                        }`}
+                                      >
+                                        {item.role}
+                                      </span>
+                                    </td>
+                                  )}
+                                  <td className="px-6 py-4 text-foreground/60 text-sm">
+                                    {new Date(
+                                      item.createdAt,
+                                    ).toLocaleDateString()}
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    {activeTab === "users" ? (
+                                      <button
+                                        onClick={() =>
+                                          handleToggleUserStatus(item._id)
+                                        }
+                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                                          item.isActive !== false
+                                            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20"
+                                            : "bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20"
+                                        }`}
+                                      >
+                                        <div
+                                          className={`size-1.5 rounded-full ${
+                                            item.isActive !== false
+                                              ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)]"
+                                              : "bg-rose-500"
+                                          }`}
+                                        />
+                                        {item.isActive !== false
+                                          ? "Active"
+                                          : "Inactive"}
+                                      </button>
+                                    ) : (
+                                      <div className="flex items-center gap-2">
+                                        <div
+                                          className={`size-2 rounded-full ${
+                                            item.isActive !== false
+                                              ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                                              : "bg-rose-500"
+                                          }`}
+                                        />
+                                        <span className="text-xs text-foreground/80">
+                                          {item.isActive !== false
+                                            ? "Active"
+                                            : "Inactive"}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                              {isEmpty && (
+                                <tr>
+                                  <td
+                                    colSpan={colCount}
+                                    className="px-6 py-20 text-center text-foreground/50"
+                                  >
+                                    {userSearch ||
+                                    userDateFilter !== "all" ||
+                                    userTypeFilter !== "all"
+                                      ? "No users match your filters."
+                                      : "No records found in this sector."}
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </motion.div>
             )}
 
@@ -1492,12 +1796,7 @@ const AdminDashboard = () => {
                     >
                       Admin
                     </option>
-                    <option
-                      value="superadmin"
-                      className="bg-background text-foreground"
-                    >
-                      Superadmin
-                    </option>
+
                     <option
                       value="editor"
                       className="bg-background text-foreground"

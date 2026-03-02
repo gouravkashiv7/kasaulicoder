@@ -116,25 +116,54 @@ const RegisterPage = () => {
 
       <GlobalHeader />
 
-      <main className="flex-1 flex flex-col items-center justify-center pt-32 pb-12 px-4 relative z-10 w-full max-w-7xl mx-auto">
+      <main className="flex-1 flex flex-col items-center justify-center pt-24 sm:pt-32 pb-12 px-4 relative z-10 w-full max-w-7xl mx-auto">
         {/* Step 1: Selection Header */}
-        <div className="w-full text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
+        <div className="w-full text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight">
             Join the{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary">
               KasauliCoder
             </span>{" "}
             Ecosystem
           </h1>
-          <p className="text-foreground/60 text-lg max-w-2xl mx-auto">
+          <p className="text-foreground/60 text-base sm:text-lg max-w-2xl mx-auto px-2">
             Whether you're a student building a standout portfolio through live
             projects, or a professional seeking premium tech services, your
             journey starts here.
           </p>
         </div>
 
-        {/* Step 2: The Map Selectors (Overlapping Animation) */}
-        <div className="flex items-center justify-center w-full mb-10 min-h-100 relative mt-12">
+        {/* Step 2: The Map Selectors */}
+        {/* Mobile: simple side-by-side row | sm+: animated absolute positioning */}
+        <div className="flex sm:hidden items-center justify-center gap-4 w-full mb-6 mt-4">
+          <div
+            onClick={() => handleTypeChange("student")}
+            className="cursor-pointer flex-1 max-w-40 transition-transform active:scale-95"
+          >
+            <LocationMap
+              location="Student"
+              coordinates=""
+              isSelected={isStudent}
+              colorTheme="secondary"
+              className="w-full"
+            />
+          </div>
+          <div
+            onClick={() => handleTypeChange("professional")}
+            className="cursor-pointer flex-1 max-w-40 transition-transform active:scale-95"
+          >
+            <LocationMap
+              location="Professional"
+              coordinates=""
+              isSelected={isProfessional}
+              colorTheme="primary"
+              className="w-full"
+            />
+          </div>
+        </div>
+
+        {/* sm+: Original animated absolute layout */}
+        <div className="hidden sm:flex items-center justify-center w-full mb-10 min-h-100 relative mt-12">
           <motion.div
             onClick={() => handleTypeChange("student")}
             className="absolute cursor-pointer"
@@ -202,7 +231,7 @@ const RegisterPage = () => {
         </AnimatePresence>
 
         {/* Step 3: Interactive Layout Swap (Text vs Form) */}
-        <div className="w-full max-w-5xl relative min-h-125">
+        <div className="w-full max-w-5xl relative min-h-112 sm:min-h-125">
           <AnimatePresence mode="wait">
             {!isSelected && (
               <motion.div
