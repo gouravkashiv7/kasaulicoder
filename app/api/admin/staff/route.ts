@@ -49,13 +49,33 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    const { name, email, password, role } = await req.json();
+    const { name, email, password, role, designation, roleDescription, image } =
+      await req.json();
 
     if (!name || !email || !password || !role) {
       return NextResponse.json(
         { error: "Name, email, password, and role are required" },
         { status: 400 },
       );
+    }
+
+    // Validate image size (max 200KB)
+    if (image) {
+      // image is expected to be a data URL: data:image/png;base64,iVBORw0KGgo...
+      const base64Data = image.split(",")[1];
+      if (base64Data) {
+        const buffer = Buffer.from(base64Data, "base64");
+        // 200KB limit
+        if (buffer.length > 200 * 1024) {
+          return NextResponse.json(
+            {
+              error:
+                "Image size exceeds the 200KB limit. Please try a smaller image.",
+            },
+            { status: 400 },
+          );
+        }
+      }
     }
 
     await connectDB();
@@ -76,6 +96,9 @@ export async function POST(req: Request) {
       email,
       password: hashedPassword,
       role,
+      designation,
+      roleDescription,
+      image,
       isActive: true,
     });
 
@@ -87,6 +110,7 @@ export async function POST(req: Request) {
           name: newStaff.name,
           email: newStaff.email,
           role: newStaff.role,
+          designation: newStaff.designation,
         },
       },
       { status: 201 },

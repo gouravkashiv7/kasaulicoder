@@ -5,6 +5,9 @@ export interface IStaff extends Document {
   email: string;
   password?: string;
   role: "superadmin" | "admin" | "editor" | "support";
+  designation?: string;
+  roleDescription?: string;
+  image?: string;
   isActive: boolean;
   lastLogin?: Date;
   createdAt: Date;
@@ -21,6 +24,9 @@ const StaffSchema: Schema = new Schema(
       enum: ["superadmin", "admin", "editor", "support"],
       default: "admin",
     },
+    designation: { type: String },
+    roleDescription: { type: String },
+    image: { type: String },
     isActive: { type: Boolean, default: true },
     lastLogin: { type: Date },
   },

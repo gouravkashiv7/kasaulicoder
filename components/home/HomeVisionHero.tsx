@@ -11,8 +11,6 @@ import HomeUpcomingEventsStats from "@/components/home/HomeUpcomingEventsStats";
 import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 
 const HomeVisionHero = () => {
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -34,39 +32,7 @@ const HomeVisionHero = () => {
 
       <main className="pt-28">
         {/* Hero Section */}
-        <section className="relative min-h-[90vh] flex items-center justify-center px-6 overflow-hidden hero-gradient">
-          {/* Background Video / Image Fallback */}
-          <div className="absolute inset-0 z-0">
-            {/* Fallback Image */}
-            <div
-              className={`absolute inset-0 transition-opacity duration-1000 ${isVideoLoaded ? "opacity-0" : "opacity-20"}`}
-            >
-              <Image
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsusT6goUDVPEYtFUtcweoh9GTj1LRmXHZE5N9XQJlm7ICHBiNfmsrhqsit-DuWpPKH_9VjcA2aJpZv58Lft6WMoV1Py5S_hgboLo9bG0XXyWxvbiYHeTFj4QEkWn_zENaKAezWroB8XfE228G-SGnhcuRfbT3g7sP3zw81FeWUDzEGYi51LHtbYLo4gxxrly2cRUGVOGXySZhyozxEWjEJOM1Ys0WmHhlj_eksiZTpKKSJrul5HF_9Q8Q_A8ECUdWmM6A4lsjrS8"
-                alt="Hero Fallback"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-
-            {/* Background Video */}
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              onLoadedData={() => setIsVideoLoaded(true)}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoaded ? "opacity-30" : "opacity-0"}`}
-            >
-              <source src="/hero_bg.mp4" type="video/mp4" />
-            </video>
-
-            {/* Overlay Gradients to ensure text readability and brand integration */}
-            <div className="absolute inset-0 bg-background/40"></div>
-            <div className="absolute inset-0 bg-linear-to-b from-background/20 via-transparent to-background"></div>
-          </div>
+        <section className="relative min-h-[90vh] flex items-center justify-center px-6 overflow-hidden bg-transparent">
           <motion.div
             variants={containerVariants}
             initial="hidden"

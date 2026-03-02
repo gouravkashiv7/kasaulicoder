@@ -12,13 +12,9 @@ const GlobalHeader = () => {
 
   const navLinks = [
     { title: "Home", href: "/" },
-    { title: "About", href: "/about" },
-    { title: "Blog", href: "/insights" },
     { title: "Programs", href: "/programs" },
     { title: "Projects", href: "/projects" },
-    { title: "Pricing", href: "/pricing" },
-    { title: "Careers", href: "/careers" },
-    { title: "Contact", href: "/contact" },
+    { title: "Blog", href: "/insights" },
   ];
 
   useEffect(() => {
@@ -117,7 +113,7 @@ const GlobalHeader = () => {
               href="/register"
               className="hidden sm:block bg-primary text-primary-content text-sm font-black px-6 py-2.5 rounded-lg neon-glow hover:brightness-110 transition-all hover:scale-105 active:scale-95"
             >
-              Enroll Now
+              Explore Solutions
             </Link>
 
             {/* Mobile Menu Button */}

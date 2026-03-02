@@ -3,8 +3,29 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const HomeTeamWorkTestimonials = () => {
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [loadingTeam, setLoadingTeam] = useState(true);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        const res = await fetch("/api/public/team");
+        if (res.ok) {
+          const data = await res.json();
+          setTeamMembers(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch team members");
+      } finally {
+        setLoadingTeam(false);
+      }
+    };
+    fetchTeam();
+  }, []);
+
   return (
     <>
       {/* Meet the Team & Work With Us */}
@@ -25,48 +46,47 @@ const HomeTeamWorkTestimonials = () => {
             </h3>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 max-w-4xl mx-auto gap-12">
-            {[
-              {
-                name: "Alex Neon",
-                role: "Founder & CEO",
-                desc: "Former Tech Lead aiming to revolutionize tech education from the Himalayas.",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC8uhV46FrtfwSfk6jmFCi31HGf8a6gEI_3XJnWQr7loXgo96DZq0Td5zA66tRu_OhcQdADAC8B4cBJhmTpLzUTYeq6DMCdRRAuFE5c-cxl4Fvjdr1lrBjl3OHbG-yhGtpJSVyq6J7fyaq-exlgYHUbK5Z7YLSuRUuLz4dtUTm7j8EFDzAjCWzUTLiwV8muyLfL-uRNPc1DJxAsZ5DsKvVHwFZZyU5CPgCMvRNnJnun43rUK2Gx9B3uSjHjks4KzY55Ia8SaeqOw-8",
-              },
-              {
-                name: "Sarah Cipher",
-                role: "Co-Founder & CTO",
-                desc: "AI Architect building scalable systems and guiding our live project cohorts.",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBYX_GJGdVa2g53ZXo_gYvIyWUEOMbtekO9Pwf3eqiSIGYQkNjEgV4GH8Yzka5egS4_YO9FS9HQ6w7GywJfEEqpRvCWvH5qyxjURHB3Q8oGBCqXz1hw--o8OdAUG_smLp7LOOroojOfiS0ZMBJFj6x5hfokFhC2CIClPeSuawOZcZaPdEijAyS2p6xtjtpClWgdgCsKF-HVEFnXgIPLmjxAA6TinWNrEmIIXhehdtkr5e7XfjXInRpkQZSUwAm-Cd91blgvqRi7alk",
-              },
-            ].map((member, i) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="text-center group"
-              >
-                <div className="relative size-48 mx-auto rounded-full overflow-hidden mb-6 border-4 border-white/5 group-hover:border-primary/50 transition-colors duration-500">
-                  <Image
-                    src={member.img}
-                    alt={member.name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-                <h4 className="text-2xl font-bold text-foreground mb-1">
-                  {member.name}
-                </h4>
-                <p className="text-primary font-mono text-sm mb-4">
-                  {member.role}
-                </p>
-                <p className="text-foreground/60 text-sm">{member.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+          {loadingTeam ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+            </div>
+          ) : teamMembers.length === 0 ? (
+            <div className="text-center text-foreground/50 py-10 italic">
+              Our core team is currently being assembled.
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 max-w-4xl mx-auto gap-12">
+              {teamMembers.map((member, i) => (
+                <motion.div
+                  key={member._id || member.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.2 }}
+                  className="text-center group"
+                >
+                  <div className="relative size-48 mx-auto rounded-full overflow-hidden mb-6 border-4 border-white/5 group-hover:border-primary/50 transition-colors duration-500">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  </div>
+                  <h4 className="text-2xl font-bold text-foreground mb-1">
+                    {member.name}
+                  </h4>
+                  <p className="text-primary font-mono text-sm mb-4">
+                    {member.designation || "Core Team"}
+                  </p>
+                  <p className="text-foreground/60 text-sm">
+                    {member.roleDescription}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}

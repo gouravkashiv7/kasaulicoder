@@ -52,9 +52,17 @@ const LoginPage = () => {
             text: "Login successful! Redirecting...",
             type: "success",
           });
-          localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem(
+            "user",
+            JSON.stringify({ ...data.user, loginType }),
+          );
           setTimeout(() => {
-            window.location.href = "/dashboard";
+            if (loginType === "admin") {
+              window.location.href = "/admin/dashboard";
+            } else {
+              const userType = data.user.role || "user";
+              window.location.href = `/user/${userType}/dashboard`;
+            }
           }, 1500);
         } else {
           setMessage({ text: data.error || "Login failed", type: "error" });
