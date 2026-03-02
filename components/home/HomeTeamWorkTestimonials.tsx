@@ -8,7 +8,7 @@ const HomeTeamWorkTestimonials = () => {
   return (
     <>
       {/* Meet the Team & Work With Us */}
-      <section className="py-24 px-6 relative overflow-hidden bg-background">
+      <section className="py-24 px-6 relative overflow-hidden bg-transparent">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 blur-3xl pointer-events-none transform translate-x-1/2"></div>
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -90,7 +90,7 @@ const HomeTeamWorkTestimonials = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 px-6 bg-background border-t border-white/5 border-b relative">
+      <section className="py-24 px-6 bg-transparent border-t border-white/5 border-b relative">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

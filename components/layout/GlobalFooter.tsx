@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const GlobalFooter = () => {
   return (
-    <footer className="py-12 px-6 border-t border-white/5 bg-background-dark relative z-10 w-full overflow-hidden">
+    <footer className="py-12 px-6 border-t border-foreground/10 bg-background relative z-10 w-full overflow-hidden">
       {/* Decorative gradient for the footer */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent"></div>
 
@@ -20,12 +20,12 @@ const GlobalFooter = () => {
               className="object-contain"
             />
           </div>
-          <h2 className="text-lg font-black tracking-tighter text-slate-100">
+          <h2 className="text-lg font-black tracking-tighter text-foreground">
             Kasauli<span className="text-primary">Coder</span>
           </h2>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-6 text-sm font-bold text-slate-500 uppercase tracking-widest">
+        <div className="flex flex-wrap justify-center gap-6 text-sm font-bold text-foreground/50 uppercase tracking-widest">
           <Link className="hover:text-primary transition-colors" href="/about">
             About
           </Link>
@@ -52,7 +52,7 @@ const GlobalFooter = () => {
           </Link>
         </div>
 
-        <div className="text-sm font-semibold text-slate-500">
+        <div className="text-sm font-semibold text-foreground/50">
           © {new Date().getFullYear()} KasauliCoder. All rights reserved.
         </div>
       </div>

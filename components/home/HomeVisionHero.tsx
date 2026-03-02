@@ -29,7 +29,7 @@ const HomeVisionHero = () => {
   };
 
   return (
-    <div className="bg-background font-display text-foreground antialiased overflow-x-hidden">
+    <div className="font-display text-foreground antialiased overflow-x-hidden">
       <GlobalHeader />
 
       <main className="pt-28">
@@ -129,7 +129,7 @@ const HomeVisionHero = () => {
         </section>
 
         {/* Highlights Section */}
-        <section className="py-20 px-6 bg-background border-t border-b border-white/5 relative z-10">
+        <section className="py-20 px-6 bg-transparent border-t border-b border-white/5 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               {[
@@ -178,7 +178,7 @@ const HomeVisionHero = () => {
         </section>
 
         {/* Vision Section */}
-        <section className="py-24 px-6 bg-background">
+        <section className="py-24 px-6 bg-transparent">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <motion.div
@@ -314,7 +314,7 @@ const HomeVisionHero = () => {
         </section>
 
         {/* Portfolio Showcase */}
-        <section className="py-24 px-6 relative overflow-hidden bg-background">
+        <section className="py-24 px-6 relative overflow-hidden bg-transparent">
           <div className="max-w-7xl mx-auto relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -417,7 +417,7 @@ const HomeVisionHero = () => {
         <HomeTeamWorkTestimonials />
 
         {/* Final CTA Section */}
-        <section className="py-24 px-6 bg-background">
+        <section className="py-24 px-6 bg-transparent">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}

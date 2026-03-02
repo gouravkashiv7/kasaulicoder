@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const HomeUpcomingEventsStats = () => {
   return (
-    <section className="py-24 px-6 bg-background border-t border-foreground/5 relative z-10">
+    <section className="py-24 px-6 bg-transparent border-t border-foreground/5 relative z-10">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         {/* Upcoming Events */}
         <motion.div
