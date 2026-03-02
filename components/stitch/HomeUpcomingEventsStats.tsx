@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const HomeUpcomingEventsStats = () => {
   return (
-    <section className="py-24 px-6 bg-background-dark border-t border-white/5 relative z-10">
+    <section className="py-24 px-6 bg-background border-t border-white/5 relative z-10">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         {/* Upcoming Events */}
         <motion.div
@@ -17,7 +17,7 @@ const HomeUpcomingEventsStats = () => {
           <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
             Join The Action
           </h2>
-          <h3 className="text-4xl font-black text-white mb-8 leading-tight">
+          <h3 className="text-4xl font-black text-foreground mb-8 leading-tight">
             Upcoming Events
           </h3>
 
@@ -42,19 +42,19 @@ const HomeUpcomingEventsStats = () => {
               >
                 <div className="absolute top-0 left-0 w-2 h-full bg-primary/50 group-hover:bg-primary transition-colors"></div>
                 <div className="flex justify-between items-start mb-2">
-                  <h4 className="text-xl font-bold text-white group-hover:text-primary transition-colors">
+                  <h4 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
                     {event.title}
                   </h4>
                   <div className="text-xs font-mono text-primary bg-primary/10 px-2 py-1 rounded border border-primary/20">
                     {event.date}
                   </div>
                 </div>
-                <p className="text-slate-400 text-sm mb-4">{event.type}</p>
+                <p className="text-foreground/60 text-sm mb-4">{event.type}</p>
                 <div className="flex gap-2">
                   {event.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[10px] font-bold uppercase tracking-widest text-slate-500 bg-slate-800/50 px-2 py-1 rounded"
+                      className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 bg-foreground/5 px-2 py-1 rounded"
                     >
                       {tag}
                     </span>
@@ -73,7 +73,7 @@ const HomeUpcomingEventsStats = () => {
           transition={{ duration: 0.8 }}
           className="relative"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,242,255,0.05)_0%,transparent_60%)] -z-10"></div>
+          <div className="absolute inset-0 bg-glow-radial -z-10"></div>
           <div className="grid grid-cols-2 gap-6">
             {[
               { value: "100%", label: "Placement Rate", icon: "verified" },
@@ -95,7 +95,7 @@ const HomeUpcomingEventsStats = () => {
                     {stat.icon}
                   </span>
                 </div>
-                <div className="text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-linear-to-br from-white to-slate-500 mb-2 drop-shadow-lg relative z-10">
+                <div className="text-4xl lg:text-5xl font-black text-transparent bg-clip-text bg-linear-to-br from-foreground to-foreground/40 mb-2 drop-shadow-lg relative z-10">
                   {stat.value}
                 </div>
                 <div className="text-xs font-bold text-primary tracking-widest uppercase relative z-10">

@@ -8,7 +8,7 @@ const HomeTeamWorkTestimonials = () => {
   return (
     <>
       {/* Meet the Team & Work With Us */}
-      <section className="py-24 px-6 relative overflow-hidden">
+      <section className="py-24 px-6 relative overflow-hidden bg-background">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 blur-3xl pointer-events-none transform translate-x-1/2"></div>
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -20,7 +20,7 @@ const HomeTeamWorkTestimonials = () => {
             <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
               The Brains Behind the Code
             </h2>
-            <h3 className="text-4xl md:text-5xl font-black text-white mb-6">
+            <h3 className="text-4xl md:text-5xl font-black text-foreground mb-6">
               Meet the Team
             </h3>
           </motion.div>
@@ -57,13 +57,13 @@ const HomeTeamWorkTestimonials = () => {
                   />
                   <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <h4 className="text-2xl font-bold text-white mb-1">
+                <h4 className="text-2xl font-bold text-foreground mb-1">
                   {member.name}
                 </h4>
                 <p className="text-primary font-mono text-sm mb-4">
                   {member.role}
                 </p>
-                <p className="text-slate-400 text-sm">{member.desc}</p>
+                <p className="text-foreground/60 text-sm">{member.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -74,14 +74,14 @@ const HomeTeamWorkTestimonials = () => {
             viewport={{ once: true }}
             className="mt-20 p-8 glass-morphism border border-primary/20 rounded-3xl text-center max-w-3xl mx-auto neon-glow"
           >
-            <h4 className="text-2xl font-bold text-white mb-4">
+            <h4 className="text-2xl font-bold text-foreground mb-4">
               Want to build with us?
             </h4>
-            <p className="text-slate-400 mb-8">
+            <p className="text-foreground/60 mb-8">
               We are always looking for mentors, developers, and designers.
             </p>
             <Link href="/careers">
-              <button className="px-8 py-3 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-all">
+              <button className="px-8 py-3 bg-white/5 border border-white/10 text-foreground font-bold rounded-xl hover:bg-white/10 transition-all">
                 View Open Roles
               </button>
             </Link>
@@ -90,7 +90,7 @@ const HomeTeamWorkTestimonials = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 px-6 bg-[#050a0a] border-t border-white/5 border-b">
+      <section className="py-24 px-6 bg-background border-t border-white/5 border-b relative">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -98,7 +98,7 @@ const HomeTeamWorkTestimonials = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-3xl font-bold mb-4 text-foreground">
               Verified{" "}
               <span className="text-stroke text-transparent">Success</span>{" "}
               Stories
@@ -132,7 +132,7 @@ const HomeTeamWorkTestimonials = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="min-w-[280px] sm:min-w-[350px] md:min-w-[450px] snap-center bg-background-dark border border-slate-800 p-6 sm:p-8 rounded-xl relative group"
+                className="min-w-70 sm:min-w-87.5 md:min-w-112.5 snap-center bg-card border border-white/10 p-6 sm:p-8 rounded-xl relative group backdrop-blur-md"
               >
                 <div className="absolute -top-4 -right-2 sm:-right-4 w-10 h-10 sm:w-12 sm:h-12 bg-primary/20 rounded-full flex items-center justify-center border border-primary/40 z-10">
                   <span className="material-symbols-outlined text-primary">
@@ -146,7 +146,7 @@ const HomeTeamWorkTestimonials = () => {
                     </span>
                   ))}
                 </div>
-                <p className="text-slate-300 italic mb-6 sm:mb-8 text-sm sm:text-base leading-relaxed">
+                <p className="text-foreground/80 italic mb-6 sm:mb-8 text-sm sm:text-base leading-relaxed">
                   "{testi.text}"
                 </p>
                 <div className="flex items-center gap-4">
@@ -159,8 +159,8 @@ const HomeTeamWorkTestimonials = () => {
                     />
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-100">{testi.name}</h4>
-                    <p className="text-xs text-slate-500">{testi.role}</p>
+                    <h4 className="font-bold text-foreground">{testi.name}</h4>
+                    <p className="text-xs text-foreground/50">{testi.role}</p>
                   </div>
                 </div>
               </motion.div>

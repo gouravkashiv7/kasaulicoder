@@ -29,7 +29,7 @@ const HomeVisionHero = () => {
   };
 
   return (
-    <div className="bg-background-dark font-display text-slate-100 antialiased overflow-x-hidden">
+    <div className="bg-background font-display text-foreground antialiased overflow-x-hidden">
       <GlobalHeader />
 
       <main className="pt-28">
@@ -58,14 +58,14 @@ const HomeVisionHero = () => {
               playsInline
               preload="auto"
               onLoadedData={() => setIsVideoLoaded(true)}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoaded ? "opacity-40" : "opacity-0"}`}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoaded ? "opacity-30" : "opacity-0"}`}
             >
               <source src="/hero_bg.mp4" type="video/mp4" />
             </video>
 
             {/* Overlay Gradients to ensure text readability and brand integration */}
-            <div className="absolute inset-0 bg-background-dark/40"></div>
-            <div className="absolute inset-0 bg-linear-to-b from-background-dark/20 via-transparent to-background-dark"></div>
+            <div className="absolute inset-0 bg-background/40"></div>
+            <div className="absolute inset-0 bg-linear-to-b from-background/20 via-transparent to-background"></div>
           </div>
           <motion.div
             variants={containerVariants}
@@ -82,95 +82,76 @@ const HomeVisionHero = () => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
               </span>
               <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-                Coders from the Himalayas!!
+                SaaS Solutions & Digital Growth
               </span>
             </motion.div>
             <motion.h1
               variants={itemVariants}
-              className="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tight text-white"
+              className="text-4xl md:text-6xl font-black mb-6 leading-tight tracking-tight text-foreground"
             >
-              Build, Compete, <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-cyan-400">
-                Get Placed
+              SaaS Solutions that <br />
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary">
+                Drive Growth
               </span>
+              <div className="text-xl md:text-2xl font-bold text-foreground/40 mt-2">
+                Built with Next.js, SEO & Automation
+              </div>
             </motion.h1>
             <motion.p
               variants={itemVariants}
-              className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed"
+              className="text-lg md:text-xl text-foreground/60 mb-10 max-w-2xl mx-auto leading-relaxed"
             >
-              From the Hills to the Hub. Join the most ambitious community of
-              developers, participate in high-stakes hackathons, and land your
-              dream job.
+              We build high-performance SaaS platforms, SEO strategies,
+              automated workflows, and modern web experiences — backed by 24/7
+              business support.
             </motion.p>
             <motion.div
               variants={itemVariants}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap"
             >
               <Link href="/programs">
-                <button className="w-full sm:w-auto px-8 py-4 bg-primary text-background-dark font-black rounded-xl neon-glow hover:scale-105 transition-all flex items-center justify-center gap-2">
-                  Register for Hackathon
-                  <span className="material-symbols-outlined">
-                    rocket_launch
-                  </span>
+                <button className="w-full sm:w-auto px-8 py-4 bg-primary text-background font-black rounded-xl neon-glow hover:scale-105 transition-all flex items-center justify-center gap-2">
+                  🚀 See Solutions
                 </button>
               </Link>
               <Link href="/programs">
-                <button className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-all backdrop-blur-sm">
-                  Explore Programs
+                <button className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 text-foreground font-bold rounded-xl hover:bg-white/10 transition-all backdrop-blur-sm flex items-center justify-center gap-2">
+                  🔍 Boost Your SEO
                 </button>
               </Link>
               <Link href="/contact">
-                <button className="w-full sm:w-auto px-8 py-4 bg-transparent border border-primary/30 text-primary font-bold rounded-xl hover:bg-primary/10 transition-all backdrop-blur-sm">
-                  Join as Partner
+                <button className="w-full sm:w-auto px-8 py-4 bg-transparent border border-primary/30 text-primary font-bold rounded-xl hover:bg-primary/10 transition-all backdrop-blur-sm flex items-center justify-center gap-2">
+                  📞 Talk to Our Team
                 </button>
               </Link>
-            </motion.div>
-            <motion.div
-              variants={itemVariants}
-              className="mt-16 flex items-center justify-center gap-8 grayscale opacity-50"
-            >
-              <div className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
-                Industry workflows used at
-              </div>
-              <div className="flex gap-6 items-center">
-                <span className="material-symbols-outlined text-3xl">
-                  terminal
-                </span>
-                <span className="material-symbols-outlined text-3xl">
-                  developer_board
-                </span>
-                <span className="material-symbols-outlined text-3xl">
-                  data_object
-                </span>
-              </div>
             </motion.div>
           </motion.div>
         </section>
 
         {/* Highlights Section */}
-        <section className="py-20 px-6 bg-background-dark border-t border-b border-white/5 relative z-10">
+        <section className="py-20 px-6 bg-background border-t border-b border-white/5 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               {[
                 {
-                  title: "Hackathons",
-                  desc: "High-stakes coding battles",
-                  icon: "emoji_events",
+                  title: "Custom SaaS",
+                  desc: "Tailored enterprise solutions",
+                  icon: "architecture",
                 },
                 {
-                  title: "Live Projects",
-                  desc: "Build real enterprise apps",
-                  icon: "rocket_launch",
+                  title: "Fast Delivery",
+                  desc: "Launch in weeks, not months",
+                  icon: "speed",
                 },
                 {
-                  title: "100% Placement",
-                  desc: "Direct industry hiring",
-                  icon: "work",
+                  title: "24/7 Support",
+                  desc: "Reliable business continuity",
+                  icon: "support_agent",
                 },
                 {
-                  title: "All Tech Stacks",
-                  desc: "Agnostic modern development",
-                  icon: "layers",
+                  title: "Scalable Tech",
+                  desc: "Built to grow with your needs",
+                  icon: "hub",
                 },
               ].map((highlight, index) => (
                 <motion.div
@@ -186,10 +167,10 @@ const HomeVisionHero = () => {
                       {highlight.icon}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">
+                  <h3 className="text-xl font-bold text-foreground mb-2">
                     {highlight.title}
                   </h3>
-                  <p className="text-sm text-slate-400">{highlight.desc}</p>
+                  <p className="text-sm text-foreground/60">{highlight.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -197,7 +178,7 @@ const HomeVisionHero = () => {
         </section>
 
         {/* Vision Section */}
-        <section className="py-24 px-6 bg-[#0a1515]">
+        <section className="py-24 px-6 bg-background">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <motion.div
@@ -207,54 +188,65 @@ const HomeVisionHero = () => {
                 transition={{ duration: 0.8 }}
               >
                 <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
-                  Our Expertise
+                  Services
                 </h2>
-                <h3 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
-                  We Build Solutions <br />
-                  That Matter
+                <h3 className="text-4xl md:text-5xl font-black text-foreground mb-6 leading-tight">
+                  Everything Your Business Needs <br />
+                  <span className="text-primary">— From Website to Growth</span>
                 </h3>
-                <p className="text-lg text-slate-400 mb-8 leading-relaxed">
-                  Beyond teaching, we are a powerhouse development agency. From
-                  high-converting landing pages to complex operational ERPs, we
-                  deliver scalable, high-performance web solutions across
-                  industries.
+                <p className="text-lg text-foreground/60 mb-8 leading-relaxed">
+                  We don't just build websites; we build engines for business
+                  success. Our team specializes in delivering high-performance
+                  solutions that scale with your growth.
                 </p>
-                <div className="space-y-6">
+                <div className="grid sm:grid-cols-2 gap-6">
                   {[
                     {
-                      icon: "hotel",
-                      title: "Hospitality & Hotel Operations",
-                      desc: "Complete inventory management, dynamic pricing engines, and seamless booking experiences.",
+                      icon: "developer_mode",
+                      title: "SaaS Development",
+                      desc: "Built with Next.js, TypeScript, and modern stacks for maximum performance and scalability.",
                     },
                     {
-                      icon: "school",
-                      title: "Education & School ERPs",
-                      desc: "Streamlined administration, student portals, and resource management systems for modern campuses.",
+                      icon: "trending_up",
+                      title: "Full SEO Services",
+                      desc: "Strategic SEO implementations that boost organic traffic and improve search engine rankings.",
                     },
                     {
-                      icon: "storefront",
-                      title: "Retail & E-commerce",
-                      desc: "High-conversion storefronts, real-time inventory tracking, and integrated analytics dashboards.",
+                      icon: "robot_2",
+                      title: "Business Automations",
+                      desc: "Custom workflows and AI integrations that save time, reduce errors, and cut operational costs.",
                     },
-                  ].map((feature, i) => (
+                    {
+                      icon: "auto_awesome",
+                      title: "Futuristic UI/UX",
+                      desc: "Stunning, interactive designs that provide premium user experiences and drive conversions.",
+                    },
+                    {
+                      icon: "support_agent",
+                      title: "Ongoing Support",
+                      desc: "24/7 business support and continuous growth guidance to ensure your platform stays ahead.",
+                    },
+                  ].map((service, i) => (
                     <motion.div
-                      key={feature.title}
+                      key={service.title}
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.1 * i }}
-                      className="flex gap-4"
+                      className="flex gap-4 p-4 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all"
                     >
                       <div className="size-12 rounded-lg bg-primary/10 border border-primary/20 shrink-0 flex items-center justify-center">
                         <span className="material-symbols-outlined text-primary">
-                          {feature.icon}
+                          {service.icon}
                         </span>
                       </div>
                       <div>
-                        <h4 className="text-lg font-bold text-white mb-1">
-                          {feature.title}
+                        <h4 className="text-lg font-bold text-foreground mb-1">
+                          {service.title}
                         </h4>
-                        <p className="text-slate-400 text-sm">{feature.desc}</p>
+                        <p className="text-foreground/60 text-xs">
+                          {service.desc}
+                        </p>
                       </div>
                     </motion.div>
                   ))}
@@ -267,7 +259,7 @@ const HomeVisionHero = () => {
                 transition={{ duration: 0.8 }}
                 className="relative"
               >
-                <div className="absolute -inset-1 bg-linear-to-r from-primary/30 to-purple-500/30 blur-2xl rounded-3xl opacity-50"></div>
+                <div className="absolute -inset-1 bg-linear-to-r from-primary/30 to-secondary/30 blur-2xl rounded-3xl opacity-50"></div>
                 <div className="relative glass-morphism rounded-3xl p-8 border border-white/10 flex flex-col gap-6">
                   <div className="aspect-video rounded-xl overflow-hidden relative border border-white/5">
                     <Image
@@ -276,17 +268,17 @@ const HomeVisionHero = () => {
                       fill
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-background-dark/20"></div>
-                    <div className="absolute bottom-4 left-4 right-4 bg-background-dark/80 backdrop-blur-md p-4 rounded-lg border border-white/10 flex items-center justify-between">
+                    <div className="absolute inset-0 bg-background/20"></div>
+                    <div className="absolute bottom-4 left-4 right-4 bg-background/80 backdrop-blur-md p-4 rounded-lg border border-white/10 flex items-center justify-between">
                       <div>
-                        <p className="text-white font-bold text-sm">
+                        <p className="text-foreground font-bold text-sm">
                           Hotelier Pro ERP
                         </p>
                         <p className="text-primary text-[10px] tracking-widest uppercase mt-1">
                           Live Dashboard
                         </p>
                       </div>
-                      <button className="bg-primary text-background-dark text-xs font-bold px-3 py-1.5 rounded">
+                      <button className="bg-primary text-background text-xs font-bold px-3 py-1.5 rounded">
                         View
                       </button>
                     </div>
@@ -299,7 +291,7 @@ const HomeVisionHero = () => {
                         className="object-cover opacity-50 group-hover:scale-110 transition-transform duration-700"
                         alt="edu"
                       />
-                      <p className="relative z-10 text-white font-bold text-sm drop-shadow-lg">
+                      <p className="relative z-10 text-foreground font-bold text-sm drop-shadow-lg">
                         EduConnect System
                       </p>
                     </div>
@@ -310,7 +302,7 @@ const HomeVisionHero = () => {
                         className="object-cover opacity-50 group-hover:scale-110 transition-transform duration-700"
                         alt="retail"
                       />
-                      <p className="relative z-10 text-white font-bold text-sm drop-shadow-lg">
+                      <p className="relative z-10 text-foreground font-bold text-sm drop-shadow-lg">
                         Retail Analytics
                       </p>
                     </div>
@@ -322,7 +314,7 @@ const HomeVisionHero = () => {
         </section>
 
         {/* Portfolio Showcase */}
-        <section className="py-24 px-6 relative overflow-hidden">
+        <section className="py-24 px-6 relative overflow-hidden bg-background">
           <div className="max-w-7xl mx-auto relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -330,10 +322,10 @@ const HomeVisionHero = () => {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+              <h2 className="text-4xl md:text-5xl font-black text-foreground mb-6">
                 Featured Projects
               </h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">
+              <p className="text-foreground/60 max-w-2xl mx-auto">
                 These aren't just student projects. These are fully functional
                 SaaS tools and AI engines built by our members.
               </p>
@@ -341,22 +333,25 @@ const HomeVisionHero = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
-                  title: "AI Content Analytics",
-                  desc: "Full-stack dashboard with real-time 3D data visualizations of LLM outputs and performance metrics.",
-                  img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDtWew6lCblRoK84au8NTbJXud-LUukQH11GxXo9mQ2cdgB2EipW8sxGeAShmaRBTjIyHMZLC1PKU65A-f8UJQTVMfKajPUE1ovBcQVv7CY7pDr7O10Cw-_fSNKRcRgtfojWpuskNGQUSN0v4JBRcdJ-JcT_oXHV1vnBCeT5V3wJfim2NZONV2gGshMvHVx-C8uVUzANJJfjpUj1V78Kvj6qRBxtlH6Q-na2TL2V9_xmsXG68kCV5o21l4c4zhkReBLD6384OS53So",
-                  tags: ["NEXT.JS", "OPENAI", "THREE.JS"],
+                  title: "AI SaaS Boilerplate",
+                  outcome: "Launch a fully integrated SaaS in weeks",
+                  desc: "Built with Next.js, Tailwind, Stripe — Scalable, Fast & SEO-ready.",
+                  img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDkqmd6cJ7Wo_yDBHW_RPBs0jEDLP_5yGUKaiymSgG9DStDhLLyv_MfNRr64wdHehQ_-AwP-GTQdjknMP2n3hMsUIW3mz9UkP4WS1QM0g7HE3oit1cCuvGt4Km1c4AWMVcAQI2d-HD7RJQhwNLgwcim0tAd1CBGVP4fxw8A8vK9XbJZigKLZmoGIw8kjn7yLvGOtWWqXOLKtqB02IBEQkr6lQxNWgfFc3X9zO1Q_snOR_QKXqb5c-6kFil2mVoev1HNdDDkzWILZcg",
+                  tags: ["NEXT.JS", "TAILWIND", "STRIPE"],
                 },
                 {
                   title: "Workflow Orchestrator",
-                  desc: "Enterprise-grade automation tool using agentic workflows to handle complex multi-step business tasks.",
+                  outcome: "Automation that cut admin time by 45%",
+                  desc: "Enterprise-grade automation tool using agentic workflows to handle complex business tasks.",
                   img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBLrZzBC1qPl3IPuDIaSy-GKLLHwvLxkZsxxvbbOSzEatZWcj4t8qWNQWHrHHZFbGDLt4kQFHeCOqYmO3pxpaZpoj-59M5O0oVelGvhHBtpSxmKmBAIIosXU2g0zurUXwkPBBk4FAkV0QYeONeiRphAm6YV9DOPVmFsRDip7Hw06auAffUB73YjV7E6S4IIHqEZs5tmJUmUc7BJss2vUnOj4t-HhEiHP5rHxe1aWRMpQmyJn4yQbi5mPOOrNusRk6sn_Zd_kpPalNc",
                   tags: ["PYTHON", "LANGCHAIN", "ZAPIER"],
                 },
                 {
-                  title: "AI SaaS Boilerplate",
-                  desc: "A production-ready starter kit for launching AI-powered SaaS products with pre-built auth and billing.",
-                  img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDkqmd6cJ7Wo_yDBHW_RPBs0jEDLP_5yGUKaiymSgG9DStDhLLyv_MfNRr64wdHehQ_-AwP-GTQdjknMP2n3hMsUIW3mz9UkP4WS1QM0g7HE3oit1cCuvGt4Km1c4AWMVcAQI2d-HD7RJQhwNLgwcim0tAd1CBGVP4fxw8A8vK9XbJZigKLZmoGIw8kjn7yLvGOtWWqXOLKtqB02IBEQkr6lQxNWgfFc3X9zO1Q_snOR_QKXqb5c-6kFil2mVoev1HNdDDkzWILZcg",
-                  tags: ["NEXT.JS", "TAILWIND", "STRIPE"],
+                  title: "AI Content Analytics",
+                  outcome: "Real-time insights dashboards with Next.js",
+                  desc: "Full-stack dashboard with real-time visualizations of LLM outputs and performance metrics.",
+                  img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDtWew6lCblRoK84au8NTbJXud-LUukQH11GxXo9mQ2cdgB2EipW8sxGeAShmaRBTjIyHMZLC1PKU65A-f8UJQTVMfKajPUE1ovBcQVv7CY7pDr7O10Cw-_fSNKRcRgtfojWpuskNGQUSN0v4JBRcdJ-JcT_oXHV1vnBCeT5V3wJfim2NZONV2gGshMvHVx-C8uVUzANJJfjpUj1V78Kvj6qRBxtlH6Q-na2TL2V9_xmsXG68kCV5o21l4c4zhkReBLD6384OS53So",
+                  tags: ["NEXT.JS", "OPENAI", "THREE.JS"],
                 },
               ].map((project, i) => (
                 <motion.div
@@ -389,12 +384,16 @@ const HomeVisionHero = () => {
                         </span>
                       ))}
                     </div>
-                    <h4 className="text-xl font-bold text-white mb-2">
+                    <h4 className="text-xl font-black text-foreground mb-1">
                       {project.title}
                     </h4>
-                    <p className="text-slate-400 text-sm mb-6 flex-1">
+                    <p className="text-primary text-sm font-bold mb-3 italic">
+                      {project.outcome}
+                    </p>
+                    <p className="text-foreground/60 text-xs mb-6 flex-1">
                       {project.desc}
                     </p>
+
                     <a
                       className="text-primary text-sm font-bold flex items-center gap-2 group/link"
                       href="#"
@@ -418,7 +417,7 @@ const HomeVisionHero = () => {
         <HomeTeamWorkTestimonials />
 
         {/* Final CTA Section */}
-        <section className="py-24 px-6">
+        <section className="py-24 px-6 bg-background">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -426,22 +425,22 @@ const HomeVisionHero = () => {
             transition={{ duration: 0.6 }}
             className="max-w-5xl mx-auto glass-morphism border border-primary/20 rounded-3xl p-12 text-center neon-glow"
           >
-            <h2 className="text-4xl font-black text-white mb-6">
+            <h2 className="text-4xl font-black text-foreground mb-6">
               Ready to build the future?
             </h2>
-            <p className="text-slate-400 mb-10 text-lg max-w-xl mx-auto">
+            <p className="text-foreground/60 mb-10 text-lg max-w-xl mx-auto">
               Stop watching tutorials. Join a cohort of creators and start
               building production-ready AI applications today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-10 py-4 bg-primary text-background-dark font-black rounded-xl hover:scale-105 transition-all">
+              <button className="px-10 py-4 bg-primary text-background font-black rounded-xl hover:scale-105 transition-all">
                 Secure Your Spot
               </button>
-              <button className="px-10 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-all">
+              <button className="px-10 py-4 bg-white/5 border border-white/10 text-foreground font-bold rounded-xl hover:bg-white/10 transition-all">
                 Download Curriculum
               </button>
             </div>
-            <div className="mt-8 text-xs font-bold text-slate-500 uppercase tracking-widest">
+            <div className="mt-8 text-xs font-bold text-foreground/40 uppercase tracking-widest">
               Next Cohort Starts in 5 Days
             </div>
           </motion.div>
