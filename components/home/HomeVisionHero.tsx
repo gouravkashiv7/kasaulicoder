@@ -10,7 +10,51 @@ import GlobalFooter from "@/components/layout/GlobalFooter";
 import HomeUpcomingEventsStats from "@/components/home/HomeUpcomingEventsStats";
 import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+
 const HomeVisionHero = () => {
+  const [cohortEmail, setCohortEmail] = useState("");
+  const [cohortStatus, setCohortStatus] = useState<
+    "idle" | "loading" | "success" | "error" | "duplicate"
+  >("idle");
+  const [cohortMsg, setCohortMsg] = useState("");
+
+  const handleCohortSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = cohortEmail.trim();
+
+    if (!EMAIL_REGEX.test(trimmed)) {
+      setCohortStatus("error");
+      setCohortMsg("Please enter a valid email address.");
+      return;
+    }
+
+    setCohortStatus("loading");
+    try {
+      const res = await fetch("/api/public/cohort-interest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmed }),
+      });
+      const data = await res.json();
+
+      if (res.status === 201) {
+        setCohortStatus("success");
+        setCohortMsg(data.message);
+        setCohortEmail("");
+      } else if (res.status === 200) {
+        setCohortStatus("duplicate");
+        setCohortMsg(data.message);
+      } else {
+        setCohortStatus("error");
+        setCohortMsg(data.error || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setCohortStatus("error");
+      setCohortMsg("Network error. Please try again.");
+    }
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -398,16 +442,118 @@ const HomeVisionHero = () => {
               Stop watching tutorials. Join a cohort of creators and start
               building production-ready AI applications today.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-10 py-4 bg-primary text-background font-black rounded-xl hover:scale-105 transition-all">
-                Secure Your Spot
-              </button>
-              <button className="px-10 py-4 bg-white/5 border border-white/10 text-foreground font-bold rounded-xl hover:bg-white/10 transition-all">
-                Download Curriculum
-              </button>
-            </div>
-            <div className="mt-8 text-xs font-bold text-foreground/40 uppercase tracking-widest">
-              Next Cohort Starts in 5 Days
+            {/* Coming Soon Block */}
+            <div className="flex flex-col items-center gap-6 mt-2">
+              {/* Animated pulse badge */}
+              <div className="relative flex items-center justify-center">
+                <span className="absolute inline-flex h-16 w-16 rounded-full bg-primary/20 animate-ping opacity-60" />
+                <span className="absolute inline-flex h-12 w-12 rounded-full bg-primary/30 animate-ping animation-delay-300 opacity-40" />
+                <div className="relative z-10 flex items-center justify-center size-14 rounded-full bg-primary/10 border-2 border-primary/40 shadow-[0_0_24px_rgba(var(--primary-rgb),0.3)]">
+                  <span className="material-symbols-outlined text-primary text-2xl">
+                    schedule
+                  </span>
+                </div>
+              </div>
+
+              {/* Main label */}
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 border border-primary/30 shadow-inner">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                  </span>
+                  <span className="text-sm font-black uppercase tracking-[0.2em] text-primary">
+                    Next Cohort Coming Soon
+                  </span>
+                </div>
+                <p className="text-foreground/40 text-sm font-medium">
+                  We&apos;re finalising the dates — be the first to know when
+                  enrollment opens.
+                </p>
+              </div>
+
+              {/* Notify form */}
+              {cohortStatus === "success" || cohortStatus === "duplicate" ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className={`flex items-center gap-3 px-5 py-3 rounded-xl border text-sm font-bold ${
+                    cohortStatus === "success"
+                      ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                      : "bg-amber-500/10 border-amber-500/30 text-amber-400"
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-base">
+                    {cohortStatus === "success" ? "check_circle" : "info"}
+                  </span>
+                  {cohortMsg}
+                </motion.div>
+              ) : (
+                <form
+                  onSubmit={handleCohortSubmit}
+                  className="flex flex-col items-center gap-3 w-full max-w-sm mx-auto mt-1"
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <div
+                      className={`flex items-center gap-2 flex-1 px-4 py-2.5 rounded-xl bg-white/5 border backdrop-blur-sm transition-colors ${
+                        cohortStatus === "error"
+                          ? "border-rose-500/50"
+                          : "border-white/10 focus-within:border-primary/50"
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-base text-foreground/30 shrink-0">
+                        mail
+                      </span>
+                      <input
+                        type="email"
+                        value={cohortEmail}
+                        onChange={(e) => {
+                          setCohortEmail(e.target.value);
+                          if (cohortStatus !== "idle") setCohortStatus("idle");
+                        }}
+                        placeholder="your@email.com"
+                        className="bg-transparent text-sm font-medium text-foreground placeholder:text-foreground/30 focus:outline-none w-full"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={cohortStatus === "loading"}
+                      className="px-5 py-2.5 bg-primary/90 text-background text-sm font-black rounded-xl hover:bg-primary hover:scale-105 transition-all shadow-[0_0_16px_rgba(var(--primary-rgb),0.3)] disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100 shrink-0 flex items-center gap-1.5"
+                    >
+                      {cohortStatus === "loading" ? (
+                        <>
+                          <span className="material-symbols-outlined text-sm animate-spin">
+                            progress_activity
+                          </span>
+                          <span>Saving...</span>
+                        </>
+                      ) : (
+                        "Notify Me"
+                      )}
+                    </button>
+                  </div>
+                  {cohortStatus === "error" && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-xs text-rose-400 font-bold self-start pl-1"
+                    >
+                      {cohortMsg}
+                    </motion.p>
+                  )}
+                </form>
+              )}
+
+              {/* Three dots separator */}
+              <div className="flex items-center gap-2 mt-1">
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    className="block h-1.5 w-1.5 rounded-full bg-primary/30"
+                    style={{ animationDelay: `${i * 0.3}s` }}
+                  />
+                ))}
+              </div>
             </div>
           </motion.div>
         </section>

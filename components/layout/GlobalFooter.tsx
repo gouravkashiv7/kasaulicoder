@@ -1,9 +1,58 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+const COUNTRIES = [
+  { code: "IN", name: "India", flag: "🇮🇳" },
+  { code: "US", name: "United States", flag: "🇺🇸" },
+  { code: "GB", name: "United Kingdom", flag: "🇬🇧" },
+  { code: "CA", name: "Canada", flag: "🇨🇦" },
+  { code: "AU", name: "Australia", flag: "🇦🇺" },
+  { code: "DE", name: "Germany", flag: "🇩🇪" },
+  { code: "FR", name: "France", flag: "🇫🇷" },
+  { code: "JP", name: "Japan", flag: "🇯🇵" },
+  { code: "KR", name: "South Korea", flag: "🇰🇷" },
+  { code: "BR", name: "Brazil", flag: "🇧🇷" },
+  { code: "MX", name: "Mexico", flag: "🇲🇽" },
+  { code: "ZA", name: "South Africa", flag: "🇿🇦" },
+  { code: "NG", name: "Nigeria", flag: "🇳🇬" },
+  { code: "AE", name: "UAE", flag: "🇦🇪" },
+  { code: "SG", name: "Singapore", flag: "🇸🇬" },
+  { code: "NL", name: "Netherlands", flag: "🇳🇱" },
+  { code: "SE", name: "Sweden", flag: "🇸🇪" },
+  { code: "CH", name: "Switzerland", flag: "🇨🇭" },
+  { code: "IT", name: "Italy", flag: "🇮🇹" },
+  { code: "ES", name: "Spain", flag: "🇪🇸" },
+  { code: "PL", name: "Poland", flag: "🇵🇱" },
+  { code: "RU", name: "Russia", flag: "🇷🇺" },
+  { code: "CN", name: "China", flag: "🇨🇳" },
+  { code: "ID", name: "Indonesia", flag: "🇮🇩" },
+  { code: "PH", name: "Philippines", flag: "🇵🇭" },
+  { code: "MY", name: "Malaysia", flag: "🇲🇾" },
+  { code: "TH", name: "Thailand", flag: "🇹🇭" },
+  { code: "VN", name: "Vietnam", flag: "🇻🇳" },
+  { code: "PK", name: "Pakistan", flag: "🇵🇰" },
+  { code: "BD", name: "Bangladesh", flag: "🇧🇩" },
+  { code: "LK", name: "Sri Lanka", flag: "🇱🇰" },
+  { code: "NP", name: "Nepal", flag: "🇳🇵" },
+  { code: "KE", name: "Kenya", flag: "🇰🇪" },
+  { code: "EG", name: "Egypt", flag: "🇪🇬" },
+  { code: "AR", name: "Argentina", flag: "🇦🇷" },
+  { code: "CL", name: "Chile", flag: "🇨🇱" },
+  { code: "CO", name: "Colombia", flag: "🇨🇴" },
+  { code: "NZ", name: "New Zealand", flag: "🇳🇿" },
+  { code: "IE", name: "Ireland", flag: "🇮🇪" },
+  { code: "IL", name: "Israel", flag: "🇮🇱" },
+];
+
+const LANGUAGES = [{ code: "en", name: "English", icon: "🌐" }];
+
 const GlobalFooter = () => {
+  const [selectedCountry, setSelectedCountry] = useState("IN");
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
+
   return (
     <footer className="pt-20 pb-10 px-6 border-t border-foreground/10 bg-transparent relative w-full overflow-hidden">
       {/* Decorative gradient for the footer */}
@@ -150,9 +199,124 @@ const GlobalFooter = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-foreground/5 flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
+      <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-foreground/5 flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
         <div className="text-sm font-semibold text-foreground/40">
           © {new Date().getFullYear()} KasauliCoder. All rights reserved.
+        </div>
+
+        {/* Language & Location Dropdowns */}
+        <div className="flex items-center gap-4 flex-wrap justify-center">
+          {/* Language Dropdown */}
+          <div className="relative group">
+            <label htmlFor="footer-language" className="sr-only">
+              Language
+            </label>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-foreground/10 bg-foreground/3 hover:border-primary/40 focus-within:border-primary/60 transition-all duration-300 cursor-pointer">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-foreground/40 group-hover:text-primary/70 transition-colors shrink-0"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20" />
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              </svg>
+              <select
+                id="footer-language"
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="bg-transparent text-sm font-medium text-foreground/60 appearance-none cursor-pointer focus:outline-none pr-5"
+              >
+                {LANGUAGES.map((lang) => (
+                  <option
+                    key={lang.code}
+                    value={lang.code}
+                    className="bg-background text-foreground"
+                  >
+                    {lang.name}
+                  </option>
+                ))}
+              </select>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-foreground/30 -ml-4 pointer-events-none"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="w-px h-5 bg-foreground/10 hidden sm:block" />
+
+          {/* Location Dropdown */}
+          <div className="relative group">
+            <label htmlFor="footer-location" className="sr-only">
+              Location
+            </label>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-foreground/10 bg-foreground/3 hover:border-primary/40 focus-within:border-primary/60 transition-all duration-300 cursor-pointer">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-foreground/40 group-hover:text-primary/70 transition-colors shrink-0"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <select
+                id="footer-location"
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.target.value)}
+                className="bg-transparent text-sm font-medium text-foreground/60 appearance-none cursor-pointer focus:outline-none pr-5"
+              >
+                {COUNTRIES.map((country) => (
+                  <option
+                    key={country.code}
+                    value={country.code}
+                    className="bg-background text-foreground"
+                  >
+                    {country.flag} {country.name}
+                  </option>
+                ))}
+              </select>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-foreground/30 -ml-4 pointer-events-none"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

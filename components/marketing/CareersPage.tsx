@@ -54,6 +54,159 @@ const CareersPage = () => {
             </motion.div>
           </div>
 
+          {/* Section: Our Mission */}
+          <section className="mb-32">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="space-y-6"
+              >
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest">
+                  <span className="material-symbols-outlined text-[14px]">
+                    rocket_launch
+                  </span>
+                  Our Mission
+                </div>
+                <h2 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tight">
+                  Empowering the{" "}
+                  <span className="text-primary italic">Next Generation</span>{" "}
+                  of AI Engineers.
+                </h2>
+                <p className="text-lg text-slate-400 max-w-xl leading-relaxed">
+                  KasauliCoder is a tech-driven ecosystem designed for students,
+                  job seekers, and professionals. We believe the best way to
+                  master production-level AI is through hands-on collaboration
+                  on real industry systems.
+                </p>
+                <div className="flex flex-wrap gap-4 pt-4">
+                  <div className="flex items-center gap-2 text-sm font-medium text-slate-200">
+                    <span className="material-symbols-outlined text-primary">
+                      groups
+                    </span>
+                    1000+ Collaborators
+                  </div>
+                  <div className="flex items-center gap-2 text-sm font-medium text-slate-200">
+                    <span className="material-symbols-outlined text-primary">
+                      bolt
+                    </span>
+                    Real-world Stack
+                  </div>
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="relative group"
+              >
+                <div className="absolute -inset-1 bg-linear-to-r from-primary to-purple-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative bg-[#1b2728] rounded-xl overflow-hidden aspect-video border border-primary/20 shadow-2xl">
+                  <div className="absolute inset-0 bg-glow-radial"></div>
+                  <Image
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCB5pdU3o0g4wJ8ccZNW-lrr8ac9VaDMdHTwyizbABNIz1tVXg72HPH-4262HcxPqsI9n3-b6d07yGUkwejgVfrRpfylghkeidYj7QcHR7kfDpQUWSbqj_P_h-lvrHphzBgYJ9AXrsBYPdHID2vrE5IBP9oJ0ADMVS9GWy-fsKm1a5jNdTtnkagwWyN5d377vjckuvgI9BMw1DTxDZIxZTcLl6L13R9swQlfqMbUedIfufP5QcX_0RWA8aywUnJBSoiHTcTP5S-Wko"
+                    alt="High-tech server room with neon blue lights"
+                    fill
+                    className="object-cover opacity-80 mix-blend-overlay"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.5 }}
+                      className="p-4 rounded-lg bg-background-dark/80 backdrop-blur-md border border-primary/30 text-primary font-mono text-sm"
+                    >
+                      <p>&gt; Initializing AI_Project_Alpha...</p>
+                      <p className="text-purple-500">
+                        &gt; Connecting to production node...
+                      </p>
+                      <p className="text-green-400">&gt; System Ready.</p>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </section>
+
+          {/* Section: What We Do */}
+          <section className="mb-32">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-16 space-y-4"
+            >
+              <h2 className="text-3xl md:text-5xl font-black text-white">
+                Bridge the gap between{" "}
+                <span className="text-primary">Learning</span> and{" "}
+                <span className="text-purple-500">Industry</span>.
+              </h2>
+              <p className="text-slate-400 max-w-2xl mx-auto">
+                Receive rigorous peer feedback and work on high-impact AI
+                systems used in actual production environments.
+              </p>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: "terminal",
+                  title: "Production AI Projects",
+                  border: "border-t-primary",
+                  bgHover: "hover:bg-primary/5",
+                  iconColor: "text-primary",
+                  iconBg: "bg-primary/20",
+                  desc: "Forget toy datasets. Work on task-based, high-impact AI systems deployed in real-world infrastructure.",
+                },
+                {
+                  icon: "rate_review",
+                  title: "Expert Code Reviews",
+                  border: "border-t-purple-500",
+                  bgHover: "hover:bg-purple-500/5",
+                  iconColor: "text-purple-500",
+                  iconBg: "bg-purple-500/20",
+                  desc: "Receive feedback from senior mentors and peers to sharpen your coding standards and architectural thinking.",
+                },
+                {
+                  icon: "diversity_3",
+                  title: "Team Collaboration",
+                  border: "border-t-primary",
+                  bgHover: "hover:bg-primary/5",
+                  iconColor: "text-primary",
+                  iconBg: "bg-primary/20",
+                  desc: "Master industry-standard tools (Git, Docker, Kubernetes) and agile workflows in a professional team setting.",
+                },
+              ].map((feature, i) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 * i }}
+                  whileHover={{ y: -5 }}
+                  className={`glass-card p-8 rounded-xl border-t-2 ${feature.border} group ${feature.bgHover} transition-all duration-300`}
+                >
+                  <div
+                    className={`size-12 rounded-lg ${feature.iconBg} flex items-center justify-center ${feature.iconColor} mb-6 group-hover:scale-110 transition-transform`}
+                  >
+                    <span className="material-symbols-outlined text-3xl">
+                      {feature.icon}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    {feature.desc}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+
           {/* Core Values */}
           <div className="grid md:grid-cols-3 gap-8 mb-32">
             {values.map((v, i) => (

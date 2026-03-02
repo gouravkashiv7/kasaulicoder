@@ -26,6 +26,24 @@ const InteractiveGlobe = dynamic(
 const LoginPage = () => {
   const [loginType, setLoginType] = React.useState<"user" | "admin">("user");
   const [formData, setFormData] = React.useState({ email: "", password: "" });
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const type = new URLSearchParams(window.location.search).get("type");
+      if (type === "admin" || type === "user") {
+        setLoginType(type);
+      }
+    }
+  }, []);
+
+  const handleTypeChange = (type: "user" | "admin") => {
+    setLoginType(type);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("type", type);
+      window.history.pushState({}, "", url.toString());
+    }
+  };
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState<{
     text: string;
@@ -48,19 +66,19 @@ const LoginPage = () => {
         const data = await res.json();
 
         if (res.ok) {
-          setMessage({
-            text: "Login successful! Redirecting...",
-            type: "success",
-          });
           localStorage.setItem(
             "user",
             JSON.stringify({ ...data.user, loginType }),
           );
+          setMessage({
+            text: "Login successful! Redirecting...",
+            type: "success",
+          });
           setTimeout(() => {
             if (loginType === "admin") {
               window.location.href = "/admin/dashboard";
             } else {
-              const userType = data.user.role || "user";
+              const userType = data.user.userType || "student";
               window.location.href = `/user/${userType}/dashboard`;
             }
           }, 1500);
@@ -125,8 +143,9 @@ const LoginPage = () => {
               {/* Login Type Toggle */}
               <div className="flex p-1.5 bg-foreground/5 rounded-2xl mb-8 border border-foreground/5 relative max-w-sm mx-auto lg:mx-0">
                 <button
+                  key="user-login-btn"
                   type="button"
-                  onClick={() => setLoginType("user")}
+                  onClick={() => handleTypeChange("user")}
                   className={`relative z-10 flex-1 py-2.5 px-4 text-xs font-black rounded-xl transition-colors duration-500 ${
                     loginType === "user"
                       ? "text-primary-content"
@@ -136,8 +155,9 @@ const LoginPage = () => {
                   User Login
                 </button>
                 <button
+                  key="admin-login-btn"
                   type="button"
-                  onClick={() => setLoginType("admin")}
+                  onClick={() => handleTypeChange("admin")}
                   className={`relative z-10 flex-1 py-2.5 px-4 text-xs font-black rounded-xl transition-colors duration-500 ${
                     loginType === "admin"
                       ? "text-white"

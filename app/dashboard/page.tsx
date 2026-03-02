@@ -23,7 +23,8 @@ export default function DashboardRedirect() {
       ) {
         router.push("/admin/dashboard");
       } else {
-        const userType = user.role || "user";
+        // Route based on userType (student/professional)
+        const userType = user.userType || "student";
         router.push(`/user/${userType}/dashboard`);
       }
     } catch (e) {
@@ -31,7 +32,6 @@ export default function DashboardRedirect() {
     }
   }, [router]);
 
-  // Optionally return a sleek loading state while redirecting
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">

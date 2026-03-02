@@ -63,6 +63,7 @@ export async function POST(req: Request) {
       id: account._id,
       email: account.email,
       role: account.role,
+      userType: account.userType || null,
       type: loginType,
     })
       .setProtectedHeader({ alg: "HS256" })
@@ -78,6 +79,7 @@ export async function POST(req: Request) {
           name: account.name,
           email: account.email,
           role: account.role,
+          userType: account.userType || null,
         },
       },
       { status: 200 },

@@ -19,41 +19,41 @@ export default function ThemeSwitcher() {
   };
 
   return (
-    <div className="flex items-center gap-2 bg-glass border border-white/10 rounded-full p-1 backdrop-blur-md">
+    <div className="flex items-center gap-0.5 bg-foreground/5 border border-foreground/10 rounded-full p-1 backdrop-blur-md">
       <button
         onClick={() => changeTheme("theme-light")}
-        className={`p-2 rounded-full transition-all ${
+        className={`p-1.5 rounded-full transition-all ${
           theme === "theme-light"
-            ? "bg-primary text-background shadow-lg scale-110"
-            : "text-foreground/60 hover:text-foreground hover:bg-white/5"
+            ? "bg-foreground/10 text-foreground scale-105 shadow-sm border border-foreground/5"
+            : "text-foreground/40 hover:text-foreground hover:bg-foreground/5"
         }`}
         title="Light Mode"
       >
-        <Sun size={18} />
+        <Sun size={15} />
       </button>
 
       <button
         onClick={() => changeTheme("theme-brand")}
-        className={`p-2 rounded-full transition-all ${
+        className={`p-1.5 rounded-full transition-all ${
           theme === "theme-brand"
-            ? "bg-primary text-background shadow-lg scale-110"
-            : "text-foreground/60 hover:text-foreground hover:bg-white/5"
+            ? "bg-foreground/10 text-foreground scale-105 shadow-sm border border-foreground/5"
+            : "text-foreground/40 hover:text-foreground hover:bg-foreground/5"
         }`}
         title="Brand Theme"
       >
-        <Shield size={18} />
+        <Shield size={15} />
       </button>
 
       <button
         onClick={() => changeTheme("theme-dark-violet")}
-        className={`p-2 rounded-full transition-all ${
+        className={`p-1.5 rounded-full transition-all ${
           theme === "theme-dark-violet"
-            ? "bg-primary text-background shadow-lg scale-110"
-            : "text-foreground/60 hover:text-foreground hover:bg-white/5"
+            ? "bg-foreground/10 text-foreground scale-105 shadow-sm border border-foreground/5"
+            : "text-foreground/40 hover:text-foreground hover:bg-foreground/5"
         }`}
         title="Violet Dark Mode"
       >
-        <Palette size={18} />
+        <Palette size={15} />
       </button>
     </div>
   );

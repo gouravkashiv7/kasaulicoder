@@ -105,13 +105,13 @@ const GlobalHeader = () => {
 
             <Link
               href="/login"
-              className="hidden sm:block text-sm font-bold text-foreground/70 hover:text-foreground transition-colors"
+              className="hidden sm:flex items-center justify-center text-sm font-bold text-foreground/80 hover:text-foreground transition-all hover:bg-foreground/5 px-5 py-2 rounded-full border border-transparent hover:border-foreground/10"
             >
               Login
             </Link>
             <Link
               href="/register"
-              className="hidden sm:block bg-primary text-primary-content text-sm font-black px-6 py-2.5 rounded-lg neon-glow hover:brightness-110 transition-all hover:scale-105 active:scale-95"
+              className="hidden sm:flex items-center justify-center bg-linear-to-r from-primary to-secondary text-white text-sm font-black px-6 py-2 rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] border border-white/20"
             >
               Explore Solutions
             </Link>
