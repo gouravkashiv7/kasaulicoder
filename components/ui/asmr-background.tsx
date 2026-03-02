@@ -26,11 +26,16 @@ const ASMRStaticBackground: React.FC = () => {
     let animationFrameId: number;
     let particles: Particle[] = [];
     const mouse = { x: -1000, y: -1000 };
+    let resizeTimeout: ReturnType<typeof setTimeout>;
 
-    const PARTICLE_COUNT = 800; // Slightly reduced for performance
-    const MAGNETIC_RADIUS = 280;
+    // Mobile-responsive config
+    const isMobile = window.innerWidth <= 768;
+    const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+    const PARTICLE_COUNT = isMobile ? 300 : isTablet ? 500 : 800;
+    const MAGNETIC_RADIUS = isMobile ? 150 : 280;
     const VORTEX_STRENGTH = 0.07;
-    const PULL_STRENGTH = 0.12;
+    const PULL_STRENGTH = isMobile ? 0.08 : 0.12;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     // Cached colors
     let themeColors = {
@@ -68,7 +73,9 @@ const ASMRStaticBackground: React.FC = () => {
       reset() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.size = Math.random() * 1.5 + 0.5;
+        this.size = isMobile
+          ? Math.random() * 1.2 + 0.4
+          : Math.random() * 1.5 + 0.5;
         this.vx = (Math.random() - 0.5) * 0.2;
         this.vy = (Math.random() - 0.5) * 0.2;
         this.isPrimary = Math.random() > 0.7;
@@ -120,7 +127,8 @@ const ASMRStaticBackground: React.FC = () => {
           : themeColors.secondary;
         ctx.globalAlpha = finalAlpha;
 
-        if (this.frictionGlow > 0.3) {
+        // Skip expensive shadow/glow on mobile for GPU savings
+        if (!isMobile && this.frictionGlow > 0.3) {
           ctx.shadowBlur = 8 * this.frictionGlow;
           ctx.shadowColor = themeColors.primary;
         }
@@ -138,8 +146,14 @@ const ASMRStaticBackground: React.FC = () => {
     }
 
     const init = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      // Use devicePixelRatio for crisp rendering on retina/mobile screens
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.scale(dpr, dpr);
       updateThemeColors();
       particles = [];
       for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -181,16 +195,22 @@ const ASMRStaticBackground: React.FC = () => {
       attributeFilter: ["class"],
     });
 
-    window.addEventListener("resize", init);
+    // Debounce resize to avoid layout thrashing on mobile orientation changes
+    const debouncedInit = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(init, 200);
+    };
+    window.addEventListener("resize", debouncedInit);
     window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
 
     init();
     render();
 
     return () => {
       observer.disconnect();
-      window.removeEventListener("resize", init);
+      clearTimeout(resizeTimeout);
+      window.removeEventListener("resize", debouncedInit);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("touchmove", handleTouchMove);
       cancelAnimationFrame(animationFrameId);
