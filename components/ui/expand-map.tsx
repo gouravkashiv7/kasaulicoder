@@ -94,6 +94,17 @@ export function LocationMap({
     }
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   return (
     <motion.div
       ref={containerRef}
@@ -114,8 +125,8 @@ export function LocationMap({
           transformStyle: "preserve-3d",
         }}
         animate={{
-          width: isExpanded ? 360 : 240,
-          height: isExpanded ? 280 : 140,
+          width: isMobile ? (isExpanded ? 140 : 130) : isExpanded ? 360 : 240,
+          height: isMobile ? (isExpanded ? 120 : 110) : isExpanded ? 280 : 140,
         }}
         transition={{
           type: "spring",

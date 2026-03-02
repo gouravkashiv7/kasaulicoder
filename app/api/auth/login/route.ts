@@ -37,9 +37,14 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!account.isActive && loginType === "admin") {
+    if (account.isActive === false) {
       return NextResponse.json(
-        { error: "This administrative account is inactive" },
+        {
+          error:
+            loginType === "admin"
+              ? "This administrative account is inactive"
+              : "Your account has been deactivated. Please contact support.",
+        },
         { status: 403 },
       );
     }
@@ -60,7 +65,7 @@ export async function POST(req: Request) {
 
     // Create token
     const token = await new SignJWT({
-      id: account._id,
+      id: account._id.toString(),
       email: account.email,
       role: account.role,
       userType: account.userType || null,

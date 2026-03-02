@@ -121,7 +121,7 @@ const HomeVisionHero = () => {
             >
               <Link href="/programs">
                 <button className="w-full sm:w-auto px-8 py-4 bg-primary text-background font-black rounded-xl neon-glow hover:scale-105 transition-all flex items-center justify-center gap-2">
-                  🚀 See Solutions
+                  🚀 Explore Solutions
                 </button>
               </Link>
               <Link href="/programs">

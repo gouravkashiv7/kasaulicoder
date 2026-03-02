@@ -88,12 +88,24 @@ function project(
   return [x * scale + cx, y * scale + cy, z];
 }
 
+function hexToRgbString(hex: string): string | null {
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  const replacedHex = hex.replace(
+    shorthandRegex,
+    (m, r, g, b) => r + r + g + g + b + b,
+  );
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(replacedHex);
+  return result
+    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+    : null;
+}
+
 export const InteractiveGlobe = ({
   className,
   size = 600,
-  dotColor = "rgba(100, 180, 255, ALPHA)",
-  arcColor = "rgba(100, 180, 255, 0.5)",
-  markerColor = "rgba(100, 220, 255, 1)",
+  dotColor,
+  arcColor,
+  markerColor,
   autoRotateSpeed = 0.002,
   connections = DEFAULT_CONNECTIONS,
   markers = DEFAULT_MARKERS,
@@ -110,6 +122,45 @@ export const InteractiveGlobe = ({
   }>({ active: false, startX: 0, startY: 0, startRotY: 0, startRotX: 0 });
   const animRef = useRef<number>(0);
   const timeRef = useRef(0);
+
+  const [themeColors, setThemeColors] = useState({
+    primary: "0, 242, 255",
+    secondary: "168, 85, 247",
+  });
+
+  useEffect(() => {
+    const updateColors = () => {
+      if (typeof document === "undefined") return;
+      const computedStyle = getComputedStyle(document.documentElement);
+      const primaryHex = computedStyle.getPropertyValue("--primary").trim();
+      const secondaryHex = computedStyle.getPropertyValue("--secondary").trim();
+
+      const newColors = { ...themeColors };
+      if (primaryHex) {
+        const rgb = hexToRgbString(primaryHex);
+        if (rgb) newColors.primary = rgb;
+      }
+      if (secondaryHex) {
+        const rgb = hexToRgbString(secondaryHex);
+        if (rgb) newColors.secondary = rgb;
+      }
+      setThemeColors(newColors);
+    };
+
+    updateColors();
+    if (typeof MutationObserver !== "undefined") {
+      const observer = new MutationObserver(updateColors);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+      return () => observer.disconnect();
+    }
+  }, []);
+
+  const activeDotColor = dotColor || `rgba(${themeColors.primary}, ALPHA)`;
+  const activeArcColor = arcColor || `rgba(${themeColors.primary}, 0.5)`;
+  const activeMarkerColor = markerColor || `rgba(${themeColors.secondary}, 1)`;
 
   // Generate globe dots (land approximation via density sampling)
   const dotsRef = useRef<[number, number, number][]>([]);
@@ -168,15 +219,15 @@ export const InteractiveGlobe = ({
       cy,
       radius * 1.5,
     );
-    glowGrad.addColorStop(0, "rgba(60, 140, 255, 0.03)");
-    glowGrad.addColorStop(1, "rgba(60, 140, 255, 0)");
+    glowGrad.addColorStop(0, `rgba(${themeColors.primary}, 0.03)`);
+    glowGrad.addColorStop(1, `rgba(${themeColors.primary}, 0)`);
     ctx.fillStyle = glowGrad;
     ctx.fillRect(0, 0, w, h);
 
     // Globe outline
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(100, 180, 255, 0.06)";
+    ctx.strokeStyle = `rgba(${themeColors.primary}, 0.06)`;
     ctx.lineWidth = 1;
     ctx.stroke();
 
@@ -202,7 +253,7 @@ export const InteractiveGlobe = ({
 
       ctx.beginPath();
       ctx.arc(sx, sy, dotSize, 0, Math.PI * 2);
-      ctx.fillStyle = dotColor.replace("ALPHA", depthAlpha.toFixed(2));
+      ctx.fillStyle = activeDotColor.replace("ALPHA", depthAlpha.toFixed(2));
       ctx.fill();
     }
 
@@ -239,7 +290,7 @@ export const InteractiveGlobe = ({
       ctx.beginPath();
       ctx.moveTo(sx1, sy1);
       ctx.quadraticCurveTo(scx, scy, sx2, sy2);
-      ctx.strokeStyle = arcColor;
+      ctx.strokeStyle = activeArcColor;
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
@@ -250,7 +301,7 @@ export const InteractiveGlobe = ({
 
       ctx.beginPath();
       ctx.arc(tx, ty, 2, 0, Math.PI * 2);
-      ctx.fillStyle = markerColor;
+      ctx.fillStyle = activeMarkerColor;
       ctx.fill();
     }
 
@@ -268,26 +319,36 @@ export const InteractiveGlobe = ({
       const pulse = Math.sin(time * 2 + marker.lat) * 0.5 + 0.5;
       ctx.beginPath();
       ctx.arc(sx, sy, 4 + pulse * 4, 0, Math.PI * 2);
-      ctx.strokeStyle = markerColor.replace("1)", `${0.2 + pulse * 0.15})`);
+      ctx.strokeStyle = activeMarkerColor.replace(
+        "1)",
+        `${0.2 + pulse * 0.15})`,
+      );
       ctx.lineWidth = 1;
       ctx.stroke();
 
       // Core dot
       ctx.beginPath();
       ctx.arc(sx, sy, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = markerColor;
+      ctx.fillStyle = activeMarkerColor;
       ctx.fill();
 
       // Label
       if (marker.label) {
         ctx.font = "10px system-ui, sans-serif";
-        ctx.fillStyle = markerColor.replace("1)", "0.6)");
+        ctx.fillStyle = activeMarkerColor.replace("1)", "0.6)");
         ctx.fillText(marker.label, sx + 8, sy + 3);
       }
     }
 
     animRef.current = requestAnimationFrame(draw);
-  }, [dotColor, arcColor, markerColor, autoRotateSpeed, connections, markers]);
+  }, [
+    activeDotColor,
+    activeArcColor,
+    activeMarkerColor,
+    autoRotateSpeed,
+    connections,
+    markers,
+  ]);
 
   useEffect(() => {
     animRef.current = requestAnimationFrame(draw);
@@ -329,10 +390,10 @@ export const InteractiveGlobe = ({
     <canvas
       ref={canvasRef}
       className={cn(
-        "w-full h-full cursor-grab active:cursor-grabbing",
+        "w-full aspect-square cursor-grab active:cursor-grabbing",
         className,
       )}
-      style={{ width: size, height: size }}
+      style={{ maxWidth: size, maxHeight: size }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

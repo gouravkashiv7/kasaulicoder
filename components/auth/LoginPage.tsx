@@ -24,17 +24,14 @@ const InteractiveGlobe = dynamic(
 );
 
 const LoginPage = () => {
-  const [loginType, setLoginType] = React.useState<"user" | "admin">("user");
-  const [formData, setFormData] = React.useState({ email: "", password: "" });
-
-  React.useEffect(() => {
+  const [loginType, setLoginType] = React.useState<"user" | "admin">(() => {
     if (typeof window !== "undefined") {
       const type = new URLSearchParams(window.location.search).get("type");
-      if (type === "admin" || type === "user") {
-        setLoginType(type);
-      }
+      if (type === "admin" || type === "user") return type;
     }
-  }, []);
+    return "user";
+  });
+  const [formData, setFormData] = React.useState({ email: "", password: "" });
 
   const handleTypeChange = (type: "user" | "admin") => {
     setLoginType(type);
@@ -76,7 +73,11 @@ const LoginPage = () => {
           });
           setTimeout(() => {
             if (loginType === "admin") {
-              window.location.href = "/admin/dashboard";
+              if (data.user.role === "superadmin") {
+                window.location.href = "/admin/dashboard";
+              } else {
+                window.location.href = "/member/dashboard";
+              }
             } else {
               const userType = data.user.userType || "student";
               window.location.href = `/user/${userType}/dashboard`;
@@ -168,15 +169,14 @@ const LoginPage = () => {
                 </button>
 
                 <motion.div
-                  layout
                   initial={false}
+                  animate={{
+                    x: loginType === "user" ? "0%" : "100%",
+                  }}
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   className={`absolute inset-y-1.5 left-1.5 w-[calc(50%-6px)] rounded-xl shadow-lg ${
                     loginType === "user" ? "bg-primary" : "bg-secondary"
                   }`}
-                  style={{
-                    x: loginType === "user" ? "0%" : "100%",
-                  }}
                 />
               </div>
 
@@ -188,7 +188,7 @@ const LoginPage = () => {
                     exit={{ opacity: 0, height: 0, y: -10 }}
                     className={`p-4 rounded-xl mb-6 text-sm font-bold text-center border overflow-hidden ${
                       message.type === "success"
-                        ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                        ? "bg-primary/10 text-primary border-primary/20"
                         : "bg-rose-500/10 text-rose-500 border-rose-500/20"
                     }`}
                   >
@@ -196,6 +196,15 @@ const LoginPage = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {/* Mobile-only Small Globe */}
+              <div className="lg:hidden flex items-center justify-center mb-8">
+                <div className="relative aspect-square w-full max-w-44 xs:max-w-56 flex items-center justify-center pointer-events-auto">
+                  {/* Ambient Glow for mobile globe */}
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-40 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+                  <InteractiveGlobe size={280} />
+                </div>
+              </div>
 
               <form className="space-y-5" onSubmit={handleSubmit}>
                 <div className="space-y-2">
@@ -285,7 +294,7 @@ const LoginPage = () => {
             </div>
 
             {/* Right Content — Interactive Globe (Lazy Loaded, hidden on mobile) */}
-            <div className="hidden lg:flex w-full lg:w-1/2 bg-primary/3 dark:bg-primary/1 flex-col justify-center items-center p-8 xl:p-12 relative overflow-hidden group">
+            <div className="hidden lg:flex w-full lg:w-1/2 bg-primary/3 dark:bg-primary/1 flex-col justify-center items-center p-6 sm:p-12 relative overflow-hidden group lg:min-h-0 lg:order-0">
               {/* Ambient Glow */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/20 transition-colors duration-1000"></div>
 

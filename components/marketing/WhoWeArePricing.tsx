@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
+import ASMRStaticBackground from "@/components/ui/asmr-background";
 
 interface Plan {
   _id: string;
@@ -97,21 +98,9 @@ const WhoWeArePricing = () => {
   };
 
   return (
-    <div className="bg-background text-foreground min-h-screen selection:bg-primary/30 font-display">
+    <div className="bg-transparent text-foreground min-h-screen selection:bg-primary/30 font-display">
       <div className="relative overflow-x-hidden">
-        {/* Background Accents */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5 }}
-          className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] pointer-events-none"
-        ></motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.5, delay: 0.5 }}
-          className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-[120px] pointer-events-none"
-        ></motion.div>
+        <ASMRStaticBackground />
 
         <div className="layout-container flex h-full grow flex-col relative z-10">
           <GlobalHeader />

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 
@@ -287,6 +288,19 @@ const UserDashboard = ({ userType }: { userType: string }) => {
 
         {/* Bottom: Logout + Collapse */}
         <div className="p-3 border-t border-foreground/10 space-y-1">
+          <AnimatePresence>
+            {!sidebarCollapsed && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex items-center justify-center pb-2 overflow-hidden"
+              >
+                <ThemeSwitcher />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-500/70 hover:text-rose-500 hover:bg-rose-500/5 transition-all"

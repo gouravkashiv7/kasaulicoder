@@ -116,29 +116,33 @@ const RegisterPage = () => {
 
       <GlobalHeader />
 
-      <main className="flex-1 flex flex-col items-center justify-center pt-24 sm:pt-32 pb-12 px-4 relative z-10 w-full max-w-7xl mx-auto">
+      <main className="flex-1 flex flex-col items-center justify-start sm:justify-center pt-20 sm:pt-28 pb-16 px-4 relative z-10 w-full max-w-7xl mx-auto">
         {/* Step 1: Selection Header */}
-        <div className="w-full text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight">
+        <div className="w-full text-center mb-6 sm:mb-10">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black mb-3 sm:mb-4 tracking-tight">
             Join the{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary">
               KasauliCoder
             </span>{" "}
             Ecosystem
           </h1>
-          <p className="text-foreground/60 text-base sm:text-lg max-w-2xl mx-auto px-2">
-            Whether you're a student building a standout portfolio through live
-            projects, or a professional seeking premium tech services, your
+          <p className="text-foreground/60 text-sm sm:text-lg max-w-2xl mx-auto">
+            Whether you&apos;re a student building a standout portfolio through
+            live projects, or a professional seeking premium tech services, your
             journey starts here.
           </p>
         </div>
 
         {/* Step 2: The Map Selectors */}
-        {/* Mobile: simple side-by-side row | sm+: animated absolute positioning */}
-        <div className="flex sm:hidden items-center justify-center gap-4 w-full mb-6 mt-4">
+        {/* Mobile: equal-width centered row */}
+        <div className="flex sm:hidden items-center justify-center gap-6 w-full max-w-xs mx-auto mb-6">
           <div
             onClick={() => handleTypeChange("student")}
-            className="cursor-pointer flex-1 max-w-40 transition-transform active:scale-95"
+            className={`cursor-pointer flex-1 transition-transform active:scale-95 rounded-2xl ${
+              isStudent
+                ? "ring-2 ring-secondary/50 ring-offset-2 ring-offset-background"
+                : ""
+            }`}
           >
             <LocationMap
               location="Student"
@@ -150,7 +154,11 @@ const RegisterPage = () => {
           </div>
           <div
             onClick={() => handleTypeChange("professional")}
-            className="cursor-pointer flex-1 max-w-40 transition-transform active:scale-95"
+            className={`cursor-pointer flex-1 transition-transform active:scale-95 rounded-2xl ${
+              isProfessional
+                ? "ring-2 ring-primary/50 ring-offset-2 ring-offset-background"
+                : ""
+            }`}
           >
             <LocationMap
               location="Professional"
@@ -209,20 +217,20 @@ const RegisterPage = () => {
           </motion.div>
         </div>
 
-        {/* Step 2.5: The Moved Banner */}
+        {/* Step 2.5: The urgency Banner */}
         <AnimatePresence>
           {isStudent && (
             <motion.div
               initial={{ opacity: 0, height: 0, scale: 0.9 }}
               animate={{ opacity: 1, height: "auto", scale: 1 }}
               exit={{ opacity: 0, height: 0, scale: 0.9 }}
-              className="flex items-center justify-center gap-2 mb-10 text-rose-500 font-bold bg-rose-500/10 w-fit mx-auto px-5 py-2.5 rounded-full border border-rose-500/20 overflow-hidden shadow-[0_0_15px_rgba(244,63,94,0.1)] relative z-30"
+              className="flex items-center justify-center gap-2 mb-6 sm:mb-10 text-rose-500 font-bold bg-rose-500/10 w-full sm:w-fit mx-auto px-4 py-2.5 rounded-full border border-rose-500/20 overflow-hidden shadow-[0_0_15px_rgba(244,63,94,0.1)] relative z-30 text-center"
             >
-              <span className="material-symbols-outlined text-sm">
+              <span className="material-symbols-outlined text-sm shrink-0">
                 error_outline
               </span>
-              <span className="text-sm">
-                Limited Seats Remaining: Only 4 slots left for the{" "}
+              <span className="text-xs sm:text-sm">
+                Limited Seats: Only 4 slots left for the{" "}
                 {new Date().toLocaleString("default", { month: "long" })}{" "}
                 intake!
               </span>
@@ -231,7 +239,7 @@ const RegisterPage = () => {
         </AnimatePresence>
 
         {/* Step 3: Interactive Layout Swap (Text vs Form) */}
-        <div className="w-full max-w-5xl relative min-h-112 sm:min-h-125">
+        <div className="w-full max-w-5xl mx-auto">
           <AnimatePresence mode="wait">
             {!isSelected && (
               <motion.div
@@ -239,9 +247,9 @@ const RegisterPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="absolute inset-0 flex items-center justify-center pb-20 pointer-events-none"
+                className="flex items-center justify-center py-16 pointer-events-none"
               >
-                <p className="text-foreground/40 text-xl font-bold uppercase tracking-[0.2em] animate-pulse">
+                <p className="text-foreground/40 text-xl font-bold uppercase tracking-[0.2em] animate-pulse text-center px-4">
                   Select your path above to continue
                 </p>
               </motion.div>
@@ -252,12 +260,14 @@ const RegisterPage = () => {
                 key="interactive-section"
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`flex flex-col lg:flex-row gap-8 w-full ${isProfessional ? "lg:flex-row-reverse" : ""}`}
+                className={`flex flex-col lg:flex-row gap-6 sm:gap-8 w-full items-stretch ${
+                  isProfessional ? "lg:flex-row-reverse" : ""
+                }`}
               >
-                {/* TEXT SIDE */}
+                {/* TEXT SIDE — hidden on mobile, shown on lg+ */}
                 <motion.div
                   layout
-                  className="flex-1 flex flex-col justify-center p-8 bg-foreground/5 border border-foreground/10 rounded-3xl backdrop-blur-md"
+                  className="hidden lg:flex basis-0 grow flex-col justify-center p-6 sm:p-8 bg-foreground/5 border border-foreground/10 rounded-3xl backdrop-blur-md"
                 >
                   <AnimatePresence mode="wait">
                     {isStudent ? (
@@ -325,7 +335,7 @@ const RegisterPage = () => {
                 {/* FORM SIDE */}
                 <motion.div
                   layout
-                  className="flex-1 glass-morphism border-white/5 dark:border-white/10 p-8 rounded-3xl shadow-2xl relative overflow-hidden"
+                  className="w-full lg:basis-0 lg:grow glass-morphism border-white/5 dark:border-white/10 p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden"
                 >
                   <div
                     className={`absolute -top-px left-8 right-8 h-px bg-linear-to-r from-transparent via-${accent}/40 to-transparent`}

@@ -260,7 +260,7 @@ export const sendStaffWelcomeEmail = async (
               </p>
               <p style="margin:18px 0 0;font-size:15px;color:#374151;">
                 Cheers,<br/>
-                <strong style="color:#1a1a2e;">The Kasaulicoder Team</strong>
+                <strong style="color:#1a1a2e;">Kasaulicoder Leadership</strong>
               </p>
             </td>
           </tr>
@@ -269,10 +269,9 @@ export const sendStaffWelcomeEmail = async (
           <tr>
             <td style="padding:36px 48px 40px;">
               <div style="border-top:1px solid #e2e8f0;padding-top:24px;text-align:center;">
+                <img src="https://kasaulicoder.com/logo.png" alt="Kasaulicoder Logo" width="110" style="display:block;margin:0 auto 12px;max-width:110px;" />
                 <p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.7;">
-                  This email was sent from <a href="mailto:info@kasaulicoder.com" style="color:#6b7280;text-decoration:none;">info@kasaulicoder.com</a><br/>
-                  © ${year} Kasaulicoder. All rights reserved.<br/>
-                  <a href="https://kasaulicoder.com" style="color:#6b7280;text-decoration:none;">kasaulicoder.com</a>
+                  © Kasauli coder 2026 | All Rights Reserved
                 </p>
               </div>
             </td>
@@ -289,6 +288,138 @@ export const sendStaffWelcomeEmail = async (
     from: `"Kasaulicoder" <${process.env.SMTP_FROM || "info@kasaulicoder.com"}>`,
     to: toEmail,
     subject: `🎉 Welcome to Kasaulicoder, ${toName}! Your account is ready`,
+    html,
+  });
+};
+
+export const sendAccountDeactivationEmail = async (
+  email: string,
+  name: string,
+): Promise<void> => {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account Deactivated - Kasaulicoder</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+          <tr>
+            <td style="background:#ef4444;padding:30px 48px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:800;letter-spacing:-0.5px;">Account Deactivated</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:40px 48px 32px;">
+              <p style="margin:0 0 16px;font-size:16px;color:#374151;line-height:1.7;">
+                Hello <strong>${name}</strong>,
+              </p>
+              <p style="margin:0 0 24px;font-size:16px;color:#4b5563;line-height:1.7;">
+                This email is to inform you that your Kasaulicoder account has been deactivated by an administrator. You will no longer be able to access the platform.
+              </p>
+              <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:16px;margin-bottom:24px;">
+                <p style="margin:0;font-size:14px;color:#991b1b;line-height:1.6;">
+                  If you believe this is an error or wish to request account restoration, please contact our administrative team.
+                </p>
+              </div>
+              <p style="margin:0;font-size:15px;color:#374151;">
+                Regards,<br/>
+                <strong>Kasaulicoder Operations</strong>
+              </p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:0 48px 40px;">
+              <div style="border-top:1px solid #e2e8f0;padding-top:24px;text-align:center;">
+                <img src="https://kasaulicoder.com/logo.png" alt="Kasaulicoder Logo" width="110" style="display:block;margin:0 auto 12px;max-width:110px;" />
+                <p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.7;">
+                  © Kasauli coder 2026 | All Rights Reserved
+                </p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  await transporter.sendMail({
+    from: `"Kasaulicoder Admin" <${process.env.SMTP_FROM || "info@kasaulicoder.com"}>`,
+    to: email,
+    subject: `Notice: Your Kasaulicoder account has been deactivated`,
+    html,
+  });
+};
+
+export const sendAccountActivationEmail = async (
+  email: string,
+  name: string,
+): Promise<void> => {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account Reactivated - Kasaulicoder</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+          <tr>
+            <td style="background:#10b981;padding:30px 48px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:800;letter-spacing:-0.5px;">Account Reactivated</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:40px 48px 32px;">
+              <p style="margin:0 0 16px;font-size:16px;color:#374151;line-height:1.7;">
+                Welcome back, <strong>${name}</strong> 🎉
+              </p>
+              <p style="margin:0 0 24px;font-size:16px;color:#4b5563;line-height:1.7;">
+                Good news! Your Kasaulicoder account has been reactivated by an administrator. You now have full access to the platform again.
+              </p>
+              <div style="text-align:center;margin:32px 0;">
+                <a href="https://kasaulicoder.com/login" style="display:inline-block;background:#1a1a2e;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 32px;border-radius:8px;">
+                  Login Now
+                </a>
+              </div>
+              <p style="margin:0;font-size:15px;color:#374151;">
+                Regards,<br/>
+                <strong>Kasaulicoder Operations</strong>
+              </p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:0 48px 40px;">
+              <div style="border-top:1px solid #e2e8f0;padding-top:24px;text-align:center;">
+                <img src="https://kasaulicoder.com/logo.png" alt="Kasaulicoder Logo" width="110" style="display:block;margin:0 auto 12px;max-width:110px;" />
+                <p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.7;">
+                  © Kasauli coder 2026 | All Rights Reserved
+                </p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  await transporter.sendMail({
+    from: `"Kasaulicoder Admin" <${process.env.SMTP_FROM || "info@kasaulicoder.com"}>`,
+    to: email,
+    subject: `Good News: Your Kasaulicoder account is active again`,
     html,
   });
 };

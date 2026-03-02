@@ -1,46 +1,47 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a1212;
-  --foreground: #ededed;
-  --primary: #00f2ff;
-  --primary-content: #0a1212;
-  --secondary: #a855f7;
-  --glass: rgba(10, 18, 18, 0.7);
-  --glass-border: rgba(0, 242, 255, 0.1);
-  --card: rgba(27, 39, 40, 0.6);
+  --background: #0a1214;
+  --foreground: #e8f4f5;
+  --primary: #06d6e0;
+  --primary-content: #0a1214;
+  --secondary: #c084fc;
+  --glass: rgba(10, 18, 20, 0.75);
+  --glass-border: rgba(6, 214, 224, 0.18);
+  --card: rgba(20, 35, 38, 0.6);
 }
 
 .theme-light {
-  --background: #f8fafc; /* Off-white / slate-50 */
-  --foreground: #0f172a;
-  --primary: #f59e0b; /* Sun-like Amber */
-  --primary-content: #0f172a;
-  --secondary: #ea580c;
-  --glass: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(245, 158, 11, 0.2);
-  --card: rgba(255, 255, 255, 0.8);
+  --background: #fffbf5; /* Warmer off-white with subtle amber tint */
+  --foreground: #1c1917; /* Warm stone-900 */
+  --primary: #d97706; /* Deeper amber-600 — better contrast */
+  --primary-content: #fffbeb;
+  --secondary: #7c3aed; /* Violet-600 — strong contrast from amber */
+  --glass: rgba(255, 251, 245, 0.75);
+  --glass-border: rgba(217, 119, 6, 0.25);
+  --card: rgba(255, 251, 245, 0.85);
 }
 
 .theme-brand {
-  --background: #0a1212;
-  --foreground: #ededed;
-  --primary: #00f2ff;
-  --secondary: #a855f7;
-  --glass: rgba(10, 18, 18, 0.7);
-  --glass-border: rgba(0, 242, 255, 0.1);
-  --card: rgba(27, 39, 40, 0.6);
+  --background: #0a1214; /* Slightly richer dark base */
+  --foreground: #e8f4f5; /* Cyan-tinted off-white */
+  --primary: #06d6e0; /* Slightly muted cyan — easier on eyes */
+  --primary-content: #0a1214;
+  --secondary: #c084fc; /* Lighter violet-400 */
+  --glass: rgba(10, 18, 20, 0.75);
+  --glass-border: rgba(6, 214, 224, 0.18);
+  --card: rgba(20, 35, 38, 0.6);
 }
 
 .theme-dark-violet {
-  --background: #0f0a1f; /* Grayish violet dark */
-  --foreground: #f1f5f9;
-  --primary: #a855f7; /* Violet primary */
+  --background: #110b22; /* Richer violet-black */
+  --foreground: #eee8f7; /* Violet-tinted light */
+  --primary: #b06cf7; /* Slightly warmer/lighter violet */
   --primary-content: #ffffff;
-  --secondary: #00f2ff;
-  --glass: rgba(15, 10, 31, 0.7);
-  --glass-border: rgba(168, 85, 247, 0.2);
-  --card: rgba(30, 20, 50, 0.6);
+  --secondary: #f472b6; /* Pink-400 — unique warm identity */
+  --glass: rgba(17, 11, 34, 0.72);
+  --glass-border: rgba(176, 108, 247, 0.22);
+  --card: rgba(35, 22, 60, 0.65);
 }
 
 @theme inline {

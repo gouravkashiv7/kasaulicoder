@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 const COUNTRIES = [
   { code: "IN", name: "India", flag: "🇮🇳" },
@@ -52,6 +53,24 @@ const LANGUAGES = [{ code: "en", name: "English", icon: "🌐" }];
 const GlobalFooter = () => {
   const [selectedCountry, setSelectedCountry] = useState("IN");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const [langOpen, setLangOpen] = useState(false);
+  const [locOpen, setLocOpen] = useState(false);
+
+  const langRef = useRef<HTMLDivElement>(null);
+  const locRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(event.target as Node)) {
+        setLangOpen(false);
+      }
+      if (locRef.current && !locRef.current.contains(event.target as Node)) {
+        setLocOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <footer className="pt-20 pb-10 px-6 border-t border-foreground/10 bg-transparent relative w-full overflow-hidden">
@@ -207,44 +226,42 @@ const GlobalFooter = () => {
         {/* Language & Location Dropdowns */}
         <div className="flex items-center gap-4 flex-wrap justify-center">
           {/* Language Dropdown */}
-          <div className="relative group">
+          <div className="relative group" ref={langRef}>
             <label htmlFor="footer-language" className="sr-only">
               Language
             </label>
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-foreground/10 bg-foreground/3 hover:border-primary/40 focus-within:border-primary/60 transition-all duration-300 cursor-pointer">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-foreground/40 group-hover:text-primary/70 transition-colors shrink-0"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M2 12h20" />
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-              </svg>
-              <select
-                id="footer-language"
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="bg-transparent text-sm font-medium text-foreground/60 appearance-none cursor-pointer focus:outline-none pr-5"
-              >
-                {LANGUAGES.map((lang) => (
-                  <option
-                    key={lang.code}
-                    value={lang.code}
-                    className="bg-background text-foreground"
-                  >
-                    {lang.name}
-                  </option>
-                ))}
-              </select>
-              <svg
+            <button
+              onClick={() => {
+                setLangOpen(!langOpen);
+                setLocOpen(false);
+              }}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg border border-foreground/10 bg-foreground/3 hover:border-primary/40 focus:border-primary/60 hover:bg-foreground/5 transition-all duration-300 min-w-32.5 justify-between z-10 relative"
+            >
+              <div className="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-foreground/40 group-hover:text-primary/70 transition-colors shrink-0"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+                <span className="text-sm font-medium text-foreground truncate">
+                  {LANGUAGES.find((l) => l.code === selectedLanguage)?.name ||
+                    "English"}
+                </span>
+              </div>
+              <motion.svg
+                animate={{ rotate: langOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"
                 height="12"
@@ -254,54 +271,83 @@ const GlobalFooter = () => {
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-foreground/30 -ml-4 pointer-events-none"
+                className="text-foreground/40 shrink-0"
               >
                 <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </div>
+              </motion.svg>
+            </button>
+
+            <AnimatePresence>
+              {langOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute bottom-full left-0 mb-2 w-40 max-h-48 overflow-y-auto scrollbar-hide rounded-xl border border-glass-border bg-background/95 backdrop-blur-xl shadow-2xl z-50 p-1 custom-scrollbar"
+                >
+                  {LANGUAGES.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        setSelectedLanguage(lang.code);
+                        setLangOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2.5 text-sm transition-all rounded-lg flex items-center gap-2 ${
+                        selectedLanguage === lang.code
+                          ? "bg-primary/10 text-primary font-semibold"
+                          : "text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
+                      }`}
+                    >
+                      <span>{lang.icon}</span>
+                      <span>{lang.name}</span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Divider */}
           <div className="w-px h-5 bg-foreground/10 hidden sm:block" />
 
           {/* Location Dropdown */}
-          <div className="relative group">
+          <div className="relative group" ref={locRef}>
             <label htmlFor="footer-location" className="sr-only">
               Location
             </label>
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-foreground/10 bg-foreground/3 hover:border-primary/40 focus-within:border-primary/60 transition-all duration-300 cursor-pointer">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-foreground/40 group-hover:text-primary/70 transition-colors shrink-0"
-              >
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-              <select
-                id="footer-location"
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.target.value)}
-                className="bg-transparent text-sm font-medium text-foreground/60 appearance-none cursor-pointer focus:outline-none pr-5"
-              >
-                {COUNTRIES.map((country) => (
-                  <option
-                    key={country.code}
-                    value={country.code}
-                    className="bg-background text-foreground"
-                  >
-                    {country.flag} {country.name}
-                  </option>
-                ))}
-              </select>
-              <svg
+            <button
+              onClick={() => {
+                setLocOpen(!locOpen);
+                setLangOpen(false);
+              }}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg border border-foreground/10 bg-foreground/3 hover:border-primary/40 focus:border-primary/60 hover:bg-foreground/5 transition-all duration-300 min-w-40 justify-between z-10 relative"
+            >
+              <div className="flex items-center gap-2 truncate">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-foreground/40 group-hover:text-primary/70 transition-colors shrink-0"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                <span className="text-sm font-medium text-foreground truncate">
+                  {COUNTRIES.find((c) => c.code === selectedCountry)?.flag}{" "}
+                  {COUNTRIES.find((c) => c.code === selectedCountry)?.name ||
+                    "Location"}
+                </span>
+              </div>
+              <motion.svg
+                animate={{ rotate: locOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"
                 height="12"
@@ -311,11 +357,41 @@ const GlobalFooter = () => {
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-foreground/30 -ml-4 pointer-events-none"
+                className="text-foreground/40 shrink-0"
               >
                 <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </div>
+              </motion.svg>
+            </button>
+
+            <AnimatePresence>
+              {locOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute bottom-full right-0 sm:left-auto mb-2 w-auto min-w-50 max-h-60 overflow-y-auto scrollbar-hide rounded-xl border border-glass-border bg-background/95 backdrop-blur-xl shadow-2xl z-50 p-1 custom-scrollbar"
+                >
+                  {COUNTRIES.map((country) => (
+                    <button
+                      key={country.code}
+                      onClick={() => {
+                        setSelectedCountry(country.code);
+                        setLocOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2.5 text-sm whitespace-nowrap transition-all rounded-lg flex items-center gap-2 ${
+                        selectedCountry === country.code
+                          ? "bg-primary/10 text-primary font-semibold"
+                          : "text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
+                      }`}
+                    >
+                      <span className="text-base">{country.flag}</span>
+                      <span className="truncate">{country.name}</span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

@@ -45,11 +45,12 @@ export async function POST(req: Request) {
       password: hashedPassword,
       userType,
       emailVerified: false,
+      isActive: true,
     });
 
     // Auto-login: create JWT token
     const token = await new SignJWT({
-      id: user._id,
+      id: user._id.toString(),
       email: user.email,
       role: user.role,
       userType: user.userType,

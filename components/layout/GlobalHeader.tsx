@@ -3,12 +3,14 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
 const GlobalHeader = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   const navLinks = [
     { title: "Home", href: "/" },
@@ -35,6 +37,12 @@ const GlobalHeader = () => {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
+
+  // Helper to check if a link is active
+  const isActive = (path: string) => {
+    if (path === "/" && pathname !== "/") return false;
+    return pathname.startsWith(path);
+  };
 
   return (
     <>
@@ -75,22 +83,31 @@ const GlobalHeader = () => {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-8 text-foreground/80">
-            {navLinks.map((item, i) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * i }}
-              >
-                <Link
-                  className="text-sm font-bold hover:text-primary transition-colors hover:scale-110 inline-block relative group"
-                  href={item.href}
+            {navLinks.map((item, i) => {
+              const active = isActive(item.href);
+              return (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * i }}
                 >
-                  {item.title}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    className={`text-sm font-bold transition-colors hover:scale-110 inline-block relative group ${
+                      active ? "text-primary" : "hover:text-primary"
+                    }`}
+                    href={item.href}
+                  >
+                    {item.title}
+                    <span
+                      className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all ${
+                        active ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
+                    ></span>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </nav>
 
           {/* Actions & Mobile Toggle */}
@@ -105,7 +122,11 @@ const GlobalHeader = () => {
 
             <Link
               href="/login"
-              className="hidden sm:flex items-center justify-center text-sm font-bold text-foreground/80 hover:text-foreground transition-all hover:bg-foreground/5 px-5 py-2 rounded-full border border-transparent hover:border-foreground/10"
+              className={`hidden sm:flex items-center justify-center text-sm font-bold transition-all px-5 py-2 rounded-full border ${
+                isActive("/login")
+                  ? "text-primary bg-primary/10 border-primary/20"
+                  : "text-foreground/80 hover:text-foreground hover:bg-foreground/5 border-transparent hover:border-foreground/10"
+              }`}
             >
               Login
             </Link>
@@ -119,7 +140,9 @@ const GlobalHeader = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden size-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none z-60 relative"
+              className={`lg:hidden size-10 items-center justify-center gap-1.5 focus:outline-none z-60 relative ${
+                isMobileMenuOpen ? "hidden" : "flex flex-col"
+              }`}
               aria-label="Toggle Menu"
             >
               <motion.span
@@ -159,33 +182,74 @@ const GlobalHeader = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-55 bg-background/98 backdrop-blur-2xl lg:hidden flex flex-col overflow-y-auto"
+            className="fixed inset-0 z-60 bg-background/98 backdrop-blur-2xl lg:hidden flex flex-col overflow-hidden"
           >
+            {/* Header inside mobile menu */}
+            <div className="flex items-center justify-between p-6 w-full relative z-10 border-b border-foreground/5">
+              <div className="flex items-center gap-3">
+                <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 relative">
+                  <Image
+                    src="/logo.png"
+                    alt="Logo"
+                    width={24}
+                    height={24}
+                    className="object-contain"
+                  />
+                </div>
+                <h2 className="text-lg font-black tracking-tighter text-foreground">
+                  Kasauli<span className="text-primary">Coder</span>
+                </h2>
+              </div>
+
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="size-10 flex items-center justify-center rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
+                aria-label="Close Menu"
+              >
+                <span className="material-symbols-outlined text-2xl text-foreground/70">
+                  close
+                </span>
+              </button>
+            </div>
+
             <div className="absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-transparent pointer-events-none"></div>
 
-            <div className="flex-1 flex flex-col items-center justify-center p-8 min-h-screen">
+            <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-y-auto">
               <div className="mb-12">
                 <ThemeSwitcher />
               </div>
 
               <nav className="flex flex-col items-center gap-6 relative z-10 w-full mb-12">
-                {navLinks.map((item, i) => (
-                  <motion.div
-                    key={item.title}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.05 * i }}
-                    className="w-full text-center"
-                  >
-                    <Link
-                      href={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-2xl font-bold text-foreground hover:text-primary transition-colors block py-1.5 uppercase tracking-tighter"
+                {navLinks.map((item, i) => {
+                  const active = isActive(item.href);
+                  return (
+                    <motion.div
+                      key={item.title}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05 * i }}
+                      className="w-full text-center"
                     >
-                      {item.title}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`text-2xl font-bold transition-colors block py-1.5 uppercase tracking-tighter ${
+                          active
+                            ? "text-primary"
+                            : "text-foreground hover:text-primary"
+                        }`}
+                      >
+                        {item.title}
+                        {active && (
+                          <motion.div
+                            layoutId="mobile-active"
+                            className="h-1 bg-primary w-12 mx-auto mt-1 rounded-full"
+                          />
+                        )}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </nav>
 
               <motion.div
@@ -197,7 +261,11 @@ const GlobalHeader = () => {
                 <Link
                   href="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full py-4 bg-white/5 border border-white/10 text-foreground font-bold rounded-xl text-center"
+                  className={`w-full py-4 font-bold rounded-xl text-center border transition-all ${
+                    isActive("/login")
+                      ? "bg-primary/10 border-primary/20 text-primary"
+                      : "bg-white/5 border-white/10 text-foreground"
+                  }`}
                 >
                   Login Member
                 </Link>
@@ -206,7 +274,7 @@ const GlobalHeader = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="w-full py-4 bg-primary text-primary-content font-black rounded-xl text-center neon-glow"
                 >
-                  Join the Hub
+                  Explore Solutions
                 </Link>
               </motion.div>
             </div>
