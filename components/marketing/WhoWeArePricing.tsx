@@ -3,8 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import GlobalHeader from "./GlobalHeader";
-import GlobalFooter from "./GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
+import GlobalFooter from "@/components/layout/GlobalFooter";
 
 const WhoWeArePricing = () => {
   return (

@@ -5,10 +5,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import GlobalHeader from "./GlobalHeader";
-import GlobalFooter from "./GlobalFooter";
-import HomeUpcomingEventsStats from "./HomeUpcomingEventsStats";
-import HomeTeamWorkTestimonials from "./HomeTeamWorkTestimonials";
+import GlobalHeader from "@/components/layout/GlobalHeader";
+import GlobalFooter from "@/components/layout/GlobalFooter";
+import HomeUpcomingEventsStats from "@/components/home/HomeUpcomingEventsStats";
+import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 
 const HomeVisionHero = () => {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);

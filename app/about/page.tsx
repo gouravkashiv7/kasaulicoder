@@ -1,4 +1,4 @@
-import AboutUs from "@/components/stitch/AboutUs";
+import AboutUs from "@/components/marketing/AboutUs";
 
 export const metadata = {
   title: "About Us | KasauliCoder",

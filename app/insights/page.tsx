@@ -1,4 +1,4 @@
-import InsightsArticles from "@/components/stitch/InsightsArticles";
+import InsightsArticles from "@/components/marketing/InsightsArticles";
 
 export default function InsightsPage() {
   return <InsightsArticles />;

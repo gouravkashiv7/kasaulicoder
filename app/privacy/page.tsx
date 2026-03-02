@@ -1,4 +1,4 @@
-import PrivacyPolicy from "@/components/stitch/PrivacyPolicy";
+import PrivacyPolicy from "@/components/marketing/PrivacyPolicy";
 
 export const metadata = {
   title: "Privacy Policy | KasauliCoder",

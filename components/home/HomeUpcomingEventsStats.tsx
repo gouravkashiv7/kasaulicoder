@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const HomeUpcomingEventsStats = () => {
   return (
-    <section className="py-24 px-6 bg-background border-t border-white/5 relative z-10">
+    <section className="py-24 px-6 bg-background border-t border-foreground/5 relative z-10">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         {/* Upcoming Events */}
         <motion.div
@@ -38,7 +38,7 @@ const HomeUpcomingEventsStats = () => {
             ].map((event, i) => (
               <div
                 key={i}
-                className="group relative glass-morphism p-6 rounded-2xl border border-white/10 hover:border-primary/50 transition-all overflow-hidden cursor-pointer"
+                className="group relative glass-morphism p-6 rounded-2xl border border-foreground/10 hover:border-primary/50 transition-all overflow-hidden cursor-pointer"
               >
                 <div className="absolute top-0 left-0 w-2 h-full bg-primary/50 group-hover:bg-primary transition-colors"></div>
                 <div className="flex justify-between items-start mb-2">
@@ -54,7 +54,7 @@ const HomeUpcomingEventsStats = () => {
                   {event.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 bg-foreground/5 px-2 py-1 rounded"
+                      className="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/5 px-2 py-1 rounded border border-primary/10"
                     >
                       {tag}
                     </span>
@@ -88,7 +88,7 @@ const HomeUpcomingEventsStats = () => {
               <motion.div
                 key={i}
                 whileHover={{ scale: 1.05 }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center flex flex-col items-center justify-center relative overflow-hidden group"
+                className="bg-card border border-foreground/10 rounded-2xl p-6 text-center flex flex-col items-center justify-center relative overflow-hidden group shadow-lg backdrop-blur-sm"
               >
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                   <span className="material-symbols-outlined text-6xl text-primary">

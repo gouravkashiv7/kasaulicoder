@@ -1,4 +1,4 @@
-import HomeVisionHero from "@/components/stitch/HomeVisionHero";
+import HomeVisionHero from "@/components/home/HomeVisionHero";
 
 export default function Home() {
   return <HomeVisionHero />;

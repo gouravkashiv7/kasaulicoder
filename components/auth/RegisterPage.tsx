@@ -4,8 +4,8 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import GlobalHeader from "./GlobalHeader";
-import GlobalFooter from "./GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
+import GlobalFooter from "@/components/layout/GlobalFooter";
 
 const RegisterPage = () => {
   return (

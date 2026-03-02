@@ -1,4 +1,4 @@
-import TermsOfService from "@/components/stitch/TermsOfService";
+import TermsOfService from "@/components/marketing/TermsOfService";
 
 export const metadata = {
   title: "Terms of Service | KasauliCoder",

@@ -1,4 +1,4 @@
-import RegisterPage from "@/components/stitch/RegisterPage";
+import RegisterPage from "@/components/auth/RegisterPage";
 
 export const metadata = {
   title: "Register | KasauliCoder",

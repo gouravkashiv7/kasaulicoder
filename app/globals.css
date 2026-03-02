@@ -4,6 +4,7 @@
   --background: #0a1212;
   --foreground: #ededed;
   --primary: #00f2ff;
+  --primary-content: #0a1212;
   --secondary: #a855f7;
   --glass: rgba(10, 18, 18, 0.7);
   --glass-border: rgba(0, 242, 255, 0.1);
@@ -14,6 +15,7 @@
   --background: #f8fafc; /* Off-white / slate-50 */
   --foreground: #0f172a;
   --primary: #f59e0b; /* Sun-like Amber */
+  --primary-content: #0f172a;
   --secondary: #ea580c;
   --glass: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(245, 158, 11, 0.2);
@@ -34,6 +36,7 @@
   --background: #0f0a1f; /* Grayish violet dark */
   --foreground: #f1f5f9;
   --primary: #a855f7; /* Violet primary */
+  --primary-content: #ffffff;
   --secondary: #00f2ff;
   --glass: rgba(15, 10, 31, 0.7);
   --glass-border: rgba(168, 85, 247, 0.2);
@@ -44,6 +47,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-content: var(--primary-content);
   --color-secondary: var(--secondary);
   --color-glass: var(--glass);
   --color-glass-border: var(--glass-border);

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import ThemeSwitcher from "./ThemeSwitcher";
+import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
 const GlobalHeader = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -59,13 +59,16 @@ const GlobalHeader = () => {
               href="/"
               className="flex items-center gap-3 group cursor-pointer"
             >
-              <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 group-hover:border-primary transition-colors overflow-hidden">
+              <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 group-hover:border-primary transition-colors overflow-hidden relative">
                 <Image
                   src="/logo.png"
                   alt="KasauliCoder Logo"
                   width={40}
                   height={40}
-                  className="object-contain"
+                  className="object-contain transition-all duration-500"
+                  style={{
+                    filter: "drop-shadow(0 0 8px var(--primary))",
+                  }}
                 />
               </div>
               <h2 className="text-xl font-black tracking-tighter text-foreground">
@@ -112,7 +115,7 @@ const GlobalHeader = () => {
             </Link>
             <Link
               href="/register"
-              className="hidden sm:block bg-primary text-secondary text-sm font-black px-6 py-2.5 rounded-lg neon-glow hover:brightness-110 transition-all hover:scale-105 active:scale-95"
+              className="hidden sm:block bg-primary text-primary-content text-sm font-black px-6 py-2.5 rounded-lg neon-glow hover:brightness-110 transition-all hover:scale-105 active:scale-95"
             >
               Enroll Now
             </Link>
@@ -205,7 +208,7 @@ const GlobalHeader = () => {
                 <Link
                   href="/register"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full py-4 bg-primary text-secondary font-black rounded-xl text-center neon-glow"
+                  className="w-full py-4 bg-primary text-primary-content font-black rounded-xl text-center neon-glow"
                 >
                   Join the Hub
                 </Link>
