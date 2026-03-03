@@ -55,41 +55,50 @@ const HomeTeamWorkTestimonials = () => {
               Our core team is currently being assembled.
             </div>
           ) : (
-            <div className="flex flex-wrap justify-center items-start gap-x-8 gap-y-16 max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto px-6">
               {teamMembers.map((member, i) => (
                 <motion.div
                   key={member._id || member.name}
-                  initial={{ opacity: 0, scale: 0.9, y: 30 }}
-                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                  whileHover={{ y: -10 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
                   viewport={{ once: true }}
                   transition={{
                     delay: i * 0.1,
-                    type: "spring",
-                    stiffness: 100,
+                    duration: 0.5,
                   }}
-                  className="text-center group w-60 sm:w-64 md:w-72 flex flex-col items-center"
+                  className="flex flex-row items-start gap-5 p-5 glass-morphism rounded-4xl border border-white/5 hover:border-primary/20 transition-all group overflow-hidden relative min-h-35"
                 >
-                  <div className="relative size-32 sm:size-40 md:size-48 rounded-full overflow-hidden mb-6 border-4 border-white/5 group-hover:border-primary/50 transition-all duration-500 shadow-xl group-hover:shadow-primary/20">
+                  {/* Background Accent */}
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-primary/10 transition-colors"></div>
+
+                  <div className="relative size-24 sm:size-32 rounded-3xl overflow-hidden shrink-0 border-2 border-white/5 group-hover:border-primary/50 transition-all duration-700 shadow-xl mt-1">
                     <Image
                       src={member.image}
                       alt={member.name}
                       fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      className="object-cover group-hover:scale-110 transition-transform duration-1000"
                     />
-                    <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="absolute inset-0 bg-linear-to-t from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   </div>
-                  <h4 className="text-xl md:text-2xl font-black text-foreground mb-1 group-hover:text-primary transition-colors">
-                    {member.name}
-                  </h4>
-                  <div className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-                    <p className="text-primary font-bold uppercase tracking-widest text-[10px]">
-                      {member.designation || "Core Team"}
+
+                  <div className="flex-1 min-w-0 pr-2 pt-1">
+                    <div className="mb-2">
+                      <h4 className="text-xl font-black text-foreground group-hover:text-primary transition-colors tracking-tighter truncate">
+                        {member.name}
+                      </h4>
+                      <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 mt-1">
+                        <span className="size-1 rounded-full bg-primary animate-pulse"></span>
+                        <p className="text-primary font-black uppercase tracking-widest text-[8px]">
+                          {member.designation || "Core Team"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="text-foreground/70 text-xs md:text-sm leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all duration-500 cursor-help">
+                      {member.roleDescription}
                     </p>
                   </div>
-                  <p className="text-foreground/60 text-xs md:text-sm leading-relaxed max-w-50">
-                    {member.roleDescription}
-                  </p>
                 </motion.div>
               ))}
             </div>

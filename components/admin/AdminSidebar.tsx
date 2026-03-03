@@ -90,7 +90,7 @@ const Sidebar = ({
               alt="Logo"
               width={32}
               height={32}
-              className="object-contain"
+              className="object-contain dark:invert-0 invert"
             />
           </div>
           <AnimatePresence>
