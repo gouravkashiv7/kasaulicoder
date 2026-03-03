@@ -116,15 +116,26 @@ const BlogEditorSection = ({
       return;
     }
 
+    const payload = {
+      ...blogData,
+      writtenBy: blogData.writtenBy || user?.name || "Anonymous",
+    };
+
+    console.log("Submitting blog payload:", payload);
+
+    if (editingBlog) {
+      const confirmUpdate = window.confirm(
+        "Are you sure you want to push these updates to the blog?",
+      );
+      if (!confirmUpdate) {
+        return;
+      }
+    }
+
     setSubmittingBlog(true);
     setBlogStatus(null);
 
     try {
-      const payload = {
-        ...blogData,
-        writtenBy: blogData.writtenBy || user?.name || "Anonymous",
-      };
-
       const url = editingBlog
         ? `/api/member/blogs/${editingBlog._id}`
         : "/api/member/blogs";
@@ -210,7 +221,7 @@ const BlogEditorSection = ({
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black mb-2 tracking-tight">
-            {editingBlog ? "Refine Your Story" : "Compose New Story"}
+            {editingBlog ? "Refine Your Blog" : "Compose New Blog"}
           </h1>
           <p className="text-foreground/50 font-medium leading-relaxed max-w-lg">
             {editingBlog
@@ -245,7 +256,7 @@ const BlogEditorSection = ({
               <UniqueLoading variant="morph" size="lg" />
               <div className="text-center space-y-2">
                 <h3 className="text-2xl font-black tracking-tight text-foreground">
-                  {editingBlog ? "Pushing Updates..." : "Publishing Story..."}
+                  {editingBlog ? "Pushing Updates..." : "Publishing Blog..."}
                 </h3>
                 <p className="text-sm font-medium text-foreground/40 italic">
                   Synchronizing with the creative neural engine...
@@ -279,7 +290,7 @@ const BlogEditorSection = ({
                 {submittingBlog
                   ? "Saving..."
                   : editingBlog
-                    ? "Update Story"
+                    ? "Update Blog"
                     : "Publish to Queue"}
               </button>
             </div>
@@ -311,7 +322,7 @@ const BlogEditorSection = ({
                     <span className="material-symbols-outlined text-xs">
                       title
                     </span>
-                    Story Title <span className="text-primary">*</span>
+                    Blog Title <span className="text-primary">*</span>
                   </label>
                   <input
                     type="text"
@@ -375,27 +386,6 @@ const BlogEditorSection = ({
                     placeholder="Unsplash URL, etc."
                   />
                 </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1">
-                    <span className="material-symbols-outlined text-xs">
-                      edit
-                    </span>
-                    Display Author
-                  </label>
-                  <input
-                    type="text"
-                    value={blogData.writtenBy || user?.name || ""}
-                    onChange={(e) =>
-                      setBlogData({
-                        ...blogData,
-                        writtenBy: e.target.value,
-                      })
-                    }
-                    className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl px-5 py-3.5 focus:border-primary outline-none transition-all text-sm font-bold opacity-80"
-                    placeholder="Display Name"
-                  />
-                </div>
               </div>
             </div>
 
@@ -407,7 +397,8 @@ const BlogEditorSection = ({
                   </span>
                   Tagline & Meta Summary <span className="text-primary">*</span>
                 </label>
-                <textarea
+                <input
+                  type="text"
                   value={blogData.tagline}
                   onChange={(e) =>
                     setBlogData({
@@ -415,9 +406,29 @@ const BlogEditorSection = ({
                       tagline: e.target.value,
                     })
                   }
-                  className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all text-sm font-medium leading-relaxed min-h-24"
+                  className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl px-5 py-3.5 focus:border-primary outline-none transition-all text-sm font-medium"
                   required
                   placeholder="A brief hook that summarizes the story..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1">
+                  <span className="material-symbols-outlined text-xs">
+                    description
+                  </span>
+                  Meta Description <span className="text-primary">*</span>
+                </label>
+                <textarea
+                  value={blogData.description}
+                  onChange={(e) =>
+                    setBlogData({
+                      ...blogData,
+                      description: e.target.value,
+                    })
+                  }
+                  className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl px-5 py-4 focus:border-primary outline-none transition-all text-sm font-medium leading-relaxed min-h-24"
+                  required
+                  placeholder="SEO-friendly description for search engines..."
                 />
               </div>
             </div>
@@ -432,9 +443,7 @@ const BlogEditorSection = ({
                     </span>
                   </div>
                   <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">
-                    {previewMode
-                      ? "Visual Canvas"
-                      : "Story Blueprint (MDX/JSX)"}
+                    {previewMode ? "Visual Canvas" : "Blog Blueprint (MDX/JSX)"}
                   </label>
                 </div>
 
@@ -838,7 +847,7 @@ Output ONLY the MDX content.`;
                           </span>
                         </div>
                         <h4 className="text-xl font-black mb-2">
-                          Visualizing Your Story
+                          Visualizing Your Blog
                         </h4>
                         <p className="text-sm text-foreground/30 max-w-xs mx-auto italic">
                           {blogData.content
@@ -888,8 +897,8 @@ Output ONLY the MDX content.`;
                 {submittingBlog
                   ? "Synchronizing..."
                   : editingBlog
-                    ? "Push Updates Live"
-                    : "Initiate Story Publication"}
+                    ? "Update Blog"
+                    : "Initiate Blog Publication"}
               </button>
             </div>
           </div>
@@ -1034,7 +1043,7 @@ const MemberDashboard = () => {
   const fetchBlogs = useCallback(async () => {
     setFetchingBlogs(true);
     try {
-      const res = await fetch("/api/member/blogs");
+      const res = await fetch(`/api/member/blogs?t=${Date.now()}`);
       if (res.ok) {
         const data = await res.json();
         setBlogs(data.blogs);
@@ -1330,7 +1339,7 @@ const MemberDashboard = () => {
                     <span className="material-symbols-outlined text-sm">
                       add_circle
                     </span>
-                    Create New Story
+                    Create New Blog
                   </button>
                 </div>
 
@@ -1470,7 +1479,7 @@ const MemberDashboard = () => {
                           <button
                             onClick={() => handleEditBlog(blog)}
                             className="size-12 flex items-center justify-center rounded-2xl bg-foreground/5 text-foreground/60 hover:bg-primary hover:text-white transition-all shadow-sm border border-foreground/5 group-hover:border-primary/20"
-                            title="Refine Story"
+                            title="Refine Blog"
                           >
                             <span className="material-symbols-outlined text-xl">
                               edit_note

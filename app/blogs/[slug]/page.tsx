@@ -53,7 +53,7 @@ const BlogPostPage = () => {
     const fetchBlog = async () => {
       if (!slug) return;
       try {
-        const res = await fetch(`/api/public/blogs/${slug}`);
+        const res = await fetch(`/api/public/blogs/${slug}?t=${Date.now()}`);
         if (res.ok) {
           const data = await res.json();
           setBlog(data.blog);
@@ -157,7 +157,7 @@ const BlogPostPage = () => {
   }
 
   return (
-    <div className="font-display bg-background text-foreground min-h-screen selection:bg-primary selection:text-primary-content">
+    <div className="font-display text-foreground min-h-screen selection:bg-primary selection:text-primary-content relative">
       <GlobalHeader />
 
       <BackgroundPaths />

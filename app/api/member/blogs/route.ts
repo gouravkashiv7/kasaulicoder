@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import Blog from "@/backend/models/Blog";
 import connectDB from "@/backend/lib/db";
@@ -56,15 +57,6 @@ export async function GET(req: Request) {
   }
 }
 
-function sanitizeMdx(content: string) {
-  return content
-    .replace(/<p>/g, "")
-    .replace(/<\/p>/g, "\n")
-    .replace(/(<motion\.div|<Image|<Link|#{1,6}\s|>\n)/g, "\n$1")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
 export async function POST(req: Request) {
   try {
     const cookieHeader = req.headers.get("cookie") || "";
@@ -112,7 +104,6 @@ export async function POST(req: Request) {
     }
 
     // Sanitize MDX content
-    const sanitizedContent = sanitizeMdx(content);
 
     // Fetch the staff member to get their official name
     const Staff = (await import("@/backend/models/Staff")).default;
@@ -141,7 +132,7 @@ export async function POST(req: Request) {
       mainImageUrl,
       tagline,
       description,
-      content: sanitizedContent,
+      content,
       authorId: payload.id, // Save the Staff ID
       writtenBy: staff.name, // Save the official name from DB
       status: "inactive", // Always inactive by default for moderation

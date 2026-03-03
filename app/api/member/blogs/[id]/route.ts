@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import Blog from "@/backend/models/Blog";
 import connectDB from "@/backend/lib/db";
@@ -72,21 +73,28 @@ export async function PATCH(
         .replace(/^-+|-+$/g, ""); // Remove trailing hyphens
     };
 
-    const sanitizeMdx = (content: string) => {
-      return content
-        .replace(/<p>/g, "")
-        .replace(/<\/p>/g, "\n")
-        .replace(/(<motion\.div|<Image|<Link|#{1,6}\s|>\n)/g, "\n$1")
-        .replace(/\n{3,}/g, "\n\n")
-        .trim();
-    };
-
     // Update fields
-    if (title) blog.title = title;
-    if (mainImageUrl) blog.mainImageUrl = mainImageUrl;
-    if (tagline) blog.tagline = tagline;
-    if (description) blog.description = description;
-    if (content) blog.content = sanitizeMdx(content);
+    if (title !== undefined) {
+      blog.title = title;
+      blog.markModified("title");
+    }
+    if (mainImageUrl !== undefined) {
+      blog.mainImageUrl = mainImageUrl;
+      blog.markModified("mainImageUrl");
+    }
+    if (tagline !== undefined) {
+      blog.tagline = tagline;
+      blog.markModified("tagline");
+    }
+    if (description !== undefined) {
+      blog.description = description;
+      blog.markModified("description");
+    }
+    if (content !== undefined) {
+      console.log("Setting content. Length:", content.length);
+      blog.content = content;
+      blog.markModified("content");
+    }
 
     // Slug update logic
     let finalSlug = blog.slug;
@@ -116,18 +124,28 @@ export async function PATCH(
     // Ensure authorId is set (for older blogs being edited)
     blog.authorId = payload.id;
 
-    // Maintain existing status instead of resetting to inactive
-    // blog.status = blog.status;
+    console.log("Saving blog updates for:", blog.title);
+    console.log(
+      "Updated content length:",
+      content?.length || blog.content.length,
+    );
 
     await blog.save();
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       message:
         blog.status === "active"
           ? "Blog updated successfully. Changes are live!"
           : "Blog updated successfully. Awaiting approval.",
       blog,
     });
+
+    // Disable caching for these responses
+    response.headers.set(
+      "Cache-Control",
+      "no-store, max-age=0, must-revalidate",
+    );
+    return response;
   } catch (error: any) {
     console.error("Error updating member blog:", error);
     return NextResponse.json(
