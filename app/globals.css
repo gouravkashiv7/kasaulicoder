@@ -5,7 +5,7 @@
   --foreground: #e8f4f5;
   --primary: #06d6e0;
   --primary-content: #0a1214;
-  --secondary: #c084fc;
+  --secondary: #6366f1;
   --glass: rgba(10, 18, 20, 0.75);
   --glass-border: rgba(6, 214, 224, 0.18);
   --card: rgba(20, 35, 38, 0.6);
@@ -16,7 +16,7 @@
   --foreground: #1c1917; /* Warm stone-900 */
   --primary: #d97706; /* Deeper amber-600 — better contrast */
   --primary-content: #fffbeb;
-  --secondary: #7c3aed; /* Violet-600 — strong contrast from amber */
+  --secondary: #0f766e; /* Deep Teal — sophisticated contrast with amber */
   --glass: rgba(255, 251, 245, 0.75);
   --glass-border: rgba(217, 119, 6, 0.25);
   --card: rgba(255, 251, 245, 0.85);
@@ -27,7 +27,7 @@
   --foreground: #e8f4f5; /* Cyan-tinted off-white */
   --primary: #06d6e0; /* Slightly muted cyan — easier on eyes */
   --primary-content: #0a1214;
-  --secondary: #c084fc; /* Lighter violet-400 */
+  --secondary: #6366f1; /* Indigo — sleek modern tech feel */
   --glass: rgba(10, 18, 20, 0.75);
   --glass-border: rgba(6, 214, 224, 0.18);
   --card: rgba(20, 35, 38, 0.6);

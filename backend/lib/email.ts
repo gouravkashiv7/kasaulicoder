@@ -75,7 +75,7 @@ export const sendStaffWelcomeEmail = async (
           <!-- Header / Logo Banner -->
           <tr>
             <td style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%);padding:40px 48px 36px;text-align:center;">
-              <img src="https://kasaulicoder.com/logo.png" alt="Kasaulicoder Logo" width="160" style="display:block;margin:0 auto 20px;max-width:160px;" />
+              <img src="https://kasaulicoder.com/mail.png" alt="Kasaulicoder Logo" width="160" style="display:block;margin:0 auto 20px;max-width:160px;" />
               <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:800;letter-spacing:-0.5px;line-height:1.3;">
                 Welcome to the Team! 🎉
               </h1>
@@ -269,7 +269,7 @@ export const sendStaffWelcomeEmail = async (
           <tr>
             <td style="padding:36px 48px 40px;">
               <div style="border-top:1px solid #e2e8f0;padding-top:24px;text-align:center;">
-                <img src="https://kasaulicoder.com/logo.png" alt="Kasaulicoder Logo" width="110" style="display:block;margin:0 auto 12px;max-width:110px;" />
+                <img src="https://kasaulicoder.com/mail.png" alt="Kasaulicoder Logo" width="110" style="display:block;margin:0 auto 12px;max-width:110px;" />
                 <p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.7;">
                   © Kasauli coder 2026 | All Rights Reserved
                 </p>
@@ -336,7 +336,7 @@ export const sendAccountDeactivationEmail = async (
           <tr>
             <td style="padding:0 48px 40px;">
               <div style="border-top:1px solid #e2e8f0;padding-top:24px;text-align:center;">
-                <img src="https://kasaulicoder.com/logo.png" alt="Kasaulicoder Logo" width="110" style="display:block;margin:0 auto 12px;max-width:110px;" />
+                <img src="https://kasaulicoder.com/mail.png" alt="Kasaulicoder Logo" width="110" style="display:block;margin:0 auto 12px;max-width:110px;" />
                 <p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.7;">
                   © Kasauli coder 2026 | All Rights Reserved
                 </p>
@@ -402,7 +402,7 @@ export const sendAccountActivationEmail = async (
           <tr>
             <td style="padding:0 48px 40px;">
               <div style="border-top:1px solid #e2e8f0;padding-top:24px;text-align:center;">
-                <img src="https://kasaulicoder.com/logo.png" alt="Kasaulicoder Logo" width="110" style="display:block;margin:0 auto 12px;max-width:110px;" />
+                <img src="https://kasaulicoder.com/mail.png" alt="Kasaulicoder Logo" width="110" style="display:block;margin:0 auto 12px;max-width:110px;" />
                 <p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.7;">
                   © Kasauli coder 2026 | All Rights Reserved
                 </p>

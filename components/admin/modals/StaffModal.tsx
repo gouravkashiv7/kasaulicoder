@@ -1,7 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Cropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
 
 interface StaffModalProps {
   showAddModal: boolean;
@@ -10,10 +12,10 @@ interface StaffModalProps {
   setEditingStaff: (staff: any) => void;
   newStaff: any;
   setNewStaff: React.Dispatch<React.SetStateAction<any>>;
-  handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleCreateStaff: (e: React.FormEvent) => void;
   isSubmitting: boolean;
   uploadError: string;
+  setUploadError: (err: string) => void;
   submitError: string;
 }
 
@@ -145,12 +147,45 @@ const StaffModal = ({
   setEditingStaff,
   newStaff,
   setNewStaff,
-  handleImageUpload,
   handleCreateStaff,
   isSubmitting,
   uploadError,
+  setUploadError,
   submitError,
 }: StaffModalProps) => {
+  const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
+  const cropperRef = useRef<any>(null);
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 200 * 1024) {
+      setUploadError("Image size must be less than 200KB");
+      return;
+    }
+    setUploadError("");
+    const reader = new FileReader();
+    reader.onload = () => {
+      setRawImageSrc(reader.result as string);
+      setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = ""; // Reset to allow same file re-selection
+  };
+
+  const handleCropDone = () => {
+    const cropper = cropperRef.current?.cropper;
+    if (!cropper) return;
+    const canvas = cropper.getCroppedCanvas({ width: 256, height: 256 });
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+
+    setNewStaff((prev: any) => ({ ...prev, image: dataUrl }));
+    setUploadError("");
+    setShowCropper(false);
+    setRawImageSrc(null);
+  };
+
   return (
     <AnimatePresence>
       {showAddModal && (
@@ -195,7 +230,7 @@ const StaffModal = ({
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={handleImageUpload}
+                    onChange={onFileChange}
                     className="absolute inset-0 opacity-0 cursor-pointer"
                   />
                 </div>
@@ -338,6 +373,72 @@ const StaffModal = ({
           </motion.div>
         </div>
       )}
+
+      {/* Cropper Modal Overlay */}
+      <AnimatePresence>
+        {showCropper && rawImageSrc && (
+          <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-background border border-foreground/10 rounded-3xl overflow-hidden w-full max-w-lg shadow-2xl"
+            >
+              <div className="p-6 border-b border-foreground/10 flex items-center justify-between bg-foreground/5">
+                <h2 className="font-black text-foreground text-lg">
+                  Crop Staff Photo
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowCropper(false);
+                    setRawImageSrc(null);
+                  }}
+                  className="size-8 flex items-center justify-center rounded-full hover:bg-foreground/10 text-foreground/50 transition-colors"
+                >
+                  <span className="material-symbols-outlined">close</span>
+                </button>
+              </div>
+              <div className="p-4 bg-black/20">
+                <Cropper
+                  ref={cropperRef}
+                  src={rawImageSrc}
+                  style={{ height: 360, width: "100%" }}
+                  aspectRatio={1}
+                  guides={true}
+                  viewMode={1}
+                  dragMode="move"
+                  autoCropArea={0.9}
+                  background={false}
+                  responsive
+                  checkOrientation={false}
+                />
+              </div>
+              <p className="text-[10px] text-foreground/30 text-center py-3 font-bold uppercase tracking-widest bg-foreground/5">
+                Drag to reposition · Scroll to zoom
+              </p>
+              <div className="p-4 border-t border-foreground/10 flex gap-3 bg-foreground/5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCropper(false);
+                    setRawImageSrc(null);
+                  }}
+                  className="flex-1 py-3 rounded-xl font-bold text-xs uppercase text-foreground/60 hover:bg-foreground/10 border border-foreground/10 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCropDone}
+                  className="flex-1 py-3 bg-primary text-primary-content rounded-xl font-black text-xs uppercase hover:brightness-110 transition-all shadow-lg"
+                >
+                  Set Photo
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </AnimatePresence>
   );
 };

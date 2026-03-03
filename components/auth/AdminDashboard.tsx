@@ -2,6 +2,8 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Types
@@ -388,21 +390,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 200 * 1024) {
-      setUploadError("Image size must be less than 200KB");
-      return;
-    }
-    setUploadError("");
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setNewStaff((prev) => ({ ...prev, image: reader.result as string }));
-    };
-    reader.readAsDataURL(file);
-  };
-
   const handleCreateStaff = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -747,15 +734,26 @@ const AdminDashboard = () => {
       <div className="fixed top-0 left-0 right-0 z-20 md:hidden flex items-center gap-3 px-4 h-14 bg-background/80 backdrop-blur-lg border-b border-foreground/10">
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="size-9 flex items-center justify-center rounded-xl bg-foreground/5"
+          className="size-9 flex items-center justify-center rounded-xl bg-foreground/5 shrink-0"
         >
           <span className="material-symbols-outlined text-xl text-foreground/70">
             menu
           </span>
         </button>
-        <span className="text-base font-black tracking-tight text-foreground">
-          Admin<span className="text-primary">Panel</span>
-        </span>
+        <Link href="/" className="flex items-center gap-2 overflow-hidden">
+          <div className="size-7 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 shrink-0 overflow-hidden relative">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={28}
+              height={28}
+              className="object-contain"
+            />
+          </div>
+          <span className="text-base font-black tracking-tight text-foreground truncate">
+            Admin<span className="text-primary">Panel</span>
+          </span>
+        </Link>
       </div>
 
       <AdminSidebar
@@ -864,10 +862,10 @@ const AdminDashboard = () => {
         setEditingStaff={setEditingStaff}
         newStaff={newStaff}
         setNewStaff={setNewStaff}
-        handleImageUpload={handleImageUpload}
         handleCreateStaff={handleCreateStaff}
         isSubmitting={isSubmitting}
         uploadError={uploadError}
+        setUploadError={setUploadError}
         submitError={submitError}
       />
 

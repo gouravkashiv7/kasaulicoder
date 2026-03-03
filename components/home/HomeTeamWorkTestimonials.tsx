@@ -55,17 +55,22 @@ const HomeTeamWorkTestimonials = () => {
               Our core team is currently being assembled.
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 max-w-4xl mx-auto gap-12">
+            <div className="flex flex-wrap justify-center items-start gap-x-8 gap-y-16 max-w-6xl mx-auto px-4">
               {teamMembers.map((member, i) => (
                 <motion.div
                   key={member._id || member.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  whileHover={{ y: -10 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.2 }}
-                  className="text-center group"
+                  transition={{
+                    delay: i * 0.1,
+                    type: "spring",
+                    stiffness: 100,
+                  }}
+                  className="text-center group w-60 sm:w-64 md:w-72 flex flex-col items-center"
                 >
-                  <div className="relative size-48 mx-auto rounded-full overflow-hidden mb-6 border-4 border-white/5 group-hover:border-primary/50 transition-colors duration-500">
+                  <div className="relative size-32 sm:size-40 md:size-48 rounded-full overflow-hidden mb-6 border-4 border-white/5 group-hover:border-primary/50 transition-all duration-500 shadow-xl group-hover:shadow-primary/20">
                     <Image
                       src={member.image}
                       alt={member.name}
@@ -74,13 +79,15 @@ const HomeTeamWorkTestimonials = () => {
                     />
                     <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
-                  <h4 className="text-2xl font-bold text-foreground mb-1">
+                  <h4 className="text-xl md:text-2xl font-black text-foreground mb-1 group-hover:text-primary transition-colors">
                     {member.name}
                   </h4>
-                  <p className="text-primary font-mono text-sm mb-4">
-                    {member.designation || "Core Team"}
-                  </p>
-                  <p className="text-foreground/60 text-sm">
+                  <div className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
+                    <p className="text-primary font-bold uppercase tracking-widest text-[10px]">
+                      {member.designation || "Core Team"}
+                    </p>
+                  </div>
+                  <p className="text-foreground/60 text-xs md:text-sm leading-relaxed max-w-50">
                     {member.roleDescription}
                   </p>
                 </motion.div>

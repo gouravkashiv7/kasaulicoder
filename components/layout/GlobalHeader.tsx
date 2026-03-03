@@ -10,6 +10,7 @@ import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 const GlobalHeader = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const pathname = usePathname();
 
   const navLinks = [
@@ -26,6 +27,34 @@ const GlobalHeader = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch (e) {
+        console.error("Failed to parse user from localStorage", e);
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    document.cookie = "token=; path=/; max-age=0";
+    window.location.href = "/login";
+  };
+
+  const getDashboardLink = () => {
+    if (!user) return "/login";
+    if (user.loginType === "admin") {
+      return user.role === "superadmin"
+        ? "/admin/dashboard"
+        : "/member/dashboard";
+    }
+    const userType = user.userType || "student";
+    return `/user/${userType}/dashboard`;
+  };
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -69,10 +98,8 @@ const GlobalHeader = () => {
                   alt="KasauliCoder Logo"
                   width={40}
                   height={40}
+                  priority
                   className="object-contain transition-all duration-500"
-                  style={{
-                    filter: "drop-shadow(0 0 8px var(--primary))",
-                  }}
                 />
               </div>
               <h2 className="text-xl font-black tracking-tighter text-foreground">
@@ -120,22 +147,64 @@ const GlobalHeader = () => {
               <ThemeSwitcher />
             </div>
 
-            <Link
-              href="/login"
-              className={`hidden sm:flex items-center justify-center text-sm font-bold transition-all px-5 py-2 rounded-full border ${
-                isActive("/login")
-                  ? "text-primary bg-primary/10 border-primary/20"
-                  : "text-foreground/80 hover:text-foreground hover:bg-foreground/5 border-transparent hover:border-foreground/10"
-              }`}
-            >
-              Login
-            </Link>
-            <Link
-              href="/register"
-              className="hidden sm:flex items-center justify-center bg-linear-to-r from-primary to-secondary text-white text-sm font-black px-6 py-2 rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] border border-white/20"
-            >
-              Explore Solutions
-            </Link>
+            {user ? (
+              <div className="flex items-center gap-4">
+                <Link
+                  href={getDashboardLink()}
+                  className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 transition-all group"
+                >
+                  <div className="size-8 rounded-full overflow-hidden border border-primary/20 bg-primary/10 flex items-center justify-center shrink-0">
+                    {user.pic || user.image ? (
+                      <img
+                        src={user.pic || user.image}
+                        alt={user.name}
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-xs font-black text-primary">
+                        {user.name?.charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <div className="hidden sm:block">
+                    <p className="text-[10px] font-black uppercase tracking-widest leading-tight text-foreground/40">
+                      Dashboard
+                    </p>
+                    <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate max-w-24">
+                      {user.name}
+                    </p>
+                  </div>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="size-10 flex items-center justify-center rounded-full hover:bg-rose-500/10 text-rose-500/70 hover:text-rose-500 transition-all border border-transparent hover:border-rose-500/20"
+                  title="Logout"
+                >
+                  <span className="material-symbols-outlined text-xl">
+                    logout
+                  </span>
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className={`hidden sm:flex items-center justify-center text-sm font-bold transition-all px-5 py-2 rounded-full border ${
+                    isActive("/login")
+                      ? "text-primary bg-primary/10 border-primary/20"
+                      : "text-foreground/80 hover:text-foreground hover:bg-foreground/5 border-transparent hover:border-foreground/10"
+                  }`}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="hidden sm:flex items-center justify-center bg-linear-to-r from-primary to-secondary text-white text-sm font-black px-6 py-2 rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] border border-white/20"
+                >
+                  Explore Solutions
+                </Link>
+              </>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -193,6 +262,7 @@ const GlobalHeader = () => {
                     alt="Logo"
                     width={24}
                     height={24}
+                    priority
                     className="object-contain"
                   />
                 </div>
@@ -258,24 +328,57 @@ const GlobalHeader = () => {
                 transition={{ delay: 0.4 }}
                 className="flex flex-col gap-4 w-full max-w-xs relative z-10"
               >
-                <Link
-                  href="/login"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`w-full py-4 font-bold rounded-xl text-center border transition-all ${
-                    isActive("/login")
-                      ? "bg-primary/10 border-primary/20 text-primary"
-                      : "bg-white/5 border-white/10 text-foreground"
-                  }`}
-                >
-                  Login Member
-                </Link>
-                <Link
-                  href="/register"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full py-4 bg-primary text-primary-content font-black rounded-xl text-center neon-glow"
-                >
-                  Explore Solutions
-                </Link>
+                {user ? (
+                  <div className="flex flex-col gap-4 w-full max-w-xs relative z-10">
+                    <Link
+                      href={getDashboardLink()}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full flex items-center justify-center gap-3 py-4 bg-primary/10 border border-primary/20 text-primary font-black rounded-xl"
+                    >
+                      <div className="size-6 rounded-full overflow-hidden border border-primary/30">
+                        {user.pic || user.image ? (
+                          <img
+                            src={user.pic || user.image}
+                            alt={user.name}
+                            className="size-full object-cover"
+                          />
+                        ) : (
+                          <div className="size-full flex items-center justify-center bg-primary/20 text-[10px]">
+                            {user.name?.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      Go to Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full py-4 text-rose-500 font-bold rounded-xl border border-rose-500/10 bg-rose-500/5"
+                    >
+                      Logout Account
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-4 w-full max-w-xs relative z-10">
+                    <Link
+                      href="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`w-full py-4 font-bold rounded-xl text-center border transition-all ${
+                        isActive("/login")
+                          ? "bg-primary/10 border-primary/20 text-primary"
+                          : "bg-white/5 border-white/10 text-foreground"
+                      }`}
+                    >
+                      Login Member
+                    </Link>
+                    <Link
+                      href="/register"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full py-4 bg-primary text-primary-content font-black rounded-xl text-center neon-glow"
+                    >
+                      Explore Solutions
+                    </Link>
+                  </div>
+                )}
               </motion.div>
             </div>
           </motion.div>

@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+import Image from "next/image";
 import { SidebarView } from "./types";
 
 interface SidebarProps {
@@ -81,23 +83,29 @@ const Sidebar = ({
     >
       {/* Logo area */}
       <div className="p-5 border-b border-foreground/10 flex items-center gap-3 min-h-18">
-        <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 shrink-0">
-          <span className="material-symbols-outlined text-primary text-lg">
-            terminal
-          </span>
-        </div>
-        <AnimatePresence>
-          {!sidebarCollapsed && (
-            <motion.span
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: "auto" }}
-              exit={{ opacity: 0, width: 0 }}
-              className="text-lg font-black tracking-tighter text-foreground whitespace-nowrap overflow-hidden"
-            >
-              Admin<span className="text-primary">Panel</span>
-            </motion.span>
-          )}
-        </AnimatePresence>
+        <Link href="/" className="flex items-center gap-3">
+          <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 shrink-0 overflow-hidden relative">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={32}
+              height={32}
+              className="object-contain"
+            />
+          </div>
+          <AnimatePresence>
+            {!sidebarCollapsed && (
+              <motion.span
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: "auto" }}
+                exit={{ opacity: 0, width: 0 }}
+                className="text-lg font-black tracking-tighter text-foreground whitespace-nowrap overflow-hidden"
+              >
+                Admin<span className="text-primary">Panel</span>
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </Link>
         {/* Close button — mobile only */}
         <button
           className="ml-auto md:hidden text-foreground/50 hover:text-foreground"
@@ -171,6 +179,27 @@ const Sidebar = ({
             </motion.div>
           )}
         </AnimatePresence>
+
+        <Link
+          href="/"
+          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all group"
+        >
+          <span className="material-symbols-outlined text-xl shrink-0">
+            home
+          </span>
+          <AnimatePresence>
+            {!sidebarCollapsed && (
+              <motion.span
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: "auto" }}
+                exit={{ opacity: 0, width: 0 }}
+                className="text-sm font-bold whitespace-nowrap overflow-hidden"
+              >
+                Return to Site
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </Link>
 
         <button
           onClick={handleLogout}

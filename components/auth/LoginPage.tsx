@@ -188,7 +188,9 @@ const LoginPage = () => {
                     exit={{ opacity: 0, height: 0, y: -10 }}
                     className={`p-4 rounded-xl mb-6 text-sm font-bold text-center border overflow-hidden ${
                       message.type === "success"
-                        ? "bg-primary/10 text-primary border-primary/20"
+                        ? loginType === "admin"
+                          ? "bg-secondary/10 text-secondary border-secondary/20"
+                          : "bg-primary/10 text-primary border-primary/20"
                         : "bg-rose-500/10 text-rose-500 border-rose-500/20"
                     }`}
                   >

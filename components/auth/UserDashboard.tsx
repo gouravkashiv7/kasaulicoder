@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
@@ -218,32 +219,36 @@ const UserDashboard = ({ userType }: { userType: string }) => {
       >
         {/* Logo */}
         <div className="p-5 border-b border-foreground/10 flex items-center gap-3 min-h-18">
-          <Link href="/">
+          <Link href="/" className="flex items-center gap-3">
             <div
-              className={`size-8 rounded-lg flex items-center justify-center border shrink-0 ${isStudent ? "bg-secondary/10 border-secondary/30" : "bg-primary/10 border-primary/30"}`}
+              className={`size-8 rounded-lg flex items-center justify-center border shrink-0 overflow-hidden relative ${isStudent ? "bg-secondary/10 border-secondary/30" : "bg-primary/10 border-primary/30"}`}
             >
-              <span
-                className={`material-symbols-outlined text-lg ${isStudent ? "text-secondary" : "text-primary"}`}
-              >
-                terminal
-              </span>
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
             </div>
+            <AnimatePresence>
+              {!sidebarCollapsed && (
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 0 }}
+                  className="text-lg font-black tracking-tighter text-foreground whitespace-nowrap overflow-hidden"
+                >
+                  Kasauli
+                  <span
+                    className={isStudent ? "text-secondary" : "text-primary"}
+                  >
+                    Coder
+                  </span>
+                </motion.span>
+              )}
+            </AnimatePresence>
           </Link>
-          <AnimatePresence>
-            {!sidebarCollapsed && (
-              <motion.span
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: "auto" }}
-                exit={{ opacity: 0, width: 0 }}
-                className="text-lg font-black tracking-tighter text-foreground whitespace-nowrap overflow-hidden"
-              >
-                Kasauli
-                <span className={isStudent ? "text-secondary" : "text-primary"}>
-                  Coder
-                </span>
-              </motion.span>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* Nav */}
@@ -300,6 +305,27 @@ const UserDashboard = ({ userType }: { userType: string }) => {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <Link
+            href="/"
+            className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all group"
+          >
+            <span className="material-symbols-outlined text-xl shrink-0">
+              home
+            </span>
+            <AnimatePresence>
+              {!sidebarCollapsed && (
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 0 }}
+                  className="text-sm font-bold whitespace-nowrap overflow-hidden"
+                >
+                  Return to Site
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </Link>
 
           <button
             onClick={handleLogout}

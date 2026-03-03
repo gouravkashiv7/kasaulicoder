@@ -86,8 +86,8 @@ const GlobalFooter = () => {
                 alt="KasauliCoder Logo"
                 width={40}
                 height={40}
+                priority
                 className="object-contain transition-all duration-500"
-                style={{ filter: "drop-shadow(0 0 8px var(--primary))" }}
               />
             </div>
             <h2 className="text-xl font-black tracking-tighter text-foreground group-hover:drop-shadow-[0_0_8px_var(--primary)] transition-all">

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
 type SidebarView = "dashboard" | "settings";
@@ -150,16 +151,22 @@ const MemberDashboard = () => {
       >
         {/* Logo area */}
         <div className="p-5 border-b border-foreground/10 flex items-center gap-3 min-h-18">
-          <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 shrink-0">
-            <span className="material-symbols-outlined text-primary text-lg">
-              terminal
-            </span>
-          </div>
-          {!sidebarCollapsed && (
-            <span className="text-lg font-black tracking-tighter text-foreground">
-              Member<span className="text-primary">Hub</span>
-            </span>
-          )}
+          <Link href="/" className="flex items-center gap-3">
+            <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 shrink-0 overflow-hidden relative">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
+            </div>
+            {!sidebarCollapsed && (
+              <span className="text-lg font-black tracking-tighter text-foreground">
+                Member<span className="text-primary">Hub</span>
+              </span>
+            )}
+          </Link>
           <button
             className="ml-auto md:hidden"
             onClick={() => setMobileMenuOpen(false)}
@@ -235,6 +242,15 @@ const MemberDashboard = () => {
                 <div className="flex justify-center">
                   <ThemeSwitcher />
                 </div>
+                <Link
+                  href="/"
+                  className="w-full flex items-center gap-3 px-3 py-2 text-foreground/50 hover:bg-foreground/5 hover:text-foreground rounded-lg transition-all text-xs font-bold mb-1"
+                >
+                  <span className="material-symbols-outlined text-sm">
+                    home
+                  </span>
+                  {!sidebarCollapsed && <span>Return to Site</span>}
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-3 py-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all text-xs font-bold"
@@ -259,13 +275,24 @@ const MemberDashboard = () => {
         <div className="md:hidden flex items-center gap-3 px-4 h-14 bg-background/80 backdrop-blur-lg border-b border-foreground/10 sticky top-0 z-20">
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="size-9 flex items-center justify-center rounded-xl bg-foreground/5"
+            className="size-9 flex items-center justify-center rounded-xl bg-foreground/5 shrink-0"
           >
             <span className="material-symbols-outlined text-xl">menu</span>
           </button>
-          <span className="text-base font-black tracking-tight">
-            Member<span className="text-primary">Hub</span>
-          </span>
+          <Link href="/" className="flex items-center gap-2 overflow-hidden">
+            <div className="size-7 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 shrink-0 overflow-hidden relative">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={28}
+                height={28}
+                className="object-contain"
+              />
+            </div>
+            <span className="text-base font-black tracking-tight truncate">
+              Member<span className="text-primary">Hub</span>
+            </span>
+          </Link>
         </div>
 
         <div className="max-w-4xl mx-auto px-6 py-10">
