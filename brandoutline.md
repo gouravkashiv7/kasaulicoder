@@ -37,12 +37,12 @@ This document outlines the core brand identity, color palette, typography, and d
 
 ## 3. Typography
 
-- **Display & Headings**: **Inter** (`var(--font-inter)`)
-  - _Characteristics_: Used heavily weighted (`font-black`, `font-bold`), often with negative letter-spacing (`tracking-tighter`, `tracking-tight`).
-- **Body & Sans-Serif Default**: **Geist Sans** (`var(--font-geist-sans)`)
-  - _Characteristics_: Clean, legible for paragraphs and standard UI text.
-- **Monospace**: **Geist Mono** (`var(--font-geist-mono)`)
-  - _Characteristics_: Used for code snippets, versions (e.g., `system_architecture.v2`), or tech-focused labels. Often styled with `tracking-widest` and uppercase.
+- **Display & Headings**: **Outfit** (`var(--font-outfit)`)
+  - _Characteristics_: Modern, geometric, and premium. Used heavily weighted (`font-black`, `font-bold`) for high impact.
+- **Body & Sans-Serif Default**: **Plus Jakarta Sans** (`var(--font-plus-jakarta)`)
+  - _Characteristics_: Professional, clean, and highly legible across all devices.
+- **Monospace**: **JetBrains Mono** (`var(--font-jetbrains-mono)`)
+  - _Characteristics_: Optimized for code legibility. Stylistically fits the "cyber" theme perfectly.
 
 ---
 

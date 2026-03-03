@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/bcryptjs": "^3.0.0",
     "@types/nodemailer": "^7.0.11",
     "bcryptjs": "^3.0.3",
@@ -22,6 +23,7 @@
     "lucide-react": "^0.576.0",
     "mongoose": "^9.2.3",
     "next": "16.1.6",
+    "next-mdx-remote": "^6.0.0",
     "nodemailer": "^8.0.1",
     "react": "19.2.3",
     "react-cropper": "^2.3.3",

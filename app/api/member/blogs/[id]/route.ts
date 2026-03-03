@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/backend/lib/db";
 import Blog from "@/backend/models/Blog";
+import connectDB from "@/backend/lib/db";
 import { jwtVerify } from "jose";
 
 const JWT_SECRET = new TextEncoder().encode(
@@ -72,28 +72,42 @@ export async function PATCH(
         .replace(/^-+|-+$/g, ""); // Remove trailing hyphens
     };
 
+    const sanitizeMdx = (content: string) => {
+      return content
+        .replace(/<p>/g, "")
+        .replace(/<\/p>/g, "\n")
+        .replace(/(<motion\.div|<Image|<Link|#{1,6}\s|>\n)/g, "\n$1")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+    };
+
     // Update fields
     if (title) blog.title = title;
     if (mainImageUrl) blog.mainImageUrl = mainImageUrl;
     if (tagline) blog.tagline = tagline;
     if (description) blog.description = description;
-    if (content) blog.content = content;
+    if (content) blog.content = sanitizeMdx(content);
 
     // Slug update logic
-    if (userSlug) {
-      let finalSlug = createSlug(userSlug);
-      // Only check for duplicates if the slug has actually changed
-      if (finalSlug !== blog.slug) {
-        let existingBlog = await Blog.findOne({ slug: finalSlug });
-        let counter = 1;
-        const originalSlug = finalSlug;
-        while (existingBlog) {
-          finalSlug = `${originalSlug}-${counter}`;
-          existingBlog = await Blog.findOne({ slug: finalSlug });
-          counter++;
-        }
-        blog.slug = finalSlug;
+    let finalSlug = blog.slug;
+    if (userSlug?.trim()) {
+      finalSlug = createSlug(userSlug);
+    } else if (userSlug === "" || !blog.slug) {
+      // Auto-generate if slug is empty or missing
+      finalSlug = createSlug(blog.title);
+    }
+
+    // Only check for duplicates if the slug has actually changed
+    if (finalSlug !== blog.slug) {
+      let existingBlog = await Blog.findOne({ slug: finalSlug });
+      let counter = 1;
+      const originalSlug = finalSlug;
+      while (existingBlog) {
+        finalSlug = `${originalSlug}-${counter}`;
+        existingBlog = await Blog.findOne({ slug: finalSlug });
+        counter++;
       }
+      blog.slug = finalSlug;
     }
 
     // Always use the official name from DB
@@ -102,13 +116,16 @@ export async function PATCH(
     // Ensure authorId is set (for older blogs being edited)
     blog.authorId = payload.id;
 
-    // Reset status to inactive if content changed, or keep it for moderation
-    blog.status = "inactive";
+    // Maintain existing status instead of resetting to inactive
+    // blog.status = blog.status;
 
     await blog.save();
 
     return NextResponse.json({
-      message: "Blog updated successfully. Awaiting re-approval.",
+      message:
+        blog.status === "active"
+          ? "Blog updated successfully. Changes are live!"
+          : "Blog updated successfully. Awaiting approval.",
       blog,
     });
   } catch (error: any) {

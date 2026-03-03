@@ -1,6 +1,7 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
-import connectDB from "@/backend/lib/db";
 import Blog from "@/backend/models/Blog";
+import connectDB from "@/backend/lib/db";
 import Comment from "@/backend/models/Comment";
 
 export async function GET(
@@ -26,10 +27,7 @@ export async function GET(
     );
 
     if (!blog) {
-      return NextResponse.json(
-        { error: "Blog not found or inactive." },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "Blog not found." }, { status: 404 });
     }
 
     // Fetch approved comments for this blog post

@@ -7,7 +7,11 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
-const GlobalHeader = () => {
+const GlobalHeader = ({
+  hideUntilScroll = false,
+}: {
+  hideUntilScroll?: boolean;
+}) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -126,7 +130,13 @@ const GlobalHeader = () => {
             : "py-6 bg-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div
+          className={`max-w-7xl mx-auto px-6 flex items-center justify-between transition-opacity duration-500 ${
+            hideUntilScroll && !isScrolled
+              ? "opacity-0 pointer-events-none"
+              : "opacity-100"
+          }`}
+        >
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}

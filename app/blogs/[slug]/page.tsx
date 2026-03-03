@@ -4,10 +4,11 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import ReactMarkdown from "react-markdown";
+import { MDXRemote } from "next-mdx-remote";
+import { serialize } from "next-mdx-remote/serialize";
 
 type CommentType = {
   _id: string;
@@ -38,6 +39,7 @@ const BlogPostPage = () => {
   const slug = params.slug as string;
 
   const [blog, setBlog] = useState<BlogType | null>(null);
+  const [jsxSource, setJsxSource] = useState<any>(null);
   const [comments, setComments] = useState<CommentType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -55,6 +57,12 @@ const BlogPostPage = () => {
           const data = await res.json();
           setBlog(data.blog);
           setComments(data.comments);
+
+          // If there's content, serialize it for MDXRemote
+          if (data.blog?.content) {
+            const mdxSource = await serialize(data.blog.content);
+            setJsxSource(mdxSource);
+          }
         } else {
           setError("Blog not found.");
         }
@@ -95,6 +103,33 @@ const BlogPostPage = () => {
     }
   };
 
+  // Safe Image wrapper for MDX to prevent missing width/height crashes
+  const SafeImage = (props: any) => {
+    // eslint-disable-next-line @next/next/no-img-element
+    if (!props.src) return null;
+    if (!props.width || !props.height) {
+      return (
+        <div className="relative w-full aspect-video overflow-hidden rounded-2xl border border-foreground/10 my-8 bg-foreground/5">
+          <Image
+            fill
+            className="object-cover"
+            alt={props.alt || "Blog image"}
+            {...props}
+            width={undefined}
+            height={undefined}
+          />
+        </div>
+      );
+    }
+    return (
+      <Image
+        className="rounded-2xl border border-foreground/10 my-8"
+        alt={props.alt || "Blog image"}
+        {...props}
+      />
+    );
+  };
+
   if (loading) {
     return (
       <div className="font-display bg-background text-foreground min-h-screen flex items-center justify-center">
@@ -127,7 +162,7 @@ const BlogPostPage = () => {
       <main className="pt-32 pb-24 px-6 relative">
         <div className="absolute top-0 left-0 w-full h-96 bg-primary/5 blur-[100px] pointer-events-none rounded-full" />
 
-        <article className="max-w-4xl mx-auto relative z-10">
+        <article className="max-w-7xl mx-auto relative z-10 px-4 md:px-6">
           <Link
             href="/blogs"
             className="inline-flex items-center gap-2 text-primary font-bold mb-8 hover:opacity-80 transition-opacity uppercase tracking-widest text-xs"
@@ -142,40 +177,75 @@ const BlogPostPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-              {blog.title}
-            </h1>
-            <p className="text-xl text-foreground/60 mb-8">{blog.tagline}</p>
-
-            <div className="flex items-center gap-4 text-sm font-bold text-foreground/40 uppercase tracking-widest mb-12">
-              <span className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">
-                  person
-                </span>
-                {blog.authorId?.name || blog.writtenBy}
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">
-                  calendar_today
-                </span>
-                {new Date(blog.createdAt).toLocaleDateString()}
-              </span>
+            <div className="max-w-5xl">
+              <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight tracking-tighter">
+                {blog.title}
+              </h1>
+              <p className="text-xl text-foreground/60 mb-10 leading-relaxed font-medium">
+                {blog.tagline}
+              </p>
             </div>
 
-            {blog.mainImageUrl && (
-              <div className="w-full aspect-video rounded-3xl overflow-hidden mb-16 border border-foreground/10 shadow-2xl relative">
-                <Image
-                  src={blog.mainImageUrl}
-                  alt={blog.title}
-                  fill
-                  className="object-cover"
-                />
+            <div className="flex flex-wrap items-center gap-6 mb-12">
+              <div className="flex items-center gap-3">
+                <div className="size-12 bg-primary/20 rounded-full flex items-center justify-center text-primary font-black border border-primary/20 overflow-hidden shadow-sm">
+                  {blog.authorId?.image ? (
+                    <Image
+                      src={blog.authorId.image}
+                      alt={blog.authorId.name}
+                      width={48}
+                      height={48}
+                      className="object-cover"
+                    />
+                  ) : (
+                    (blog.authorId?.name || blog.writtenBy)
+                      .charAt(0)
+                      .toUpperCase()
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground/30">
+                    Written By
+                  </span>
+                  <span className="font-bold text-foreground/80">
+                    {blog.authorId?.name || blog.writtenBy}
+                  </span>
+                </div>
               </div>
-            )}
+
+              <div className="flex items-center gap-3 pl-6 border-l border-foreground/10">
+                <div className="size-12 bg-foreground/5 rounded-full flex items-center justify-center text-foreground/40 border border-foreground/5">
+                  <span className="material-symbols-outlined text-xl">
+                    calendar_today
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground/30">
+                    Published On
+                  </span>
+                  <span className="font-bold text-foreground/80 font-mono">
+                    {new Date(blog.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
 
             <div className="prose prose-invert prose-lg max-w-none prose-headings:text-foreground prose-headings:font-black prose-p:text-foreground/80 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-strong:text-foreground prose-code:text-primary">
-              <ReactMarkdown>{blog.content}</ReactMarkdown>
+              {jsxSource ? (
+                <MDXRemote
+                  {...jsxSource}
+                  components={{
+                    motion,
+                    Link,
+                    Image: SafeImage,
+                    AnimatePresence,
+                  }}
+                />
+              ) : (
+                <p className="text-foreground/40 italic">
+                  Parsing interactive content...
+                </p>
+              )}
             </div>
           </motion.div>
 

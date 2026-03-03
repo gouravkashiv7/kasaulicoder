@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/backend/lib/db";
 import Blog from "@/backend/models/Blog";
+import connectDB from "@/backend/lib/db";
 import { jwtVerify } from "jose";
 
 const JWT_SECRET = new TextEncoder().encode(
@@ -56,6 +56,15 @@ export async function GET(req: Request) {
   }
 }
 
+function sanitizeMdx(content: string) {
+  return content
+    .replace(/<p>/g, "")
+    .replace(/<\/p>/g, "\n")
+    .replace(/(<motion\.div|<Image|<Link|#{1,6}\s|>\n)/g, "\n$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export async function POST(req: Request) {
   try {
     const cookieHeader = req.headers.get("cookie") || "";
@@ -91,12 +100,19 @@ export async function POST(req: Request) {
       slug: userSlug,
     } = body;
 
+    // All fields are mandatory except slug
     if (!title || !mainImageUrl || !tagline || !description || !content) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        {
+          error:
+            "Missing required fields. Title, Image, Tagline, Description, and Content are all mandatory.",
+        },
         { status: 400 },
       );
     }
+
+    // Sanitize MDX content
+    const sanitizedContent = sanitizeMdx(content);
 
     // Fetch the staff member to get their official name
     const Staff = (await import("@/backend/models/Staff")).default;
@@ -105,8 +121,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Staff not found." }, { status: 404 });
     }
 
-    // Use user slug if provided, else create from title
-    let slug = userSlug ? createSlug(userSlug) : createSlug(title);
+    // Auto-generate slug if not provided
+    let slug = userSlug?.trim() ? createSlug(userSlug) : createSlug(title);
 
     // Check if slug already exists to prevent duplicate key errors
     let existingBlog = await Blog.findOne({ slug });
@@ -125,7 +141,7 @@ export async function POST(req: Request) {
       mainImageUrl,
       tagline,
       description,
-      content,
+      content: sanitizedContent,
       authorId: payload.id, // Save the Staff ID
       writtenBy: staff.name, // Save the official name from DB
       status: "inactive", // Always inactive by default for moderation
