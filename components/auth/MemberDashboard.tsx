@@ -324,7 +324,6 @@ const BlogEditorSection = ({
                       })
                     }
                     className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl px-5 py-3.5 focus:border-primary outline-none transition-all text-sm font-bold placeholder:text-foreground/10"
-                    required
                     placeholder="e.g. The Future of Creative Architecture"
                   />
                 </div>

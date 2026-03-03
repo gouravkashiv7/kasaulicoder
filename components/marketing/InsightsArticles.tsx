@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import ShaderBackground from "@/components/ui/shader-background";
+import { BackgroundPaths } from "@/components/ui/background-paths";
 
 type ViewType = "grid" | "list";
 
@@ -52,8 +52,8 @@ const InsightsArticles = () => {
   };
 
   return (
-    <div className="font-display text-foreground min-h-screen selection:bg-primary selection:text-background">
-      <ShaderBackground />
+    <div className="font-display text-foreground min-h-screen selection:bg-primary selection:text-background relative">
+      <BackgroundPaths />
       <GlobalHeader hideUntilScroll={true} />
 
       <main className="pt-32 pb-24">
