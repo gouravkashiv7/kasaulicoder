@@ -85,6 +85,7 @@ export async function POST(req: Request) {
           email: account.email,
           role: account.role,
           userType: account.userType || null,
+          pic: account.pic || account.image || null, // Include profile image
         },
       },
       { status: 200 },

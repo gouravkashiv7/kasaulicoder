@@ -39,6 +39,15 @@ const UserDashboard = ({ userType }: { userType: string }) => {
     tabFromUrl && validTabs.includes(tabFromUrl) ? tabFromUrl : "overview",
   );
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const [user, setUser] = useState<UserData | null>(null);
 
@@ -209,13 +218,58 @@ const UserDashboard = ({ userType }: { userType: string }) => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex font-display">
+    <div className="min-h-screen bg-background text-foreground flex font-display relative">
+      {/* ── Mobile Top Bar ── */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-xl border-b border-foreground/10 z-30 flex items-center justify-between px-4">
+        <Link href="/" className="flex items-center gap-3">
+          <div
+            className={`size-8 rounded-lg flex items-center justify-center border shrink-0 overflow-hidden relative ${isStudent ? "bg-secondary/10 border-secondary/30" : "bg-primary/10 border-primary/30"}`}
+          >
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={32}
+              height={32}
+              className="object-contain"
+            />
+          </div>
+          <span className="text-lg font-black tracking-tighter text-foreground">
+            Kasauli
+            <span className={isStudent ? "text-secondary" : "text-primary"}>
+              Coder
+            </span>
+          </span>
+        </Link>
+        <button
+          onClick={() => setMobileMenuOpen(true)}
+          className="p-2 rounded-xl bg-foreground/5 text-foreground/50 hover:text-foreground transition-all"
+        >
+          <span className="material-symbols-outlined">menu</span>
+        </button>
+      </div>
+
+      {/* ── Mobile Backdrop ── */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* ── Sidebar ── */}
       <motion.aside
         initial={false}
-        animate={{ width: sidebarCollapsed ? 72 : 260 }}
+        animate={{
+          width: sidebarCollapsed ? 72 : 260,
+          x: mobileMenuOpen ? 0 : undefined,
+        }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="fixed left-0 top-0 h-full bg-background border-r border-foreground/10 z-40 flex flex-col overflow-hidden"
+        className={`fixed lg:left-0 top-0 h-full bg-background border-r border-foreground/10 z-50 flex flex-col overflow-hidden transition-transform duration-300 lg:translate-x-0 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Logo */}
         <div className="p-5 border-b border-foreground/10 flex items-center gap-3 min-h-18">
@@ -249,6 +303,13 @@ const UserDashboard = ({ userType }: { userType: string }) => {
               )}
             </AnimatePresence>
           </Link>
+          {/* Close for mobile */}
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="lg:hidden ml-auto p-2 rounded-lg hover:bg-foreground/5 text-foreground/50 hover:text-foreground transition-all"
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
         </div>
 
         {/* Nav */}
@@ -256,7 +317,10 @@ const UserDashboard = ({ userType }: { userType: string }) => {
           {sidebarItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setSidebarView(item.id)}
+              onClick={() => {
+                setSidebarView(item.id);
+                setMobileMenuOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all relative group ${
                 sidebarView === item.id
                   ? isStudent
@@ -365,11 +429,14 @@ const UserDashboard = ({ userType }: { userType: string }) => {
 
       {/* ── Main ── */}
       <motion.main
-        animate={{ marginLeft: sidebarCollapsed ? 72 : 260 }}
+        className="flex-1 min-h-screen pt-16 lg:pt-0"
+        initial={false}
+        animate={{
+          marginLeft: isDesktop ? (sidebarCollapsed ? 72 : 260) : 0,
+        }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="flex-1 min-h-screen"
       >
-        <div className="max-w-7xl mx-auto px-8 py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
           <AnimatePresence mode="wait">
             {/* ══════════════ OVERVIEW ══════════════ */}
             {sidebarView === "overview" && (
@@ -408,7 +475,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-10">
                   {(isStudent
                     ? [
                         {
@@ -577,7 +644,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                   <h3 className="font-black text-foreground mb-4">
                     Quick Actions
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                     {(isStudent
                       ? [
                           {
@@ -977,9 +1044,6 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                             {picError}
                           </p>
                         )}
-                        <p className="text-[11px] text-foreground/30">
-                          JPG, PNG, WebP · Max 200 KB
-                        </p>
                       </div>
                     </div>
                   </div>
@@ -996,7 +1060,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                         Profile Information
                       </h3>
                     </div>
-                    <div className="p-6 space-y-5">
+                    <div className="p-4 sm:p-6 space-y-5">
                       <div>
                         <label className="block text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2">
                           Display Name
@@ -1031,7 +1095,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                           placeholder="your@email.com"
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-4 pt-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                         <div>
                           <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/30 mb-2">
                             Account Type

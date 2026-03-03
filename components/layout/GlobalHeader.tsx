@@ -29,14 +29,54 @@ const GlobalHeader = () => {
   }, []);
 
   useEffect(() => {
+    // 1. Check localStorage first for instant hit
     const stored = localStorage.getItem("user");
     if (stored) {
       try {
-        setUser(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        setUser(parsed);
       } catch (e) {
         console.error("Failed to parse user from localStorage", e);
       }
     }
+
+    // 2. Refresh from API to ensure we have the latest (including pic)
+    const refreshProfile = async () => {
+      try {
+        const res = await fetch("/api/user/profile");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            // Update state and localStorage with latest server-side data
+            const current = stored ? JSON.parse(stored) : {};
+            const updated = {
+              ...current,
+              ...data.user,
+              // Backend uses _id, frontend might have 'id'
+              id: data.user.id || data.user._id || current.id,
+            };
+            setUser(updated);
+            localStorage.setItem("user", JSON.stringify(updated));
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to refresh user profile", err);
+      }
+    };
+    refreshProfile();
+
+    // Sync across tabs/windows
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "user") {
+        if (e.newValue) {
+          setUser(JSON.parse(e.newValue));
+        } else {
+          setUser(null);
+        }
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const handleLogout = () => {
@@ -153,17 +193,25 @@ const GlobalHeader = () => {
                   href={getDashboardLink()}
                   className="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-foreground/5 hover:bg-foreground/10 border border-foreground/10 transition-all group"
                 >
-                  <div className="size-8 rounded-full overflow-hidden border border-primary/20 bg-primary/10 flex items-center justify-center shrink-0">
-                    {user.pic || user.image ? (
+                  <div className="size-8 rounded-full overflow-hidden border border-primary/20 bg-primary/10 flex items-center justify-center shrink-0 shadow-inner group-hover:border-primary/50 transition-colors relative">
+                    {/* Initials (Background) fallback */}
+                    <span className="text-xs font-black text-primary select-none">
+                      {(user.name || user.email || "U").charAt(0).toUpperCase()}
+                    </span>
+                    {/* Image Overlay */}
+                    {(user.pic || user.image) && (
                       <img
                         src={user.pic || user.image}
-                        alt={user.name}
-                        className="size-full object-cover"
+                        alt={user.name || "User"}
+                        className="absolute inset-0 size-full object-cover transition-opacity duration-300 opacity-0"
+                        onLoad={(e) => {
+                          (e.target as HTMLImageElement).style.opacity = "1";
+                        }}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = "none";
+                        }}
                       />
-                    ) : (
-                      <span className="text-xs font-black text-primary">
-                        {user.name?.charAt(0).toUpperCase()}
-                      </span>
                     )}
                   </div>
                   <div className="hidden sm:block">
@@ -335,17 +383,28 @@ const GlobalHeader = () => {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="w-full flex items-center justify-center gap-3 py-4 bg-primary/10 border border-primary/20 text-primary font-black rounded-xl"
                     >
-                      <div className="size-6 rounded-full overflow-hidden border border-primary/30">
-                        {user.pic || user.image ? (
+                      <div className="size-6 rounded-full overflow-hidden border border-primary/30 bg-primary/10 flex items-center justify-center shrink-0 shadow-inner relative">
+                        {/* Initials (Background) fallback */}
+                        <span className="text-[10px] font-black text-primary select-none">
+                          {(user.name || user.email || "U")
+                            .charAt(0)
+                            .toUpperCase()}
+                        </span>
+                        {/* Image Overlay */}
+                        {(user.pic || user.image) && (
                           <img
                             src={user.pic || user.image}
-                            alt={user.name}
-                            className="size-full object-cover"
+                            alt={user.name || "User"}
+                            className="absolute inset-0 size-full object-cover transition-opacity duration-300 opacity-0"
+                            onLoad={(e) => {
+                              (e.target as HTMLImageElement).style.opacity =
+                                "1";
+                            }}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display =
+                                "none";
+                            }}
                           />
-                        ) : (
-                          <div className="size-full flex items-center justify-center bg-primary/20 text-[10px]">
-                            {user.name?.charAt(0).toUpperCase()}
-                          </div>
                         )}
                       </div>
                       Go to Dashboard
