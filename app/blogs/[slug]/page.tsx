@@ -9,7 +9,6 @@ import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import { MDXRemote } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
-
 import { BackgroundPaths } from "@/components/ui/background-paths";
 
 type CommentType = {
@@ -158,10 +157,10 @@ const BlogPostPage = () => {
   }
 
   return (
-    <div className="font-display bg-background text-foreground min-h-screen selection:bg-primary selection:text-primary-content relative">
-      <BackgroundPaths />
+    <div className="font-display bg-background text-foreground min-h-screen selection:bg-primary selection:text-primary-content">
       <GlobalHeader />
 
+      <BackgroundPaths />
       <main className="pt-32 pb-24 px-6 relative">
         <article className="max-w-7xl mx-auto relative z-10 px-4 md:px-6">
           <Link

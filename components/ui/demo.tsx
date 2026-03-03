@@ -1,10 +1,5 @@
-// This is file with demos of your component
-// Each export is one usecase for your component
+import { BackgroundPaths } from "@/components/ui/background-paths";
 
-import ShaderBackground from "@/components/ui/shader-background";
-
-const DemoOne = () => {
-  return <ShaderBackground />;
-};
-
-export { DemoOne };
+export function DemoBackgroundPaths() {
+  return <BackgroundPaths />;
+}
