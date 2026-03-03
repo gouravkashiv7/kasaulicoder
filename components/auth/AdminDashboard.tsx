@@ -747,7 +747,7 @@ const AdminDashboard = () => {
               alt="Logo"
               width={28}
               height={28}
-              className="object-contain"
+              className="object-contain theme-logo"
             />
           </div>
           <span className="text-base font-black tracking-tight text-foreground truncate">

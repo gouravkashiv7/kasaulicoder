@@ -230,7 +230,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
               alt="Logo"
               width={32}
               height={32}
-              className="object-contain"
+              className="object-contain theme-logo"
             />
           </div>
           <span className="text-lg font-black tracking-tighter text-foreground">
@@ -282,7 +282,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                 alt="Logo"
                 width={32}
                 height={32}
-                className="object-contain"
+                className="object-contain theme-logo"
               />
             </div>
             <AnimatePresence>

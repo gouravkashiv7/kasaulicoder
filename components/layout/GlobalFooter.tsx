@@ -87,7 +87,7 @@ const GlobalFooter = () => {
                 width={40}
                 height={40}
                 priority
-                className="object-contain transition-all duration-500 dark:invert-0 invert"
+                className="object-contain theme-logo"
               />
             </div>
             <h2 className="text-xl font-black tracking-tighter text-foreground group-hover:drop-shadow-[0_0_8px_var(--primary)] transition-all">

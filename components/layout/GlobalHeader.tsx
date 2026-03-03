@@ -139,7 +139,7 @@ const GlobalHeader = () => {
                   width={40}
                   height={40}
                   priority
-                  className="object-contain transition-all duration-500 dark:invert-0 invert"
+                  className="object-contain theme-logo"
                 />
               </div>
               <h2 className="text-xl font-black tracking-tighter text-foreground">
@@ -311,7 +311,7 @@ const GlobalHeader = () => {
                     width={24}
                     height={24}
                     priority
-                    className="object-contain dark:invert-0 invert"
+                    className="object-contain theme-logo"
                   />
                 </div>
                 <h2 className="text-lg font-black tracking-tighter text-foreground">
