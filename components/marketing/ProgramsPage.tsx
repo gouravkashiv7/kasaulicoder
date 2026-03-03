@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Rocket } from "lucide-react";
+import UniqueLoading from "@/components/ui/morph-loading";
 
 interface Program {
   _id: string;
@@ -71,13 +72,16 @@ const ProgramsPage = () => {
   if (loading) {
     return (
       <div className="bg-background text-foreground min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-primary font-black text-2xl tracking-tighter"
-        >
-          LOADING PROGRAMS...
-        </motion.div>
+        <div className="flex flex-col items-center gap-6">
+          <UniqueLoading variant="morph" size="lg" />
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-primary font-black text-xl tracking-widest uppercase"
+          >
+            Initializing Programs
+          </motion.div>
+        </div>
       </div>
     );
   }

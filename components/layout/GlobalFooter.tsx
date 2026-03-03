@@ -136,9 +136,9 @@ const GlobalFooter = () => {
               </Link>
               <Link
                 className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors hover:translate-x-1 group inline-block w-fit"
-                href="/insights"
+                href="/blogs"
               >
-                Blog{" "}
+                Blogs{" "}
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity">
                   →
                 </span>

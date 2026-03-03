@@ -1,0 +1,21 @@
+{
+  "name": "Kasauli Coder",
+  "short_name": "KasauliCoder",
+  "description": "Building the Future of Tech from the Hills",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#38bdf8",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

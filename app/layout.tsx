@@ -18,12 +18,75 @@ const inter = Inter({
   display: "swap",
 });
 
+const baseUrl = "https://kasaulicoder.com";
+
 export const metadata: Metadata = {
-  title: "Kasauli Coder",
-  description: "Accelerating your development journey",
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: "Kasauli Coder | Building the Future of Tech from the Hills",
+    template: "%s | Kasauli Coder",
+  },
+  description:
+    "Kasauli Coder is a premier community for developers, offering world-class programs, hands-on projects, and tech blogs to accelerate your development journey.",
+  keywords: [
+    "Kasauli Coder",
+    "Programming",
+    "Web Development",
+    "Tech Community",
+    "Software Engineering",
+    "Learning Path",
+    "Tech Programs",
+  ],
+  authors: [{ name: "Kasauli Coder Team" }],
+  creator: "Kasauli Coder",
+  publisher: "Kasauli Coder",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: baseUrl,
+    siteName: "Kasauli Coder",
+    title: "Kasauli Coder | Accelerating Your Tech Journey",
+    description:
+      "Join the community of passionate developers building future-ready tech from Kasauli. Explore programs, projects, and career blogs.",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Kasauli Coder Branding",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kasauli Coder | Accelerating Your Tech Journey",
+    description:
+      "Join the community of passionate developers building future-ready tech from Kasauli. Explore programs, projects, and career insights.",
+    creator: "@kasaulicoder",
+    images: ["/logo.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/logo.png",
   },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

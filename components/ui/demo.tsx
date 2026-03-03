@@ -1,16 +1,9 @@
-import React from "react";
-import NeuralBackground from "@/components/ui/flow-field-background";
-import { ArrowRight, Sparkles } from "lucide-react";
+import UniqueLoading from "@/components/ui/morph-loading";
 
-export default function NeuralHeroDemo() {
+export default function DemoOne() {
   return (
-    // Container must have a defined height, or use h-screen
-    <div className="relative w-full h-screen">
-      <NeuralBackground
-        color="#818cf8" // Indigo-400
-        trailOpacity={0.1} // Lower = longer trails
-        speed={0.8}
-      />
+    <div className="flex items-center justify-center p-12 bg-card rounded-2xl border border-glass-border">
+      <UniqueLoading variant="morph" size="lg" />
     </div>
   );
 }

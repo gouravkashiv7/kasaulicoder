@@ -43,11 +43,11 @@ const UserSettings = () => {
               <span className="font-medium">Projects</span>
             </Link>
             <Link
-              href="/insights"
+              href="/blogs"
               className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-white rounded-lg transition-colors"
             >
               <span className="material-symbols-outlined">analytics</span>
-              <span className="font-medium">Analytics</span>
+              <span className="font-medium">Blogs</span>
             </Link>
             <Link
               href="#"

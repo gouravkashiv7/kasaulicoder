@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
-type SidebarView = "dashboard" | "settings";
+type SidebarView = "dashboard" | "blogs" | "submitted_blogs" | "settings";
 
 const MemberDashboard = () => {
   const [sidebarView, setSidebarView] = useState<SidebarView>("dashboard");
@@ -17,6 +17,8 @@ const MemberDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   // Profile Form State
   const [profileData, setProfileData] = useState({
@@ -30,6 +32,27 @@ const MemberDashboard = () => {
   } | null>(null);
   const [updating, setUpdating] = useState(false);
 
+  // Blog Form State
+  const [blogData, setBlogData] = useState({
+    title: "",
+    mainImageUrl: "",
+    tagline: "",
+    description: "",
+    content: "",
+    writtenBy: "",
+    slug: "",
+  });
+  const [blogStatus, setBlogStatus] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+  const [submittingBlog, setSubmittingBlog] = useState(false);
+
+  // Submitted Blogs State
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [fetchingBlogs, setFetchingBlogs] = useState(false);
+  const [editingBlog, setEditingBlog] = useState<any>(null);
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -40,6 +63,24 @@ const MemberDashboard = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Sync state with URL
+  useEffect(() => {
+    const view = searchParams.get("view") as SidebarView;
+    if (
+      view &&
+      ["dashboard", "blogs", "submitted_blogs", "settings"].includes(view)
+    ) {
+      setSidebarView(view);
+    }
+  }, [searchParams]);
+
+  const updateView = (view: SidebarView) => {
+    setSidebarView(view);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("view", view);
+    router.push(`${pathname}?${params.toString()}`);
+  };
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -66,9 +107,13 @@ const MemberDashboard = () => {
     fetchProfile();
   }, [fetchProfile]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      console.warn("Logout request failed:", e);
+    }
     localStorage.removeItem("user");
-    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
     router.push("/login?type=admin");
   };
 
@@ -117,8 +162,115 @@ const MemberDashboard = () => {
     }
   };
 
+  const fetchBlogs = useCallback(async () => {
+    setFetchingBlogs(true);
+    try {
+      const res = await fetch("/api/member/blogs");
+      if (res.ok) {
+        const data = await res.json();
+        setBlogs(data.blogs);
+      }
+    } catch (err) {
+      console.error("Failed to fetch blogs:", err);
+    } finally {
+      setFetchingBlogs(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (sidebarView === "submitted_blogs") {
+      fetchBlogs();
+    }
+  }, [sidebarView, fetchBlogs]);
+
+  const handleEditBlog = (blog: any) => {
+    setEditingBlog(blog);
+    setBlogData({
+      title: blog.title,
+      mainImageUrl: blog.mainImageUrl,
+      tagline: blog.tagline,
+      description: blog.description,
+      content: blog.content,
+      writtenBy: blog.writtenBy,
+      slug: blog.slug,
+    });
+    setSidebarView("blogs");
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("view", "blogs");
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  const handleCreateBlog = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmittingBlog(true);
+    setBlogStatus(null);
+
+    try {
+      const payload = {
+        ...blogData,
+        writtenBy: blogData.writtenBy || user?.name || "Anonymous",
+      };
+
+      const url = editingBlog
+        ? `/api/member/blogs/${editingBlog._id}`
+        : "/api/member/blogs";
+      const method = editingBlog ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setBlogStatus({
+          type: "success",
+          message: editingBlog
+            ? "Blog updated successfully!"
+            : "Blog drafted! Waiting for admin approval.",
+        });
+
+        if (!editingBlog) {
+          setBlogData({
+            title: "",
+            mainImageUrl: "",
+            tagline: "",
+            description: "",
+            content: "",
+            writtenBy: user?.name || "",
+            slug: "",
+          });
+        }
+
+        // Wait a bit to show success message then switch view
+        setTimeout(() => {
+          updateView("submitted_blogs");
+          setEditingBlog(null);
+          setBlogStatus(null);
+        }, 2000);
+      } else {
+        setBlogStatus({
+          type: "error",
+          message: data.error || "Failed to process blog",
+        });
+      }
+    } catch (err) {
+      setBlogStatus({ type: "error", message: "An error occurred" });
+    } finally {
+      setSubmittingBlog(false);
+    }
+  };
+
   const sidebarItems = [
     { id: "dashboard" as SidebarView, label: "Dashboard", icon: "dashboard" },
+    { id: "blogs" as SidebarView, label: "Write Blog", icon: "edit_document" },
+    {
+      id: "submitted_blogs" as SidebarView,
+      label: "My Blogs",
+      icon: "library_books",
+    },
     { id: "settings" as SidebarView, label: "Settings", icon: "settings" },
   ];
 
@@ -181,7 +333,7 @@ const MemberDashboard = () => {
             <button
               key={item.id}
               onClick={() => {
-                setSidebarView(item.id);
+                updateView(item.id);
                 setMobileMenuOpen(false);
               }}
               className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all relative group ${
@@ -341,6 +493,319 @@ const MemberDashboard = () => {
                       {new Date(user?.createdAt).toLocaleDateString()}
                     </p>
                   </div>
+                </div>
+              </motion.div>
+            )}
+
+            {sidebarView === "blogs" && (
+              <motion.div
+                key="blogs"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+              >
+                <div className="mb-8 flex justify-between items-center">
+                  <div>
+                    <h1 className="text-3xl font-black mb-2">
+                      {editingBlog ? "Edit Blog" : "Write a New Blog"}
+                    </h1>
+                    <p className="text-foreground/50">
+                      {editingBlog
+                        ? "Update your existing blog post."
+                        : "Draft a new post for KasauliCoder. Superadmins will review before it goes live."}
+                    </p>
+                  </div>
+                  {editingBlog && (
+                    <button
+                      onClick={() => {
+                        setEditingBlog(null);
+                        setBlogData({
+                          title: "",
+                          mainImageUrl: "",
+                          tagline: "",
+                          description: "",
+                          content: "",
+                          writtenBy: user?.name || "",
+                          slug: "",
+                        });
+                        setBlogStatus(null);
+                      }}
+                      className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-sm">
+                        add
+                      </span>
+                      Create New Instead
+                    </button>
+                  )}
+                </div>
+
+                <div className="bg-background/40 border border-foreground/10 rounded-2xl overflow-hidden">
+                  <div className="p-6 md:p-8 border-b border-foreground/5">
+                    <h2 className="text-xl font-black flex items-center gap-2">
+                      <span className="material-symbols-outlined text-primary">
+                        edit_square
+                      </span>
+                      Blog Details
+                    </h2>
+                  </div>
+
+                  <form
+                    className="p-6 md:p-8 space-y-6"
+                    onSubmit={handleCreateBlog}
+                  >
+                    {blogStatus && (
+                      <div
+                        className={`p-4 rounded-xl text-sm font-bold border ${
+                          blogStatus.type === "success"
+                            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                            : "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                        }`}
+                      >
+                        {blogStatus.message}
+                      </div>
+                    )}
+
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">
+                          Blog Title
+                        </label>
+                        <input
+                          type="text"
+                          value={blogData.title}
+                          onChange={(e) =>
+                            setBlogData({ ...blogData, title: e.target.value })
+                          }
+                          className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">
+                          Custom Slug (URL Path)
+                        </label>
+                        <input
+                          type="text"
+                          value={blogData.slug}
+                          onChange={(e) =>
+                            setBlogData({ ...blogData, slug: e.target.value })
+                          }
+                          placeholder="leave-blank-for-auto-generate"
+                          className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">
+                        Main Image URL
+                      </label>
+                      <input
+                        type="url"
+                        value={blogData.mainImageUrl}
+                        onChange={(e) =>
+                          setBlogData({
+                            ...blogData,
+                            mainImageUrl: e.target.value,
+                          })
+                        }
+                        className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">
+                        Tagline (Short Summary)
+                      </label>
+                      <input
+                        type="text"
+                        value={blogData.tagline}
+                        onChange={(e) =>
+                          setBlogData({ ...blogData, tagline: e.target.value })
+                        }
+                        className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">
+                        Meta Description (SEO)
+                      </label>
+                      <textarea
+                        value={blogData.description}
+                        onChange={(e) =>
+                          setBlogData({
+                            ...blogData,
+                            description: e.target.value,
+                          })
+                        }
+                        className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold min-h-20"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">
+                        Written By (Display Name)
+                      </label>
+                      <input
+                        type="text"
+                        value={blogData.writtenBy || user?.name || ""}
+                        onChange={(e) =>
+                          setBlogData({
+                            ...blogData,
+                            writtenBy: e.target.value,
+                          })
+                        }
+                        className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold opacity-80"
+                        placeholder="Author Name"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">
+                        Blog Content (Markdown / HTML Supported)
+                      </label>
+                      <textarea
+                        value={blogData.content}
+                        onChange={(e) =>
+                          setBlogData({ ...blogData, content: e.target.value })
+                        }
+                        className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold min-h-62.5 font-mono"
+                        required
+                      />
+                    </div>
+
+                    <div className="pt-4">
+                      <button
+                        type="submit"
+                        disabled={submittingBlog}
+                        className="bg-primary text-primary-content font-black px-8 py-3 rounded-xl hover:scale-105 transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center gap-2"
+                      >
+                        {submittingBlog
+                          ? "Submitting..."
+                          : editingBlog
+                            ? "Update Blog"
+                            : "Submit for Approval"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </motion.div>
+            )}
+
+            {sidebarView === "submitted_blogs" && (
+              <motion.div
+                key="submitted_blogs"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+              >
+                <div className="mb-8">
+                  <h1 className="text-3xl font-black mb-2">My Blogs</h1>
+                  <p className="text-foreground/50">
+                    Manage your submitted blog posts and track their status.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  {fetchingBlogs ? (
+                    <div className="flex flex-col items-center justify-center py-20 bg-foreground/3 rounded-2xl border border-dashed border-foreground/10">
+                      <div className="size-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
+                      <p className="text-sm font-bold text-foreground/40">
+                        Loading your blogs...
+                      </p>
+                    </div>
+                  ) : blogs.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20 bg-foreground/3 rounded-2xl border border-dashed border-foreground/10">
+                      <span className="material-symbols-outlined text-5xl text-foreground/10 mb-4">
+                        article
+                      </span>
+                      <p className="text-sm font-bold text-foreground/40 mb-6">
+                        You hasn't published any blogs yet.
+                      </p>
+                      <button
+                        onClick={() => setSidebarView("blogs")}
+                        className="text-xs font-black bg-primary/10 text-primary px-6 py-3 rounded-xl hover:bg-primary hover:text-white transition-all"
+                      >
+                        Write Your First Blog
+                      </button>
+                    </div>
+                  ) : (
+                    blogs.map((blog) => (
+                      <div
+                        key={blog._id}
+                        className="bg-background/40 border border-foreground/10 rounded-2xl p-5 flex flex-col md:flex-row gap-5 hover:border-primary/30 transition-all group"
+                      >
+                        <div className="w-full md:w-40 h-24 rounded-xl overflow-hidden shrink-0 border border-foreground/5 bg-foreground/3 relative">
+                          <Image
+                            src={blog.mainImageUrl}
+                            alt={blog.title}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span
+                              className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${
+                                blog.status === "active"
+                                  ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                                  : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                              }`}
+                            >
+                              {blog.status}
+                            </span>
+                            <span className="text-[10px] font-medium text-foreground/30">
+                              {new Date(blog.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <h3 className="text-lg font-black truncate mb-1">
+                            {blog.title}
+                          </h3>
+                          <p className="text-sm text-foreground/50 line-clamp-1 font-medium italic">
+                            {blog.tagline}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+                          <button
+                            onClick={() => handleEditBlog(blog)}
+                            className="size-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
+                            title="Edit Blog"
+                          >
+                            <span className="material-symbols-outlined text-lg font-bold">
+                              edit
+                            </span>
+                          </button>
+                          {blog.status === "active" ? (
+                            <Link
+                              href={`/blogs/${blog.slug}`}
+                              target="_blank"
+                              className="size-10 flex items-center justify-center rounded-xl bg-foreground/5 text-foreground/50 hover:bg-foreground/10 hover:text-foreground transition-all"
+                              title="View Blog"
+                            >
+                              <span className="material-symbols-outlined text-lg">
+                                visibility
+                              </span>
+                            </Link>
+                          ) : (
+                            <button
+                              disabled
+                              className="size-10 flex items-center justify-center rounded-xl bg-foreground/5 text-foreground/20 cursor-not-allowed"
+                              title="Wait for Approval to View"
+                            >
+                              <span className="material-symbols-outlined text-lg">
+                                visibility_off
+                              </span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </motion.div>
             )}

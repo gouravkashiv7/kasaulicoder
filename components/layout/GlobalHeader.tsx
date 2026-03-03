@@ -17,7 +17,7 @@ const GlobalHeader = () => {
     { title: "Home", href: "/" },
     { title: "Programs", href: "/programs" },
     { title: "Projects", href: "/projects" },
-    { title: "Blog", href: "/insights" },
+    { title: "Blogs", href: "/blogs" },
   ];
 
   useEffect(() => {
@@ -79,9 +79,13 @@ const GlobalHeader = () => {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      console.warn("Logout request failed:", e);
+    }
     localStorage.removeItem("user");
-    document.cookie = "token=; path=/; max-age=0";
     window.location.href = "/login";
   };
 

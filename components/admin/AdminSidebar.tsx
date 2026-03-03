@@ -63,6 +63,11 @@ const Sidebar = ({
       label: "Programs",
       icon: "terminal",
     },
+    {
+      id: "blogs" as SidebarView,
+      label: "Blogs",
+      icon: "article",
+    },
   ];
 
   return (

@@ -4,7 +4,8 @@ export type SidebarView =
   | "requests"
   | "pricing"
   | "cohort"
-  | "programs";
+  | "programs"
+  | "blogs";
 
 export interface Program {
   _id: string;
@@ -51,4 +52,18 @@ export interface CohortInterest {
   email: string;
   emailSent: boolean;
   createdAt: string;
+}
+
+export interface Blog {
+  _id: string;
+  title: string;
+  slug: string;
+  mainImageUrl: string;
+  tagline: string;
+  description: string;
+  content: string;
+  writtenBy: string;
+  status: "active" | "inactive";
+  createdAt: string;
+  updatedAt: string;
 }

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import ASMRStaticBackground from "@/components/ui/asmr-background";
+import ShipTodayShowcase from "@/components/marketing/ShipTodayShowcase";
 
 interface Plan {
   _id: string;
@@ -365,6 +366,8 @@ const WhoWeArePricing = () => {
                 </div>
               )}
             </section>
+
+            <ShipTodayShowcase />
           </main>
 
           <GlobalFooter />

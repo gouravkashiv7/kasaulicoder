@@ -23,6 +23,7 @@ import Requests from "@/components/admin/Requests";
 import Pricing from "@/components/admin/Pricing";
 import Cohort from "@/components/admin/Cohort";
 import Programs from "@/components/admin/Programs";
+import AdminBlogManagement from "@/components/admin/AdminBlogManagement";
 
 // Modals
 import StaffModal from "@/components/admin/modals/StaffModal";
@@ -42,6 +43,7 @@ const AdminDashboard = () => {
     "pricing",
     "cohort",
     "programs",
+    "blogs",
   ];
   const tabFromUrl = searchParams.get("tab") as SidebarView | null;
 
@@ -315,9 +317,13 @@ const AdminDashboard = () => {
   }, [sidebarView, activeTab, fetchData]);
 
   // Handlers
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      console.warn("Logout request failed:", e);
+    }
     localStorage.removeItem("user");
-    document.cookie = "token=; path=/; max-age=0";
     window.location.href = "/login";
   };
 
@@ -850,6 +856,7 @@ const AdminDashboard = () => {
                 handleDeleteProgram={handleDeleteProgram}
               />
             )}
+            {sidebarView === "blogs" && <AdminBlogManagement />}
           </AnimatePresence>
         </div>
       </motion.main>
