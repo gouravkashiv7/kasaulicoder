@@ -50,10 +50,13 @@ const ProgramsPage = () => {
   React.useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        const res = await fetch("/api/public/programs");
-        const data = await res.json();
+        // Ensure loading screen shows for at least 1 second
+        const [res] = await Promise.all([
+          fetch("/api/public/programs"),
+          new Promise((resolve) => setTimeout(resolve, 1000)),
+        ]);
+        const data = await (res as Response).json();
         if (data.success) {
-          // Sort by sortOrder
           const sorted = data.data.sort(
             (a: Program, b: Program) => a.sortOrder - b.sortOrder,
           );
@@ -71,15 +74,24 @@ const ProgramsPage = () => {
 
   if (loading) {
     return (
-      <div className="bg-background text-foreground min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-6">
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+        {/* Ambient background glows */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="flex flex-col items-center gap-8 relative z-10">
           <UniqueLoading variant="morph" size="lg" />
           <motion.div
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="text-primary font-black text-xl tracking-widest uppercase"
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="text-center"
           >
-            Initializing Programs
+            <p className="text-primary font-black text-lg tracking-[0.3em] uppercase">
+              Initializing Programs
+            </p>
+            <p className="text-foreground/30 text-xs font-bold mt-2 tracking-widest uppercase">
+              Loading curriculum modules...
+            </p>
           </motion.div>
         </div>
       </div>

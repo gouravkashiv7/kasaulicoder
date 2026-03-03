@@ -19,13 +19,13 @@ export default function ThemeSwitcher() {
   };
 
   return (
-    <div className="flex items-center gap-0.5 bg-foreground/5 border border-foreground/10 rounded-full p-1 backdrop-blur-md">
+    <div className="flex items-center gap-0.5 bg-foreground/10 border border-foreground/15 rounded-full p-1 backdrop-blur-md shadow-sm">
       <button
         onClick={() => changeTheme("theme-light")}
         className={`p-1.5 rounded-full transition-all ${
           theme === "theme-light"
-            ? "bg-foreground/10 text-foreground scale-105 shadow-sm border border-foreground/5"
-            : "text-foreground/40 hover:text-foreground hover:bg-foreground/5"
+            ? "bg-primary/20 text-primary scale-105 shadow-sm border border-primary/30"
+            : "text-foreground/60 hover:text-foreground hover:bg-foreground/10 hover:scale-110 active:scale-95"
         }`}
         title="Light Mode"
       >
@@ -36,8 +36,8 @@ export default function ThemeSwitcher() {
         onClick={() => changeTheme("theme-brand")}
         className={`p-1.5 rounded-full transition-all ${
           theme === "theme-brand"
-            ? "bg-foreground/10 text-foreground scale-105 shadow-sm border border-foreground/5"
-            : "text-foreground/40 hover:text-foreground hover:bg-foreground/5"
+            ? "bg-primary/20 text-primary scale-105 shadow-sm border border-primary/30"
+            : "text-foreground/60 hover:text-foreground hover:bg-foreground/10 hover:scale-110 active:scale-95"
         }`}
         title="Brand Theme"
       >
@@ -48,8 +48,8 @@ export default function ThemeSwitcher() {
         onClick={() => changeTheme("theme-dark-violet")}
         className={`p-1.5 rounded-full transition-all ${
           theme === "theme-dark-violet"
-            ? "bg-foreground/10 text-foreground scale-105 shadow-sm border border-foreground/5"
-            : "text-foreground/40 hover:text-foreground hover:bg-foreground/5"
+            ? "bg-primary/20 text-primary scale-105 shadow-sm border border-primary/30"
+            : "text-foreground/60 hover:text-foreground hover:bg-foreground/10 hover:scale-110 active:scale-95"
         }`}
         title="Violet Dark Mode"
       >

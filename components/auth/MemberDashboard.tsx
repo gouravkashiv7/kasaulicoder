@@ -29,6 +29,7 @@ const SafeImage = (props: any) => {
       <div className="relative w-full aspect-video overflow-hidden rounded-2xl border border-foreground/10 my-8 bg-foreground/5">
         <Image
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
           className="object-cover"
           alt={props.alt || "Blog image"}
           {...props}
@@ -837,6 +838,9 @@ Output ONLY the MDX content.`;
                           Link,
                           Image: SafeImage,
                           AnimatePresence,
+                          p: (props: any) => (
+                            <div className="leading-relaxed mb-4" {...props} />
+                          ),
                         }}
                       />
                     ) : (

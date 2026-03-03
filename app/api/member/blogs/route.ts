@@ -57,6 +57,15 @@ export async function GET(req: Request) {
   }
 }
 
+// Strip <p> tags from content to prevent nested <p> hydration errors in MDX
+function stripParagraphTags(text: string) {
+  return text
+    .replace(/<p[^>]*>/gi, "")
+    .replace(/<\/p>/gi, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export async function POST(req: Request) {
   try {
     const cookieHeader = req.headers.get("cookie") || "";
@@ -132,7 +141,7 @@ export async function POST(req: Request) {
       mainImageUrl,
       tagline,
       description,
-      content,
+      content: stripParagraphTags(content),
       authorId: payload.id, // Save the Staff ID
       writtenBy: staff.name, // Save the official name from DB
       status: "inactive", // Always inactive by default for moderation

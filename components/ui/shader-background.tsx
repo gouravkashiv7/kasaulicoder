@@ -104,7 +104,7 @@ const ShaderBackground = () => {
       }
 
       fragColor = mix(bgColor1, bgColor2, uv.x);
-      fragColor *= verticalFade;
+      fragColor = mix(bgColor1, fragColor, verticalFade);
       fragColor.a = 1.0;
       fragColor += lines;
 

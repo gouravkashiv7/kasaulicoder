@@ -73,6 +73,15 @@ export async function PATCH(
         .replace(/^-+|-+$/g, ""); // Remove trailing hyphens
     };
 
+    // Strip <p> tags from content to prevent nested <p> hydration errors in MDX
+    const stripParagraphTags = (text: string) => {
+      return text
+        .replace(/<p[^>]*>/gi, "")
+        .replace(/<\/p>/gi, "\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+    };
+
     // Update fields
     if (title !== undefined) {
       blog.title = title;
@@ -91,8 +100,9 @@ export async function PATCH(
       blog.markModified("description");
     }
     if (content !== undefined) {
-      console.log("Setting content. Length:", content.length);
-      blog.content = content;
+      const cleaned = stripParagraphTags(content);
+      console.log("Setting content. Length:", cleaned.length);
+      blog.content = cleaned;
       blog.markModified("content");
     }
 

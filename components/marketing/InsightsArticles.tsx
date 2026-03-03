@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import ShaderBackground from "@/components/ui/shader-background";
+import PageLoading from "@/components/ui/page-loading";
 
 type ViewType = "grid" | "list";
 
@@ -19,9 +20,12 @@ const InsightsArticles = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await fetch("/api/public/blogs");
-        if (res.ok) {
-          const data = await res.json();
+        const [res] = await Promise.all([
+          fetch("/api/public/blogs"),
+          new Promise((resolve) => setTimeout(resolve, 1000)),
+        ]);
+        if ((res as Response).ok) {
+          const data = await (res as Response).json();
           setArticles(data.blogs);
         }
       } catch (err) {
@@ -48,13 +52,22 @@ const InsightsArticles = () => {
   const calculateReadingTime = (text: string) => {
     const wordsPerMinute = 200;
     const words = text ? text.split(/\s+/).length : 0;
-    return Math.ceil(words / wordsPerMinute) + 2; // Adding 2 as base for images/formatting
+    return Math.ceil(words / wordsPerMinute) + 2;
   };
+
+  if (loading) {
+    return (
+      <PageLoading
+        title="Loading Blogs"
+        subtitle="Fetching latest insights..."
+      />
+    );
+  }
 
   return (
     <div className="font-display text-foreground min-h-screen selection:bg-primary selection:text-background">
       <ShaderBackground />
-      <GlobalHeader hideUntilScroll={true} />
+      <GlobalHeader />
 
       <main className="pt-32 pb-24">
         {/* Hero Section */}
@@ -127,16 +140,7 @@ const InsightsArticles = () => {
         </section>
 
         <div className="max-w-7xl mx-auto px-6">
-          {loading ? (
-            <div className="space-y-12">
-              <SkeletonHero />
-              <div className="grid md:grid-cols-3 gap-8">
-                {[1, 2, 3].map((i) => (
-                  <SkeletonCard key={i} />
-                ))}
-              </div>
-            </div>
-          ) : filteredArticles.length > 0 ? (
+          {filteredArticles.length > 0 ? (
             <>
               {/* Featured Hero (Visible when not searching and in grid mode) */}
               {viewType === "grid" && featuredArticle && searchQuery === "" && (
@@ -351,21 +355,10 @@ const InsightsArticles = () => {
                 Get monthly deep dives on AI workflows and production-level
                 engineering strategies delivered to your inbox.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-                <div className="flex-1 relative group">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full bg-background/50 border border-glass-border rounded-xl px-6 py-4 focus:ring-2 focus:ring-primary outline-none text-foreground placeholder:text-foreground/30 transition-all"
-                  />
-                </div>
-                <button className="bg-primary text-primary-content font-black px-10 py-4 rounded-xl hover:shadow-[0_0_30px_var(--primary)] transition-all uppercase tracking-widest text-sm">
-                  Join Newsletter
-                </button>
+              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary/10 border border-primary/20 text-primary font-black uppercase tracking-[0.2em] text-xs animate-pulse">
+                <span className="size-2 rounded-full bg-primary shadow-[0_0_10px_var(--primary)]" />
+                Coming Soon
               </div>
-              <p className="mt-6 text-[10px] text-foreground/30 uppercase font-bold tracking-[0.2em]">
-                No spam. Only high-signal engineering content.
-              </p>
             </div>
           </motion.div>
         </div>
