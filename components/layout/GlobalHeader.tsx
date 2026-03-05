@@ -7,6 +7,65 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
+// Logo: shows logo.png immediately, cross-fades to animated logo.gif once loaded.
+// In theme-light, applies CSS invert (white→black); all other themes: no filter.
+const LogoGif = ({ size }: { size: number }) => {
+  const [loaded, setLoaded] = useState(false);
+  const [isLight, setIsLight] = useState(false);
+
+  useEffect(() => {
+    const check = () =>
+      setIsLight(document.documentElement.classList.contains("theme-light"));
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const filterStyle = isLight ? "invert(1)" : "none";
+
+  return (
+    // Relative container: png sits beneath, gif fades in on top
+    <span className="relative block" style={{ width: size, height: size }}>
+      {/* Fallback: logo.png shown instantly */}
+      <img
+        src="/logo.png"
+        alt=""
+        aria-hidden
+        width={size}
+        height={size}
+        className="absolute inset-0 object-contain"
+        style={{
+          width: size,
+          height: size,
+          filter: filterStyle,
+          opacity: loaded ? 0 : 1,
+          transition: "opacity 0.4s ease",
+        }}
+      />
+      {/* GIF: loads eagerly, fades in once ready */}
+      <img
+        src="/logo.gif"
+        alt="KasauliCoder Logo"
+        width={size}
+        height={size}
+        onLoad={() => setLoaded(true)}
+        className="absolute inset-0 object-contain"
+        style={{
+          width: size,
+          height: size,
+          filter: filterStyle,
+          opacity: loaded ? 1 : 0,
+          transition: "opacity 0.4s ease",
+        }}
+      />
+    </span>
+  );
+};
+
 const GlobalHeader = ({
   hideUntilScroll = false,
 }: {
@@ -147,14 +206,7 @@ const GlobalHeader = ({
               className="flex items-center gap-3 group cursor-pointer"
             >
               <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 group-hover:border-primary transition-colors overflow-hidden relative">
-                <Image
-                  src="/logo.png"
-                  alt="KasauliCoder Logo"
-                  width={40}
-                  height={40}
-                  priority
-                  className="object-contain theme-logo"
-                />
+                <LogoGif size={40} />
               </div>
               <h2 className="text-xl font-black tracking-tighter text-foreground">
                 Kasauli<span className="text-primary">Coder</span>
@@ -319,14 +371,7 @@ const GlobalHeader = ({
             <div className="flex items-center justify-between p-6 w-full relative z-10 border-b border-foreground/5">
               <div className="flex items-center gap-3">
                 <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 relative">
-                  <Image
-                    src="/logo.png"
-                    alt="Logo"
-                    width={24}
-                    height={24}
-                    priority
-                    className="object-contain theme-logo"
-                  />
+                  <LogoGif size={24} />
                 </div>
                 <h2 className="text-lg font-black tracking-tighter text-foreground">
                   Kasauli<span className="text-primary">Coder</span>

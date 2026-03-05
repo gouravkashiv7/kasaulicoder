@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 const COUNTRIES = [
@@ -50,6 +49,62 @@ const COUNTRIES = [
 
 const LANGUAGES = [{ code: "en", name: "English", icon: "🌐" }];
 
+const LogoGif = ({ size }: { size: number }) => {
+  const [loaded, setLoaded] = useState(false);
+  const [isLight, setIsLight] = useState(false);
+
+  useEffect(() => {
+    const check = () =>
+      setIsLight(document.documentElement.classList.contains("theme-light"));
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const filterStyle = isLight ? "invert(1)" : "none";
+
+  return (
+    <span className="relative block" style={{ width: size, height: size }}>
+      {/* Fallback: logo.png shown instantly */}
+      <img
+        src="/logo.png"
+        alt=""
+        aria-hidden
+        width={size}
+        height={size}
+        className="absolute inset-0 object-contain"
+        style={{
+          width: size,
+          height: size,
+          filter: filterStyle,
+          opacity: loaded ? 0 : 1,
+          transition: "opacity 0.4s ease",
+        }}
+      />
+      {/* GIF: fades in once loaded */}
+      <img
+        src="/logo.gif"
+        alt="KasauliCoder Logo"
+        width={size}
+        height={size}
+        onLoad={() => setLoaded(true)}
+        className="absolute inset-0 object-contain"
+        style={{
+          width: size,
+          height: size,
+          filter: filterStyle,
+          opacity: loaded ? 1 : 0,
+          transition: "opacity 0.4s ease",
+        }}
+      />
+    </span>
+  );
+};
+
 const GlobalFooter = () => {
   const [selectedCountry, setSelectedCountry] = useState("IN");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
@@ -81,14 +136,7 @@ const GlobalFooter = () => {
         <div className="flex flex-col gap-6 max-w-sm">
           <Link href="/" className="flex items-center gap-3 w-fit group">
             <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 group-hover:border-primary transition-colors overflow-hidden relative">
-              <Image
-                src="/logo.png"
-                alt="KasauliCoder Logo"
-                width={40}
-                height={40}
-                priority
-                className="object-contain theme-logo"
-              />
+              <LogoGif size={40} />
             </div>
             <h2 className="text-xl font-black tracking-tighter text-foreground group-hover:drop-shadow-[0_0_8px_var(--primary)] transition-all">
               Kasauli<span className="text-primary">Coder</span>
