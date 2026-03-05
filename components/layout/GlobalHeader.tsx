@@ -74,6 +74,7 @@ const GlobalHeader = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const pathname = usePathname();
 
   const navLinks = [
@@ -107,6 +108,29 @@ const GlobalHeader = ({
     const refreshProfile = async () => {
       try {
         const res = await fetch("/api/user/profile");
+
+        // Session expired — clear everything and notify the user
+        // Guard with sessionStorage so the banner only appears once even if
+        // GlobalHeader remounts across page navigations during the countdown
+        if (res.status === 401) {
+          if (!sessionStorage.getItem("session_expired_redirecting")) {
+            sessionStorage.setItem("session_expired_redirecting", "1");
+            localStorage.removeItem("user");
+            setUser(null);
+            setSessionExpired(true);
+            // Redirect to login after 3 seconds so the user can read the message
+            setTimeout(() => {
+              sessionStorage.removeItem("session_expired_redirecting");
+              window.location.href = "/login";
+            }, 3000);
+          } else {
+            // Already redirecting — just clear local state silently
+            localStorage.removeItem("user");
+            setUser(null);
+          }
+          return;
+        }
+
         if (res.ok) {
           const data = await res.json();
           if (data.user) {
@@ -126,7 +150,11 @@ const GlobalHeader = ({
         console.warn("Failed to refresh user profile", err);
       }
     };
-    refreshProfile();
+    // Only call the API if there's a stored user — otherwise we're on a
+    // public page (like /login) and a 401 would falsely trigger the banner.
+    if (stored) {
+      refreshProfile();
+    }
 
     // Sync across tabs/windows
     const handleStorageChange = (e: StorageEvent) => {
@@ -182,6 +210,62 @@ const GlobalHeader = ({
 
   return (
     <>
+      {/* Session Expired Banner */}
+      <AnimatePresence>
+        {sessionExpired && (
+          <motion.div
+            initial={{ opacity: 0, y: -60 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -60 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="fixed top-0 left-0 right-0 z-9999 flex items-center justify-center gap-3 px-6 py-3.5 backdrop-blur-md"
+            style={{
+              background:
+                "color-mix(in srgb, var(--background) 85%, oklch(0.55 0.22 25))",
+              borderBottom:
+                "1px solid color-mix(in srgb, var(--glass-border) 60%, oklch(0.65 0.22 25))",
+              boxShadow:
+                "0 4px 32px color-mix(in srgb, transparent 70%, oklch(0.55 0.22 25))",
+            }}
+          >
+            <span
+              className="material-symbols-outlined text-xl animate-pulse"
+              style={{ color: "oklch(0.75 0.22 25)" }}
+            >
+              warning
+            </span>
+            <p className="text-sm font-bold text-foreground">
+              Session expired —{" "}
+              <span style={{ color: "oklch(0.75 0.22 25)" }}>
+                logging you out…
+              </span>
+            </p>
+            <div className="flex items-center gap-1.5 ml-2">
+              <div
+                className="size-1.5 rounded-full animate-bounce"
+                style={{
+                  background: "oklch(0.75 0.22 25 / 0.6)",
+                  animationDelay: "0ms",
+                }}
+              />
+              <div
+                className="size-1.5 rounded-full animate-bounce"
+                style={{
+                  background: "oklch(0.75 0.22 25 / 0.6)",
+                  animationDelay: "150ms",
+                }}
+              />
+              <div
+                className="size-1.5 rounded-full animate-bounce"
+                style={{
+                  background: "oklch(0.75 0.22 25 / 0.6)",
+                  animationDelay: "300ms",
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
