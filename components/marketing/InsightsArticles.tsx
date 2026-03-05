@@ -20,12 +20,9 @@ const InsightsArticles = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const [res] = await Promise.all([
-          fetch("/api/public/blogs"),
-          new Promise((resolve) => setTimeout(resolve, 1000)),
-        ]);
-        if ((res as Response).ok) {
-          const data = await (res as Response).json();
+        const res = await fetch("/api/public/blogs");
+        if (res.ok) {
+          const data = await res.json();
           setArticles(data.blogs);
         }
       } catch (err) {

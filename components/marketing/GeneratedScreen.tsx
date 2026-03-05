@@ -1,21 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import PageLoading from "@/components/ui/page-loading";
 
 const GeneratedScreen = () => {
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setReady(true), 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const x = e.clientX / window.innerWidth - 0.5;
@@ -31,15 +23,6 @@ const GeneratedScreen = () => {
       document.body.style.removeProperty("--move-y");
     };
   }, []);
-
-  if (!ready) {
-    return (
-      <PageLoading
-        title="Loading Projects"
-        subtitle="Compiling project showcase..."
-      />
-    );
-  }
 
   return (
     <div className="bg-[#050505] text-gray-100 font-sans selection:bg-primary selection:text-black overflow-x-hidden min-h-screen">

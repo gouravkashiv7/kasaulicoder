@@ -50,12 +50,8 @@ const ProgramsPage = () => {
   React.useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        // Ensure loading screen shows for at least 1 second
-        const [res] = await Promise.all([
-          fetch("/api/public/programs"),
-          new Promise((resolve) => setTimeout(resolve, 1000)),
-        ]);
-        const data = await (res as Response).json();
+        const res = await fetch("/api/public/programs");
+        const data = await res.json();
         if (data.success) {
           const sorted = data.data.sort(
             (a: Program, b: Program) => a.sortOrder - b.sortOrder,

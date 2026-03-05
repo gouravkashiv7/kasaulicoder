@@ -10,6 +10,7 @@ import GlobalFooter from "@/components/layout/GlobalFooter";
 import { MDXRemote } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import { BackgroundPaths } from "@/components/ui/background-paths";
+import UniqueLoading from "@/components/ui/morph-loading";
 
 type CommentType = {
   _id: string;
@@ -134,9 +135,14 @@ const BlogPostPage = () => {
 
   if (loading) {
     return (
-      <div className="font-display bg-background text-foreground min-h-screen flex items-center justify-center">
+      <div className="font-display text-foreground min-h-screen">
         <GlobalHeader />
-        <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        <div className="flex flex-col items-center justify-center min-h-[80vh] gap-6">
+          <UniqueLoading variant="morph" size="lg" />
+          <p className="text-primary font-black text-sm tracking-[0.3em] uppercase animate-pulse">
+            Loading Article
+          </p>
+        </div>
       </div>
     );
   }
