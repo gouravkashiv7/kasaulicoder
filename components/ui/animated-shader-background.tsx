@@ -25,9 +25,10 @@ const AnoAI = () => {
 
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Keep pixel ratio at 1 — aurora background doesn't need high-res, keeps GPU load low
+    renderer.setPixelRatio(1);
     container.appendChild(renderer.domElement);
 
     const theme = getThemeColors();
@@ -56,7 +57,7 @@ const AnoAI = () => {
         uniform vec3 uColorSecondary;
         uniform float uBrightness;
 
-        #define NUM_OCTAVES 3
+        #define NUM_OCTAVES 2
 
         float rand(vec2 n) {
           return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
@@ -94,7 +95,8 @@ const AnoAI = () => {
 
           float f = 2.0 + fbm(p + vec2(iTime * 5.0, 0.0)) * 0.5;
 
-          for (float i = 0.0; i < 35.0; i++) {
+          // Reduced from 35 → 18 iterations: ~2x GPU speedup, visually near-identical
+          for (float i = 0.0; i < 18.0; i++) {
             v = p + cos(i * i + (iTime + p.x * 0.08) * 0.025 + i * vec2(13.0, 11.0)) * 3.5 + vec2(sin(iTime * 3.0 + i) * 0.003, cos(iTime * 3.5 - i) * 0.003);
             float tailNoise = fbm(v + vec2(iTime * 0.5, i)) * 0.3 * (1.0 - (i / 35.0));
             
@@ -110,7 +112,7 @@ const AnoAI = () => {
             vec4 auroraColors = vec4(baseColor, 1.0);
             
             vec4 currentContribution = auroraColors * exp(sin(i * i + iTime * 0.8)) / length(max(v, vec2(v.x * f * 0.015, v.y * 1.5)));
-            float thinnessFactor = smoothstep(0.0, 1.0, i / 35.0) * 0.6;
+            float thinnessFactor = smoothstep(0.0, 1.0, i / 18.0) * 0.6;
             o += currentContribution * (1.0 + tailNoise * 0.8) * thinnessFactor;
           }
 
@@ -138,12 +140,19 @@ const AnoAI = () => {
     });
 
     let frameId: number;
-    const animate = () => {
+    let lastTime = 0;
+    const FPS_CAP = 30;
+    const FRAME_INTERVAL = 1000 / FPS_CAP;
+
+    const animate = (timestamp: number) => {
+      frameId = requestAnimationFrame(animate);
+      const delta = timestamp - lastTime;
+      if (delta < FRAME_INTERVAL) return; // skip frame to cap FPS
+      lastTime = timestamp - (delta % FRAME_INTERVAL);
       material.uniforms.iTime.value += 0.016;
       renderer.render(scene, camera);
-      frameId = requestAnimationFrame(animate);
     };
-    animate();
+    requestAnimationFrame(animate);
 
     const handleResize = () => {
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -171,7 +180,12 @@ const AnoAI = () => {
     <div
       ref={containerRef}
       className="fixed inset-0 w-screen h-screen overflow-hidden pointer-events-none"
-      style={{ zIndex: 0 }}
+      style={{
+        zIndex: 0,
+        // Isolate on its own GPU compositing layer so scroll doesn't trigger repaints
+        willChange: "transform",
+        transform: "translateZ(0)",
+      }}
     />
   );
 };
