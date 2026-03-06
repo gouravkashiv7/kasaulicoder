@@ -27,7 +27,7 @@ const CareersPage = () => {
   ];
 
   return (
-    <div className="bg-background-dark text-slate-100 min-h-screen font-display selection:bg-primary selection:text-background-dark">
+    <div className="bg-background text-foreground min-h-screen font-display selection:bg-primary selection:text-primary-content">
       <GlobalHeader />
 
       <main className="pt-32 pb-24 px-6">
@@ -46,7 +46,7 @@ const CareersPage = () => {
                 From the <span className="text-primary italic">Hills</span> to
                 the <span className="text-primary italic">Hub</span>
               </h1>
-              <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+              <p className="text-foreground opacity-70 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
                 We're a collective of passionate developers, designers, and
                 visionaries building the future of tech from the heart of the
                 Himalayas.
@@ -70,25 +70,19 @@ const CareersPage = () => {
                   </span>
                   Our Mission
                 </div>
-                <h2 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tight">
+                <h2 className="text-4xl md:text-6xl font-black text-foreground leading-tight tracking-tight">
                   Empowering the{" "}
                   <span className="text-primary italic">Next Generation</span>{" "}
                   of AI Engineers.
                 </h2>
-                <p className="text-lg text-slate-400 max-w-xl leading-relaxed">
+                <p className="text-lg text-foreground opacity-70 max-w-xl leading-relaxed">
                   KasauliCoder is a tech-driven ecosystem designed for students,
                   job seekers, and professionals. We believe the best way to
                   master production-level AI is through hands-on collaboration
                   on real industry systems.
                 </p>
                 <div className="flex flex-wrap gap-4 pt-4">
-                  <div className="flex items-center gap-2 text-sm font-medium text-slate-200">
-                    <span className="material-symbols-outlined text-primary">
-                      groups
-                    </span>
-                    1000+ Collaborators
-                  </div>
-                  <div className="flex items-center gap-2 text-sm font-medium text-slate-200">
+                  <div className="flex items-center gap-2 text-sm font-medium text-foreground opacity-90">
                     <span className="material-symbols-outlined text-primary">
                       bolt
                     </span>
@@ -103,8 +97,8 @@ const CareersPage = () => {
                 transition={{ duration: 0.8 }}
                 className="relative group"
               >
-                <div className="absolute -inset-1 bg-linear-to-r from-primary to-purple-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative bg-[#1b2728] rounded-xl overflow-hidden aspect-video border border-primary/20 shadow-2xl">
+                <div className="absolute -inset-1 bg-linear-to-r from-primary to-secondary rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative glass-card rounded-xl overflow-hidden aspect-video border border-primary/20 shadow-2xl">
                   <div className="absolute inset-0 bg-glow-radial"></div>
                   <Image
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuCB5pdU3o0g4wJ8ccZNW-lrr8ac9VaDMdHTwyizbABNIz1tVXg72HPH-4262HcxPqsI9n3-b6d07yGUkwejgVfrRpfylghkeidYj7QcHR7kfDpQUWSbqj_P_h-lvrHphzBgYJ9AXrsBYPdHID2vrE5IBP9oJ0ADMVS9GWy-fsKm1a5jNdTtnkagwWyN5d377vjckuvgI9BMw1DTxDZIxZTcLl6L13R9swQlfqMbUedIfufP5QcX_0RWA8aywUnJBSoiHTcTP5S-Wko"
@@ -118,10 +112,10 @@ const CareersPage = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.5 }}
-                      className="p-4 rounded-lg bg-background-dark/80 backdrop-blur-md border border-primary/30 text-primary font-mono text-sm"
+                      className="p-4 rounded-lg glass-panel text-primary font-mono text-sm"
                     >
                       <p>&gt; Initializing AI_Project_Alpha...</p>
-                      <p className="text-purple-500">
+                      <p className="text-secondary">
                         &gt; Connecting to production node...
                       </p>
                       <p className="text-green-400">&gt; System Ready.</p>
@@ -140,12 +134,12 @@ const CareersPage = () => {
               viewport={{ once: true }}
               className="text-center mb-16 space-y-4"
             >
-              <h2 className="text-3xl md:text-5xl font-black text-white">
+              <h2 className="text-3xl md:text-5xl font-black text-foreground">
                 Bridge the gap between{" "}
                 <span className="text-primary">Learning</span> and{" "}
-                <span className="text-purple-500">Industry</span>.
+                <span className="text-secondary">Industry</span>.
               </h2>
-              <p className="text-slate-400 max-w-2xl mx-auto">
+              <p className="text-foreground opacity-70 max-w-2xl mx-auto">
                 Receive rigorous peer feedback and work on high-impact AI
                 systems used in actual production environments.
               </p>
@@ -164,10 +158,10 @@ const CareersPage = () => {
                 {
                   icon: "rate_review",
                   title: "Expert Code Reviews",
-                  border: "border-t-purple-500",
-                  bgHover: "hover:bg-purple-500/5",
-                  iconColor: "text-purple-500",
-                  iconBg: "bg-purple-500/20",
+                  border: "border-t-secondary",
+                  bgHover: "hover:bg-secondary/5",
+                  iconColor: "text-secondary",
+                  iconBg: "bg-secondary/20",
                   desc: "Receive feedback from senior mentors and peers to sharpen your coding standards and architectural thinking.",
                 },
                 {
@@ -196,10 +190,10 @@ const CareersPage = () => {
                       {feature.icon}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">
+                  <h3 className="text-xl font-bold text-foreground mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">
+                  <p className="text-foreground opacity-70 text-sm leading-relaxed">
                     {feature.desc}
                   </p>
                 </motion.div>
@@ -216,7 +210,7 @@ const CareersPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white/5 border border-white/10 p-8 rounded-2xl hover:border-primary/30 transition-all group"
+                className="glass-panel border border-glass-border p-8 rounded-2xl hover:border-primary/30 transition-all group"
               >
                 <div className="size-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-primary">
@@ -224,7 +218,7 @@ const CareersPage = () => {
                   </span>
                 </div>
                 <h3 className="text-xl font-bold mb-3">{v.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
+                <p className="text-foreground opacity-70 text-sm leading-relaxed">
                   {v.desc}
                 </p>
               </motion.div>
@@ -232,7 +226,7 @@ const CareersPage = () => {
           </div>
 
           {/* Current Opportunities */}
-          <div className="bg-slate-900/40 border border-white/10 rounded-3xl p-12 relative overflow-hidden mb-32">
+          <div className="glass-card border border-glass-border rounded-3xl p-12 relative overflow-hidden mb-32">
             <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 blur-3xl pointer-events-none"></div>
 
             <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-12">
@@ -240,7 +234,7 @@ const CareersPage = () => {
                 <h2 className="text-3xl md:text-4xl font-bold mb-6">
                   Building Something Extraordinary?
                 </h2>
-                <p className="text-slate-400 mb-8">
+                <p className="text-foreground opacity-70 mb-8">
                   We are always looking for talented partners, mentors, and
                   developers who share our vision of decentralized excellence.
                   Whether you're a seasoned architect or a rising star, let's
@@ -248,7 +242,7 @@ const CareersPage = () => {
                 </p>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-2 bg-primary text-background-dark font-bold px-8 py-4 rounded-xl hover:shadow-[0_0_25px_rgba(0,242,255,0.4)] transition-all hover:scale-105"
+                  className="inline-flex items-center gap-2 bg-primary text-primary-content font-bold px-8 py-4 rounded-xl hover:shadow-[0_0_25px_rgba(0,242,255,0.4)] hover:scale-105 hover:neon-glow transition-all duration-300"
                 >
                   Apply as Partner / Mentor
                   <span className="material-symbols-outlined text-sm font-black">
@@ -258,35 +252,35 @@ const CareersPage = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-background-dark/80 p-6 border border-white/5 rounded-2xl flex flex-col items-center">
+                <div className="bg-background/80 p-6 border border-glass-border rounded-2xl flex flex-col items-center">
                   <span className="text-3xl font-black text-primary mb-1">
                     100%
                   </span>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  <span className="text-[10px] font-bold text-foreground opacity-60 uppercase tracking-widest">
                     Remote
                   </span>
                 </div>
-                <div className="bg-background-dark/80 p-6 border border-white/5 rounded-2xl flex flex-col items-center">
+                <div className="bg-background/80 p-6 border border-glass-border rounded-2xl flex flex-col items-center">
                   <span className="text-3xl font-black text-primary mb-1">
                     Flex
                   </span>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  <span className="text-[10px] font-bold text-foreground opacity-60 uppercase tracking-widest">
                     Hours
                   </span>
                 </div>
-                <div className="bg-background-dark/80 p-6 border border-white/5 rounded-2xl flex flex-col items-center">
+                <div className="bg-background/80 p-6 border border-glass-border rounded-2xl flex flex-col items-center">
                   <span className="text-3xl font-black text-primary mb-1">
                     Top
                   </span>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  <span className="text-[10px] font-bold text-foreground opacity-60 uppercase tracking-widest">
                     Stack
                   </span>
                 </div>
-                <div className="bg-background-dark/80 p-6 border border-white/5 rounded-2xl flex flex-col items-center">
+                <div className="bg-background/80 p-6 border border-glass-border rounded-2xl flex flex-col items-center">
                   <span className="text-3xl font-black text-primary mb-1">
                     Global
                   </span>
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                  <span className="text-[10px] font-bold text-foreground opacity-60 uppercase tracking-widest">
                     Reach
                   </span>
                 </div>
@@ -302,7 +296,7 @@ const CareersPage = () => {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl font-bold mb-6">Our Culture</h2>
-              <p className="text-slate-400 text-lg mb-8 leading-relaxed">
+              <p className="text-foreground opacity-70 text-lg mb-8 leading-relaxed">
                 At KasauliCoder, we believe that great tech doesn't require a
                 cubicle in a skyscraper. It requires passion, curiosity, and a
                 supportive environment. Our culture is built on transparency,
@@ -317,7 +311,7 @@ const CareersPage = () => {
                 ].map((item) => (
                   <li
                     key={item}
-                    className="flex items-center gap-3 text-slate-200 font-medium"
+                    className="flex items-center gap-3 text-foreground opacity-90 font-medium"
                   >
                     <span className="material-symbols-outlined text-primary text-sm">
                       verified
@@ -332,7 +326,7 @@ const CareersPage = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="relative aspect-square rounded-3xl overflow-hidden glass-card border border-white/10"
+              className="relative aspect-square rounded-3xl overflow-hidden glass-card border border-glass-border"
             >
               <Image
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRESHDUxWcudqKjmVHldyzV41VeMrM35fkW3hekI1t8Wn2Biln-deaaV8aHtCMxcZxHNsgJ1RFeMNfVplgyNQrGMAPQUW6FmGmePz2Lg2MJnMAS360vfmJx6yvQ448GTyhou0-0BR3nVJ7aysyvnnKhAMLmBs9OaHmexCJZgGORHl4eycKmG7qbdOItaWsqdu5Wiikhq5FeyqOImMyibGVwubf2bkC-yi1eFKI9V2iIhbjg4oWCYDlDO6m9HFai9ro_s2Gu4Aalws"
@@ -340,9 +334,9 @@ const CareersPage = () => {
                 fill
                 className="object-cover opacity-60"
               />
-              <div className="absolute inset-0 bg-linear-to-t from-background-dark via-transparent to-transparent"></div>
-              <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10">
-                <p className="text-sm italic text-slate-300">
+              <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent"></div>
+              <div className="absolute bottom-6 left-6 right-6 p-6 glass-panel backdrop-blur-md rounded-2xl border border-glass-border">
+                <p className="text-sm italic text-foreground opacity-80">
                   "The best part is the community. We're not just coworkers;
                   we're a team building the future together."
                 </p>
