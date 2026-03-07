@@ -222,7 +222,7 @@ export default function AdminProjectsManagement() {
               ) : projects.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="p-8 text-center text-foreground/40 text-sm"
                   >
                     No projects found

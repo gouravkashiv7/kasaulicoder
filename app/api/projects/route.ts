@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
-import Staff from "@/backend/models/Staff"; // Ensure the schema is registered
+import "@/backend/models/Staff"; // Ensure the schema is registered
 
 export async function GET() {
   try {

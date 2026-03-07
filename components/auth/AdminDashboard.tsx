@@ -45,6 +45,7 @@ const AdminDashboard = () => {
     "cohort",
     "programs",
     "blogs",
+    "projects",
   ];
   const tabFromUrl = searchParams.get("tab") as SidebarView | null;
 
