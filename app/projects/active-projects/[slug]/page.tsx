@@ -6,6 +6,7 @@ import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
+import "@/backend/models/Staff"; // Ensure Staff schema is registered for populate
 import { Metadata } from "next";
 
 export async function generateMetadata(props: {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
+import "@/backend/models/Staff"; // Ensure schema registration
 
 // Update (PUT)
 export async function PUT(req: Request) {
