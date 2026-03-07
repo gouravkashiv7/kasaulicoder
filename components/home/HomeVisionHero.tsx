@@ -8,6 +8,13 @@ import { motion } from "framer-motion";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import HomeUpcomingEventsStats from "@/components/home/HomeUpcomingEventsStats";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+
+const AnoAI = dynamic(
+  () => import("@/components/ui/animated-shader-background"),
+  { ssr: false },
+);
 import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
@@ -217,6 +224,28 @@ const HomeVisionHero = () => {
     }
   };
 
+  const studentVideoRef = useRef<HTMLVideoElement>(null);
+  const [isStudentMuted, setIsStudentMuted] = useState(true);
+  const [isStudentPlaying, setIsStudentPlaying] = useState(true);
+
+  const toggleStudentPlay = () => {
+    if (studentVideoRef.current) {
+      if (isStudentPlaying) {
+        studentVideoRef.current.pause();
+      } else {
+        studentVideoRef.current.play();
+      }
+      setIsStudentPlaying(!isStudentPlaying);
+    }
+  };
+
+  const toggleStudentMute = () => {
+    if (studentVideoRef.current) {
+      studentVideoRef.current.muted = !isStudentMuted;
+      setIsStudentMuted(!isStudentMuted);
+    }
+  };
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -288,7 +317,10 @@ const HomeVisionHero = () => {
   };
 
   return (
-    <div className="font-display text-foreground antialiased overflow-x-hidden">
+    <div className="font-display text-foreground antialiased overflow-x-hidden relative">
+      <Suspense fallback={null}>
+        <AnoAI />
+      </Suspense>
       <GlobalHeader />
 
       <main className="pt-28">
@@ -445,15 +477,14 @@ const HomeVisionHero = () => {
         </section>
 
         {/* Vision Section */}
-        <section className="py-24 px-6 bg-transparent">
+        <section className="py-24 px-6 bg-transparent relative z-10">
           <div className="max-w-7xl mx-auto">
             {/* Section Header */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="text-center mb-16"
+              className="mb-16 text-center"
             >
               <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
                 Services
@@ -859,33 +890,42 @@ const HomeVisionHero = () => {
                 </motion.div>
               </div>
 
-              <div className="flex-1 relative hidden md:block">
+              <div className="flex-1 relative w-full lg:w-1/2 group/student-video">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  className="relative h-[300px] w-full"
+                  className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10"
                 >
-                  <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-secondary/20 blur-3xl opacity-30 rounded-full animate-pulse"></div>
-                  <div className="relative grid grid-cols-2 gap-4">
-                    {[
-                      { icon: "school", label: "Live Mentorship" },
-                      { icon: "work", label: "Real Internships" },
-                      { icon: "terminal", label: "Industry Stack" },
-                      { icon: "groups", label: "Peer Learning" },
-                    ].map((item, i) => (
-                      <div
-                        key={i}
-                        className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center gap-3 backdrop-blur-md hover:border-primary/40 transition-colors"
-                      >
-                        <span className="material-symbols-outlined text-primary text-3xl">
-                          {item.icon}
-                        </span>
-                        <span className="text-xs font-bold text-foreground/80">
-                          {item.label}
-                        </span>
-                      </div>
-                    ))}
+                  <video
+                    ref={studentVideoRef}
+                    src="/students.mp4"
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                  {/* Video Controls Overlay */}
+                  <div className="absolute bottom-4 right-4 flex gap-2 opacity-100 md:opacity-0 md:group-hover/student-video:opacity-100 transition-opacity duration-300">
+                    <button
+                      onClick={toggleStudentMute}
+                      className="size-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-all hover:scale-110"
+                      title={isStudentMuted ? "Unmute" : "Mute"}
+                    >
+                      <span className="material-symbols-outlined text-xl">
+                        {isStudentMuted ? "volume_off" : "volume_up"}
+                      </span>
+                    </button>
+                    <button
+                      onClick={toggleStudentPlay}
+                      className="size-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-all hover:scale-110"
+                      title={isStudentPlaying ? "Pause" : "Play"}
+                    >
+                      <span className="material-symbols-outlined text-xl">
+                        {isStudentPlaying ? "pause" : "play_arrow"}
+                      </span>
+                    </button>
                   </div>
                 </motion.div>
               </div>
