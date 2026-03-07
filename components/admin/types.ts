@@ -5,7 +5,8 @@ export type SidebarView =
   | "pricing"
   | "cohort"
   | "programs"
-  | "blogs";
+  | "blogs"
+  | "projects";
 
 export interface Program {
   _id: string;
@@ -18,6 +19,30 @@ export interface Program {
   isVisible: boolean;
   sortOrder: number;
   createdAt: string;
+}
+
+export interface Project {
+  _id: string;
+  title: string;
+  slug: string;
+  outcome: string;
+  desc: string;
+  images: string[];
+  tags: string[];
+  content?: string;
+  githubUrl?: string;
+  liveUrl?: string;
+  videoUrl?: string;
+  status: "active" | "past";
+  featured: boolean;
+  members: Array<{
+    _id: string;
+    name: string;
+    image?: string;
+    designation?: string;
+  }>;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Plan {

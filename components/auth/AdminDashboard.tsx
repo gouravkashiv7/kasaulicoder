@@ -24,6 +24,7 @@ import Pricing from "@/components/admin/Pricing";
 import Cohort from "@/components/admin/Cohort";
 import Programs from "@/components/admin/Programs";
 import AdminBlogManagement from "@/components/admin/AdminBlogManagement";
+import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement";
 
 // Modals
 import StaffModal from "@/components/admin/modals/StaffModal";
@@ -857,6 +858,7 @@ const AdminDashboard = () => {
               />
             )}
             {sidebarView === "blogs" && <AdminBlogManagement />}
+            {sidebarView === "projects" && <AdminProjectsManagement />}
           </AnimatePresence>
         </div>
       </motion.main>

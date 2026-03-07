@@ -68,6 +68,11 @@ const Sidebar = ({
       label: "Blogs",
       icon: "article",
     },
+    {
+      id: "projects" as SidebarView,
+      label: "Projects",
+      icon: "rocket_launch",
+    },
   ];
 
   return (

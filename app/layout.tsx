@@ -88,6 +88,9 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     apple: "/logo.png",
   },
+  alternates: {
+    canonical: "./",
+  },
   manifest: "/manifest.json",
 };
 
