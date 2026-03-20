@@ -10,16 +10,22 @@ import Project from "@/backend/models/Project";
 import "@/backend/models/Staff"; // Ensure Staff schema is registered for populate
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
+/** Fetch project data once to be shared by metadata and the page */
+async function getProject(slug: string) {
+  await connectDB();
+  return await Project.findOne({
+    slug: slug,
+    status: "active",
+  }).populate("members", "name image designation");
+}
+
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const params = await props.params;
-  await connectDB();
-
-  const project = await Project.findOne({
-    slug: params.slug,
-    status: "active",
-  });
+  const { slug } = await props.params;
+  const project = await getProject(slug);
 
   if (!project) {
     return {
@@ -44,14 +50,8 @@ export async function generateMetadata(props: {
 export default async function ActiveProjectPage(props: {
   params: Promise<{ slug: string }>;
 }) {
-  const params = await props.params;
-  await connectDB();
-
-  // Find the exact project via slug and active status
-  const project = await Project.findOne({
-    slug: params.slug,
-    status: "active",
-  }).populate("members", "name image designation");
+  const { slug } = await props.params;
+  const project = await getProject(slug);
 
   if (!project) {
     notFound();
