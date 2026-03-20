@@ -48,6 +48,8 @@ const AdminDashboard = () => {
     }
   }, []);
 
+  const isSuperAdmin = useMemo(() => currentUser?.role === "superadmin", [currentUser]);
+
   // Navigation Logic
   const validAdminTabs = useMemo<SidebarView[]>(() => {
     const allTabs: SidebarView[] = [
@@ -61,7 +63,7 @@ const AdminDashboard = () => {
       "projects",
       "social-media",
     ];
-    if (currentUser?.role === "superadmin") return allTabs;
+    if (isSuperAdmin) return allTabs;
     // Staff (admin role) restricted tabs
     return allTabs.filter(
       (t) =>
@@ -986,6 +988,8 @@ const AdminDashboard = () => {
               <SocialMediaManagement
                 accounts={socialMediaAccounts}
                 loading={socialMediaLoading}
+                currentUser={currentUser ? { id: currentUser._id || currentUser.id, ...currentUser } : null}
+                isSuperAdmin={isSuperAdmin}
                 onAdd={() => {
                   setEditingSocialMediaAccount(null);
                   setShowSocialMediaModal(true);

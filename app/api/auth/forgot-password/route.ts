@@ -44,7 +44,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Your account is deactivated. Please contact support." }, { status: 403 });
     }
 
-    // Generate Reset Token (valid for 1 hour)
     const token = await new SignJWT({
       id: account._id.toString(),
       email: account.email,
@@ -56,7 +55,16 @@ export async function POST(req: Request) {
       .setExpirationTime("1h")
       .sign(JWT_SECRET);
 
-    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/reset-password?token=${token}`;
+    // Save token to DB for one-time use validation
+    account.resetPasswordToken = token;
+    account.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
+    await account.save();
+
+    const host = req.headers.get("host");
+    const protocol = host?.includes("localhost") ? "http" : "https";
+    const origin = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
+
+    const resetUrl = `${origin}/reset-password?token=${token}`;
 
     await sendPasswordResetEmail(account.email, account.name, resetUrl);
 

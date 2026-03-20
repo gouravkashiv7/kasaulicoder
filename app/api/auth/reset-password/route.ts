@@ -31,17 +31,38 @@ export async function POST(req: Request) {
     await connectDB();
 
     const hashedPassword = await bcrypt.hash(password, 12);
+    const update = { 
+      password: hashedPassword,
+      resetPasswordToken: null,
+      resetPasswordExpires: null 
+    };
 
     if (payload.type === "staff") {
-      const staff = await Staff.findByIdAndUpdate(payload.id, { password: hashedPassword });
+      const staff = await Staff.findOne({ 
+        _id: payload.id, 
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: Date.now() }
+      });
       if (!staff) {
-        return NextResponse.json({ error: "Account not found" }, { status: 404 });
+        return NextResponse.json({ error: "Invalid or expired reset link. Please try again." }, { status: 400 });
       }
+      staff.password = hashedPassword;
+      staff.resetPasswordToken = undefined;
+      staff.resetPasswordExpires = undefined;
+      await staff.save();
     } else {
-      const user = await User.findByIdAndUpdate(payload.id, { password: hashedPassword });
+      const user = await User.findOne({ 
+        _id: payload.id, 
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: Date.now() }
+      });
       if (!user) {
-        return NextResponse.json({ error: "Account not found" }, { status: 404 });
+        return NextResponse.json({ error: "Invalid or expired reset link. Please try again." }, { status: 400 });
       }
+      user.password = hashedPassword;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+      await user.save();
     }
 
     return NextResponse.json({ message: "Password updated successfully! You can now log in." });
