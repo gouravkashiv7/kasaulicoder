@@ -5,7 +5,7 @@ export interface IProject extends Document {
   slug: string;
   outcome: string;
   desc: string;
-  images: string[];
+  media: { type: "image" | "video"; url: string }[];
   tags: string[];
   content?: string;
   githubUrl?: string;
@@ -24,7 +24,12 @@ const ProjectSchema: Schema = new Schema(
     slug: { type: String, required: true, unique: true },
     outcome: { type: String, required: true },
     desc: { type: String, required: true },
-    images: { type: [String], default: [] },
+    media: [
+      {
+        type: { type: String, enum: ["image", "video"], required: true },
+        url: { type: String, required: true },
+      },
+    ],
     tags: { type: [String], default: [] },
     content: { type: String },
     githubUrl: { type: String },

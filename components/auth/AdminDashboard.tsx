@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,6 +13,7 @@ import {
   Plan,
   ContactRequest,
   CohortInterest,
+  SocialMediaAccount,
 } from "@/components/admin/types";
 
 // Components
@@ -25,33 +26,61 @@ import Cohort from "@/components/admin/Cohort";
 import Programs from "@/components/admin/Programs";
 import AdminBlogManagement from "@/components/admin/AdminBlogManagement";
 import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement";
+import SocialMediaManagement from "@/components/admin/SocialMediaManagement";
 
 // Modals
 import StaffModal from "@/components/admin/modals/StaffModal";
 import PlanModal from "@/components/admin/modals/PlanModal";
 import ProgramModal from "@/components/admin/modals/ProgramModal";
 import StatusToggleModal from "@/components/admin/modals/StatusToggleModal";
+import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
 
 const AdminDashboard = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      setCurrentUser(JSON.parse(userStr));
+    }
+  }, []);
+
   // Navigation Logic
-  const validAdminTabs: SidebarView[] = [
-    "overview",
-    "management",
-    "requests",
-    "pricing",
-    "cohort",
-    "programs",
-    "blogs",
-    "projects",
-  ];
+  const validAdminTabs = useMemo<SidebarView[]>(() => {
+    const allTabs: SidebarView[] = [
+      "overview",
+      "management",
+      "requests",
+      "pricing",
+      "cohort",
+      "programs",
+      "blogs",
+      "projects",
+      "social-media",
+    ];
+    if (currentUser?.role === "superadmin") return allTabs;
+    // Staff (admin role) restricted tabs
+    return allTabs.filter(
+      (t) =>
+        !["management", "requests", "pricing", "cohort", "programs"].includes(t),
+    );
+  }, [currentUser]);
+
   const tabFromUrl = searchParams.get("tab") as SidebarView | null;
 
-  const [sidebarView, setSidebarViewState] = useState<SidebarView>(
-    tabFromUrl && validAdminTabs.includes(tabFromUrl) ? tabFromUrl : "overview",
-  );
+  const [sidebarView, setSidebarViewState] = useState<SidebarView>("overview");
+
+  useEffect(() => {
+    if (tabFromUrl && validAdminTabs.includes(tabFromUrl)) {
+      setSidebarViewState(tabFromUrl);
+    } else if (currentUser && !validAdminTabs.includes(sidebarView)) {
+      // Default to first valid tab if current one is restricted
+      setSidebarViewState(validAdminTabs[0] || "overview");
+    }
+  }, [tabFromUrl, validAdminTabs, currentUser, sidebarView]);
 
   const setSidebarView = useCallback(
     (tab: SidebarView) => {
@@ -159,6 +188,14 @@ const AdminDashboard = () => {
   const [uploadError, setUploadError] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+ 
+  // Social Media State
+  const [socialMediaAccounts, setSocialMediaAccounts] = useState<SocialMediaAccount[]>([]);
+  const [socialMediaLoading, setSocialMediaLoading] = useState(false);
+  const [showSocialMediaModal, setShowSocialMediaModal] = useState(false);
+  const [editingSocialMediaAccount, setEditingSocialMediaAccount] = useState<SocialMediaAccount | null>(null);
+  const [socialMediaError, setSocialMediaError] = useState("");
+  const [allStaff, setAllStaff] = useState<any[]>([]);
 
   // UI State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -213,6 +250,7 @@ const AdminDashboard = () => {
   }, []);
 
   const fetchContacts = useCallback(async () => {
+    if (currentUser?.role !== "superadmin") return;
     setContactsLoading(true);
     try {
       const res = await fetch("/api/admin/contacts");
@@ -297,26 +335,58 @@ const AdminDashboard = () => {
     }
   }, []);
 
+  const fetchSocialMediaAccounts = useCallback(async () => {
+    setSocialMediaLoading(true);
+    try {
+      const res = await fetch("/api/admin/social-media");
+      if (res.ok) {
+        const data = await res.json();
+        setSocialMediaAccounts(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSocialMediaLoading(false);
+    }
+  }, []);
+
+  const fetchAllStaff = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/staff");
+      if (res.ok) {
+        const data = await res.json();
+        setAllStaff(data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
   // Lifecycle
   useEffect(() => {
-    fetchOverviewData();
-    fetchContacts();
     fetchPlans();
     fetchCohortInterests();
     fetchPrograms();
+    fetchSocialMediaAccounts();
+    fetchAllStaff();
   }, [
     fetchOverviewData,
     fetchContacts,
     fetchPlans,
     fetchCohortInterests,
     fetchPrograms,
+    fetchSocialMediaAccounts,
+    fetchAllStaff,
   ]);
 
   useEffect(() => {
     if (sidebarView === "management") {
       fetchData();
     }
-  }, [sidebarView, activeTab, fetchData]);
+    if (sidebarView === "social-media") {
+      fetchSocialMediaAccounts();
+    }
+  }, [sidebarView, activeTab, fetchData, fetchSocialMediaAccounts]);
 
   // Handlers
   const handleLogout = async () => {
@@ -710,6 +780,57 @@ const AdminDashboard = () => {
     reader.readAsDataURL(file);
   };
 
+  const handleSaveSocialMediaAccount = async (formData: any) => {
+    setIsSubmitting(true);
+    setSocialMediaError("");
+    try {
+      let res;
+      if (editingSocialMediaAccount) {
+        res = await fetch("/api/admin/social-media", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: editingSocialMediaAccount._id, ...formData }),
+        });
+      } else {
+        res = await fetch("/api/admin/social-media", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+      }
+
+      if (res.ok) {
+        setShowSocialMediaModal(false);
+        setEditingSocialMediaAccount(null);
+        fetchSocialMediaAccounts();
+      } else {
+        const result = await res.json();
+        setSocialMediaError(result.error || "Operation failed");
+      }
+    } catch (err) {
+      setSocialMediaError("An error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteSocialMediaAccount = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this social account?")) return;
+    try {
+      const res = await fetch(`/api/admin/social-media?id=${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) fetchSocialMediaAccounts();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const openEditSocialMedia = (account: SocialMediaAccount) => {
+    setEditingSocialMediaAccount(account);
+    setShowSocialMediaModal(true);
+  };
+
   const unreadCount = contactRequests.filter((r) => !r.isRead).length;
 
   if (authError) {
@@ -785,16 +906,17 @@ const AdminDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
           <AnimatePresence mode="wait">
             {sidebarView === "overview" && (
-              <Overview
-                totalUsers={totalUsers}
-                totalStaff={totalStaff}
-                unreadCount={unreadCount}
-                cohortTotal={cohortTotal}
-                cohortNotNotified={cohortNotNotified}
-                contactRequests={contactRequests}
-                setSidebarView={setSidebarView}
-              />
-            )}
+            <Overview
+              role={currentUser?.role}
+              totalUsers={totalUsers}
+              totalStaff={totalStaff}
+              unreadCount={contactRequests.filter((r) => !r.isRead).length}
+              cohortTotal={cohortTotal}
+              cohortNotNotified={cohortNotNotified}
+              contactRequests={contactRequests}
+              setSidebarView={setSidebarView}
+            />
+          )}
             {sidebarView === "management" && (
               <Management
                 activeTab={activeTab}
@@ -860,6 +982,18 @@ const AdminDashboard = () => {
             )}
             {sidebarView === "blogs" && <AdminBlogManagement />}
             {sidebarView === "projects" && <AdminProjectsManagement />}
+            {sidebarView === "social-media" && (
+              <SocialMediaManagement
+                accounts={socialMediaAccounts}
+                loading={socialMediaLoading}
+                onAdd={() => {
+                  setEditingSocialMediaAccount(null);
+                  setShowSocialMediaModal(true);
+                }}
+                onEdit={openEditSocialMedia}
+                onDelete={handleDeleteSocialMediaAccount}
+              />
+            )}
           </AnimatePresence>
         </div>
       </motion.main>
@@ -906,6 +1040,17 @@ const AdminDashboard = () => {
         toggleConfirm={toggleConfirm}
         setToggleConfirm={setToggleConfirm}
         executeStatusToggle={executeStatusToggle}
+      />
+
+      <SocialMediaModal
+        showModal={showSocialMediaModal}
+        setShowModal={setShowSocialMediaModal}
+        editingAccount={editingSocialMediaAccount}
+        setEditingAccount={setEditingSocialMediaAccount}
+        staffList={allStaff}
+        onSave={handleSaveSocialMediaAccount}
+        isSubmitting={isSubmitting}
+        error={socialMediaError}
       />
     </div>
   );

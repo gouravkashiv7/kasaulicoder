@@ -30,6 +30,15 @@ const Sidebar = ({
   cohortNotNotified,
   handleLogout,
 }: SidebarProps) => {
+  const [currentUser, setCurrentUser] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      setCurrentUser(JSON.parse(userStr));
+    }
+  }, []);
+
   const sidebarItems = [
     {
       id: "overview" as SidebarView,
@@ -40,28 +49,33 @@ const Sidebar = ({
       id: "management" as SidebarView,
       label: "Management",
       icon: "group",
+      superOnly: true,
     },
     {
       id: "requests" as SidebarView,
       label: "Requests",
       icon: "mail",
       badge: unreadCount,
+      superOnly: true,
     },
     {
       id: "pricing" as SidebarView,
       label: "Pricing",
       icon: "payments",
+      superOnly: true,
     },
     {
       id: "cohort" as SidebarView,
       label: "Cohort Waitlist",
       icon: "groups",
       badge: cohortNotNotified,
+      superOnly: true,
     },
     {
       id: "programs" as SidebarView,
       label: "Programs",
       icon: "terminal",
+      superOnly: true,
     },
     {
       id: "blogs" as SidebarView,
@@ -73,7 +87,15 @@ const Sidebar = ({
       label: "Projects",
       icon: "rocket_launch",
     },
-  ];
+    {
+      id: "social-media" as SidebarView,
+      label: "Social Media",
+      icon: "share",
+    },
+  ].filter((item) => {
+    if (item.superOnly && currentUser?.role !== "superadmin") return false;
+    return true;
+  });
 
   return (
     <motion.aside

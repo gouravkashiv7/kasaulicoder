@@ -32,6 +32,7 @@ const LoginPage = () => {
     return "user";
   });
   const [formData, setFormData] = React.useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const handleTypeChange = (type: "user" | "admin") => {
     setLoginType(type);
@@ -247,15 +248,25 @@ const LoginPage = () => {
                       lock
                     </span>
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       required
                       value={formData.password}
                       onChange={(e) =>
                         setFormData({ ...formData, password: e.target.value })
                       }
-                      className="w-full bg-foreground/3 border border-foreground/10 rounded-xl pl-12 pr-4 py-3.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-foreground placeholder:text-foreground/20"
+                      className="w-full bg-foreground/3 border border-foreground/10 rounded-xl pl-12 pr-12 py-3.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-foreground placeholder:text-foreground/20"
                       placeholder="••••••••"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-primary transition-colors focus:outline-none"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      <span className="material-symbols-outlined text-xl">
+                        {showPassword ? "visibility_off" : "visibility"}
+                      </span>
+                    </button>
                   </div>
                 </div>
 

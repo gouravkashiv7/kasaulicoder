@@ -23,7 +23,10 @@ const StatusToggleModal = ({
   return (
     <AnimatePresence>
       {toggleConfirm && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div
+          key="status-toggle-modal-overlay"
+          className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}

@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 import { notFound } from "next/navigation";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
@@ -33,7 +34,9 @@ export async function generateMetadata(props: {
       title: project.title,
       description: project.outcome || project.desc?.substring(0, 160),
       images:
-        project.images && project.images.length > 0 ? [project.images[0]] : [],
+        project.media && project.media.length > 0 
+          ? [project.media[0].url] 
+          : [],
     },
   };
 }
@@ -93,16 +96,14 @@ export default async function ActiveProjectPage(props: {
 
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-12">
-              {project.images && project.images.length > 0 && (
-                <div className="w-full aspect-video relative rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-                  <Image
-                    src={project.images[0]}
-                    fill
-                    className="object-cover"
-                    alt={project.title}
-                  />
-                </div>
-              )}
+              <div className="w-full">
+                <ProjectMediaDisplay
+                  media={project.media || []}
+                  liveUrl={project.liveUrl}
+                  title={project.title}
+                  aspectRatio="aspect-video"
+                />
+              </div>
 
               <div className="prose prose-invert max-w-none prose-p:text-foreground/70 prose-headings:text-foreground prose-a:text-primary">
                 <h3 className="text-2xl font-bold mb-4">Project Overview</h3>

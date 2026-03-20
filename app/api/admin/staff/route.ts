@@ -25,13 +25,17 @@ export async function GET() {
 
     const { payload } = await jwtVerify(token, JWT_SECRET);
 
-    if (payload.role !== "superadmin") {
+    if (payload.type !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     await connectDB();
 
-    const staffMembers = await Staff.find({}).sort({ createdAt: -1 });
+    // If not superadmin, maybe return a limited selection? 
+    // For now, allow all admin types to see the staff list names/ids.
+    const staffMembers = await Staff.find({})
+      .select("name email role designation image isActive")
+      .sort({ createdAt: -1 });
 
     return NextResponse.json(staffMembers);
   } catch (error: any) {

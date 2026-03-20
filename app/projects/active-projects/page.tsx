@@ -4,6 +4,7 @@ import GlobalFooter from "@/components/layout/GlobalFooter";
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
 
@@ -54,20 +55,13 @@ export default async function ActiveProjects() {
                 key={project._id.toString()}
                 className="grid lg:grid-cols-2 gap-8 items-center border border-foreground/10 bg-foreground/5 rounded-3xl p-6 sm:p-10 hover:border-primary/30 transition-colors"
               >
-                <div className="aspect-video w-full rounded-2xl bg-foreground/10 border border-foreground/10 flex items-center justify-center overflow-hidden relative group">
-                  {project.images && project.images.length > 0 ? (
-                    <Image
-                      src={project.images[0]}
-                      alt={project.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <span className="text-foreground/40 font-bold uppercase tracking-widest text-sm">
-                      No Image
-                    </span>
-                  )}
-                  <div className="absolute inset-0 bg-primary/20 mix-blend-overlay group-hover:opacity-0 transition-opacity"></div>
+                <div className="w-full">
+                  <ProjectMediaDisplay
+                    media={project.media || []}
+                    liveUrl={project.liveUrl}
+                    title={project.title}
+                    aspectRatio="aspect-video"
+                  />
                 </div>
 
                 <div className="flex flex-col gap-4">

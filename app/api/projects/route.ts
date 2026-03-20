@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
-import "@/backend/models/Staff"; // Ensure the schema is registered
+import "@/backend/models/Staff";
+import { getServerSession } from "@/backend/lib/auth";
 
 export async function GET() {
   try {
     await connectDB();
+    const session = await getServerSession();
 
-    const projects = await Project.find()
+    let query = {};
+    if (session && session.type === "admin" && session.role !== "superadmin") {
+      query = { members: session.id };
+    }
+
+    const projects = await Project.find(query)
       .populate("members", "name image designation email")
       .sort({ createdAt: -1 });
 

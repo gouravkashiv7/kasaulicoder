@@ -4,6 +4,7 @@ import GlobalFooter from "@/components/layout/GlobalFooter";
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
 
@@ -80,19 +81,13 @@ export default async function RecentProjects() {
                   </div>
                 </div>
 
-                <div className="order-1 lg:order-2 aspect-video w-full rounded-2xl bg-foreground/10 border border-foreground/10 flex items-center justify-center overflow-hidden relative grayscale saturate-50 hover:grayscale-0 hover:saturate-100 transition-all duration-700">
-                  {project.images && project.images.length > 0 ? (
-                    <Image
-                      src={project.images[0]}
-                      alt={project.title}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <span className="text-foreground/40 font-bold uppercase tracking-widest text-sm text-center">
-                      No Image
-                    </span>
-                  )}
+                <div className="order-1 lg:order-2 w-full">
+                  <ProjectMediaDisplay
+                    media={project.media || []}
+                    liveUrl={project.liveUrl}
+                    title={project.title}
+                    aspectRatio="aspect-video"
+                  />
                 </div>
               </div>
             ))

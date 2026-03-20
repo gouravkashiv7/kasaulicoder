@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ContactRequest, SidebarView } from "./types";
 
 interface OverviewProps {
+  role?: string;
   totalUsers: number;
   totalStaff: number;
   unreadCount: number;
@@ -15,6 +16,7 @@ interface OverviewProps {
 }
 
 const Overview = ({
+  role,
   totalUsers,
   totalStaff,
   unreadCount,
@@ -23,6 +25,8 @@ const Overview = ({
   contactRequests,
   setSidebarView,
 }: OverviewProps) => {
+  const isSuper = role === "superadmin";
+
   return (
     <motion.div
       key="overview"
@@ -36,85 +40,118 @@ const Overview = ({
           Dashboard Overview
         </h1>
         <p className="text-foreground/50">
-          Welcome back, Superadmin. Here&apos;s your summary.
+          {isSuper
+            ? "Welcome back, Superadmin. Here's your summary."
+            : "Welcome back. Access your assigned projects and tasks below."}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-        {/* Total Users */}
-        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-primary/30 transition-colors">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-colors"></div>
-          <div className="relative">
-            <div className="size-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 border border-primary/20">
-              <span className="material-symbols-outlined text-primary text-2xl">
-                group
-              </span>
-            </div>
-            <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
-              Total Users
-            </p>
-            <p className="text-4xl font-black text-foreground">{totalUsers}</p>
-          </div>
-        </div>
-
-        {/* Total Staff */}
-        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-secondary/30 transition-colors">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-secondary/10 transition-colors"></div>
-          <div className="relative">
-            <div className="size-12 bg-secondary/10 rounded-xl flex items-center justify-center mb-4 border border-secondary/20">
-              <span className="material-symbols-outlined text-secondary text-2xl">
-                badge
-              </span>
-            </div>
-            <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
-              Team Members
-            </p>
-            <p className="text-4xl font-black text-foreground">{totalStaff}</p>
-          </div>
-        </div>
-
-        {/* Unread Requests */}
-        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-rose-500/30 transition-colors">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-rose-500/10 transition-colors"></div>
-          <div className="relative">
-            <div className="size-12 bg-rose-500/10 rounded-xl flex items-center justify-center mb-4 border border-rose-500/20">
-              <span className="material-symbols-outlined text-rose-500 text-2xl">
-                notifications_active
-              </span>
-            </div>
-            <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
-              Unread Requests
-            </p>
-            <p className="text-4xl font-black text-foreground">{unreadCount}</p>
-          </div>
-        </div>
-
-        {/* Cohort Waitlist */}
-        <div
-          onClick={() => setSidebarView("cohort")}
-          className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-emerald-500/30 transition-colors cursor-pointer"
-        >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/10 transition-colors"></div>
-          <div className="relative">
-            <div className="size-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-4 border border-emerald-500/20">
-              <span className="material-symbols-outlined text-emerald-500 text-2xl">
-                groups
-              </span>
-            </div>
-            <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
-              Cohort Waitlist
-            </p>
-            <p className="text-4xl font-black text-foreground">{cohortTotal}</p>
-            {cohortNotNotified > 0 && (
-              <p className="text-xs text-emerald-500 font-bold mt-1">
-                {cohortNotNotified} not yet notified
+      {isSuper && (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+          {/* Total Users */}
+          <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-primary/30 transition-colors">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-colors"></div>
+            <div className="relative">
+              <div className="size-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 border border-primary/20">
+                <span className="material-symbols-outlined text-primary text-2xl">
+                  group
+                </span>
+              </div>
+              <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
+                Total Users
               </p>
-            )}
+              <p className="text-4xl font-black text-foreground">{totalUsers}</p>
+            </div>
+          </div>
+
+          {/* Total Staff */}
+          <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-secondary/30 transition-colors">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-secondary/10 transition-colors"></div>
+            <div className="relative">
+              <div className="size-12 bg-secondary/10 rounded-xl flex items-center justify-center mb-4 border border-secondary/20">
+                <span className="material-symbols-outlined text-secondary text-2xl">
+                  badge
+                </span>
+              </div>
+              <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
+                Team Members
+              </p>
+              <p className="text-4xl font-black text-foreground">{totalStaff}</p>
+            </div>
+          </div>
+
+          {/* Unread Requests */}
+          <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-rose-500/30 transition-colors">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-rose-500/10 transition-colors"></div>
+            <div className="relative">
+              <div className="size-12 bg-rose-500/10 rounded-xl flex items-center justify-center mb-4 border border-rose-500/20">
+                <span className="material-symbols-outlined text-rose-500 text-2xl">
+                  notifications_active
+                </span>
+              </div>
+              <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
+                Unread Requests
+              </p>
+              <p className="text-4xl font-black text-foreground">{unreadCount}</p>
+            </div>
+          </div>
+
+          {/* Cohort Waitlist */}
+          <div
+            onClick={() => setSidebarView("cohort")}
+            className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-emerald-500/30 transition-colors cursor-pointer"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/10 transition-colors"></div>
+            <div className="relative">
+              <div className="size-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-4 border border-emerald-500/20">
+                <span className="material-symbols-outlined text-emerald-500 text-2xl">
+                  groups
+                </span>
+              </div>
+              <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
+                Cohort Waitlist
+              </p>
+              <p className="text-4xl font-black text-foreground">{cohortTotal}</p>
+              {cohortNotNotified > 0 && (
+                <p className="text-xs text-emerald-500 font-bold mt-1">
+                  {cohortNotNotified} not yet notified
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {unreadCount > 0 && (
+      {!isSuper && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <div
+            onClick={() => setSidebarView("projects")}
+            className="p-8 rounded-3xl bg-primary/10 border border-primary/20 hover:bg-primary/20 transition-all cursor-pointer group"
+          >
+            <span className="material-symbols-outlined text-4xl text-primary mb-4 group-hover:scale-110 transition-transform">
+              rocket_launch
+            </span>
+            <h3 className="text-xl font-black mb-2">My Projects</h3>
+            <p className="text-foreground/60 text-sm">
+              View and manage the projects you are currently assigned to.
+            </p>
+          </div>
+          <div
+            onClick={() => setSidebarView("social-media")}
+            className="p-8 rounded-3xl bg-secondary/10 border border-secondary/20 hover:bg-secondary/20 transition-all cursor-pointer group"
+          >
+            <span className="material-symbols-outlined text-4xl text-secondary mb-4 group-hover:scale-110 transition-transform">
+              share
+            </span>
+            <h3 className="text-xl font-black mb-2">Social Hub</h3>
+            <p className="text-foreground/60 text-sm">
+              Manage connected social media platforms and accounts.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {isSuper && unreadCount > 0 && (
         <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-black text-foreground">Recent Notifications</h3>

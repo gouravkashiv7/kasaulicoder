@@ -6,7 +6,8 @@ export type SidebarView =
   | "cohort"
   | "programs"
   | "blogs"
-  | "projects";
+  | "projects"
+  | "social-media";
 
 export interface Program {
   _id: string;
@@ -27,7 +28,7 @@ export interface Project {
   slug: string;
   outcome: string;
   desc: string;
-  images: string[];
+  media: Array<{ type: "image" | "video"; url: string }>;
   tags: string[];
   content?: string;
   githubUrl?: string;
@@ -89,6 +90,23 @@ export interface Blog {
   content: string;
   writtenBy: string;
   status: "active" | "inactive";
+  createdAt: string;
+  updatedAt: Date;
+}
+
+export interface SocialMediaAccount {
+  _id: string;
+  platform: string;
+  username: string;
+  password?: string;
+  managedBy: {
+    _id: string;
+    name: string;
+    email: string;
+    image?: string;
+  };
+  platformUrl?: string;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }

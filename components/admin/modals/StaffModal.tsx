@@ -187,9 +187,13 @@ const StaffModal = ({
   };
 
   return (
-    <AnimatePresence>
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <>
+      <AnimatePresence>
+        {showAddModal && (
+          <div
+            key="staff-modal-overlay"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          >
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -373,11 +377,15 @@ const StaffModal = ({
           </motion.div>
         </div>
       )}
-
+      </AnimatePresence>
+ 
       {/* Cropper Modal Overlay */}
       <AnimatePresence>
         {showCropper && rawImageSrc && (
-          <div className="fixed inset-0 z-100 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div
+            key="cropper-modal-overlay"
+            className="fixed inset-0 z-100 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          >
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -439,7 +447,7 @@ const StaffModal = ({
           </div>
         )}
       </AnimatePresence>
-    </AnimatePresence>
+    </>
   );
 };
 

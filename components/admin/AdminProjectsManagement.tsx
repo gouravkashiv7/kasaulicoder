@@ -1,31 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { Project } from "@/components/admin/types";
 
 export default function AdminProjectsManagement() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<"all" | "active" | "past">("all");
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
-  // Form State
-  const [formData, setFormData] = useState({
-    title: "",
-    outcome: "",
-    desc: "",
-    images: [] as string[],
-    tags: [] as string[],
-    content: "",
-    githubUrl: "",
-    liveUrl: "",
-    videoUrl: "",
-    status: "active" as "active" | "past",
-    featured: false,
-  });
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      setCurrentUser(JSON.parse(userStr));
+    }
+    fetchProjects();
+  }, []);
 
   const fetchProjects = async () => {
     try {
@@ -36,562 +31,318 @@ export default function AdminProjectsManagement() {
         setProjects(data);
       }
     } catch (err) {
+      console.error("Failed to fetch projects:", err);
       setError("Failed to fetch projects");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
+  const handleDelete = async (id: string, title: string) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete "${title}"? This action cannot be undone.`,
+      )
+    )
+      return;
 
-  const handleOpenEdit = (project: Project) => {
-    setEditingProject(project);
-    setFormData({
-      title: project.title,
-      outcome: project.outcome,
-      desc: project.desc,
-      images: project.images || [],
-      tags: project.tags || [],
-      content: project.content || "",
-      githubUrl: project.githubUrl || "",
-      liveUrl: project.liveUrl || "",
-      videoUrl: project.videoUrl || "",
-      status: project.status,
-      featured: project.featured || false,
-    });
-    setShowModal(true);
-  };
-
-  const handleOpenAdd = () => {
-    setEditingProject(null);
-    setFormData({
-      title: "",
-      outcome: "",
-      desc: "",
-      images: [],
-      tags: [],
-      content: "",
-      githubUrl: "",
-      liveUrl: "",
-      videoUrl: "",
-      status: "active",
-      featured: false,
-    });
-    setShowModal(true);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const url = editingProject
-        ? `/api/admin/projects?id=${editingProject._id}`
-        : `/api/projects`;
-
-      const method = editingProject ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        setShowModal(false);
-        fetchProjects();
-      } else {
-        const errData = await res.json();
-        setError(errData.error || "Failed to save project");
-      }
-    } catch (err) {
-      setError("An unexpected error occurred");
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this project?")) return;
     try {
       const res = await fetch(`/api/admin/projects?id=${id}`, {
         method: "DELETE",
       });
+
       if (res.ok) {
-        fetchProjects();
+        setProjects((prev) => prev.filter((p) => p._id !== id));
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to delete project");
       }
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      alert("An error occurred while deleting the project");
     }
   };
 
   const handleToggleStatus = async (project: Project) => {
+    const newStatus = project.status === "active" ? "past" : "active";
     try {
-      const newStatus = project.status === "active" ? "past" : "active";
-      await fetch(`/api/admin/projects?id=${project._id}`, {
+      const res = await fetch(`/api/admin/projects?id=${project._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
-      fetchProjects();
+
+      if (res.ok) {
+        setProjects((prev) =>
+          prev.map((p) =>
+            p._id === project._id ? { ...p, status: newStatus } : p,
+          ),
+        );
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Toggle status failed:", err);
     }
   };
 
   const handleToggleFeatured = async (project: Project) => {
     try {
-      const newFeatured = !project.featured;
-      await fetch(`/api/admin/projects?id=${project._id}`, {
+      const res = await fetch(`/api/admin/projects?id=${project._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ featured: newFeatured }),
+        body: JSON.stringify({ featured: !project.featured }),
       });
-      fetchProjects();
+
+      if (res.ok) {
+        setProjects((prev) =>
+          prev.map((p) =>
+            p._id === project._id ? { ...p, featured: !project.featured } : p,
+          ),
+        );
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Toggle featured failed:", err);
     }
   };
 
+  // Stats calculation
+  const stats = useMemo(() => {
+    return {
+      total: projects.length,
+      active: projects.filter((p) => p.status === "active").length,
+      featured: projects.filter((p) => p.featured).length,
+    };
+  }, [projects]);
+
+  // Filtering calculation
+  const filteredProjects = useMemo(() => {
+    return projects.filter((p) => {
+      const matchesSearch =
+        p.title.toLowerCase().includes(search.toLowerCase()) ||
+        p.slug.toLowerCase().includes(search.toLowerCase()) ||
+        p.tags?.some((t) => t.toLowerCase().includes(search.toLowerCase()));
+      const matchesStatus = filter === "all" || p.status === filter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [projects, search, filter]);
+
+  // Helper to get first image from media array
+  const getThumbnail = (project: Project) => {
+    return project.media?.find((m) => m.type === "image")?.url;
+  };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="space-y-6"
-    >
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-black tracking-tight flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary">
-              rocket_launch
-            </span>
-            Projects
-          </h2>
-          <p className="text-foreground/60 text-sm mt-1">
-            Manage your featured active and past projects.
-          </p>
+    <div className="space-y-8 pb-10">
+      {/* Header & Stats */}
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 className="text-3xl font-black tracking-tight flex items-center gap-3">
+              <span className="size-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <span className="material-symbols-outlined text-primary text-2xl">rocket_launch</span>
+              </span>
+              Projects Console
+            </h2>
+            <p className="text-foreground/50 text-sm mt-2 font-medium">
+              Manage and showcase your engineering milestones.
+            </p>
+          </div>
+          <Link
+            href="/admin/projects/new"
+            className="flex items-center gap-2 px-6 py-3 bg-primary text-background font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 group"
+          >
+            <span className="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform">add</span>
+            New Project
+          </Link>
         </div>
-        <button
-          onClick={handleOpenAdd}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-background font-bold rounded-xl hover:bg-primary/90 transition-all shadow-lg"
-        >
-          <span className="material-symbols-outlined text-[18px]">add</span>
-          Add Project
-        </button>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {[
+            { label: "Total Projects", value: stats.total, icon: "inventory_2", color: "text-foreground" },
+            { label: "Active Engineering", value: stats.active, icon: "engineering", color: "text-emerald-500" },
+            { label: "Featured Highlights", value: stats.featured, icon: "star", color: "text-amber-500" },
+          ].map((s, i) => (
+            <div key={i} className="bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-sm shadow-sm">
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">{s.label}</p>
+                  <p className={`text-3xl font-black ${s.color}`}>{s.value}</p>
+                </div>
+                <span className={`material-symbols-outlined ${s.color}/20 text-2xl`}>{s.icon}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Control Bar */}
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-xl">
+        <div className="relative w-full md:max-w-md group">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-foreground/30 group-focus-within:text-primary transition-colors">search</span>
+          <input
+            type="text"
+            placeholder="Search by title, slug, or tags..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-background border border-white/10 rounded-xl pl-12 pr-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-all shadow-inner"
+          />
+        </div>
+        <div className="flex gap-2 w-full md:w-auto">
+          {(["all", "active", "past"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setFilter(s)}
+              className={`flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all border ${
+                filter === s
+                  ? "bg-primary text-background border-primary"
+                  : "bg-white/5 text-foreground/40 border-white/10 hover:border-white/20 hover:text-foreground"
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
       </div>
 
       {error && (
-        <div className="bg-rose-500/10 border border-rose-500/20 text-rose-500 text-sm p-3 rounded-lg flex items-center gap-2">
+        <div className="bg-rose-500/10 border border-rose-500/20 text-rose-500 text-sm p-4 rounded-2xl flex items-center gap-3">
           <span className="material-symbols-outlined">error</span>
-          {error}
+          <p className="font-bold">{error}</p>
         </div>
       )}
 
-      <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-foreground/5 border-b border-white/10">
-              <tr>
-                <th className="p-4 text-xs font-black text-foreground/40 uppercase tracking-widest whitespace-nowrap">
-                  Project
-                </th>
-                <th className="p-4 text-xs font-black text-foreground/40 uppercase tracking-widest">
-                  Featured
-                </th>
-                <th className="p-4 text-xs font-black text-foreground/40 uppercase tracking-widest">
-                  Status
-                </th>
-                <th className="p-4 text-xs font-black text-foreground/40 uppercase tracking-widest">
-                  Tags
-                </th>
-                <th className="p-4 text-xs font-black text-foreground/40 uppercase tracking-widest text-right">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="p-8 text-center text-foreground/40"
-                  >
-                    <span className="material-symbols-outlined animate-spin text-primary">
-                      refresh
-                    </span>
-                  </td>
-                </tr>
-              ) : projects.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="p-8 text-center text-foreground/40 text-sm"
-                  >
-                    No projects found
-                  </td>
-                </tr>
-              ) : (
-                projects.map((project) => (
-                  <tr
+      {/* Projects List */}
+      <div className="space-y-4">
+        {loading ? (
+          <div className="py-20 flex flex-col items-center justify-center gap-4 text-foreground/20">
+            <span className="material-symbols-outlined animate-spin text-5xl">refresh</span>
+            <p className="text-xs font-black uppercase tracking-widest">Compiling entries...</p>
+          </div>
+        ) : filteredProjects.length === 0 ? (
+          <div className="py-24 border border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center text-center">
+            <span className="material-symbols-outlined text-foreground/5 text-6xl mb-4">search_off</span>
+            <p className="text-sm font-black text-foreground/20 uppercase tracking-[0.3em]">No matching projects found</p>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project) => {
+                const thumbnail = getThumbnail(project);
+                return (
+                  <motion.div
+                    layout
                     key={project._id}
-                    className="hover:bg-white/5 transition-colors"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    className="group relative bg-white/5 border border-white/10 hover:border-primary/30 p-4 sm:p-5 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5"
                   >
-                    <td className="p-4">
-                      <div className="flex items-center gap-3 w-max">
-                        <div className="size-10 rounded-lg overflow-hidden relative bg-foreground/10 shrink-0 border border-white/10">
-                          {project.images?.[0] ? (
-                            <Image
-                              src={project.images[0]}
-                              fill
-                              alt=""
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-foreground/30">
-                              <span className="material-symbols-outlined text-sm">
-                                image
+                    <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                      {/* Thumbnail Block */}
+                      <div className="relative size-16 sm:size-24 rounded-xl overflow-hidden bg-foreground/5 border border-white/10 shrink-0 shadow-lg">
+                        {thumbnail ? (
+                          <Image src={thumbnail} fill alt="" className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-foreground/10 bg-linear-to-br from-white/5 to-transparent">
+                            <span className="material-symbols-outlined text-3xl">image</span>
+                          </div>
+                        )}
+                        <div className={`absolute top-1.5 left-1.5 size-2 rounded-full ring-2 ring-background ${
+                          project.status === "active" ? "bg-emerald-500 animate-pulse" : "bg-foreground/20"
+                        }`} />
+                      </div>
+
+                      {/* Content Block */}
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <h3 className="text-lg font-black tracking-tight text-foreground group-hover:text-primary transition-colors truncate">
+                            {project.title}
+                          </h3>
+                          <div className="flex gap-2">
+                            {project.featured && (
+                              <span className="px-2 py-0.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-md text-[9px] font-black uppercase tracking-widest flex items-center gap-1">
+                                <span className="material-symbols-outlined text-[12px] fill-1">star</span>
+                                Featured
                               </span>
-                            </div>
+                            )}
+                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${
+                              project.status === "active" 
+                                ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" 
+                                : "bg-foreground/5 text-foreground/40 border-white/10"
+                            }`}>
+                              {project.status}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-sm font-medium text-foreground/50 italic truncate max-w-lg">
+                          {project.outcome}
+                        </p>
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {project.tags?.map((tag, i) => (
+                            <span key={i} className="text-[10px] font-bold text-foreground/30 px-2 py-0.5 bg-white/5 rounded-lg border border-white/10 uppercase tracking-tighter">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action Block */}
+                      <div className="flex flex-row sm:flex-col lg:flex-row items-center gap-2 w-full sm:w-auto border-t sm:border-t-0 border-white/5 pt-4 sm:pt-0">
+                        <div className="flex gap-2 flex-1 sm:flex-none">
+                          <button
+                            onClick={() => handleToggleFeatured(project)}
+                            className={`flex-1 sm:size-10 rounded-xl flex items-center justify-center transition-all border ${
+                              project.featured
+                                ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                : "bg-white/5 text-foreground/20 border-white/10 hover:text-foreground/40"
+                            }`}
+                            title="Toggle Featured"
+                          >
+                            <span className="material-symbols-outlined text-[20px]">star</span>
+                          </button>
+                          <button
+                            onClick={() => handleToggleStatus(project)}
+                            className={`flex-1 sm:size-10 rounded-xl flex items-center justify-center transition-all border ${
+                              project.status === "active"
+                                ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                : "bg-white/5 text-foreground/20 border-white/10 hover:text-foreground/40"
+                            }`}
+                            title="Toggle Status"
+                          >
+                            <span className="material-symbols-outlined text-[20px]">sync</span>
+                          </button>
+                        </div>
+                        <div className="h-8 w-px bg-white/10 hidden lg:block mx-1" />
+                        <div className="flex gap-2 flex-1 sm:flex-none">
+                          <Link
+                            href={`/admin/projects/edit/${project._id}`}
+                            className="flex-1 sm:size-10 rounded-xl bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 flex items-center justify-center transition-all"
+                            title="Edit Details"
+                          >
+                            <span className="material-symbols-outlined text-[20px]">edit</span>
+                          </Link>
+                          {currentUser?.role === "superadmin" && (
+                            <button
+                              onClick={() =>
+                                handleDelete(project._id as string, project.title)
+                              }
+                              className="flex-1 sm:size-10 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20 flex items-center justify-center transition-all"
+                              title="Delete Permanently"
+                            >
+                              <span className="material-symbols-outlined text-[20px]">
+                                delete
+                              </span>
+                            </button>
                           )}
                         </div>
-                        <div>
-                          <div className="font-bold text-sm tracking-tight">
-                            {project.title}
-                          </div>
-                          <div className="text-primary text-[10px] font-black tracking-widest uppercase">
-                            /{project.slug}
-                          </div>
-                        </div>
                       </div>
-                    </td>
-                    <td className="p-4">
-                      <button
-                        onClick={() => handleToggleFeatured(project)}
-                        className={`size-8 rounded-lg flex items-center justify-center transition-all ${
-                          project.featured
-                            ? "bg-amber-500/10 text-amber-500"
-                            : "bg-foreground/5 text-foreground/20 hover:text-foreground/40"
-                        }`}
-                        title={
-                          project.featured
-                            ? "Featured (Show on Home)"
-                            : "Set as Featured"
-                        }
-                      >
-                        <span
-                          className={`material-symbols-outlined text-[20px] ${
-                            project.featured ? "fill-1" : ""
-                          }`}
-                        >
-                          star
-                        </span>
-                      </button>
-                    </td>
-                    <td className="p-4">
-                      <button
-                        onClick={() => handleToggleStatus(project)}
-                        className={`px-3 py-1 rounded-full text-xs font-bold leading-none inline-flex items-center gap-1.5 transition-colors ${
-                          project.status === "active"
-                            ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
-                            : "bg-foreground/10 text-foreground/60 hover:bg-foreground/20"
-                        }`}
-                      >
-                        <span
-                          className={`size-1.5 rounded-full ${
-                            project.status === "active"
-                              ? "bg-emerald-500 animate-pulse"
-                              : "bg-foreground/40"
-                          }`}
-                        />
-                        {project.status === "active" ? "Active" : "Past"}
-                      </button>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex flex-wrap gap-1 w-max">
-                        {project.tags?.slice(0, 2).map((tag, i) => (
-                          <span
-                            key={i}
-                            className="text-[10px] font-bold uppercase tracking-widest bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-foreground/60"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                        {(project.tags?.length || 0) > 2 && (
-                          <span className="text-[10px] font-bold uppercase tracking-widest bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-foreground/60">
-                            +{(project.tags?.length || 0) - 2}
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="p-4 text-right">
-                      <div className="flex items-center justify-end gap-2 w-max ml-auto">
-                        <button
-                          onClick={() => handleOpenEdit(project)}
-                          className="size-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors text-foreground/60 hover:text-foreground"
-                          title="Edit"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">
-                            edit
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => handleDelete(project._id)}
-                          className="size-8 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 flex items-center justify-center transition-colors text-rose-500"
-                          title="Delete"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">
-                            delete
-                          </span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Editor Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-            onClick={() => setShowModal(false)}
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-[#111] border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10 custom-scrollbar"
-          >
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-black">
-                {editingProject ? "Edit Project" : "Add Project"}
-              </h3>
-              <button
-                onClick={() => setShowModal(false)}
-                className="size-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2">
-                    Title *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.title}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, title: e.target.value }))
-                    }
-                    className="w-full bg-background border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2">
-                    Outcome *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.outcome}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, outcome: e.target.value }))
-                    }
-                    className="w-full bg-background border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2">
-                  Short Description *
-                </label>
-                <textarea
-                  required
-                  rows={2}
-                  value={formData.desc}
-                  onChange={(e) =>
-                    setFormData((p) => ({ ...p, desc: e.target.value }))
-                  }
-                  className="w-full bg-background border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-colors resize-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2">
-                  Full Content / Case Study
-                </label>
-                <textarea
-                  rows={4}
-                  value={formData.content}
-                  onChange={(e) =>
-                    setFormData((p) => ({ ...p, content: e.target.value }))
-                  }
-                  placeholder="Supports Markdown... (Optional)"
-                  className="w-full bg-background border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-colors resize-none"
-                />
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2">
-                    Primary Image URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.images[0] || ""}
-                    onChange={(e) =>
-                      setFormData((p) => ({
-                        ...p,
-                        images: [e.target.value, ...p.images.slice(1)],
-                      }))
-                    }
-                    className="w-full bg-background border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2">
-                    Status
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) =>
-                      setFormData((p) => ({
-                        ...p,
-                        status: e.target.value as "active" | "past",
-                      }))
-                    }
-                    className="w-full bg-background border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-colors appearance-none"
-                  >
-                    <option value="active">Active (In Progress)</option>
-                    <option value="past">Past (Completed)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">
-                      smart_display
-                    </span>
-                    Video Demo URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.videoUrl}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, videoUrl: e.target.value }))
-                    }
-                    placeholder="https://youtube.com/..."
-                    className="w-full bg-background border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-colors"
-                  />
-                </div>
-                <div className="flex items-end pb-1">
-                  <label className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-colors w-full">
-                    <input
-                      type="checkbox"
-                      checked={formData.featured}
-                      onChange={(e) =>
-                        setFormData((p) => ({
-                          ...p,
-                          featured: e.target.checked,
-                        }))
-                      }
-                      className="size-5 rounded border-white/10 bg-background text-primary focus:ring-primary/20"
-                    />
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold leading-none">
-                        Featured Project
-                      </span>
-                      <span className="text-[10px] text-foreground/40 uppercase tracking-widest mt-1">
-                        Show on Homepage
-                      </span>
                     </div>
-                  </label>
-                </div>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">
-                      link
-                    </span>
-                    Live URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.liveUrl}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, liveUrl: e.target.value }))
-                    }
-                    className="w-full bg-background border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">
-                      code
-                    </span>
-                    GitHub URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.githubUrl}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, githubUrl: e.target.value }))
-                    }
-                    className="w-full bg-background border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2">
-                  Tags (comma separated)
-                </label>
-                <input
-                  type="text"
-                  value={formData.tags.join(", ")}
-                  onChange={(e) =>
-                    setFormData((p) => ({
-                      ...p,
-                      tags: e.target.value
-                        .split(",")
-                        .map((t) => t.trim())
-                        .filter(Boolean),
-                    }))
-                  }
-                  placeholder="NEXT.JS, TAILWIND, STRIPE"
-                  className="w-full bg-background border border-white/10 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-colors"
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4 border-t border-white/10">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-6 py-2.5 rounded-xl font-bold bg-white/5 hover:bg-white/10 transition-colors flex-1"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 rounded-xl font-bold bg-primary text-background hover:bg-primary/90 transition-colors flex-1"
-                >
-                  Save Project
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
-    </motion.div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
