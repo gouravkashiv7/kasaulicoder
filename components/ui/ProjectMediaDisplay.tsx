@@ -25,6 +25,9 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
   aspectRatio = "aspect-video",
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [viewMode, setViewMode] = useState<"media" | "iframe">(
+    media.length > 0 ? "media" : "iframe"
+  );
 
   // Helper to get embed URL for YouTube/Vimeo
   const getEmbedUrl = (url: string) => {
@@ -49,10 +52,50 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
     setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
   };
 
-  // 1. If media provided, show media (Carousel or Single)
-  if (media.length > 0) {
-    const currentMedia = media[currentIndex];
+  // Render Iframe Preview
+  const renderIframe = () => (
+    <div className={`relative group overflow-hidden bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}>
+      <div className="absolute top-0 left-0 right-0 h-8 bg-background/80 backdrop-blur-md border-b border-white/10 z-10 px-4 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 overflow-hidden">
+          <span className="size-2 rounded-full bg-rose-500" />
+          <span className="size-2 rounded-full bg-amber-500" />
+          <span className="size-2 rounded-full bg-emerald-500" />
+          <span className="text-[10px] font-bold text-foreground/40 ml-2 truncate uppercase tracking-widest">
+            Live Preview: {liveUrl?.replace(/^https?:\/\//, "")}
+          </span>
+        </div>
+        <a
+          href={liveUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[10px] font-black uppercase tracking-tighter text-primary hover:underline flex items-center gap-1"
+        >
+          Visit <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+        </a>
+      </div>
+      <div className="w-full h-full pt-8">
+        <iframe
+          src={liveUrl}
+          className="w-full h-full border-0"
+          title={`${title} Website Preview`}
+        />
+        {/* Overlay to detect blocked iframes or just handle interaction */}
+        <div className="absolute inset-0 pt-8 pointer-events-none group-hover:bg-primary/5 transition-colors" />
+      </div>
+      
+      {/* Fallback Message for iframe blocking */}
+      <div className="absolute inset-x-4 bottom-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="bg-background/90 backdrop-blur-md border border-white/10 p-3 rounded-xl text-[10px] font-bold text-center">
+            Previewing via Iframe. Some sites may block this view. 
+            <a href={liveUrl} target="_blank" className="text-primary hover:underline ml-1">Open in new tab →</a>
+        </div>
+      </div>
+    </div>
+  );
 
+  // Render Media Carousel
+  const renderMedia = () => {
+    const currentMedia = media[currentIndex];
     return (
       <div className={`relative group overflow-hidden bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}>
         <AnimatePresence mode="wait">
@@ -109,60 +152,57 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
         )}
       </div>
     );
-  }
+  };
 
-  // 2. Fallback to Website Preview (Iframe)
-  if (liveUrl && liveUrl !== "#") {
-    return (
-      <div className={`relative group overflow-hidden bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}>
-        <div className="absolute top-0 left-0 right-0 h-8 bg-background/80 backdrop-blur-md border-b border-white/10 z-10 px-4 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 overflow-hidden">
-            <span className="size-2 rounded-full bg-rose-500" />
-            <span className="size-2 rounded-full bg-amber-500" />
-            <span className="size-2 rounded-full bg-emerald-500" />
-            <span className="text-[10px] font-bold text-foreground/40 ml-2 truncate uppercase tracking-widest">
-              Live Preview: {liveUrl.replace(/^https?:\/\//, "")}
-            </span>
-          </div>
-          <a
-            href={liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] font-black uppercase tracking-tighter text-primary hover:underline flex items-center gap-1"
-          >
-            Visit <span className="material-symbols-outlined text-[12px]">open_in_new</span>
-          </a>
-        </div>
-        <div className="w-full h-full pt-8">
-          <iframe
-            src={liveUrl}
-            className="w-full h-full border-0"
-            title={`${title} Website Preview`}
-          />
-          {/* Overlay to detect blocked iframes or just handle interaction */}
-          <div className="absolute inset-0 pt-8 pointer-events-none group-hover:bg-primary/5 transition-colors" />
-        </div>
-        
-        {/* Fallback Message for iframe blocking */}
-        <div className="absolute inset-x-4 bottom-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="bg-background/90 backdrop-blur-md border border-white/10 p-3 rounded-xl text-[10px] font-bold text-center">
-             Previewing via Iframe. Some sites may block this view. 
-             <a href={liveUrl} target="_blank" className="text-primary hover:underline ml-1">Open in new tab →</a>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const hasMedia = media.length > 0;
+  const hasLiveUrl = liveUrl && liveUrl !== "#";
 
-  // 3. Absolute Fallback
   return (
-    <div className={`flex flex-col items-center justify-center bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}>
-      <span className="material-symbols-outlined text-4xl text-foreground/20 mb-2">
-        website
-      </span>
-      <span className="text-xs font-bold text-foreground/40 uppercase tracking-widest">
-        No Preview Available
-      </span>
+    <div className="relative w-full h-full flex flex-col gap-4">
+      {/* Toggle Controls */}
+      {hasMedia && hasLiveUrl && (
+        <div className="flex justify-center md:justify-end gap-2 mb-2">
+          <button
+            onClick={() => setViewMode("media")}
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 ${
+              viewMode === "media"
+                ? "bg-primary text-background"
+                : "bg-white/5 border border-white/10 text-foreground/60 hover:text-foreground"
+            }`}
+          >
+            <span className="material-symbols-outlined text-sm">photo_library</span>
+            Gallery
+          </button>
+          <button
+            onClick={() => setViewMode("iframe")}
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 ${
+              viewMode === "iframe"
+                ? "bg-primary text-background"
+                : "bg-white/5 border border-white/10 text-foreground/60 hover:text-foreground"
+            }`}
+          >
+            <span className="material-symbols-outlined text-sm">language</span>
+            Live Preview
+          </button>
+        </div>
+      )}
+
+      {/* Main Display Area */}
+      {viewMode === "media" && hasMedia ? (
+        renderMedia()
+      ) : viewMode === "iframe" && hasLiveUrl ? (
+        renderIframe()
+      ) : (
+        <div className={`flex flex-col items-center justify-center bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}>
+          <span className="material-symbols-outlined text-4xl text-foreground/20 mb-2">
+            website
+          </span>
+          <span className="text-xs font-bold text-foreground/40 uppercase tracking-widest">
+            No Preview Available
+          </span>
+        </div>
+      )}
     </div>
   );
 };
+

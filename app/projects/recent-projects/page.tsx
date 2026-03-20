@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 import connectDB from "@/backend/lib/db";
-import Project from "@/backend/models/Project";
+import Project, { IProject } from "@/backend/models/Project";
 
 export const metadata: Metadata = {
   title: "Recent Projects",
@@ -16,9 +16,13 @@ export const metadata: Metadata = {
 
 export default async function RecentProjects() {
   await connectDB();
-  const projects = await Project.find({ status: "past" }).sort({
-    createdAt: -1,
-  });
+  const rawProjects = await Project.find({ status: "past" })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  // Next.js 14+ requires strictly plain objects (Plain Old JS Objects)
+  // Mongoose .lean() still contains ObjectIds which cause serialization errors
+  const projects = JSON.parse(JSON.stringify(rawProjects));
 
   return (
     <div className="relative bg-background text-foreground font-sans min-h-screen flex flex-col">
@@ -46,7 +50,7 @@ export default async function RecentProjects() {
               No recent projects at the moment.
             </div>
           ) : (
-            projects.map((project) => (
+            projects.map((project: IProject) => (
               <div
                 key={project._id.toString()}
                 className="grid lg:grid-cols-2 gap-8 items-center border border-foreground/10 bg-foreground/5 rounded-3xl p-6 sm:p-10 hover:border-foreground/20 transition-colors"

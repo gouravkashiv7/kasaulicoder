@@ -2,7 +2,9 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import Blog from "@/backend/models/Blog";
 import connectDB from "@/backend/lib/db";
+import Staff from "@/backend/models/Staff";
 import Comment from "@/backend/models/Comment";
+
 
 export async function GET(
   req: Request,

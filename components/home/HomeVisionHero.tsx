@@ -25,7 +25,7 @@ export interface ProjectType {
   slug: string;
   outcome: string;
   desc: string;
-  images: string[];
+  media: { type: "image" | "video"; url: string }[];
   tags: string[];
   status: "active" | "past";
   featured: boolean;
@@ -737,20 +737,37 @@ const HomeVisionHero = () => {
                     whileHover={{ y: -5 }}
                     className="group relative flex flex-col bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-primary/50 transition-all shadow-lg"
                   >
-                    <div className="aspect-video overflow-hidden relative border-b border-white/5">
+                    <div className="aspect-video overflow-hidden relative border-b border-white/5 bg-foreground/5">
                       <div className="w-full h-full relative">
-                        {project.images && project.images.length > 0 ? (
+                        {project.media && project.media.length > 0 && project.media[0].type === "image" ? (
                           <Image
-                            src={project.images[0]}
+                            src={project.media[0].url}
                             alt={project.title}
                             fill
                             className="object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         ) : (
-                          <div className="flex items-center justify-center w-full h-full bg-foreground/5 relative overflow-hidden">
-                            <span className="material-symbols-outlined text-4xl text-foreground/20">
-                              image
-                            </span>
+                          /* Premium Fallback Design */
+                          <div className="flex items-center justify-center w-full h-full relative overflow-hidden group-hover:scale-110 transition-transform duration-500">
+                             {/* Dynamic Gradient Background based on title length */}
+                             <div className={`absolute inset-0 opacity-40 bg-linear-to-br ${
+                               ["from-primary/30 to-secondary/30", "from-emerald-500/30 to-teal-500/30", "from-violet-500/30 to-purple-500/30", "from-blue-500/30 to-cyan-500/30"][project.title.length % 4]
+                             }`}></div>
+                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05)_0%,transparent_70%)]"></div>
+                             
+                             {/* Large Abstract Icon/Text */}
+                             <div className="text-8xl font-black text-foreground/5 select-none tracking-tighter uppercase whitespace-nowrap">
+                               {project.title}
+                             </div>
+                             
+                             {/* Central Initials */}
+                             <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="size-20 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center shadow-2xl">
+                                  <span className="text-3xl font-black text-foreground/40 tracking-tighter uppercase">
+                                    {project.title.substring(0, 2)}
+                                  </span>
+                                </div>
+                             </div>
                           </div>
                         )}
                         <div className="absolute top-3 left-3 flex gap-2">

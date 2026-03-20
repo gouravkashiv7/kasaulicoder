@@ -15,10 +15,15 @@ export const dynamic = "force-dynamic";
 /** Fetch project data once to be shared by metadata and the page */
 async function getProject(slug: string) {
   await connectDB();
-  return await Project.findOne({
+  const rawProject = await Project.findOne({
     slug: slug,
     status: "past",
-  }).populate("members", "name image designation");
+  })
+    .populate("members", "name image designation")
+    .lean();
+
+  if (!rawProject) return null;
+  return JSON.parse(JSON.stringify(rawProject));
 }
 
 export async function generateMetadata(props: {
