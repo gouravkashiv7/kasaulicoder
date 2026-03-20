@@ -24,8 +24,15 @@ const SocialMediaModal = ({
   isSubmitting,
   error,
 }: SocialMediaModalProps) => {
+  const PREDEFINED_PLATFORMS = ["Twitter", "Facebook", "Instagram", "LinkedIn", "YouTube"];
+  
   const [formData, setFormData] = useState({
-    platform: editingAccount?.platform || "Twitter",
+    platform: editingAccount?.platform && PREDEFINED_PLATFORMS.includes(editingAccount.platform) 
+      ? editingAccount.platform 
+      : (editingAccount?.platform ? "Other" : "Twitter"),
+    customPlatform: editingAccount?.platform && !PREDEFINED_PLATFORMS.includes(editingAccount.platform)
+      ? editingAccount.platform
+      : "",
     username: editingAccount?.username || "",
     password: editingAccount?.password || "",
     managedBy: editingAccount?.managedBy?._id || editingAccount?.managedBy || "",
@@ -35,8 +42,10 @@ const SocialMediaModal = ({
 
   React.useEffect(() => {
     if (editingAccount) {
+      const isPredefined = PREDEFINED_PLATFORMS.includes(editingAccount.platform);
       setFormData({
-        platform: editingAccount.platform,
+        platform: isPredefined ? editingAccount.platform : "Other",
+        customPlatform: isPredefined ? "" : editingAccount.platform,
         username: editingAccount.username,
         password: editingAccount.password || "",
         managedBy: editingAccount.managedBy?._id || editingAccount.managedBy || "",
@@ -46,6 +55,7 @@ const SocialMediaModal = ({
     } else {
       setFormData({
         platform: "Twitter",
+        customPlatform: "",
         username: "",
         password: "",
         managedBy: "",
@@ -57,7 +67,11 @@ const SocialMediaModal = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    const submissionData = {
+      ...formData,
+      platform: formData.platform === "Other" ? formData.customPlatform : formData.platform,
+    };
+    onSave(submissionData);
   };
 
   return (
@@ -85,7 +99,7 @@ const SocialMediaModal = ({
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className={`grid ${formData.platform === "Other" ? "grid-cols-1" : "grid-cols-2"} gap-4 transition-all`}>
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">Platform</label>
                   <select
@@ -101,6 +115,25 @@ const SocialMediaModal = ({
                     <option value="Other">Other</option>
                   </select>
                 </div>
+
+                {formData.platform === "Other" && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-1.5"
+                  >
+                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">Platform Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.customPlatform}
+                      onChange={(e) => setFormData({ ...formData, customPlatform: e.target.value })}
+                      className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40"
+                      placeholder="Enter platform name"
+                    />
+                  </motion.div>
+                )}
+
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">Username</label>
                   <input

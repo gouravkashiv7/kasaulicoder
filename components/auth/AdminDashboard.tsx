@@ -1047,7 +1047,7 @@ const AdminDashboard = () => {
         setShowModal={setShowSocialMediaModal}
         editingAccount={editingSocialMediaAccount}
         setEditingAccount={setEditingSocialMediaAccount}
-        staffList={allStaff}
+        staffList={allStaff.filter((staff) => staff.role !== "superadmin")}
         onSave={handleSaveSocialMediaAccount}
         isSubmitting={isSubmitting}
         error={socialMediaError}

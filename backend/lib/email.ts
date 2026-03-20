@@ -423,3 +423,122 @@ export const sendAccountActivationEmail = async (
     html,
   });
 };
+export interface SocialMediaAssignmentEmailOptions {
+  toEmail: string;
+  toName: string;
+  platform: string;
+  username: string;
+  password?: string;
+}
+
+export const sendSocialMediaAssignmentEmail = async (
+  opts: SocialMediaAssignmentEmailOptions,
+): Promise<void> => {
+  const { toEmail, toName, platform, username, password } = opts;
+  const year = new Date().getFullYear();
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Social Media Responsibility – Kasaulicoder</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);padding:40px 48px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:800;letter-spacing:-0.5px;">New Responsibility Assigned 📱</h1>
+              <p style="margin:10px 0 0;color:rgba(255,255,255,0.6);font-size:14px;">Social Media Management</p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding:40px 48px 0;">
+              <p style="margin:0;font-size:16px;color:#374151;line-height:1.7;">
+                Hello <strong>${toName}</strong>,
+              </p>
+              <p style="margin:14px 0 0;font-size:15px;color:#4b5563;line-height:1.8;">
+                You have been assigned responsibility for a new social media account on <strong style="color:#0f172a;">${platform}</strong>. Please ensure all brand guidelines are followed while managing this channel.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Account Details Card -->
+          <tr>
+            <td style="padding:32px 48px 0;">
+              <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:28px;">
+                <p style="margin:0 0- 18px;font-size:13px;font-weight:700;color:#64748b;letter-spacing:0.6px;text-transform:uppercase;">
+                  Credential Details
+                </p>
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="padding-bottom:16px;">
+                      <p style="margin:0;font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;">Platform</p>
+                      <p style="margin:4px 0 0;font-size:16px;color:#1e293b;font-weight:700;">${platform}</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom:16px;">
+                      <p style="margin:0;font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;">Username</p>
+                      <p style="margin:4px 0 0;font-size:16px;color:#1e293b;font-weight:700;">${username}</p>
+                    </td>
+                  </tr>
+                  ${password ? `
+                  <tr>
+                    <td>
+                      <p style="margin:0;font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;">Password</p>
+                      <div style="margin-top:6px;display:inline-block;background:#1e293b;border-radius:6px;padding:8px 16px;">
+                        <code style="font-size:16px;color:#ffffff;font-family:monospace;">${password}</code>
+                      </div>
+                    </td>
+                  </tr>
+                  ` : ""}
+                </table>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Guidelines -->
+          <tr>
+            <td style="padding:32px 48px 0;">
+              <p style="margin:0;font-size:14px;font-weight:700;color:#374151;">Guidelines for Management:</p>
+              <ul style="margin:10px 0 0;padding-left:20px;font-size:14px;color:#6b7280;line-height:1.7;">
+                <li>Maintain a professional and engaging brand voice.</li>
+                <li>Ensure all content follows the Kasaulicoder brand style.</li>
+                <li>Respond to queries and comments promptly.</li>
+                <li>Report any security concerns immediately.</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:40px 48px;">
+              <div style="border-top:1px solid #e2e8f0;padding-top:24px;text-align:center;">
+                <p style="margin:0;font-size:12px;color:#9ca3af;">
+                  © ${year} Kasaulicoder | Administrative Notification
+                </p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  await transporter.sendMail({
+    from: `"Kasaulicoder Admin" <${process.env.SMTP_FROM || "info@kasaulicoder.com"}>`,
+    to: toEmail,
+    subject: `📋 Responsibility Assigned: ${platform} (${username})`,
+    html,
+  });
+};

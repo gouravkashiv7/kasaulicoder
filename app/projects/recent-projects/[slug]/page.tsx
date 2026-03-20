@@ -71,62 +71,50 @@ export default async function RecentProjectPage(props: {
             Back to Home
           </Link>
 
-          <header className="mb-12">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="px-3 py-1 bg-white/10 text-foreground/80 rounded-full text-xs font-black uppercase tracking-widest border border-white/20">
+          <header className="mb-16 text-center">
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+              <span className="px-3 py-1 bg-white/10 text-foreground/80 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20">
                 Completed Project
               </span>
               {project.tags?.map((tag: string) => (
                 <span
                   key={tag}
-                  className="text-xs font-bold text-foreground/60 bg-white/5 px-2 py-1 rounded"
+                  className="text-[10px] font-black uppercase text-foreground/40 bg-white/5 px-2 py-1 rounded border border-white/5"
                 >
                   {tag}
                 </span>
               ))}
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tight text-foreground">
+            <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tighter text-foreground max-w-4xl mx-auto leading-[0.9]">
               {project.title}
             </h1>
-            <p className="text-xl md:text-2xl text-foreground/60 font-bold italic">
+            <p className="text-xl md:text-2xl text-foreground/50 font-bold italic max-w-2xl mx-auto">
               {project.outcome}
             </p>
           </header>
 
-          <div className="grid lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-2 space-y-12">
-              <div className="w-full">
-                <ProjectMediaDisplay
-                  media={project.media || []}
-                  liveUrl={project.liveUrl}
-                  title={project.title}
-                  aspectRatio="aspect-video"
-                />
-              </div>
-
-              <div className="prose prose-invert max-w-none prose-p:text-foreground/70 prose-headings:text-foreground prose-a:text-primary">
-                <h3 className="text-2xl font-bold mb-4">Case Study</h3>
-                <p className="text-lg leading-relaxed">{project.desc}</p>
-
-                {project.content && (
-                  <div className="mt-8 whitespace-pre-wrap">
-                    {project.content}
-                  </div>
-                )}
-              </div>
+          <div className="grid lg:grid-cols-3 gap-8 items-stretch mb-20">
+            <div className="lg:col-span-2">
+              <ProjectMediaDisplay
+                media={project.media || []}
+                liveUrl={project.liveUrl}
+                title={project.title}
+                aspectRatio="aspect-video"
+                className="h-full shadow-2xl"
+              />
             </div>
 
-            <div className="space-y-8">
-              <div className="bg-white/5 border border-white/10 p-6 rounded-2xl opacity-90 hover:opacity-100 transition-opacity">
-                <h4 className="text-sm font-black text-foreground/50 uppercase tracking-widest mb-6">
+            <div className="flex flex-col gap-6 h-full">
+              <div className="flex-1 bg-white/5 border border-white/10 p-8 rounded-2xl flex flex-col justify-center backdrop-blur-sm">
+                <h4 className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em] mb-8 text-center">
                   Team Members Who Worked On It
                 </h4>
                 {project.members && project.members.length > 0 ? (
-                  <div className="flex flex-col gap-4">
+                  <div className="space-y-6">
                     {project.members.map((member: any) => (
-                      <div key={member._id} className="flex items-center gap-3">
-                        <div className="size-10 rounded-full bg-foreground/10 relative overflow-hidden border border-white/10">
+                      <div key={member._id} className="flex flex-col items-center text-center group">
+                        <div className="size-16 rounded-full bg-foreground/10 relative overflow-hidden border-2 border-white/10 mb-3 group-hover:border-primary/50 transition-colors">
                           {member.image ? (
                             <Image
                               src={member.image}
@@ -135,17 +123,17 @@ export default async function RecentProjectPage(props: {
                               className="object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center font-bold text-xs uppercase text-foreground/40">
+                            <div className="w-full h-full flex items-center justify-center font-black text-xl uppercase text-foreground/20">
                               {member.name.substring(0, 2)}
                             </div>
                           )}
                         </div>
                         <div>
-                          <p className="font-bold text-foreground text-sm leading-none">
+                          <p className="font-black text-foreground text-base tracking-tight leading-none mb-1">
                             {member.name}
                           </p>
                           {member.designation && (
-                            <p className="text-xs text-foreground/50 mt-1">
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40">
                               {member.designation}
                             </p>
                           )}
@@ -154,8 +142,8 @@ export default async function RecentProjectPage(props: {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-foreground/50 italic">
-                    Team members not specified.
+                  <p className="text-sm text-foreground/30 italic text-center">
+                    Project contributors remains confidential.
                   </p>
                 )}
               </div>
@@ -169,11 +157,9 @@ export default async function RecentProjectPage(props: {
                       href={project.videoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-4 rounded-xl bg-white text-black font-black flex items-center justify-center gap-2 hover:bg-white/90 transition-colors"
+                      className="w-full py-4 rounded-xl bg-white text-black font-black flex items-center justify-center gap-2 hover:bg-white/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      <span className="material-symbols-outlined">
-                        smart_display
-                      </span>
+                      <span className="material-symbols-outlined">smart_display</span>
                       Watch Demo Video
                     </a>
                   )}
@@ -182,27 +168,31 @@ export default async function RecentProjectPage(props: {
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-4 rounded-xl bg-white text-black font-black flex items-center justify-center gap-2 hover:bg-white/90 transition-colors"
+                      className="w-full py-4 rounded-xl bg-primary text-primary-content font-black flex items-center justify-center gap-2 hover:brightness-110 transition-all hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      <span className="material-symbols-outlined">
-                        open_in_new
-                      </span>
+                      <span className="material-symbols-outlined">open_in_new</span>
                       Visit Project
-                    </a>
-                  )}
-                  {project.githubUrl && project.githubUrl !== "#" && (
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-4 rounded-xl bg-white/5 border border-white/10 text-foreground font-black flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
-                    >
-                      <span className="material-symbols-outlined">code</span>
-                      Source Code
                     </a>
                   )}
                 </div>
               )}
+            </div>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="prose prose-invert max-w-none text-center prose-p:text-xl prose-p:leading-relaxed prose-p:text-foreground/70 prose-headings:text-foreground prose-headings:font-black prose-headings:tracking-tighter prose-strong:text-foreground">
+              <h3 className="text-3xl md:text-5xl font-black mb-10 tracking-tighter">
+                The Case Study
+              </h3>
+              <div className="space-y-8 bg-white/5 border border-white/10 p-10 md:p-16 rounded-[2.5rem] backdrop-blur-md">
+                <p>{project.desc}</p>
+
+                {project.content && (
+                  <div className="mt-12 text-left whitespace-pre-wrap font-medium border-t border-white/10 pt-12 opacity-80 italic">
+                    {project.content}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
