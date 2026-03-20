@@ -9,8 +9,14 @@ import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import { MDXRemote } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import UniqueLoading from "@/components/ui/morph-loading";
+import { SocialMediaAccount } from "@/components/admin/types";
+import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
 
-type SidebarView = "dashboard" | "blogs" | "submitted_blogs" | "settings";
+type SidebarView = "dashboard" | "blogs" | "submitted_blogs" | "projects" | "social-media" | "settings";
+
+// Adding imports for the new views
+import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement";
+import SocialMediaManagement from "@/components/admin/SocialMediaManagement";
 
 interface BlogEditorSectionProps {
   user: any;
@@ -951,7 +957,7 @@ const MemberDashboard = () => {
     const view = searchParams.get("view") as SidebarView;
     if (
       view &&
-      ["dashboard", "blogs", "submitted_blogs", "settings"].includes(view)
+      ["dashboard", "blogs", "submitted_blogs", "projects", "social-media", "settings"].includes(view)
     ) {
       setSidebarView(view);
     }
@@ -1070,6 +1076,94 @@ const MemberDashboard = () => {
     updateView("blogs");
   };
 
+  // Social Media State
+  const [socialMediaAccounts, setSocialMediaAccounts] = useState<SocialMediaAccount[]>([]);
+  const [socialMediaLoading, setSocialMediaLoading] = useState(false);
+  const [showSocialMediaModal, setShowSocialMediaModal] = useState(false);
+  const [editingSocialMediaAccount, setEditingSocialMediaAccount] = useState<SocialMediaAccount | null>(null);
+  const [socialMediaError, setSocialMediaError] = useState("");
+  const [allStaff, setAllStaff] = useState<any[]>([]);
+
+  const fetchSocialMediaAccounts = useCallback(async () => {
+    setSocialMediaLoading(true);
+    try {
+      const res = await fetch("/api/admin/social-media");
+      if (res.ok) {
+        const data = await res.json();
+        setSocialMediaAccounts(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSocialMediaLoading(false);
+    }
+  }, []);
+
+  const fetchAllStaff = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/staff");
+      if (res.ok) {
+        const data = await res.json();
+        setAllStaff(data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (sidebarView === "social-media") {
+      fetchSocialMediaAccounts();
+      fetchAllStaff();
+    }
+  }, [sidebarView, fetchSocialMediaAccounts, fetchAllStaff]);
+
+  const handleSaveSocialMediaAccount = async (formData: any) => {
+    setUpdating(true);
+    setSocialMediaError("");
+    try {
+      let res;
+      if (editingSocialMediaAccount) {
+        res = await fetch("/api/admin/social-media", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: editingSocialMediaAccount._id, ...formData }),
+        });
+      } else {
+        res = await fetch("/api/admin/social-media", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+      }
+
+      if (res.ok) {
+        setShowSocialMediaModal(false);
+        setEditingSocialMediaAccount(null);
+        fetchSocialMediaAccounts();
+      } else {
+        const result = await res.json();
+        setSocialMediaError(result.error || "Operation failed");
+      }
+    } catch (err) {
+      setSocialMediaError("An error occurred");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleDeleteSocialMediaAccount = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this social account?")) return;
+    try {
+      const res = await fetch(`/api/admin/social-media?id=${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) fetchSocialMediaAccounts();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Submitted Blogs State
   const [blogs, setBlogs] = useState<any[]>([]);
   const [fetchingBlogs, setFetchingBlogs] = useState(false);
@@ -1078,13 +1172,18 @@ const MemberDashboard = () => {
   const sidebarItems = [
     { id: "dashboard" as SidebarView, label: "Dashboard", icon: "dashboard" },
     { id: "blogs" as SidebarView, label: "Write Blog", icon: "edit_document" },
-    {
-      id: "submitted_blogs" as SidebarView,
-      label: "My Blogs",
-      icon: "library_books",
-    },
+    { id: "submitted_blogs" as SidebarView, label: "My Blogs", icon: "library_books" },
+    { id: "projects" as SidebarView, label: "Projects", icon: "rocket_launch" },
+    { id: "social-media" as SidebarView, label: "Social Media", icon: "share" },
     { id: "settings" as SidebarView, label: "Settings", icon: "settings" },
   ];
+
+  const filteredSidebarItems = sidebarItems.filter((item) => {
+    if (["projects", "social-media"].includes(item.id)) {
+      return user?.role === "admin" || user?.role === "editor";
+    }
+    return true;
+  });
 
   if (loading) return null;
 
@@ -1141,7 +1240,7 @@ const MemberDashboard = () => {
 
         {/* Navigation */}
         <nav className="flex-1 p-3 space-y-1">
-          {sidebarItems.map((item) => (
+          {filteredSidebarItems.map((item) => (
             <button
               key={item.id}
               onClick={() => {
@@ -1519,6 +1618,28 @@ const MemberDashboard = () => {
               </motion.div>
             )}
 
+            {sidebarView === "projects" && (
+              <AdminProjectsManagement />
+            )}
+
+            {sidebarView === "social-media" && (
+              <SocialMediaManagement
+                accounts={socialMediaAccounts}
+                loading={socialMediaLoading}
+                currentUser={{ id: user?._id || user?.id, ...user }}
+                isSuperAdmin={false}
+                onAdd={() => {
+                  setEditingSocialMediaAccount(null);
+                  setShowSocialMediaModal(true);
+                }}
+                onEdit={(account) => {
+                  setEditingSocialMediaAccount(account);
+                  setShowSocialMediaModal(true);
+                }}
+                onDelete={handleDeleteSocialMediaAccount}
+              />
+            )}
+
             {sidebarView === "settings" && (
               <motion.div
                 key="settings"
@@ -1630,6 +1751,17 @@ const MemberDashboard = () => {
           </AnimatePresence>
         </div>
       </motion.main>
+
+      <SocialMediaModal
+        showModal={showSocialMediaModal}
+        setShowModal={setShowSocialMediaModal}
+        editingAccount={editingSocialMediaAccount}
+        setEditingAccount={setEditingSocialMediaAccount}
+        staffList={allStaff.filter((staff) => staff.role !== "superadmin")}
+        onSave={handleSaveSocialMediaAccount}
+        isSubmitting={updating}
+        error={socialMediaError}
+      />
     </div>
   );
 };

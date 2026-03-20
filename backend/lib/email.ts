@@ -474,7 +474,7 @@ export const sendSocialMediaAssignmentEmail = async (
           <tr>
             <td style="padding:32px 48px 0;">
               <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:28px;">
-                <p style="margin:0 0- 18px;font-size:13px;font-weight:700;color:#64748b;letter-spacing:0.6px;text-transform:uppercase;">
+                <p style="margin:0 0 18px;font-size:13px;font-weight:700;color:#64748b;letter-spacing:0.6px;text-transform:uppercase;">
                   Credential Details
                 </p>
                 <table width="100%" cellpadding="0" cellspacing="0">
@@ -539,6 +539,90 @@ export const sendSocialMediaAssignmentEmail = async (
     from: `"Kasaulicoder Admin" <${process.env.SMTP_FROM || "info@kasaulicoder.com"}>`,
     to: toEmail,
     subject: `📋 Responsibility Assigned: ${platform} (${username})`,
+    html,
+  });
+};
+
+export const sendPasswordResetEmail = async (
+  email: string,
+  name: string,
+  resetUrl: string,
+): Promise<void> => {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reset Your Password - Kasaulicoder</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.05);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);padding:50px 40px;text-align:center;">
+              <div style="margin-bottom:24px;">
+                <img src="https://kasaulicoder.com/mail.png" alt="Kasaulicoder" width="140" style="max-width:140px;" />
+              </div>
+              <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:900;letter-spacing:-0.5px;line-height:1.2;">Password Reset <br/>Request</h1>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding:50px 50px 40px;">
+              <p style="margin:0;font-size:16px;color:#334155;line-height:1.8;">
+                Hello <strong>${name}</strong>,
+              </p>
+              <p style="margin:20px 0 0;font-size:15px;color:#64748b;line-height:1.8;">
+                We received a request to reset the password for your Kasaulicoder account. If you didn't make this request, you can safely ignore this email.
+              </p>
+              
+              <div style="text-align:center;margin:45px 0;">
+                <a href="${resetUrl}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;font-size:15px;font-weight:800;padding:18px 45px;border-radius:16px;box-shadow:0 10px 20px rgba(15,23,42,0.15);">
+                  Reset My Password
+                </a>
+              </div>
+
+              <p style="margin:0;font-size:13px;color:#94a3b8;text-align:center;line-height:1.6;">
+                This link will expire in 1 hour for your security.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Security Notice -->
+          <tr>
+            <td style="padding:0 50px 50px;">
+              <div style="background:#f8fafc;border-radius:16px;padding:24px;border:1px solid #e2e8f0;">
+                <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">
+                  For security reasons, never share this link or your account credentials with anyone. Kasaulicoder team will never ask for your password via email.
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:40px;background:#f8fafc;text-align:center;border-top:1px solid #f1f5f9;">
+              <p style="margin:0;font-size:12px;color:#94a3b8;">
+                © ${new Date().getFullYear()} Kasaulicoder. Dedicated to Crafting the Future.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  await transporter.sendMail({
+    from: `"Kasaulicoder Security" <${process.env.SMTP_FROM || "info@kasaulicoder.com"}>`,
+    to: email,
+    subject: `🔐 Action Required: Reset Your Password`,
     html,
   });
 };

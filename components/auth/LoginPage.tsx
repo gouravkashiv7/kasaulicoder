@@ -237,7 +237,7 @@ const LoginPage = () => {
                       Password
                     </label>
                     <Link
-                      href="#"
+                      href="/forgot-password"
                       className="text-[10px] font-black uppercase tracking-tighter text-primary hover:underline"
                     >
                       Forgot access key?

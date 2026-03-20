@@ -57,7 +57,7 @@ export const metadata: Metadata = {
       "Join the community of passionate developers building future-ready tech from Kasauli. Explore programs, projects, and career blogs.",
     images: [
       {
-        url: "/logo.png",
+        url: "/logowithbg.png",
         width: 1200,
         height: 630,
         alt: "Kasauli Coder Branding",
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     description:
       "Join the community of passionate developers building future-ready tech from Kasauli. Explore programs, projects, and career insights.",
     creator: "@kasaulicoder",
-    images: ["/logo.png"],
+    images: ["/logowithbg.png"],
   },
   robots: {
     index: true,
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
-    apple: "/logo.png",
+    apple: "/logowithbg.png",
   },
   alternates: {
     canonical: "./",

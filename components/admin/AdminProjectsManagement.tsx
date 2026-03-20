@@ -312,7 +312,15 @@ export default function AdminProjectsManagement() {
                           </button>
                         </div>
                         <div className="h-8 w-px bg-white/10 hidden lg:block mx-1" />
-                        <div className="flex gap-2 flex-1 sm:flex-none">
+                         <div className="flex gap-2 flex-1 sm:flex-none">
+                          <Link
+                            href={`/projects/recent-projects/${project.slug}`}
+                            target="_blank"
+                            className="flex-1 sm:size-10 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20 flex items-center justify-center transition-all"
+                            title="View Public Profile"
+                          >
+                            <span className="material-symbols-outlined text-[20px]">visibility</span>
+                          </Link>
                           <Link
                             href={`/admin/projects/edit/${project._id}`}
                             className="flex-1 sm:size-10 rounded-xl bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 flex items-center justify-center transition-all"

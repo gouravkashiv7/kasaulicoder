@@ -38,7 +38,7 @@ export default function ProjectForm({ project, isEditing = false }: ProjectFormP
         const res = await fetch("/api/admin/staff");
         if (res.ok) {
           const data = await res.json();
-          setStaffList(data);
+          setStaffList(data.filter((s: any) => s.role !== "superadmin"));
         }
       } catch (err) {
         console.error("Failed to fetch staff:", err);

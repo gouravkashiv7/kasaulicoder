@@ -7,6 +7,8 @@ import { SocialMediaAccount } from "./types";
 interface SocialMediaManagementProps {
   accounts: SocialMediaAccount[];
   loading: boolean;
+  currentUser: any;
+  isSuperAdmin: boolean;
   onAdd: () => void;
   onEdit: (account: SocialMediaAccount) => void;
   onDelete: (id: string) => void;
@@ -15,6 +17,8 @@ interface SocialMediaManagementProps {
 const SocialMediaManagement = ({
   accounts,
   loading,
+  currentUser,
+  isSuperAdmin,
   onAdd,
   onEdit,
   onDelete,
@@ -47,13 +51,15 @@ const SocialMediaManagement = ({
             Securely manage platform credentials and team assignments.
           </p>
         </div>
-        <button
-          onClick={onAdd}
-          className="px-6 py-2 bg-primary text-primary-content font-bold rounded-lg hover:brightness-110 flex items-center gap-2"
-        >
-          <span className="material-symbols-outlined text-sm">add</span>
-          Add Account
-        </button>
+        {isSuperAdmin && (
+          <button
+            onClick={onAdd}
+            className="px-6 py-2 bg-primary text-primary-content font-bold rounded-lg hover:brightness-110 flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined text-sm">add</span>
+            Add Account
+          </button>
+        )}
       </div>
 
       <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl overflow-hidden shadow-2xl">
@@ -74,7 +80,7 @@ const SocialMediaManagement = ({
                   <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">Credentials</th>
                   <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">Managed By</th>
                   <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">Status</th>
-                  <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">Actions</th>
+                  {isSuperAdmin && <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">Actions</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-foreground/10">
@@ -100,31 +106,38 @@ const SocialMediaManagement = ({
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-sm">
-                          <span className="text-foreground/40 font-medium">U:</span>
-                          <span className="text-foreground font-bold">{account.username}</span>
-                          <button onClick={() => copyToClipboard(account.username)} className="text-foreground/20 hover:text-primary transition-colors">
-                            <span className="material-symbols-outlined text-sm">content_copy</span>
-                          </button>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <span className="text-foreground/40 font-medium">P:</span>
-                          <span className="text-foreground font-mono">
-                            {showPasswords[account._id] ? account.password : "••••••••"}
-                          </span>
-                          <button onClick={() => togglePassword(account._id)} className="text-foreground/20 hover:text-primary transition-colors">
-                            <span className="material-symbols-outlined text-sm">
-                              {showPasswords[account._id] ? "visibility_off" : "visibility"}
-                            </span>
-                          </button>
-                          {showPasswords[account._id] && (
-                            <button onClick={() => copyToClipboard(account.password || "")} className="text-foreground/20 hover:text-primary transition-colors">
+                      {isSuperAdmin || account.managedBy?._id === currentUser?.id ? (
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="text-foreground/40 font-medium">U:</span>
+                            <span className="text-foreground font-bold">{account.username}</span>
+                            <button onClick={() => copyToClipboard(account.username)} className="text-foreground/20 hover:text-primary transition-colors">
                               <span className="material-symbols-outlined text-sm">content_copy</span>
                             </button>
-                          )}
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="text-foreground/40 font-medium">P:</span>
+                            <span className="text-foreground font-mono">
+                              {showPasswords[account._id] ? account.password : "••••••••"}
+                            </span>
+                            <button onClick={() => togglePassword(account._id)} className="text-foreground/20 hover:text-primary transition-colors">
+                              <span className="material-symbols-outlined text-sm">
+                                {showPasswords[account._id] ? "visibility_off" : "visibility"}
+                              </span>
+                            </button>
+                            {showPasswords[account._id] && (
+                              <button onClick={() => copyToClipboard(account.password || "")} className="text-foreground/20 hover:text-primary transition-colors">
+                                <span className="material-symbols-outlined text-sm">content_copy</span>
+                              </button>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-xs text-foreground/20 italic font-bold">
+                          <span className="material-symbols-outlined text-sm">lock</span>
+                          Access Restricted
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
@@ -146,22 +159,24 @@ const SocialMediaManagement = ({
                         {account.isActive ? "Active" : "Disabled"}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => onEdit(account)}
-                          className="p-2 hover:bg-foreground/10 rounded-lg text-foreground/50 hover:text-foreground transition-all"
-                        >
-                          <span className="material-symbols-outlined text-sm">edit</span>
-                        </button>
-                        <button
-                          onClick={() => onDelete(account._id)}
-                          className="p-2 hover:bg-rose-500/10 rounded-lg text-rose-500/50 hover:text-rose-500 transition-all"
-                        >
-                          <span className="material-symbols-outlined text-sm">delete</span>
-                        </button>
-                      </div>
-                    </td>
+                    {isSuperAdmin && (
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => onEdit(account)}
+                            className="p-2 hover:bg-foreground/10 rounded-lg text-foreground/50 hover:text-foreground transition-all"
+                          >
+                            <span className="material-symbols-outlined text-sm">edit</span>
+                          </button>
+                          <button
+                            onClick={() => onDelete(account._id)}
+                            className="p-2 hover:bg-rose-500/10 rounded-lg text-rose-500/50 hover:text-rose-500 transition-all"
+                          >
+                            <span className="material-symbols-outlined text-sm">delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

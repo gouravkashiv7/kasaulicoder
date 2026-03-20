@@ -16,7 +16,9 @@ export default function AdminDashboardPage() {
     }
 
     const user = JSON.parse(storedUser);
-    if (user.role !== "superadmin" && user.userType !== "admin") {
+    const hasAccess = ["superadmin", "admin", "editor"].includes(user.role);
+
+    if (!hasAccess) {
       router.push("/");
       return;
     }
