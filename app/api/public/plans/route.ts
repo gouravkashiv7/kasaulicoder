@@ -9,6 +9,7 @@ export async function GET() {
     const plans = await Plan.find({ isActive: true }).sort({ sortOrder: 1 });
     return NextResponse.json({ plans }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

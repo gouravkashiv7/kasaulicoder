@@ -1,7 +1,7 @@
 import { rateLimit } from "@/backend/lib/rateLimit";
 import { getJwtSecret } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
-import connectDB from "@/backend/lib/db";
+import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
 import User from "@/backend/models/User";
 import { SignJWT } from "jose";
@@ -27,12 +27,12 @@ export async function POST(req: Request) {
     await connectDB();
 
     // Check in Staff first
-    let account = await Staff.findOne({ email });
+    let account = await Staff.findOne({ email }).collation(EMAIL_COLLATION);
     let accountType: "staff" | "user" = "staff";
 
     if (!account) {
       // Check in User
-      account = await User.findOne({ email });
+      account = await User.findOne({ email }).collation(EMAIL_COLLATION);
       accountType = "user";
     }
 

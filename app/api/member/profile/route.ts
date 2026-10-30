@@ -1,6 +1,6 @@
 import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
-import connectDB from "@/backend/lib/db";
+import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
 import bcrypt from "bcryptjs";
 
@@ -54,7 +54,9 @@ export async function PATCH(req: Request) {
     if (name) staff.name = name;
     if (email) {
       // Check if email is already taken by another person
-      const emailUsed = await Staff.findOne({ email, _id: { $ne: staff._id } });
+      const emailUsed = await Staff.findOne({ email, _id: { $ne: staff._id } }).collation(
+        EMAIL_COLLATION,
+      );
       if (emailUsed) {
         return NextResponse.json(
           { error: "Email already in use" },

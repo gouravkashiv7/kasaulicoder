@@ -26,7 +26,8 @@ export async function GET() {
       .sort({ createdAt: -1 });
     return NextResponse.json(users);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -74,6 +75,7 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json({ isActive: user.isActive });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

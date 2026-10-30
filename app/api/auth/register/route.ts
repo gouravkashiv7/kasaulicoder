@@ -1,7 +1,7 @@
 import { rateLimit } from "@/backend/lib/rateLimit";
 import { getJwtSecret } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
-import connectDB from "@/backend/lib/db";
+import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import User from "@/backend/models/User";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email }).collation(EMAIL_COLLATION);
 
     if (existingUser) {
       return NextResponse.json(

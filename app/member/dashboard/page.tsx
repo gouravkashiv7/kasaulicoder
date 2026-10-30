@@ -1,30 +1,14 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 import MemberDashboard from "@/components/auth/MemberDashboard";
-import { useRouter } from "next/navigation";
+import { getServerSession } from "@/backend/lib/auth";
 
-export default function MemberDashboardPage() {
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+export default async function MemberDashboardPage() {
+  const session = await getServerSession();
+  if (!session) redirect("/login?type=admin");
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      router.push("/login?type=admin");
-      return;
-    }
-
-    const user = JSON.parse(storedUser);
-    if (user.loginType !== "admin" || user.role === "superadmin") {
-      router.push("/");
-      return;
-    }
-
-    setLoading(false);
-  }, [router]);
-
-  if (loading) return null;
+  if (session.type !== "admin" || session.role === "superadmin") {
+    redirect("/");
+  }
 
   return <MemberDashboard />;
 }

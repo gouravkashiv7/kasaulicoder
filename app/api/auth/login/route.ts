@@ -1,7 +1,7 @@
 import { rateLimit } from "@/backend/lib/rateLimit";
 import { getJwtSecret } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
-import connectDB from "@/backend/lib/db";
+import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import User from "@/backend/models/User";
 import Staff from "@/backend/models/Staff";
 import bcrypt from "bcryptjs";
@@ -36,9 +36,13 @@ export async function POST(req: Request) {
     let account: any;
 
     if (loginType === "admin") {
-      account = await Staff.findOne({ email: email.trim() }).select("+password");
+      account = await Staff.findOne({ email: email.trim() })
+        .collation(EMAIL_COLLATION)
+        .select("+password");
     } else {
-      account = await User.findOne({ email: email.trim() }).select("+password");
+      account = await User.findOne({ email: email.trim() })
+        .collation(EMAIL_COLLATION)
+        .select("+password");
     }
 
     if (!account) {

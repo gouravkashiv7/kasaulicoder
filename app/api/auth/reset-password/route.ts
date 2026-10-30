@@ -36,12 +36,6 @@ export async function POST(req: Request) {
     await connectDB();
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const update = { 
-      password: hashedPassword,
-      resetPasswordToken: null,
-      resetPasswordExpires: null 
-    };
-
     if (payload.type === "staff") {
       const staff = await Staff.findOne({ 
         _id: payload.id, 
@@ -72,7 +66,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "Password updated successfully! You can now log in." });
   } catch (error: any) {
-    console.error("Reset password error:", error);
+    // Log only the error type: messages can echo the token
+    console.error("Reset password error:", error?.name);
     if (error.code === "ERR_JWT_EXPIRED") {
       return NextResponse.json({ error: "Reset link has expired. Please request a new one." }, { status: 400 });
     }

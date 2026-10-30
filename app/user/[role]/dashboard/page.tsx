@@ -1,56 +1,22 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 import UserDashboard from "@/components/auth/UserDashboard";
-import { useRouter, useParams } from "next/navigation";
+import { getServerSession } from "@/backend/lib/auth";
 
-export default function UserDashboardPage() {
-  const [loading, setLoading] = useState(true);
-  const [validRole, setValidRole] = useState<string | null>(null);
-  const router = useRouter();
-  const params = useParams();
+export default async function UserDashboardPage({
+  params,
+}: {
+  params: Promise<{ role: string }>;
+}) {
+  const session = await getServerSession();
+  if (!session) redirect("/login");
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      router.push("/login");
-      return;
-    }
+  if (session.type === "admin") redirect("/admin/dashboard");
 
-    try {
-      const user = JSON.parse(storedUser);
-      if (
-        user.role === "admin" ||
-        user.role === "superadmin" ||
-        user.loginType === "admin"
-      ) {
-        router.push("/admin/dashboard");
-        return;
-      }
-
-      // Validate the role param matches the user's type
-      const role = params?.role as string;
-      const userType = user.userType || "student";
-
-      if (role !== "student" && role !== "professional") {
-        router.push(`/user/${userType}/dashboard`);
-        return;
-      }
-
-      setValidRole(role);
-      setLoading(false);
-    } catch (e) {
-      router.push("/login");
-    }
-  }, [router, params]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="size-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-      </div>
-    );
+  // Validate the role param matches a known user type
+  const { role } = await params;
+  if (role !== "student" && role !== "professional") {
+    redirect(`/user/${session.userType || "student"}/dashboard`);
   }
 
-  return <UserDashboard userType={validRole || "student"} />;
+  return <UserDashboard userType={role} />;
 }

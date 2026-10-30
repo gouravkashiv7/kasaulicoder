@@ -24,6 +24,7 @@ export type Session = {
   name: string;
   role: string;
   type: "admin" | "user";
+  userType?: string;
 };
 
 // Verifies the auth cookie and re-checks the account in the DB, so
@@ -46,7 +47,9 @@ export async function getServerSession(): Promise<Session | null> {
     const account =
       type === "admin"
         ? await Staff.findById(payload.id).select("name email role isActive")
-        : await User.findById(payload.id).select("name email role isActive");
+        : await User.findById(payload.id).select(
+            "name email role userType isActive",
+          );
 
     if (!account || account.isActive === false) return null;
 
@@ -56,6 +59,7 @@ export async function getServerSession(): Promise<Session | null> {
       name: account.name,
       role: account.role,
       type,
+      userType: account.userType,
     };
   } catch {
     return null;

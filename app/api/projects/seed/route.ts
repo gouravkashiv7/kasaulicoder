@@ -73,7 +73,7 @@ export async function POST() {
   } catch (error: any) {
     console.error("Error seeding projects:", error);
     return NextResponse.json(
-      { error: "Failed to seed projects", details: error.message },
+      { error: "Failed to seed projects" },
       { status: 500 },
     );
   }

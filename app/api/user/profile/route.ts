@@ -1,6 +1,6 @@
 import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
-import connectDB from "@/backend/lib/db";
+import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import User from "@/backend/models/User";
 import Staff from "@/backend/models/Staff";
 
@@ -68,7 +68,7 @@ export async function PATCH(req: Request) {
     const existing = await Model.findOne({
       email: update.email,
       _id: { $ne: id },
-    });
+    }).collation(EMAIL_COLLATION);
     if (existing)
       return NextResponse.json(
         { error: "Email already in use" },

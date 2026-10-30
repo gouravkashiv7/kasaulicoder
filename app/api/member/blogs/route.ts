@@ -43,7 +43,7 @@ export async function GET(req: Request) {
   } catch (error: any) {
     console.error("Error fetching member blogs:", error);
     return NextResponse.json(
-      { error: "Internal server error", details: error.message },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }
@@ -145,7 +145,7 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error("Error creating blog:", error);
     return NextResponse.json(
-      { error: "Internal server error", details: error.message },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }

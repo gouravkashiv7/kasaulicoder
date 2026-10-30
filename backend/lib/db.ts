@@ -38,3 +38,7 @@ async function connectDB() {
 }
 
 export default connectDB;
+
+// Case-insensitive match for email lookups. New emails are stored
+// lowercased by the schema; this keeps older mixed-case records matching.
+export const EMAIL_COLLATION = { locale: "en", strength: 2 } as const;

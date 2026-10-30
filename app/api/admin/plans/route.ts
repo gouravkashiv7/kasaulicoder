@@ -23,7 +23,8 @@ export async function GET() {
     const plans = await Plan.find().sort({ sortOrder: 1 });
     return NextResponse.json({ plans }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -85,7 +86,8 @@ export async function POST(req: Request) {
       { status: 201 },
     );
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -124,7 +126,8 @@ export async function PUT(req: Request) {
       { status: 200 },
     );
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -155,6 +158,7 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ message: "Plan deleted" }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

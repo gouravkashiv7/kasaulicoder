@@ -1,32 +1,15 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 import AdminDashboard from "@/components/auth/AdminDashboard";
-import { useRouter } from "next/navigation";
+import { getServerSession } from "@/backend/lib/auth";
 
-export default function AdminDashboardPage() {
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+export default async function AdminDashboardPage() {
+  const session = await getServerSession();
+  if (!session) redirect("/login");
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      router.push("/login");
-      return;
-    }
-
-    const user = JSON.parse(storedUser);
-    const hasAccess = ["superadmin", "admin", "editor"].includes(user.role);
-
-    if (!hasAccess) {
-      router.push("/");
-      return;
-    }
-
-    setLoading(false);
-  }, [router]);
-
-  if (loading) return null;
+  const hasAccess =
+    session.type === "admin" &&
+    ["superadmin", "admin", "editor"].includes(session.role);
+  if (!hasAccess) redirect("/");
 
   return <AdminDashboard />;
 }

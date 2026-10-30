@@ -1,6 +1,6 @@
 import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
-import connectDB from "@/backend/lib/db";
+import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
 import bcrypt from "bcryptjs";
 import {
@@ -32,7 +32,8 @@ export async function GET() {
 
     return NextResponse.json(staffMembers);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -79,7 +80,7 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    const existingStaff = await Staff.findOne({ email });
+    const existingStaff = await Staff.findOne({ email }).collation(EMAIL_COLLATION);
 
     if (existingStaff) {
       return NextResponse.json(
@@ -127,7 +128,8 @@ export async function POST(req: Request) {
       { status: 201 },
     );
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -176,7 +178,8 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json({ isActive: staff.isActive });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -238,6 +241,7 @@ export async function PUT(req: Request) {
       },
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
