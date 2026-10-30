@@ -4,7 +4,7 @@ import GeneratedScreen from "@/components/marketing/GeneratedScreen";
 export const metadata: Metadata = {
   title: "Projects",
   description:
-    "See the real-world projects built by our community members and partners using the latest technologies and best practices.",
+    "Software projects built by KasauliCoder, from work in progress to completed projects.",
 };
 
 export default function ProjectsPage() {

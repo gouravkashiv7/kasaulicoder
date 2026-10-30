@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import WhoWeArePricing from "@/components/marketing/WhoWeArePricing";
+import ProposalRequest from "@/components/marketing/ProposalRequest";
 
 export const metadata: Metadata = {
-  title: "Pricing",
+  title: "Request a Proposal",
   description:
-    "Choose the right plan for your development journey. We offer transparent pricing for students and professionals.",
+    "Every KasauliCoder project is scoped to your requirements. Tell us about your project and request a proposal.",
 };
 
 export default function PricingPage() {
-  return <WhoWeArePricing />;
+  return <ProposalRequest />;
 }

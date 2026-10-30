@@ -23,7 +23,7 @@ const PrivacyPolicy = () => {
               Privacy <span className="text-primary italic">Policy</span>
             </h1>
             <p className="text-foreground opacity-70 text-lg">
-              Your data is yours. We just protect it.
+              How we collect, use and protect your information.
             </p>
           </motion.div>
 
@@ -40,17 +40,17 @@ const PrivacyPolicy = () => {
               <div className="md:col-span-2 space-y-4">
                 <p>
                   We collect information you provide directly to us when you
-                  register for a cohort, subscribe to our newsletter, or contact
-                  us. This may include your name, email, professional interests,
-                  and payment information.
+                  contact us or use an account on this website. This may include
+                  your name, your email address, and the details of your
+                  enquiry.
                 </p>
                 <div className="glass-card p-6 rounded-xl">
                   <p className="text-sm font-bold text-primary mb-2 uppercase tracking-widest">
                     Why we collect it
                   </p>
                   <ul className="text-sm space-y-2 list-disc list-inside opacity-70">
-                    <li>To personalize your learning path</li>
-                    <li>To facilitate secure payments</li>
+                    <li>To respond to your enquiries and requests</li>
+                    <li>To provide and support our services</li>
                     <li>To send critical system updates</li>
                   </ul>
                 </div>
@@ -63,10 +63,10 @@ const PrivacyPolicy = () => {
               </div>
               <div className="md:col-span-2">
                 <p>
-                  We implement enterprise-grade encryption for all sensitive
-                  data. Your source code, project submissions, and personal
-                  details are protected by advanced security protocols and
-                  restricted access controls.
+                  We take reasonable measures to protect the information you
+                  provide against unauthorized access, and we limit who can
+                  access it. No method of transmission or storage is completely
+                  secure, so we cannot guarantee absolute security.
                 </p>
               </div>
             </section>
@@ -78,9 +78,9 @@ const PrivacyPolicy = () => {
               <div className="md:col-span-2">
                 <p>
                   We do not sell your personal data. We only share information
-                  with trusted partners (like payment processors or cloud
-                  providers) necessary to deliver our services, and only under
-                  strict confidentiality agreements.
+                  with service providers (such as hosting and email providers)
+                  where this is necessary to operate our website and deliver our
+                  services.
                 </p>
               </div>
             </section>
@@ -93,13 +93,13 @@ const PrivacyPolicy = () => {
               <p className="mb-6 relative z-10">
                 You have the right to access, correct, or delete your personal
                 information at any time. If you wish to exercise these rights,
-                please contact our data protection officer.
+                please contact us.
               </p>
               <Link
                 href="/contact"
                 className="text-primary font-bold hover:underline inline-flex items-center gap-2 relative z-10 group/link"
               >
-                Contact Data Protection Officer
+                Contact Us
                 <span className="material-symbols-outlined text-sm group-hover/link:translate-x-1 transition-transform">
                   arrow_forward
                 </span>

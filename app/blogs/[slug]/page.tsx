@@ -16,12 +16,12 @@ export async function generateMetadata(props: {
 
   if (!blog) {
     return {
-      title: "Blog Not Found | Kasauli Coder",
+      title: "Blog Not Found",
     };
   }
 
   return {
-    title: `${blog.title} | Kasauli Coder Blog`,
+    title: blog.title,
     description: blog.tagline || blog.description?.substring(0, 160),
     openGraph: {
       title: blog.title,

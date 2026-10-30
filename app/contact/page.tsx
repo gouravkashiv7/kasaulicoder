@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import ContactCommunity from "@/components/marketing/ContactCommunity";
+import ContactForm from "@/components/marketing/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
+  title: "Contact",
   description:
-    "Get in touch with the Kasauli Coder team for any inquiries, support, or partnership opportunities.",
+    "Discuss your project with KasauliCoder. Tell us what you would like built or improved and we will get back to you.",
 };
 
 export default function ContactPage() {
-  return <ContactCommunity />;
+  return <ContactForm />;
 }

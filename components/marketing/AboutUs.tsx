@@ -5,6 +5,30 @@ import Link from "next/link";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 
+const capabilities = [
+  {
+    title: "Software Products",
+    desc: "SaaS product development and custom software and web applications, designed around the needs of the businesses that use them.",
+    icon: "code",
+  },
+  {
+    title: "Digital Presence",
+    desc: "Modern UI/UX and web development together with search engine optimization, so your business is easy to find and easy to use online.",
+    icon: "web",
+  },
+  {
+    title: "Operations & Infrastructure",
+    desc: "Business process automation and integrations, cloud infrastructure, and ongoing technical support to keep your software running.",
+    icon: "dns",
+  },
+];
+
+const principles = [
+  "Business-focused development",
+  "Clear, transparent communication",
+  "Technical support after launch",
+];
+
 const AboutUs = () => {
   return (
     <div className="bg-background text-foreground min-h-screen font-display selection:bg-primary selection:text-primary-content overflow-hidden relative">
@@ -16,76 +40,70 @@ const AboutUs = () => {
       <main className="relative z-10 pt-28">
         {/* Hero Section */}
         <section className="py-24 px-6 relative overflow-hidden">
-          <div className="max-w-7xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="inline-block px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded text-xs font-bold uppercase tracking-widest mb-6"
             >
-              Our Mission
+              About KasauliCoder
             </motion.span>
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-5xl md:text-7xl font-black leading-tight mb-8 tracking-tighter"
+              className="text-4xl md:text-6xl font-black leading-tight mb-8 tracking-tighter"
             >
-              Engineering the{" "}
-              <span className="text-primary italic">Next Decade</span> <br /> of
-              Digital Excellence.
+              Software products and digital solutions{" "}
+              <span className="text-primary italic">for businesses.</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-foreground opacity-70 text-xl max-w-3xl mx-auto mb-12"
+              className="text-foreground opacity-70 text-xl max-w-3xl mx-auto"
             >
-              KasauliCoder is a premier technical collective dedicated to
-              bridging the gap between raw potential and industry-leading
-              expertise. We build the tools, the talent, and the future.
+              KasauliCoder designs and develops SaaS products, web applications
+              and business solutions, and supports the businesses that rely on
+              them.
             </motion.p>
           </div>
         </section>
 
-        {/* Values Grid */}
+        {/* Capabilities */}
         <section className="py-20 px-6 bg-primary/5">
           <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-14">
+              <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
+                What We Do
+              </h2>
+              <h3 className="text-3xl md:text-4xl font-black tracking-tight">
+                Our areas of work
+              </h3>
+            </div>
             <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Radical Innovation",
-                  desc: "We don't just follow trends; we set the standard for modern web architecture and AI integration.",
-                  icon: "bolt",
-                },
-                {
-                  title: "Relentless Quality",
-                  desc: "Every line of code is a signature. We prioritize performance, security, and scalability in everything we build.",
-                  icon: "verified",
-                },
-                {
-                  title: "Empowered Community",
-                  desc: "Our strength lies in our collective. We foster an environment of continuous learning and mutual growth.",
-                  icon: "groups",
-                },
-              ].map((val, i) => (
+              {capabilities.map((item, i) => (
                 <motion.div
-                  key={val.title}
+                  key={item.title}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="p-8 glass-card border-glass-border rounded-2xl hover:border-primary/30 transition-all group"
+                  className="p-8 glass-card border-glass-border rounded-2xl hover:border-primary/30 transition-colors group"
                 >
-                  <div className="size-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <span className="material-symbols-outlined text-primary text-3xl">
-                      {val.icon}
+                  <div className="size-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
+                    <span
+                      className="material-symbols-outlined text-primary text-3xl"
+                      aria-hidden="true"
+                    >
+                      {item.icon}
                     </span>
                   </div>
                   <h3 className="text-2xl font-black mb-4 tracking-tight">
-                    {val.title}
+                    {item.title}
                   </h3>
                   <p className="text-foreground opacity-70 leading-relaxed">
-                    {val.desc}
+                    {item.desc}
                   </p>
                 </motion.div>
               ))}
@@ -93,28 +111,23 @@ const AboutUs = () => {
           </div>
         </section>
 
-        {/* Story Section */}
+        {/* Identity Section */}
         <section className="py-24 px-6 relative">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative"
+              className="aspect-square bg-card rounded-3xl overflow-hidden border border-glass-border relative max-w-md w-full mx-auto"
             >
-              <div className="aspect-square bg-card rounded-3xl overflow-hidden border border-glass-border relative">
-                <div className="absolute inset-0 bg-linear-to-tr from-primary/20 to-transparent"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[120px] text-primary/20">
-                    settings_suggest
-                  </span>
-                </div>
-              </div>
-              <div className="absolute -bottom-6 -right-6 p-8 glass-panel border-glass-border rounded-2xl shadow-2xl">
-                <p className="text-4xl font-black text-primary mb-1">100+</p>
-                <p className="text-xs font-bold uppercase tracking-widest opacity-60">
-                  Global Initiatives
-                </p>
+              <div className="absolute inset-0 bg-linear-to-tr from-primary/20 to-transparent"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span
+                  className="material-symbols-outlined text-[120px] text-primary/20"
+                  aria-hidden="true"
+                >
+                  settings_suggest
+                </span>
               </div>
             </motion.div>
             <motion.div
@@ -123,42 +136,32 @@ const AboutUs = () => {
               viewport={{ once: true }}
               className="space-y-6"
             >
-              <h2 className="text-4xl font-black leading-tight tracking-tight">
-                Born in the Mountains, <br /> Built for the{" "}
-                <span className="text-primary italic">Global Stack.</span>
+              <h2 className="text-3xl md:text-4xl font-black leading-tight tracking-tight">
+                A software company with its roots in{" "}
+                <span className="text-primary italic">Kasauli.</span>
               </h2>
               <p className="text-foreground opacity-70 text-lg leading-relaxed">
-                What started as a small cohort of developers in Kasauli has
-                evolved into a global ecosystem. Our unique approach combines
-                high-altitude focus with deep-level technical precision.
+                KasauliCoder takes its name from Kasauli, the hill town in
+                Himachal Pradesh. That identity shapes the brand; the work
+                itself is practical: building dependable software for the
+                businesses we work with.
               </p>
-              <p className="text-foreground opacity-70 text-lg leading-relaxed">
-                We believe that the next generation of digital leaders isn't
-                just born in Silicon Valley—they are built wherever there is a
-                terminal, an internet connection, and the will to create.
-              </p>
-              <div className="pt-4 flex gap-6">
-                <div>
-                  <p className="text-2xl font-black">2023</p>
-                  <p className="text-xs opacity-60 uppercase tracking-widest font-bold">
-                    Founded
-                  </p>
-                </div>
-                <div className="w-px h-10 bg-glass-border"></div>
-                <div>
-                  <p className="text-2xl font-black text-secondary">24/7</p>
-                  <p className="text-xs opacity-60 uppercase tracking-widest font-bold">
-                    Support
-                  </p>
-                </div>
-                <div className="w-px h-10 bg-glass-border"></div>
-                <div>
-                  <p className="text-2xl font-black text-primary">4.0</p>
-                  <p className="text-xs opacity-60 uppercase tracking-widest font-bold">
-                    Current Cohort
-                  </p>
-                </div>
-              </div>
+              <ul className="space-y-3 pt-2">
+                {principles.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-3 font-medium text-foreground opacity-90"
+                  >
+                    <span
+                      className="material-symbols-outlined text-primary text-xl"
+                      aria-hidden="true"
+                    >
+                      check_circle
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </motion.div>
           </div>
         </section>
@@ -172,26 +175,25 @@ const AboutUs = () => {
             className="max-w-4xl mx-auto glass-card border-glass-border rounded-3xl p-12 text-center relative overflow-hidden group"
           >
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-            <h2 className="text-4xl font-black mb-6 italic tracking-tighter relative z-10">
-              Ready to redefine your trajectory?
+            <h2 className="text-3xl md:text-4xl font-black mb-6 tracking-tight relative z-10">
+              Have a project in mind?
             </h2>
             <p className="text-foreground opacity-70 text-lg mb-10 max-w-2xl mx-auto relative z-10">
-              Whether you're looking to hire our precision engineering team or
-              join our next development cohort, the future starts with a single
-              click.
+              Tell us what you would like built or improved and we will get back
+              to you to discuss it.
             </p>
             <div className="flex flex-wrap justify-center gap-4 relative z-10">
               <Link
-                href="/register"
-                className="bg-primary text-primary-content font-bold px-8 py-4 rounded-xl hover:shadow-[0_0_20px_rgba(0,242,255,0.4)] hover:scale-105 transition-all uppercase tracking-widest text-sm"
+                href="/contact"
+                className="bg-primary text-primary-content font-bold px-8 py-4 rounded-xl hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/30 transition-all text-sm uppercase tracking-widest"
               >
-                JOIN THE COHORT
+                Discuss a Project
               </Link>
               <Link
-                href="/contact"
-                className="glass-panel border-glass-border font-bold px-8 py-4 rounded-xl hover:bg-white/5 transition-all uppercase tracking-widest text-sm"
+                href="/projects"
+                className="glass-panel border-glass-border font-bold px-8 py-4 rounded-xl hover:bg-white/5 transition-colors text-sm uppercase tracking-widest"
               >
-                CONTACT US
+                View Projects
               </Link>
             </div>
           </motion.div>

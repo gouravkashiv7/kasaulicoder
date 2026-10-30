@@ -336,30 +336,6 @@ const InsightsArticles = () => {
               )}
             </>
           ) : null}
-
-          {/* Newsletter Section */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="mt-32 p-12 rounded-3xl glass-panel text-center relative overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-glow-radial opacity-20 pointer-events-none"></div>
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-5xl font-black mb-4 decoration-primary/30 underline-offset-8">
-                Stay Ahead{" "}
-                <span className="text-primary italic">of the Curve</span>
-              </h2>
-              <p className="text-foreground/60 mb-8 max-w-xl mx-auto text-lg leading-relaxed">
-                Get monthly deep dives on AI workflows and production-level
-                engineering strategies delivered to your inbox.
-              </p>
-              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary/10 border border-primary/20 text-primary font-black uppercase tracking-[0.2em] text-xs animate-pulse">
-                <span className="size-2 rounded-full bg-primary shadow-[0_0_10px_var(--primary)]" />
-                Coming Soon
-              </div>
-            </div>
-          </motion.div>
         </div>
       </main>
 

@@ -1,9 +1,9 @@
 import AboutUs from "@/components/marketing/AboutUs";
 
 export const metadata = {
-  title: "About Us",
+  title: "About",
   description:
-    "Discover the mission, vision, and team behind Kasauli Coder. We're building a community of world-class developers from the heart of the hills.",
+    "KasauliCoder is a software product development and digital solutions company building SaaS products, web applications and automation for businesses.",
 };
 
 export default function About() {

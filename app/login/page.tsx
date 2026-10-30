@@ -2,7 +2,7 @@ import LoginPage from "@/components/auth/LoginPage";
 
 export const metadata = {
   title: "Login | KasauliCoder",
-  description: "Access your KasauliCoder developer dashboard.",
+  description: "Sign in to your KasauliCoder account.",
 };
 
 export default function Login() {

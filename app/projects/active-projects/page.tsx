@@ -8,8 +8,7 @@ import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 
 export const metadata: Metadata = {
   title: "Active Projects",
-  description:
-    "Explore the live projects currently being engineered in our labs.",
+  description: "Software projects KasauliCoder is currently building.",
 };
 
 export default async function ActiveProjects() {
@@ -33,15 +32,15 @@ export default async function ActiveProjects() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
               </span>
-              Currently Engineering
+              In Development
             </div>
           </div>
           <h1 className="text-5xl sm:text-7xl font-black mb-6 tracking-tight">
             Active <span className="text-primary">Projects</span>
           </h1>
           <p className="text-foreground/60 max-w-2xl text-xl leading-relaxed">
-            A look into the live solutions and cutting-edge digital
-            architectures we are currently building.
+            Software and digital solutions we are currently designing and
+            building.
           </p>
         </div>
 

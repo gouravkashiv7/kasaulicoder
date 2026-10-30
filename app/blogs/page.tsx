@@ -4,7 +4,7 @@ import InsightsArticles from "@/components/marketing/InsightsArticles";
 export const metadata: Metadata = {
   title: "Blogs",
   description:
-    "Read the latest tech insights, tutorials, and success stories from the Kasauli Coder blog.",
+    "Articles and insights on software development, SaaS, SEO and digital products from the KasauliCoder team.",
 };
 
 export default function BlogsPage() {

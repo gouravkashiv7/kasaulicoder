@@ -8,8 +8,7 @@ import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 
 export const metadata: Metadata = {
   title: "Recent Projects",
-  description:
-    "Browse our past success stories and completed digital architectures.",
+  description: "Completed software projects built by KasauliCoder.",
 };
 
 export default async function RecentProjects() {
@@ -30,15 +29,15 @@ export default async function RecentProjects() {
         <div className="mb-16">
           <div className="flex mb-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-foreground/70 text-[11px] font-bold tracking-[0.2em] uppercase">
-              Past Work
+              Completed Work
             </div>
           </div>
           <h1 className="text-5xl sm:text-7xl font-black mb-6 tracking-tight">
-            Recent Case <span className="text-foreground/50">Studies</span>
+            Recent <span className="text-foreground/50">Projects</span>
           </h1>
           <p className="text-foreground/60 max-w-2xl text-xl leading-relaxed">
-            Review the proven high-performance solutions we have previously
-            engineered and shipped to our clients.
+            Software and digital solutions we have previously designed and
+            built.
           </p>
         </div>
 
@@ -78,7 +77,7 @@ export default async function RecentProjects() {
                       href={`/projects/recent-projects/${project.slug}`}
                       className="inline-block px-6 py-2 bg-foreground text-background border border-transparent hover:bg-foreground/80 rounded-lg text-sm font-bold transition-colors"
                     >
-                      Read Case Study
+                      View Project
                     </Link>
                   </div>
                 </div>

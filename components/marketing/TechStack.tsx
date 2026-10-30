@@ -120,9 +120,8 @@ const TechStack = () => {
           </div>
           <div className="lg:max-w-md">
             <p className="text-sm sm:text-base lg:text-lg text-foreground/60 font-medium leading-relaxed italic border-l-2 border-primary/30 pl-4 sm:pl-6">
-              We leverage the industry&apos;s most powerful tools to build
-              scalable, resilient, and high-performance digital solutions for
-              modern businesses.
+              The technologies we use to build web applications and software for
+              businesses.
             </p>
           </div>
         </div>

@@ -33,12 +33,12 @@ export async function generateMetadata(props: {
 
   if (!project) {
     return {
-      title: "Project Not Found | Kasauli Coder",
+      title: "Project Not Found",
     };
   }
 
   return {
-    title: `${project.title} | Case Study | Kasauli Coder`,
+    title: project.title,
     description: project.outcome || project.desc?.substring(0, 160),
     openGraph: {
       title: project.title,
@@ -191,7 +191,7 @@ export default async function RecentProjectPage(props: {
           <div className="max-w-4xl mx-auto">
             <div className="prose prose-invert max-w-none text-center prose-p:text-xl prose-p:leading-relaxed prose-p:text-foreground/70 prose-headings:text-foreground prose-headings:font-black prose-headings:tracking-tighter prose-strong:text-foreground">
               <h3 className="text-3xl md:text-5xl font-black mb-10 tracking-tighter">
-                The Case Study
+                Project Overview
               </h3>
               <div className="space-y-8 bg-white/5 border border-white/10 p-10 md:p-16 rounded-[2.5rem] backdrop-blur-md">
                 <p>{project.desc}</p>

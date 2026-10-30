@@ -22,7 +22,7 @@ const TermsOfService = () => {
               Terms of <span className="text-primary italic">Service</span>
             </h1>
             <p className="text-foreground opacity-70">
-              Last updated: October 2024
+              Last updated: October 2026
             </p>
           </motion.div>
 
@@ -37,23 +37,20 @@ const TermsOfService = () => {
                 1. Acceptance of Terms
               </h2>
               <p className="leading-relaxed">
-                By accessing and using KasauliCoder's platform, cohort
-                materials, and services, you agree to be bound by these Terms of
-                Service. If you do not agree to these terms, please do not use
-                our services.
+                By accessing and using the KasauliCoder website and services,
+                you agree to be bound by these Terms of Service. If you do not
+                agree to these terms, please do not use our services.
               </p>
             </section>
 
             <section>
               <h2 className="text-2xl font-black mb-4 tracking-tight">
-                2. Professional Development
+                2. Services
               </h2>
               <p className="leading-relaxed">
-                Our cohorts and training programs are intended for professional
-                development. While we provide industry-leading knowledge and
-                mentorship, KasauliCoder does not guarantee specific employment
-                outcomes. Success depends on individual effort and market
-                conditions.
+                KasauliCoder provides software development and related digital
+                services to businesses. The scope and terms of any project are
+                agreed separately with the client.
               </p>
             </section>
 
@@ -62,11 +59,10 @@ const TermsOfService = () => {
                 3. Intellectual Property
               </h2>
               <p className="leading-relaxed">
-                All materials provided during our programs, including code
-                snippets, architecture diagrams, and educational content, are
-                owned by KasauliCoder or its licensors. You are granted a
-                personal, non-exclusive license to use these materials for your
-                own professional growth.
+                The content of this website, including text, graphics and code,
+                is owned by KasauliCoder or its licensors. Ownership of work
+                delivered to a client is governed by the agreement for that
+                project.
               </p>
             </section>
 
@@ -75,23 +71,20 @@ const TermsOfService = () => {
                 4. Payment and Refunds
               </h2>
               <p className="leading-relaxed">
-                Fees for our premium cohorts are non-refundable unless otherwise
-                specified in the registration documentation. We provide
-                high-value, limited-seat opportunities and expect a commitment
-                from all participants.
+                Fees and payment terms for a project are set out in the
+                agreement or proposal for that project.
               </p>
             </section>
 
             <section className="glass-panel border-glass-border p-8 rounded-2xl relative overflow-hidden group">
               <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <h2 className="text-2xl font-black text-primary mb-4 tracking-tight relative z-10">
-                5. Code of Conduct
+                5. Acceptable Use
               </h2>
               <p className="leading-relaxed relative z-10">
-                KasauliCoder is a high-performance community. We expect all
-                members to maintain professional standards, contribute
-                positively to group dynamics, and respect the privacy and
-                intellectual property of fellow developers.
+                We expect everyone using this website to use it lawfully and
+                respectfully, and to respect the privacy and intellectual
+                property of others.
               </p>
             </section>
           </motion.div>

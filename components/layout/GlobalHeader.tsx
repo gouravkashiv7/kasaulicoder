@@ -78,9 +78,11 @@ const GlobalHeader = ({
 
   const navLinks = [
     { title: "Home", href: "/" },
-    { title: "Programs", href: "/programs" },
+    { title: "Services", href: "/#services" },
     { title: "Projects", href: "/projects" },
-    { title: "Blogs", href: "/blogs" },
+    { title: "About", href: "/about" },
+    { title: "Blog", href: "/blogs" },
+    { title: "Contact", href: "/contact" },
   ];
 
   useEffect(() => {
@@ -203,7 +205,8 @@ const GlobalHeader = ({
 
   // Helper to check if a link is active
   const isActive = (path: string) => {
-    if (path === "/" && pathname !== "/") return false;
+    if (path.includes("#")) return false;
+    if (path === "/") return pathname === "/";
     return pathname.startsWith(path);
   };
 
@@ -396,10 +399,10 @@ const GlobalHeader = ({
                   Login
                 </Link>
                 <Link
-                  href="/register"
+                  href="/contact"
                   className="hidden sm:flex items-center justify-center bg-linear-to-r from-primary to-secondary text-white text-sm font-black px-6 py-2 rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] border border-white/20"
                 >
-                  Explore Solutions
+                  Discuss a Project
                 </Link>
               </>
             )}
@@ -576,11 +579,11 @@ const GlobalHeader = ({
                       Login Member
                     </Link>
                     <Link
-                      href="/register"
+                      href="/contact"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="w-full py-4 bg-primary text-primary-content font-black rounded-xl text-center neon-glow"
                     >
-                      Explore Solutions
+                      Discuss a Project
                     </Link>
                   </div>
                 )}

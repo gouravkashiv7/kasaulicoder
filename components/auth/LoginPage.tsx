@@ -294,18 +294,6 @@ const LoginPage = () => {
                   <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></div>
                 </button>
               </form>
-
-              <div className="mt-10 pt-8 border-t border-foreground/5 text-center lg:text-left">
-                <p className="text-foreground/50 text-xs">
-                  New to the hub?{" "}
-                  <Link
-                    href="/register"
-                    className="text-primary font-black hover:underline"
-                  >
-                    Create Master Account
-                  </Link>
-                </p>
-              </div>
             </div>
 
             {/* Right Content — Interactive Globe (Lazy Loaded, hidden on mobile) */}
@@ -316,27 +304,11 @@ const LoginPage = () => {
               <div className="relative z-10 w-full flex flex-col items-center">
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary mb-12 shadow-[0_0_15px_rgba(var(--primary),0.2)]">
                   <span className="size-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-                  KasauliCoder Ecosystem Active
+                  KasauliCoder
                 </div>
 
                 <div className="relative aspect-square w-full max-w-88 xl:max-w-108 flex items-center justify-center pointer-events-auto">
                   <InteractiveGlobe size={380} />
-                </div>
-
-                <div className="mt-12 flex items-center justify-center">
-                  <div className="inline-flex items-center gap-3 rounded-2xl border border-foreground/10 bg-foreground/5 px-5 py-3 backdrop-blur-sm">
-                    <span className="material-symbols-outlined text-primary text-2xl">
-                      headset_mic
-                    </span>
-                    <div>
-                      <p className="text-sm font-black text-primary leading-none">
-                        24/7
-                      </p>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/50">
-                        Support
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

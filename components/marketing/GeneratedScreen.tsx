@@ -81,19 +81,18 @@ const GeneratedScreen = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
-                Active Ecosystem
+                Our Work
               </div>
               <h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight mb-4 leading-tight sm:leading-none text-foreground">
                 KasauliCoder <br />
                 <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary animate-gradient">
-                  Active Labs
+                  Projects
                 </span>
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-foreground/60 mb-6 sm:mb-8 max-w-xl font-medium">
-                Explore our portfolio of cutting-edge solutions. Discover what
-                we are currently engineering in our active labs, or browse
-                through past success stories of high-performance digital
-                architectures.
+                Software and digital solutions we have built. Browse the
+                projects currently in development, or look through completed
+                work.
               </p>
 
               <motion.div
@@ -121,13 +120,13 @@ const GeneratedScreen = () => {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-content opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-content"></span>
                   </span>
-                  View Active Projects
+                  Projects in Development
                 </Link>
                 <Link
                   href="/projects/recent-projects"
                   className="px-6 sm:px-8 py-3 sm:py-4 bg-foreground/5 border border-foreground/10 text-sm sm:text-base font-bold rounded-lg hover:bg-foreground/10 transition-colors text-foreground"
                 >
-                  Recent Projects
+                  Completed Projects
                 </Link>
               </div>
             </motion.div>

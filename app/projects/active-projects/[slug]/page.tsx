@@ -33,12 +33,12 @@ export async function generateMetadata(props: {
 
   if (!project) {
     return {
-      title: "Project Not Found | Kasauli Coder",
+      title: "Project Not Found",
     };
   }
 
   return {
-    title: `${project.title} | Active Project | Kasauli Coder`,
+    title: project.title,
     description: project.outcome || project.desc?.substring(0, 160),
     openGraph: {
       title: project.title,

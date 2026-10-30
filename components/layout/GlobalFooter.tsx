@@ -143,16 +143,15 @@ const GlobalFooter = () => {
             </h2>
           </Link>
           <p className="text-sm font-medium text-foreground/60 leading-relaxed">
-            Empowering developers from the hills of Kasauli. Build, learn, and
-            grow with a community of passionate coders shaping the future of
-            tech.
+            SaaS product development and digital solutions for businesses:
+            software, automation, SEO, UI/UX and cloud infrastructure.
           </p>
         </div>
 
         <div className="flex flex-wrap sm:flex-nowrap gap-10 sm:gap-20">
           <div className="flex flex-col gap-5 min-w-30">
             <h3 className="text-sm font-bold text-foreground uppercase tracking-widest border-l-2 border-primary pl-3">
-              Platform
+              Explore
             </h3>
             <div className="flex flex-col gap-3 pl-3">
               <Link
@@ -166,9 +165,9 @@ const GlobalFooter = () => {
               </Link>
               <Link
                 className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors hover:translate-x-1 group inline-block w-fit"
-                href="/programs"
+                href="/#services"
               >
-                Programs{" "}
+                Services{" "}
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity">
                   →
                 </span>
@@ -186,16 +185,7 @@ const GlobalFooter = () => {
                 className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors hover:translate-x-1 group inline-block w-fit"
                 href="/blogs"
               >
-                Blogs{" "}
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  →
-                </span>
-              </Link>
-              <Link
-                className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors hover:translate-x-1 group inline-block w-fit"
-                href="/pricing"
-              >
-                Pricing{" "}
+                Blog{" "}
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity">
                   →
                 </span>
@@ -212,16 +202,7 @@ const GlobalFooter = () => {
                 className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors hover:translate-x-1 group inline-block w-fit"
                 href="/about"
               >
-                About Us{" "}
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  →
-                </span>
-              </Link>
-              <Link
-                className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors hover:translate-x-1 group inline-block w-fit"
-                href="/careers"
-              >
-                Careers{" "}
+                About{" "}
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity">
                   →
                 </span>
