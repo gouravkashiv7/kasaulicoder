@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   description: "Software projects KasauliCoder is currently building.",
 };
 
+// Read projects on each request so newly added projects appear without a redeploy.
+export const dynamic = "force-dynamic";
+
 export default async function ActiveProjects() {
   await connectDB();
   const rawProjects = await Project.find({ status: "active" })
