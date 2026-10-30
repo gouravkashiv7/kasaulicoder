@@ -1,27 +1,13 @@
+import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
-import { jwtVerify } from "jose";
 import connectDB from "@/backend/lib/db";
 import User from "@/backend/models/User";
 import Staff from "@/backend/models/Staff";
-import { cookies } from "next/headers";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 async function getUserAuth(): Promise<{ id: string; type: string } | null> {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
-    if (!token) return null;
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    return {
-      id: payload.id as string,
-      type: (payload.type as string) || "user",
-    };
-  } catch {
-    return null;
-  }
+  const session = await getServerSession();
+  return session ? { id: session.id, type: session.type } : null;
 }
 
 export async function GET() {
@@ -34,14 +20,14 @@ export async function GET() {
 
   let account: any;
   if (type === "admin") {
-    account = await Staff.findById(id).select("-password");
+    account = await Staff.findById(id).select("-password -resetPasswordToken -resetPasswordExpires");
     if (account) {
       // Normalize image to pic for frontend
       account = account.toObject();
       account.pic = account.image || null;
     }
   } else {
-    account = await User.findById(id).select("-password");
+    account = await User.findById(id).select("-password -resetPasswordToken -resetPasswordExpires");
   }
 
   if (!account)
@@ -92,7 +78,7 @@ export async function PATCH(req: Request) {
 
   const account = await Model.findByIdAndUpdate(id, update, {
     new: true,
-  }).select("-password");
+  }).select("-password -resetPasswordToken -resetPasswordExpires");
 
   if (!account) {
     return NextResponse.json({ error: "Account not found" }, { status: 404 });

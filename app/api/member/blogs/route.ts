@@ -1,12 +1,9 @@
 export const dynamic = "force-dynamic";
+import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import Blog from "@/backend/models/Blog";
 import connectDB from "@/backend/lib/db";
-import { jwtVerify } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 function createSlug(title: string) {
   return title
@@ -19,21 +16,16 @@ function createSlug(title: string) {
 
 export async function GET(req: Request) {
   try {
-    const cookieHeader = req.headers.get("cookie") || "";
-    const token = cookieHeader
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json(
         { error: "Unauthorized. Missing token." },
         { status: 401 },
       );
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    if (!payload.id || !payload.role) {
+    if (!session.id || !session.role) {
       return NextResponse.json(
         { error: "Unauthorized. Invalid token." },
         { status: 401 },
@@ -43,7 +35,7 @@ export async function GET(req: Request) {
     await connectDB();
 
     // Fetch blogs authored by this specific member by their Staff ID
-    const blogs = await Blog.find({ authorId: payload.id }).sort({
+    const blogs = await Blog.find({ authorId: session.id }).sort({
       createdAt: -1,
     });
 
@@ -68,21 +60,16 @@ function stripParagraphTags(text: string) {
 
 export async function POST(req: Request) {
   try {
-    const cookieHeader = req.headers.get("cookie") || "";
-    const token = cookieHeader
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json(
         { error: "Unauthorized. Missing token." },
         { status: 401 },
       );
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    if (!payload.id || !payload.role) {
+    if (!session.id || !session.role) {
       return NextResponse.json(
         { error: "Unauthorized. Invalid token." },
         { status: 401 },
@@ -116,7 +103,7 @@ export async function POST(req: Request) {
 
     // Fetch the staff member to get their official name
     const Staff = (await import("@/backend/models/Staff")).default;
-    const staff = await Staff.findById(payload.id);
+    const staff = await Staff.findById(session.id);
     if (!staff) {
       return NextResponse.json({ error: "Staff not found." }, { status: 404 });
     }
@@ -134,7 +121,7 @@ export async function POST(req: Request) {
       counter++;
     }
 
-    console.log("Creating blog with Author ID:", payload.id);
+    console.log("Creating blog with Author ID:", session.id);
     const newBlog = await Blog.create({
       title,
       slug,
@@ -142,7 +129,7 @@ export async function POST(req: Request) {
       tagline,
       description,
       content: stripParagraphTags(content),
-      authorId: payload.id, // Save the Staff ID
+      authorId: session.id, // Save the Staff ID
       writtenBy: staff.name, // Save the official name from DB
       status: "inactive", // Always inactive by default for moderation
     });

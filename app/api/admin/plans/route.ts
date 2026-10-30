@@ -1,25 +1,14 @@
+import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Plan from "@/backend/models/Plan";
-import { jwtVerify } from "jose";
-import { cookies } from "next/headers";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 // Middleware: verify superadmin
 async function verifySuperAdmin() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-  if (!token) return null;
-  try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    if (payload.role !== "superadmin") return null;
-    return payload;
-  } catch {
-    return null;
-  }
+  const session = await getServerSession();
+  if (session?.role !== "superadmin") return null;
+  return session;
 }
 
 // GET: List all plans (including inactive for admin)

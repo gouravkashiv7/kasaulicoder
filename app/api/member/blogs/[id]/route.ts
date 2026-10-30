@@ -1,12 +1,9 @@
 export const dynamic = "force-dynamic";
+import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import Blog from "@/backend/models/Blog";
 import connectDB from "@/backend/lib/db";
-import { jwtVerify } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 export async function PATCH(
   req: Request,
@@ -14,18 +11,13 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const cookieHeader = req.headers.get("cookie") || "";
-    const token = cookieHeader
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    if (!payload.id) {
+    if (!session.id) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
@@ -49,7 +41,7 @@ export async function PATCH(
 
     // Security check: Only the author can edit their own blog
     // Use String() for comparison as blog.authorId is an ObjectId
-    if (String(blog.authorId) !== payload.id) {
+    if (String(blog.authorId) !== session.id) {
       return NextResponse.json(
         { error: "Forbidden. You can only edit your own blogs." },
         { status: 403 },
@@ -58,7 +50,7 @@ export async function PATCH(
 
     // Fetch the staff member to get their official name
     const Staff = (await import("@/backend/models/Staff")).default;
-    const staff = await Staff.findById(payload.id);
+    const staff = await Staff.findById(session.id);
     if (!staff) {
       return NextResponse.json({ error: "Staff not found." }, { status: 404 });
     }
@@ -132,7 +124,7 @@ export async function PATCH(
     blog.writtenBy = staff.name;
 
     // Ensure authorId is set (for older blogs being edited)
-    blog.authorId = payload.id;
+    blog.authorId = session.id;
 
     console.log("Saving blog updates for:", blog.title);
     console.log(

@@ -5,6 +5,9 @@ import Staff from "@/backend/models/Staff";
 import bcrypt from "bcryptjs";
 
 export async function POST() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   await connectDB();
 
   const results: Record<string, string> = {};
@@ -72,25 +75,5 @@ export async function POST() {
     results.admin = "Error: " + e.message;
   }
 
-  return NextResponse.json({
-    message: "Seed complete",
-    results,
-    credentials: {
-      student: {
-        email: "student@kasaulicoder.com",
-        password: "student@kasaulicoder",
-        loginType: "user",
-      },
-      professional: {
-        email: "professional@kasaulicoder.com",
-        password: "professional@kasaulicoder",
-        loginType: "user",
-      },
-      admin: {
-        email: "admin@kasaulicoder.com",
-        password: "admin@kasaulicoder",
-        loginType: "admin",
-      },
-    },
-  });
+  return NextResponse.json({ message: "Seed complete", results });
 }

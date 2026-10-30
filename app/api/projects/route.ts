@@ -3,6 +3,7 @@ import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
 import "@/backend/models/Staff";
 import { getServerSession } from "@/backend/lib/auth";
+import { pickProjectFields } from "@/backend/lib/projectFields";
 
 export async function GET() {
   try {
@@ -15,7 +16,7 @@ export async function GET() {
     }
 
     const projects = await Project.find(query)
-      .populate("members", "name image designation email")
+      .populate("members", "name image designation")
       .sort({ createdAt: -1 });
 
     return NextResponse.json(projects, { status: 200 });
@@ -30,10 +31,18 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession();
+    if (!session || session.type !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (session.role !== "superadmin") {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
+    }
+
     await connectDB();
 
-    const body = await req.json();
-    const { title, desc } = body;
+    const body = pickProjectFields(await req.json());
+    const { title, desc } = body as { title?: string; desc?: string };
 
     // Optional slug generation block for custom creations
     const baseSlug = `${title}-${desc?.substring(0, 20) || ""}`
@@ -45,14 +54,14 @@ export async function POST(req: Request) {
 
     const newProject = await Project.create({
       ...body,
-      slug: body.slug || slug,
+      slug: (body as any).slug || slug,
     });
 
     return NextResponse.json(newProject, { status: 201 });
   } catch (error: any) {
     console.error("API POST Project error:", error);
     return NextResponse.json(
-      { error: "Failed to create project", details: error.message },
+      { error: "Failed to create project" },
       { status: 500 },
     );
   }

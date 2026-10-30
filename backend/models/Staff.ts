@@ -20,7 +20,7 @@ const StaffSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: false },
     role: {
       type: String,
       enum: ["superadmin", "admin", "editor", "support"],
@@ -31,8 +31,8 @@ const StaffSchema: Schema = new Schema(
     image: { type: String },
     isActive: { type: Boolean, default: true },
     lastLogin: { type: Date },
-    resetPasswordToken: { type: String },
-    resetPasswordExpires: { type: Date },
+    resetPasswordToken: { type: String, select: false },
+    resetPasswordExpires: { type: Date, select: false },
   },
   { timestamps: true },
 );

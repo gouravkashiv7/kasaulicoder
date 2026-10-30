@@ -19,7 +19,7 @@ const UserSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: false },
     role: { type: String, enum: ["user"], default: "user" },
     userType: {
       type: String,
@@ -29,8 +29,8 @@ const UserSchema: Schema = new Schema(
     pic: { type: String },
     emailVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
-    resetPasswordToken: { type: String },
-    resetPasswordExpires: { type: Date },
+    resetPasswordToken: { type: String, select: false },
+    resetPasswordExpires: { type: Date, select: false },
   },
   { timestamps: true },
 );

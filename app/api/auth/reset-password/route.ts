@@ -1,3 +1,5 @@
+import { rateLimit } from "@/backend/lib/rateLimit";
+import { getJwtSecret } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
@@ -5,15 +7,18 @@ import connectDB from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
 import User from "@/backend/models/User";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key"
-);
 
 export async function POST(req: Request) {
   try {
+    if (!rateLimit(req, "reset", 10, 3600000)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
     const { token, password } = await req.json();
 
-    if (!token || !password) {
+    if (typeof token !== "string" || typeof password !== "string" || !token || !password) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -22,7 +27,7 @@ export async function POST(req: Request) {
     }
 
     // Verify Token
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getJwtSecret());
 
     if (!payload.resetPassword) {
       return NextResponse.json({ error: "Invalid token type" }, { status: 400 });

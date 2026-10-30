@@ -1,20 +1,39 @@
+import { rateLimit } from "@/backend/lib/rateLimit";
+import { getJwtSecret } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import User from "@/backend/models/User";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, userType } = await req.json();
+    if (!rateLimit(req, "register", 5, 3600000)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
+    const body = await req.json();
+    const { name, password, userType } = body;
+    const email =
+      typeof body.email === "string" ? body.email.trim() : "";
 
     if (!name || !email || !password || !userType) {
       return NextResponse.json(
         { error: "Name, email, password, and user type are required" },
+        { status: 400 },
+      );
+    }
+
+    if (typeof name !== "string" || typeof password !== "string") {
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    }
+
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: "Password must be at least 8 characters" },
         { status: 400 },
       );
     }
@@ -59,7 +78,7 @@ export async function POST(req: Request) {
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("24h")
-      .sign(JWT_SECRET);
+      .sign(getJwtSecret());
 
     const response = NextResponse.json(
       {
@@ -85,6 +104,6 @@ export async function POST(req: Request) {
 
     return response;
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

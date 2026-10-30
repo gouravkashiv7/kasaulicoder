@@ -6,8 +6,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
-import { MDXRemote } from "next-mdx-remote";
-import { serialize } from "next-mdx-remote/serialize";
+import ReactMarkdown from "react-markdown";
 import UniqueLoading from "@/components/ui/morph-loading";
 import { SocialMediaAccount } from "@/components/admin/types";
 import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
@@ -91,8 +90,7 @@ const BlogEditorSection = ({
     const preparePreview = async () => {
       setPreviewLoading(true);
       try {
-        const source = await serialize(blogData.content);
-        setMdxSource(source);
+        setMdxSource(String(blogData.content));
       } catch (err) {
         console.error("MDX Preview Error:", err);
         setMdxSource(null);
@@ -837,18 +835,18 @@ Output ONLY the MDX content.`;
 
                   <div className="prose prose-invert prose-lg max-w-none prose-headings:tracking-tighter prose-headings:font-black prose-p:leading-relaxed relative z-10">
                     {mdxSource ? (
-                      <MDXRemote
-                        {...mdxSource}
+                      <ReactMarkdown
                         components={{
-                          motion,
-                          Link,
-                          Image: SafeImage,
-                          AnimatePresence,
-                          p: (props: any) => (
+                          img: ({ node, ...props }: any) => (
+                            <SafeImage {...props} />
+                          ),
+                          p: ({ node, ...props }: any) => (
                             <div className="leading-relaxed mb-4" {...props} />
                           ),
                         }}
-                      />
+                      >
+                        {mdxSource}
+                      </ReactMarkdown>
                     ) : (
                       <div className="flex flex-col items-center justify-center py-32 text-center">
                         <div className="size-20 bg-foreground/3 rounded-full flex items-center justify-center mb-6">

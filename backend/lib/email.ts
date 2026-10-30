@@ -10,6 +10,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const esc = (v: unknown): string =>
+  String(v ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 export interface StaffWelcomeEmailOptions {
   toEmail: string;
   toName: string;
@@ -89,7 +97,7 @@ export const sendStaffWelcomeEmail = async (
           <tr>
             <td style="padding:40px 48px 0;">
               <p style="margin:0;font-size:16px;color:#374151;line-height:1.7;">
-                Hey <strong>${toName}</strong> 👋,
+                Hey <strong>${esc(toName)}</strong> 👋,
               </p>
               <p style="margin:14px 0 0;font-size:15px;color:#6b7280;line-height:1.8;">
                 We're thrilled to have you join the <strong style="color:#1a1a2e;">Kasaulicoder</strong> family. Your account has been created and you're all set to start. Below you'll find everything you need to log in and get started.
@@ -102,17 +110,17 @@ export const sendStaffWelcomeEmail = async (
             <td style="padding:28px 48px 0;">
               <div style="display:inline-block;">
                 <span style="display:inline-block;background-color:${roleColor}1a;color:${roleColor};border:1.5px solid ${roleColor}50;border-radius:99px;padding:6px 18px;font-size:12px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;">
-                  ${roleLabel}
+                  ${esc(roleLabel)}
                 </span>
               </div>
               ${
                 designation
-                  ? `<p style="margin:10px 0 0;font-size:14px;color:#374151;font-weight:600;">${designation}</p>`
+                  ? `<p style="margin:10px 0 0;font-size:14px;color:#374151;font-weight:600;">${esc(designation)}</p>`
                   : ""
               }
               ${
                 roleDescription
-                  ? `<p style="margin:6px 0 0;font-size:14px;color:#6b7280;line-height:1.7;">${roleDescription}</p>`
+                  ? `<p style="margin:6px 0 0;font-size:14px;color:#6b7280;line-height:1.7;">${esc(roleDescription)}</p>`
                   : ""
               }
             </td>
@@ -129,14 +137,14 @@ export const sendStaffWelcomeEmail = async (
                   <tr>
                     <td style="padding-bottom:14px;">
                       <p style="margin:0;font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Email Address</p>
-                      <p style="margin:4px 0 0;font-size:16px;color:#1e293b;font-weight:700;word-break:break-all;">${toEmail}</p>
+                      <p style="margin:4px 0 0;font-size:16px;color:#1e293b;font-weight:700;word-break:break-all;">${esc(toEmail)}</p>
                     </td>
                   </tr>
                   <tr>
                     <td>
                       <p style="margin:0;font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Temporary Password</p>
                       <div style="margin-top:6px;display:inline-block;background:#1e293b;border-radius:8px;padding:10px 20px;">
-                        <code style="font-size:18px;font-weight:800;color:#f8fafc;letter-spacing:2px;font-family:'Courier New',monospace;">${plainPassword}</code>
+                        <code style="font-size:18px;font-weight:800;color:#f8fafc;letter-spacing:2px;font-family:'Courier New',monospace;">${esc(plainPassword)}</code>
                       </div>
                     </td>
                   </tr>
@@ -316,7 +324,7 @@ export const sendAccountDeactivationEmail = async (
           <tr>
             <td style="padding:40px 48px 32px;">
               <p style="margin:0 0 16px;font-size:16px;color:#374151;line-height:1.7;">
-                Hello <strong>${name}</strong>,
+                Hello <strong>${esc(name)}</strong>,
               </p>
               <p style="margin:0 0 24px;font-size:16px;color:#4b5563;line-height:1.7;">
                 This email is to inform you that your Kasaulicoder account has been deactivated by an administrator. You will no longer be able to access the platform.
@@ -382,7 +390,7 @@ export const sendAccountActivationEmail = async (
           <tr>
             <td style="padding:40px 48px 32px;">
               <p style="margin:0 0 16px;font-size:16px;color:#374151;line-height:1.7;">
-                Welcome back, <strong>${name}</strong> 🎉
+                Welcome back, <strong>${esc(name)}</strong> 🎉
               </p>
               <p style="margin:0 0 24px;font-size:16px;color:#4b5563;line-height:1.7;">
                 Good news! Your Kasaulicoder account has been reactivated by an administrator. You now have full access to the platform again.
@@ -462,10 +470,10 @@ export const sendSocialMediaAssignmentEmail = async (
           <tr>
             <td style="padding:40px 48px 0;">
               <p style="margin:0;font-size:16px;color:#374151;line-height:1.7;">
-                Hello <strong>${toName}</strong>,
+                Hello <strong>${esc(toName)}</strong>,
               </p>
               <p style="margin:14px 0 0;font-size:15px;color:#4b5563;line-height:1.8;">
-                You have been assigned responsibility for a new social media account on <strong style="color:#0f172a;">${platform}</strong>. Please ensure all brand guidelines are followed while managing this channel.
+                You have been assigned responsibility for a new social media account on <strong style="color:#0f172a;">${esc(platform)}</strong>. Please ensure all brand guidelines are followed while managing this channel.
               </p>
             </td>
           </tr>
@@ -481,13 +489,13 @@ export const sendSocialMediaAssignmentEmail = async (
                   <tr>
                     <td style="padding-bottom:16px;">
                       <p style="margin:0;font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;">Platform</p>
-                      <p style="margin:4px 0 0;font-size:16px;color:#1e293b;font-weight:700;">${platform}</p>
+                      <p style="margin:4px 0 0;font-size:16px;color:#1e293b;font-weight:700;">${esc(platform)}</p>
                     </td>
                   </tr>
                   <tr>
                     <td style="padding-bottom:16px;">
                       <p style="margin:0;font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;">Username</p>
-                      <p style="margin:4px 0 0;font-size:16px;color:#1e293b;font-weight:700;">${username}</p>
+                      <p style="margin:4px 0 0;font-size:16px;color:#1e293b;font-weight:700;">${esc(username)}</p>
                     </td>
                   </tr>
                   ${password ? `
@@ -495,7 +503,7 @@ export const sendSocialMediaAssignmentEmail = async (
                     <td>
                       <p style="margin:0;font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;">Password</p>
                       <div style="margin-top:6px;display:inline-block;background:#1e293b;border-radius:6px;padding:8px 16px;">
-                        <code style="font-size:16px;color:#ffffff;font-family:monospace;">${password}</code>
+                        <code style="font-size:16px;color:#ffffff;font-family:monospace;">${esc(password)}</code>
                       </div>
                     </td>
                   </tr>
@@ -575,14 +583,14 @@ export const sendPasswordResetEmail = async (
           <tr>
             <td style="padding:50px 50px 40px;">
               <p style="margin:0;font-size:16px;color:#334155;line-height:1.8;">
-                Hello <strong>${name}</strong>,
+                Hello <strong>${esc(name)}</strong>,
               </p>
               <p style="margin:20px 0 0;font-size:15px;color:#64748b;line-height:1.8;">
                 We received a request to reset the password for your Kasaulicoder account. If you didn't make this request, you can safely ignore this email.
               </p>
               
               <div style="text-align:center;margin:45px 0;">
-                <a href="${resetUrl}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;font-size:15px;font-weight:800;padding:18px 45px;border-radius:16px;box-shadow:0 10px 20px rgba(15,23,42,0.15);">
+                <a href="${esc(resetUrl)}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;font-size:15px;font-weight:800;padding:18px 45px;border-radius:16px;box-shadow:0 10px 20px rgba(15,23,42,0.15);">
                   Reset My Password
                 </a>
               </div>

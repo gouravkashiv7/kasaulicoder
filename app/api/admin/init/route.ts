@@ -4,6 +4,9 @@ import Staff from "@/backend/models/Staff";
 import bcrypt from "bcryptjs";
 
 export async function POST() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   await connectDB();
 
   try {
@@ -29,10 +32,6 @@ export async function POST() {
     return NextResponse.json(
       {
         message: "SuperAdmin created successfully",
-        credentials: {
-          email: "admin@kasaulicoder.com",
-          password: "admin@kasaulicoder",
-        },
       },
       { status: 201 },
     );

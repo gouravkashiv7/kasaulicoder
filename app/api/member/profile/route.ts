@@ -1,65 +1,51 @@
+import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
 import bcrypt from "bcryptjs";
-import { jwtVerify } from "jose";
-import { cookies } from "next/headers";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const session = await getServerSession();
 
-    if (!token) {
-      console.log("No token in /api/member/profile");
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    console.log("Payload in /api/member/profile:", payload);
-
-    if (payload.type !== "admin") {
-      console.log("Failed type check:", payload.type);
+    if (session.type !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     await connectDB();
-    const staff = await Staff.findById(payload.id).select("-password");
+    const staff = await Staff.findById(session.id).select("-password -resetPasswordToken -resetPasswordExpires");
 
     if (!staff) {
-      console.log("Staff not found for id:", payload.id);
       return NextResponse.json({ error: "Staff not found" }, { status: 404 });
     }
 
     return NextResponse.json(staff);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 export async function PATCH(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-
-    if (payload.type !== "admin") {
+    if (session.type !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     const { name, email, password } = await req.json();
 
     await connectDB();
-    const staff = await Staff.findById(payload.id);
+    const staff = await Staff.findById(session.id);
 
     if (!staff) {
       return NextResponse.json({ error: "Staff not found" }, { status: 404 });
@@ -94,6 +80,6 @@ export async function PATCH(req: Request) {
       },
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

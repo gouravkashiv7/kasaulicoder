@@ -1,3 +1,4 @@
+import { rateLimit } from "@/backend/lib/rateLimit";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import NextCohortInterest from "@/backend/models/NextCohortInterest";
@@ -6,6 +7,12 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
 export async function POST(req: Request) {
   try {
+    if (!rateLimit(req, "cohort", 5, 3600000)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
     const { email } = await req.json();
 
     if (!email || typeof email !== "string") {

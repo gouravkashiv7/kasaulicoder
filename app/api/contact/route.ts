@@ -1,9 +1,16 @@
+import { rateLimit } from "@/backend/lib/rateLimit";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import ContactRequest from "@/backend/models/ContactRequest";
 
 export async function POST(req: Request) {
   try {
+    if (!rateLimit(req, "contact", 5, 3600000)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
     const { name, email, userType, query } = await req.json();
 
     if (!name || !email || !userType || !query) {

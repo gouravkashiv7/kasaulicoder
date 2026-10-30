@@ -3,6 +3,7 @@ import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
 import "@/backend/models/Staff";
 import { getServerSession } from "@/backend/lib/auth";
+import { pickProjectFields } from "@/backend/lib/projectFields";
 
 // Update (PUT)
 export async function PUT(req: Request) {
@@ -33,14 +34,18 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    const body = await req.json();
-    const updatedProject = await Project.findByIdAndUpdate(id, body, {
-      new: true,
-    });
+    const body = pickProjectFields(await req.json());
+    // Only superadmins may change membership
+    if (session.role !== "superadmin") delete (body as any).members;
+    const updatedProject = await Project.findByIdAndUpdate(
+      id,
+      { $set: body },
+      { new: true, runValidators: true },
+    );
     return NextResponse.json(updatedProject, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
-      { error: "Internal Server Error", details: error.message },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }
@@ -80,7 +85,7 @@ export async function DELETE(req: Request) {
     );
   } catch (error: any) {
     return NextResponse.json(
-      { error: "Internal Server Error", details: error.message },
+      { error: "Internal Server Error" },
       { status: 500 },
     );
   }

@@ -1,26 +1,19 @@
+import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import NextCohortInterest from "@/backend/models/NextCohortInterest";
-import { jwtVerify } from "jose";
-import { cookies } from "next/headers";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 // GET all cohort-interest signups (admin only)
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-
-    if (payload.type !== "admin") {
+    if (session.type !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
@@ -41,16 +34,13 @@ export async function GET() {
 // PATCH — mark emailSent = true for a specific entry
 export async function PATCH(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-
-    if (payload.type !== "admin") {
+    if (session.type !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
@@ -80,16 +70,13 @@ export async function PATCH(req: Request) {
 // DELETE — remove a specific entry
 export async function DELETE(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-
-    if (payload.type !== "admin") {
+    if (session.type !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 

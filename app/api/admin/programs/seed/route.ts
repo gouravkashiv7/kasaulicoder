@@ -1,25 +1,18 @@
+import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Program from "@/backend/models/Program";
-import { jwtVerify } from "jose";
-import { cookies } from "next/headers";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 export async function POST() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-
-    if (payload.role !== "superadmin") {
+    if (session.role !== "superadmin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

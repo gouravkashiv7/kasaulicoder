@@ -1,3 +1,5 @@
+import { rateLimit } from "@/backend/lib/rateLimit";
+import { getJwtSecret } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
@@ -5,13 +7,18 @@ import User from "@/backend/models/User";
 import { SignJWT } from "jose";
 import { sendPasswordResetEmail } from "@/backend/lib/email";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key"
-);
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json();
+    if (!rateLimit(req, "forgot", 5, 3600000)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
+    const body = await req.json();
+    const email =
+      typeof body.email === "string" ? body.email.trim() : "";
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -53,16 +60,22 @@ export async function POST(req: Request) {
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("1h")
-      .sign(JWT_SECRET);
+      .sign(getJwtSecret());
 
     // Save token to DB for one-time use validation
     account.resetPasswordToken = token;
     account.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
     await account.save();
 
-    const host = req.headers.get("host");
-    const protocol = host?.includes("localhost") ? "http" : "https";
-    const origin = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
+    // Never build the link from the Host header: a forged header would
+    // send the reset token to an attacker-controlled domain.
+    const origin =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      (process.env.NODE_ENV !== "production" ? "http://localhost:3000" : "");
+    if (!origin) {
+      console.error("NEXT_PUBLIC_BASE_URL is not set; cannot send reset link");
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
 
     const resetUrl = `${origin}/reset-password?token=${token}`;
 

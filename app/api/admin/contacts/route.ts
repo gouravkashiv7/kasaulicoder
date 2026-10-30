@@ -1,26 +1,19 @@
+import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import ContactRequest from "@/backend/models/ContactRequest";
-import { jwtVerify } from "jose";
-import { cookies } from "next/headers";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 // GET all contact requests (superadmin only)
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-
-    if (payload.role !== "superadmin") {
+    if (session.role !== "superadmin") {
       return NextResponse.json(
         { error: "Access denied. Superadmin only." },
         { status: 403 },
@@ -40,16 +33,13 @@ export async function GET() {
 // PATCH — mark a contact request as read (superadmin only)
 export async function PATCH(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-
-    if (payload.role !== "superadmin") {
+    if (session.role !== "superadmin") {
       return NextResponse.json(
         { error: "Access denied. Superadmin only." },
         { status: 403 },

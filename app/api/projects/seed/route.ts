@@ -13,6 +13,9 @@ const generateSlug = (title: string, desc: string) => {
 };
 
 export async function POST() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   try {
     await connectDB();
 

@@ -6,8 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import { MDXRemote } from "next-mdx-remote";
-import { serialize } from "next-mdx-remote/serialize";
+import ReactMarkdown from "react-markdown";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import UniqueLoading from "@/components/ui/morph-loading";
 
@@ -56,10 +55,9 @@ const BlogContent = ({ slug }: { slug: string }) => {
           setBlog(data.blog);
           setComments(data.comments);
 
-          // If there's content, serialize it for MDXRemote
+          // Rendered with react-markdown: raw HTML/JSX is never executed
           if (data.blog?.content) {
-            const mdxSource = await serialize(data.blog.content);
-            setJsxSource(mdxSource);
+            setJsxSource(String(data.blog.content));
           }
         } else {
           setError("Blog not found.");
@@ -233,21 +231,19 @@ const BlogContent = ({ slug }: { slug: string }) => {
 
             <div className="prose prose-invert prose-lg max-w-none prose-headings:text-foreground prose-headings:font-black prose-p:text-foreground/80 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-strong:text-foreground prose-code:text-primary">
               {jsxSource ? (
-                <MDXRemote
-                  {...jsxSource}
+                <ReactMarkdown
                   components={{
-                    motion,
-                    Link,
-                    Image: SafeImage,
-                    AnimatePresence,
-                    p: (props: any) => (
+                    img: ({ node, ...props }: any) => <SafeImage {...props} />,
+                    p: ({ node, ...props }: any) => (
                       <div
                         className="leading-relaxed text-foreground/80 mb-4"
                         {...props}
                       />
                     ),
                   }}
-                />
+                >
+                  {jsxSource}
+                </ReactMarkdown>
               ) : (
                 <p className="text-foreground/40 italic">
                   Parsing interactive content...

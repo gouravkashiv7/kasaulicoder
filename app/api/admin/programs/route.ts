@@ -1,28 +1,21 @@
+import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Program from "@/backend/models/Program";
-import { jwtVerify } from "jose";
-import { cookies } from "next/headers";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 async function checkAuth() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
+  const session = await getServerSession();
 
-  if (!token) {
+  if (!session) {
     return { error: "Unauthorized", status: 401 };
   }
 
-  const { payload } = await jwtVerify(token, JWT_SECRET);
-
-  if (payload.role !== "superadmin") {
+  if (session.role !== "superadmin") {
     return { error: "Access denied", status: 403 };
   }
 
-  return { payload };
+  return { session };
 }
 
 export async function GET() {

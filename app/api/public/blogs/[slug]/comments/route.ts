@@ -1,33 +1,26 @@
+import { rateLimit } from "@/backend/lib/rateLimit";
+import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Blog from "@/backend/models/Blog";
 import Comment from "@/backend/models/Comment";
-import { jwtVerify } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
-    const cookieHeader = req.headers.get("cookie") || "";
-    const token = cookieHeader
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
+    const session = await getServerSession();
 
-    if (!token) {
+    if (!session) {
       return NextResponse.json(
         { error: "Unauthorized. Please login to comment." },
         { status: 401 },
       );
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    if (!payload.id || !payload.name) {
+    if (!session.id || !session.name) {
       return NextResponse.json(
         { error: "Unauthorized. Invalid token structure." },
         { status: 401 },
@@ -65,8 +58,8 @@ export async function POST(
 
     const newComment = await Comment.create({
       blogId: blog._id,
-      userId: payload.id,
-      userName: payload.name,
+      userId: session.id,
+      userName: session.name,
       content: content.trim(),
       status: "approved", // Automatically approved for now
     });

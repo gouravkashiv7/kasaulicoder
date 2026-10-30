@@ -1,3 +1,5 @@
+import { rateLimit } from "@/backend/lib/rateLimit";
+import { getJwtSecret } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import User from "@/backend/models/User";
@@ -5,15 +7,24 @@ import Staff from "@/backend/models/Staff";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default_kasaulicoder_secret_key",
-);
 
 export async function POST(req: Request) {
   try {
+    if (!rateLimit(req, "login", 10, 900000)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
     const { email, password, loginType } = await req.json();
 
-    if (!email || !password || !loginType) {
+    if (
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      !email ||
+      !password ||
+      !loginType
+    ) {
       return NextResponse.json(
         { error: "Email, password, and loginType are required" },
         { status: 400 },
@@ -25,9 +36,9 @@ export async function POST(req: Request) {
     let account: any;
 
     if (loginType === "admin") {
-      account = await Staff.findOne({ email }).select("+password");
+      account = await Staff.findOne({ email: email.trim() }).select("+password");
     } else {
-      account = await User.findOne({ email }).select("+password");
+      account = await User.findOne({ email: email.trim() }).select("+password");
     }
 
     if (!account) {
@@ -74,7 +85,7 @@ export async function POST(req: Request) {
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("24h")
-      .sign(JWT_SECRET);
+      .sign(getJwtSecret());
 
     const response = NextResponse.json(
       {
@@ -101,6 +112,6 @@ export async function POST(req: Request) {
 
     return response;
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
