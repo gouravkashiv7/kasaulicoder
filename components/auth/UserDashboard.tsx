@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-cropper";
+import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import "cropperjs/dist/cropper.css";
 
 type SidebarView = "overview" | "projects" | "learning" | "settings";
@@ -89,6 +90,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
   );
 
   // Keep in sync when URL changes externally (browser back/forward)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: sync only on URL changes, not local tab changes
   useEffect(() => {
     if (
       tabFromUrl &&
@@ -101,9 +103,14 @@ const UserDashboard = ({ userType }: { userType: string }) => {
 
   const isStudent = userType === "student";
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // The token cookie is httpOnly, so only the server can clear it
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      console.warn("Logout request failed:", e);
+    }
     localStorage.removeItem("user");
-    document.cookie = "token=; path=/; max-age=0";
     window.location.href = "/login";
   };
 
@@ -241,6 +248,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
           </span>
         </Link>
         <button
+          type="button"
           onClick={() => setMobileMenuOpen(true)}
           className="p-2 rounded-xl bg-foreground/5 text-foreground/50 hover:text-foreground transition-all"
         >
@@ -305,6 +313,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
           </Link>
           {/* Close for mobile */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(false)}
             className="lg:hidden ml-auto p-2 rounded-lg hover:bg-foreground/5 text-foreground/50 hover:text-foreground transition-all"
           >
@@ -316,6 +325,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
         <nav className="flex-1 p-3 space-y-1">
           {sidebarItems.map((item) => (
             <button
+              type="button"
               key={item.id}
               onClick={() => {
                 setSidebarView(item.id);
@@ -392,6 +402,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
           </Link>
 
           <button
+            type="button"
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-500/70 hover:text-rose-500 hover:bg-rose-500/5 transition-all"
           >
@@ -412,6 +423,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
             </AnimatePresence>
           </button>
           <button
+            type="button"
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className="w-full flex items-center justify-center px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all"
           >
@@ -1205,6 +1217,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                   Crop Your Photo
                 </h2>
                 <button
+                  type="button"
                   onClick={() => {
                     setShowCropper(false);
                     setRawImageSrc(null);

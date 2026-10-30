@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import GlobalHeader from "@/components/layout/GlobalHeader";
+import { useEffect, useMemo, useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import ShaderBackground from "@/components/ui/shader-background";
+import GlobalHeader from "@/components/layout/GlobalHeader";
 import PageLoading from "@/components/ui/page-loading";
+import ShaderBackground from "@/components/ui/shader-background";
 
 type ViewType = "grid" | "list";
 
@@ -106,6 +106,7 @@ const InsightsArticles = () => {
 
                   <div className="flex bg-card/50 backdrop-blur-xl border border-glass-border p-1 rounded-2xl shrink-0">
                     <button
+                      type="button"
                       onClick={() => setViewType("grid")}
                       className={`size-12 flex items-center justify-center rounded-xl transition-all ${
                         viewType === "grid"
@@ -118,6 +119,7 @@ const InsightsArticles = () => {
                       </span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => setViewType("list")}
                       className={`size-12 flex items-center justify-center rounded-xl transition-all ${
                         viewType === "list"
@@ -367,47 +369,5 @@ const InsightsArticles = () => {
     </div>
   );
 };
-
-const SkeletonHero = () => (
-  <div className="mb-16 h-125 rounded-3xl bg-card border border-glass-border animate-pulse grid md:grid-cols-2">
-    <div className="bg-foreground/5 h-full" />
-    <div className="p-12 flex flex-col justify-center space-y-6">
-      <div className="h-6 w-24 bg-foreground/10 rounded-full" />
-      <div className="h-16 w-full bg-foreground/10 rounded-xl" />
-      <div className="h-20 w-full bg-foreground/10 rounded-xl" />
-      <div className="flex gap-4">
-        <div className="size-12 rounded-full bg-foreground/10" />
-        <div className="space-y-2">
-          <div className="h-4 w-32 bg-foreground/10" />
-          <div className="h-3 w-20 bg-foreground/10" />
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const SkeletonCard = () => (
-  <div className="h-112.5 rounded-2xl bg-card border border-glass-border animate-pulse flex flex-col">
-    <div className="aspect-video bg-foreground/5" />
-    <div className="p-6 space-y-4 flex-1">
-      <div className="flex justify-between">
-        <div className="h-4 w-16 bg-foreground/10 rounded-full" />
-        <div className="h-4 w-12 bg-foreground/10" />
-      </div>
-      <div className="space-y-2">
-        <div className="h-6 w-full bg-foreground/10 rounded" />
-        <div className="h-6 w-2/3 bg-foreground/10 rounded" />
-      </div>
-      <div className="h-12 w-full bg-foreground/10 rounded" />
-      <div className="flex gap-3 pt-4 border-t border-glass-border">
-        <div className="size-8 rounded-full bg-foreground/10" />
-        <div className="space-y-2">
-          <div className="h-3 w-20 bg-foreground/10" />
-          <div className="h-2 w-12 bg-foreground/10" />
-        </div>
-      </div>
-    </div>
-  </div>
-);
 
 export default InsightsArticles;

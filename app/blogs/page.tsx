@@ -1,5 +1,5 @@
+import type { Metadata } from "next";
 import InsightsArticles from "@/components/marketing/InsightsArticles";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Blogs",

@@ -1,8 +1,8 @@
+import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
-import User from "@/backend/models/User";
 import Staff from "@/backend/models/Staff";
-import bcrypt from "bcryptjs";
+import User from "@/backend/models/User";
 
 export async function POST() {
   if (process.env.NODE_ENV === "production") {
@@ -29,7 +29,7 @@ export async function POST() {
       results.student = "Created";
     }
   } catch (e: any) {
-    results.student = "Error: " + e.message;
+    results.student = `Error: ${e.message}`;
   }
 
   // ── 2. Test Professional ─────────────────────────────────────────
@@ -51,7 +51,7 @@ export async function POST() {
       results.professional = "Created";
     }
   } catch (e: any) {
-    results.professional = "Error: " + e.message;
+    results.professional = `Error: ${e.message}`;
   }
 
   // ── 3. SuperAdmin (Staff) ────────────────────────────────────────
@@ -72,7 +72,7 @@ export async function POST() {
       results.admin = "Created";
     }
   } catch (e: any) {
-    results.admin = "Error: " + e.message;
+    results.admin = `Error: ${e.message}`;
   }
 
   return NextResponse.json({ message: "Seed complete", results });

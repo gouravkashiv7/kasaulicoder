@@ -1,8 +1,7 @@
-import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
+import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import Program from "@/backend/models/Program";
-
 
 async function checkAuth() {
   const session = await getServerSession();
@@ -34,7 +33,10 @@ export async function GET() {
     return NextResponse.json(programs);
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -83,7 +85,10 @@ export async function POST(req: Request) {
     return NextResponse.json(newProgram, { status: 201 });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -104,7 +109,7 @@ export async function PUT(req: Request) {
     }
 
     // Validate image size (max 500KB) if it's base64
-    if (updateData.image && updateData.image.startsWith("data:image")) {
+    if (updateData.image?.startsWith("data:image")) {
       const base64Data = updateData.image.split(",")[1];
       if (base64Data) {
         const buffer = Buffer.from(base64Data, "base64");
@@ -129,7 +134,10 @@ export async function PUT(req: Request) {
     return NextResponse.json(updatedProgram);
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -160,6 +168,9 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ message: "Program deleted successfully" });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

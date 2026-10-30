@@ -1,5 +1,4 @@
-import React from "react";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import HomeVisionHero from "@/components/home/HomeVisionHero";
 
 export const metadata: Metadata = {

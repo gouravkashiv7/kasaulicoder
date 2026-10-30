@@ -1,39 +1,37 @@
 "use client";
 
-import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-
-// Types
-import {
-  SidebarView,
-  Program,
-  Plan,
-  ContactRequest,
-  CohortInterest,
-  SocialMediaAccount,
-} from "@/components/admin/types";
-
-// Components
-import AdminSidebar from "@/components/admin/AdminSidebar";
-import Overview from "@/components/admin/Overview";
-import Management from "@/components/admin/Management";
-import Requests from "@/components/admin/Requests";
-import Pricing from "@/components/admin/Pricing";
-import Cohort from "@/components/admin/Cohort";
-import Programs from "@/components/admin/Programs";
+import { useRouter, useSearchParams } from "next/navigation";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import AdminBlogManagement from "@/components/admin/AdminBlogManagement";
 import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement";
-import SocialMediaManagement from "@/components/admin/SocialMediaManagement";
-
-// Modals
-import StaffModal from "@/components/admin/modals/StaffModal";
+// Components
+import AdminSidebar from "@/components/admin/AdminSidebar";
+import Cohort from "@/components/admin/Cohort";
+import Management from "@/components/admin/Management";
 import PlanModal from "@/components/admin/modals/PlanModal";
 import ProgramModal from "@/components/admin/modals/ProgramModal";
-import StatusToggleModal from "@/components/admin/modals/StatusToggleModal";
 import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
+// Modals
+import StaffModal from "@/components/admin/modals/StaffModal";
+import StatusToggleModal from "@/components/admin/modals/StatusToggleModal";
+import Overview from "@/components/admin/Overview";
+import Pricing from "@/components/admin/Pricing";
+import Programs from "@/components/admin/Programs";
+import Requests from "@/components/admin/Requests";
+import SocialMediaManagement from "@/components/admin/SocialMediaManagement";
+// Types
+import type {
+  CohortInterest,
+  ContactRequest,
+  Plan,
+  Program,
+  SidebarView,
+  SocialMediaAccount,
+} from "@/components/admin/types";
 
 const AdminDashboard = () => {
   const router = useRouter();
@@ -48,7 +46,10 @@ const AdminDashboard = () => {
     }
   }, []);
 
-  const isSuperAdmin = useMemo(() => currentUser?.role === "superadmin", [currentUser]);
+  const isSuperAdmin = useMemo(
+    () => currentUser?.role === "superadmin",
+    [currentUser],
+  );
 
   // Navigation Logic
   const validAdminTabs = useMemo<SidebarView[]>(() => {
@@ -67,9 +68,11 @@ const AdminDashboard = () => {
     // Staff (admin role) restricted tabs
     return allTabs.filter(
       (t) =>
-        !["management", "requests", "pricing", "cohort", "programs"].includes(t),
+        !["management", "requests", "pricing", "cohort", "programs"].includes(
+          t,
+        ),
     );
-  }, [currentUser]);
+  }, [isSuperAdmin]);
 
   const tabFromUrl = searchParams.get("tab") as SidebarView | null;
 
@@ -190,12 +193,15 @@ const AdminDashboard = () => {
   const [uploadError, setUploadError] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
- 
+
   // Social Media State
-  const [socialMediaAccounts, setSocialMediaAccounts] = useState<SocialMediaAccount[]>([]);
+  const [socialMediaAccounts, setSocialMediaAccounts] = useState<
+    SocialMediaAccount[]
+  >([]);
   const [socialMediaLoading, setSocialMediaLoading] = useState(false);
   const [showSocialMediaModal, setShowSocialMediaModal] = useState(false);
-  const [editingSocialMediaAccount, setEditingSocialMediaAccount] = useState<SocialMediaAccount | null>(null);
+  const [editingSocialMediaAccount, setEditingSocialMediaAccount] =
+    useState<SocialMediaAccount | null>(null);
   const [socialMediaError, setSocialMediaError] = useState("");
   const [allStaff, setAllStaff] = useState<any[]>([]);
 
@@ -271,7 +277,7 @@ const AdminDashboard = () => {
     } finally {
       setContactsLoading(false);
     }
-  }, []);
+  }, [currentUser?.role]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -372,14 +378,19 @@ const AdminDashboard = () => {
     fetchSocialMediaAccounts();
     fetchAllStaff();
   }, [
-    fetchOverviewData,
-    fetchContacts,
     fetchPlans,
     fetchCohortInterests,
     fetchPrograms,
     fetchSocialMediaAccounts,
     fetchAllStaff,
   ]);
+
+  // Overview counts and contact requests are superadmin-only endpoints
+  useEffect(() => {
+    if (!isSuperAdmin) return;
+    fetchOverviewData();
+    fetchContacts();
+  }, [isSuperAdmin, fetchOverviewData, fetchContacts]);
 
   useEffect(() => {
     if (sidebarView === "management") {
@@ -388,7 +399,7 @@ const AdminDashboard = () => {
     if (sidebarView === "social-media") {
       fetchSocialMediaAccounts();
     }
-  }, [sidebarView, activeTab, fetchData, fetchSocialMediaAccounts]);
+  }, [sidebarView, fetchData, fetchSocialMediaAccounts]);
 
   // Handlers
   const handleLogout = async () => {
@@ -475,7 +486,7 @@ const AdminDashboard = () => {
     setIsSubmitting(true);
     setSubmitError("");
     try {
-      let res;
+      let res: Response;
       if (editingStaff) {
         res = await fetch("/api/admin/staff", {
           method: "PUT",
@@ -508,7 +519,7 @@ const AdminDashboard = () => {
         const result = await res.json();
         setSubmitError(result.error || "Operation failed");
       }
-    } catch (err) {
+    } catch {
       setSubmitError("An error occurred");
     } finally {
       setIsSubmitting(false);
@@ -544,7 +555,7 @@ const AdminDashboard = () => {
             : undefined,
       };
 
-      let res;
+      let res: Response;
       if (editingPlan) {
         res = await fetch("/api/admin/plans", {
           method: "PUT",
@@ -671,7 +682,7 @@ const AdminDashboard = () => {
       const cleanFeatures = programForm.features.filter((f) => f.trim() !== "");
       const payload = { ...programForm, features: cleanFeatures };
 
-      let res;
+      let res: Response;
       if (editingProgram) {
         res = await fetch("/api/admin/programs", {
           method: "PUT",
@@ -786,12 +797,15 @@ const AdminDashboard = () => {
     setIsSubmitting(true);
     setSocialMediaError("");
     try {
-      let res;
+      let res: Response;
       if (editingSocialMediaAccount) {
         res = await fetch("/api/admin/social-media", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingSocialMediaAccount._id, ...formData }),
+          body: JSON.stringify({
+            id: editingSocialMediaAccount._id,
+            ...formData,
+          }),
         });
       } else {
         res = await fetch("/api/admin/social-media", {
@@ -809,7 +823,7 @@ const AdminDashboard = () => {
         const result = await res.json();
         setSocialMediaError(result.error || "Operation failed");
       }
-    } catch (err) {
+    } catch {
       setSocialMediaError("An error occurred");
     } finally {
       setIsSubmitting(false);
@@ -817,7 +831,8 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteSocialMediaAccount = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this social account?")) return;
+    if (!confirm("Are you sure you want to delete this social account?"))
+      return;
     try {
       const res = await fetch(`/api/admin/social-media?id=${id}`, {
         method: "DELETE",
@@ -864,6 +879,7 @@ const AdminDashboard = () => {
       {/* Mobile Top Bar */}
       <div className="fixed top-0 left-0 right-0 z-20 md:hidden flex items-center gap-3 px-4 h-14 bg-background/80 backdrop-blur-lg border-b border-foreground/10">
         <button
+          type="button"
           onClick={() => setMobileMenuOpen(true)}
           className="size-9 flex items-center justify-center rounded-xl bg-foreground/5 shrink-0"
         >
@@ -908,17 +924,17 @@ const AdminDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
           <AnimatePresence mode="wait">
             {sidebarView === "overview" && (
-            <Overview
-              role={currentUser?.role}
-              totalUsers={totalUsers}
-              totalStaff={totalStaff}
-              unreadCount={contactRequests.filter((r) => !r.isRead).length}
-              cohortTotal={cohortTotal}
-              cohortNotNotified={cohortNotNotified}
-              contactRequests={contactRequests}
-              setSidebarView={setSidebarView}
-            />
-          )}
+              <Overview
+                role={currentUser?.role}
+                totalUsers={totalUsers}
+                totalStaff={totalStaff}
+                unreadCount={contactRequests.filter((r) => !r.isRead).length}
+                cohortTotal={cohortTotal}
+                cohortNotNotified={cohortNotNotified}
+                contactRequests={contactRequests}
+                setSidebarView={setSidebarView}
+              />
+            )}
             {sidebarView === "management" && (
               <Management
                 activeTab={activeTab}
@@ -988,7 +1004,11 @@ const AdminDashboard = () => {
               <SocialMediaManagement
                 accounts={socialMediaAccounts}
                 loading={socialMediaLoading}
-                currentUser={currentUser ? { id: currentUser._id || currentUser.id, ...currentUser } : null}
+                currentUser={
+                  currentUser
+                    ? { id: currentUser._id || currentUser.id, ...currentUser }
+                    : null
+                }
                 isSuperAdmin={isSuperAdmin}
                 onAdd={() => {
                   setEditingSocialMediaAccount(null);

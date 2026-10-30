@@ -1,8 +1,7 @@
-import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
+import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import Plan from "@/backend/models/Plan";
-
 
 // Middleware: verify superadmin
 async function verifySuperAdmin() {
@@ -24,7 +23,10 @@ export async function GET() {
     return NextResponse.json({ plans }, { status: 200 });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -87,7 +89,10 @@ export async function POST(req: Request) {
     );
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -127,7 +132,10 @@ export async function PUT(req: Request) {
     );
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -159,6 +167,9 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ message: "Plan deleted" }, { status: 200 });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

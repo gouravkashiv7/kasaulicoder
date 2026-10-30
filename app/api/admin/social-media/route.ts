@@ -37,10 +37,17 @@ export async function GET() {
 
   try {
     await connectDB();
-    const accounts = await SocialMedia.find().populate("managedBy", "name email image");
+    const accounts = await SocialMedia.find().populate(
+      "managedBy",
+      "name email image",
+    );
     return NextResponse.json(accounts);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch social media accounts" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to fetch social media accounts" },
+      { status: 500 },
+    );
   }
 }
 
@@ -72,7 +79,11 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newAccount);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to create social media account" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to create social media account" },
+      { status: 500 },
+    );
   }
 }
 
@@ -87,7 +98,10 @@ export async function PUT(req: Request) {
     const updateData = pickFields(body);
 
     if (!id) {
-      return NextResponse.json({ error: "Account id required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Account id required" },
+        { status: 400 },
+      );
     }
 
     const oldAccount = await SocialMedia.findById(id);
@@ -122,7 +136,11 @@ export async function PUT(req: Request) {
 
     return NextResponse.json(updatedAccount);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to update social media account" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to update social media account" },
+      { status: 500 },
+    );
   }
 }
 
@@ -137,6 +155,10 @@ export async function DELETE(req: Request) {
     await SocialMedia.findByIdAndDelete(id);
     return NextResponse.json({ message: "Account deleted successfully" });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to delete social media account" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to delete social media account" },
+      { status: 500 },
+    );
   }
 }

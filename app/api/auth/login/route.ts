@@ -1,12 +1,11 @@
-import { rateLimit } from "@/backend/lib/rateLimit";
-import { getJwtSecret } from "@/backend/lib/auth";
-import { NextResponse } from "next/server";
-import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
-import User from "@/backend/models/User";
-import Staff from "@/backend/models/Staff";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
-
+import { NextResponse } from "next/server";
+import { getJwtSecret } from "@/backend/lib/auth";
+import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
+import { rateLimit } from "@/backend/lib/rateLimit";
+import Staff from "@/backend/models/Staff";
+import User from "@/backend/models/User";
 
 export async function POST(req: Request) {
   try {
@@ -116,6 +115,10 @@ export async function POST(req: Request) {
 
     return response;
   } catch (error: any) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

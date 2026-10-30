@@ -1,9 +1,9 @@
-import { rateLimit } from "@/backend/lib/rateLimit";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
+import { rateLimit } from "@/backend/lib/rateLimit";
 import NextCohortInterest from "@/backend/models/NextCohortInterest";
 
-const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export async function POST(req: Request) {
   try {

@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
-import { ContactRequest, SidebarView } from "./types";
+import type { ContactRequest, SidebarView } from "./types";
 
 interface OverviewProps {
   role?: string;
@@ -60,7 +59,9 @@ const Overview = ({
               <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
                 Total Users
               </p>
-              <p className="text-4xl font-black text-foreground">{totalUsers}</p>
+              <p className="text-4xl font-black text-foreground">
+                {totalUsers}
+              </p>
             </div>
           </div>
 
@@ -76,7 +77,9 @@ const Overview = ({
               <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
                 Team Members
               </p>
-              <p className="text-4xl font-black text-foreground">{totalStaff}</p>
+              <p className="text-4xl font-black text-foreground">
+                {totalStaff}
+              </p>
             </div>
           </div>
 
@@ -92,7 +95,9 @@ const Overview = ({
               <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
                 Unread Requests
               </p>
-              <p className="text-4xl font-black text-foreground">{unreadCount}</p>
+              <p className="text-4xl font-black text-foreground">
+                {unreadCount}
+              </p>
             </div>
           </div>
 
@@ -111,7 +116,9 @@ const Overview = ({
               <p className="text-xs font-bold uppercase tracking-widest text-foreground/40 mb-1">
                 Cohort Waitlist
               </p>
-              <p className="text-4xl font-black text-foreground">{cohortTotal}</p>
+              <p className="text-4xl font-black text-foreground">
+                {cohortTotal}
+              </p>
               {cohortNotNotified > 0 && (
                 <p className="text-xs text-emerald-500 font-bold mt-1">
                   {cohortNotNotified} not yet notified
@@ -156,6 +163,7 @@ const Overview = ({
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-black text-foreground">Recent Notifications</h3>
             <button
+              type="button"
               onClick={() => setSidebarView("requests")}
               className="text-xs font-bold text-primary hover:underline"
             >

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Component as RotatingText } from "@/components/ui/rotating-text";
 
 const words = ["faster", "better", "smarter", "together"];

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import MemberDashboard from "@/components/auth/MemberDashboard";
 import { getServerSession } from "@/backend/lib/auth";
+import MemberDashboard from "@/components/auth/MemberDashboard";
 
 export default async function MemberDashboardPage() {
   const session = await getServerSession();

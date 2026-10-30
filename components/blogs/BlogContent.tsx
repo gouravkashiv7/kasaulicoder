@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import GlobalHeader from "@/components/layout/GlobalHeader";
-import GlobalFooter from "@/components/layout/GlobalFooter";
+import type React from "react";
+import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import UniqueLoading from "@/components/ui/morph-loading";
 
@@ -92,7 +93,7 @@ const BlogContent = ({ slug }: { slug: string }) => {
       } else {
         setCommentError(data.error || "Failed to post comment");
       }
-    } catch (err) {
+    } catch {
       setCommentError("An error occurred");
     } finally {
       setSubmittingComment(false);

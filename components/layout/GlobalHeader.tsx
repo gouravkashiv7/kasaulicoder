@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
 // Logo: shows logo.png immediately, cross-fades to animated logo.gif once loaded.
@@ -374,6 +373,7 @@ const GlobalHeader = ({
                   </div>
                 </Link>
                 <button
+                  type="button"
                   onClick={handleLogout}
                   className="size-10 flex items-center justify-center rounded-full hover:bg-rose-500/10 text-rose-500/70 hover:text-rose-500 transition-all border border-transparent hover:border-rose-500/20"
                   title="Logout"
@@ -406,6 +406,7 @@ const GlobalHeader = ({
 
             {/* Mobile Menu Button */}
             <button
+              type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`lg:hidden size-10 items-center justify-center gap-1.5 focus:outline-none z-60 relative ${
                 isMobileMenuOpen ? "hidden" : "flex flex-col"
@@ -463,6 +464,7 @@ const GlobalHeader = ({
               </div>
 
               <button
+                type="button"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="size-10 flex items-center justify-center rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
                 aria-label="Close Menu"
@@ -553,6 +555,7 @@ const GlobalHeader = ({
                       Go to Dashboard
                     </Link>
                     <button
+                      type="button"
                       onClick={handleLogout}
                       className="w-full py-4 text-rose-500 font-bold rounded-xl border border-rose-500/10 bg-rose-500/5"
                     >

@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
-import GlobalHeader from "@/components/layout/GlobalHeader";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
+import { SparklesCore } from "@/components/ui/sparkles";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
-import { SparklesCore } from "@/components/ui/sparkles";
 import TechStack from "./TechStack";
 
 const GeneratedScreen = () => {

@@ -1,7 +1,7 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 import connectDB from "@/backend/lib/db";
-import Project from "@/backend/models/Project";
 import Blog from "@/backend/models/Blog";
+import Project from "@/backend/models/Project";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://kasaulicoder.com";

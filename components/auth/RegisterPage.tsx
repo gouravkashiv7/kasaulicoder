@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import GlobalHeader from "@/components/layout/GlobalHeader";
+import React, { useEffect } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
 import { LocationMap } from "@/components/ui/expand-map";
 
 type UserType = "student" | "professional" | null;
@@ -85,7 +84,7 @@ const RegisterPage = () => {
           type: "error",
         });
       }
-    } catch (err) {
+    } catch {
       setMessage({
         text: "An error occurred. Please try again.",
         type: "error",

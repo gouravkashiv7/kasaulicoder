@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import type React from "react";
 
 interface PlanModalProps {
   showPlanModal: boolean;
@@ -44,6 +44,7 @@ const PlanModal = ({
                   : "Create New Pricing Plan"}
               </h2>
               <button
+                type="button"
                 onClick={() => setShowPlanModal(false)}
                 className="size-8 flex items-center justify-center rounded-full hover:bg-foreground/10 text-foreground/50 transition-colors"
               >
@@ -80,7 +81,7 @@ const PlanModal = ({
                     onChange={(e) =>
                       setPlanForm({
                         ...planForm,
-                        sortOrder: parseInt(e.target.value),
+                        sortOrder: parseInt(e.target.value, 10),
                       })
                     }
                     className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors"

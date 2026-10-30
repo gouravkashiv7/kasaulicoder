@@ -1,9 +1,8 @@
-import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
+import { getServerSession } from "@/backend/lib/auth";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
-import User from "@/backend/models/User";
 import Staff from "@/backend/models/Staff";
-
+import User from "@/backend/models/User";
 
 async function getUserAuth(): Promise<{ id: string; type: string } | null> {
   const session = await getServerSession();
@@ -20,14 +19,18 @@ export async function GET() {
 
   let account: any;
   if (type === "admin") {
-    account = await Staff.findById(id).select("-password -resetPasswordToken -resetPasswordExpires");
+    account = await Staff.findById(id).select(
+      "-password -resetPasswordToken -resetPasswordExpires",
+    );
     if (account) {
       // Normalize image to pic for frontend
       account = account.toObject();
       account.pic = account.image || null;
     }
   } else {
-    account = await User.findById(id).select("-password -resetPasswordToken -resetPasswordExpires");
+    account = await User.findById(id).select(
+      "-password -resetPasswordToken -resetPasswordExpires",
+    );
   }
 
   if (!account)

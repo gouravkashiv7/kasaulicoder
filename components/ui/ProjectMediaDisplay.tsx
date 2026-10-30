@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import type React from "react";
+import { useState } from "react";
 
 interface MediaItem {
   type: "image" | "video";
@@ -26,7 +27,7 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [viewMode, setViewMode] = useState<"media" | "iframe">(
-    media.length > 0 ? "media" : "iframe"
+    media.length > 0 ? "media" : "iframe",
   );
 
   // Helper to get embed URL for YouTube/Vimeo
@@ -54,7 +55,9 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
 
   // Render Iframe Preview
   const renderIframe = () => (
-    <div className={`relative group overflow-hidden bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}>
+    <div
+      className={`relative group overflow-hidden bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}
+    >
       <div className="absolute top-0 left-0 right-0 h-8 bg-background/80 backdrop-blur-md border-b border-white/10 z-10 px-4 flex items-center justify-between">
         <div className="flex items-center gap-1.5 overflow-hidden">
           <span className="size-2 rounded-full bg-rose-500" />
@@ -70,7 +73,10 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
           rel="noopener noreferrer"
           className="text-[10px] font-black uppercase tracking-tighter text-primary hover:underline flex items-center gap-1"
         >
-          Visit <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+          Visit{" "}
+          <span className="material-symbols-outlined text-[12px]">
+            open_in_new
+          </span>
         </a>
       </div>
       <div className="w-full h-full pt-8">
@@ -82,12 +88,18 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
         {/* Overlay to detect blocked iframes or just handle interaction */}
         <div className="absolute inset-0 pt-8 pointer-events-none group-hover:bg-primary/5 transition-colors" />
       </div>
-      
+
       {/* Fallback Message for iframe blocking */}
       <div className="absolute inset-x-4 bottom-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
         <div className="bg-background/90 backdrop-blur-md border border-white/10 p-3 rounded-xl text-[10px] font-bold text-center">
-            Previewing via Iframe. Some sites may block this view. 
-            <a href={liveUrl} target="_blank" className="text-primary hover:underline ml-1">Open in new tab →</a>
+          Previewing via Iframe. Some sites may block this view.
+          <a
+            href={liveUrl}
+            target="_blank"
+            className="text-primary hover:underline ml-1"
+          >
+            Open in new tab →
+          </a>
         </div>
       </div>
     </div>
@@ -97,7 +109,9 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
   const renderMedia = () => {
     const currentMedia = media[currentIndex];
     return (
-      <div className={`relative group overflow-hidden bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}>
+      <div
+        className={`relative group overflow-hidden bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -115,6 +129,7 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
               />
             ) : (
               <iframe
+                title="Project video"
                 src={getEmbedUrl(currentMedia.url)}
                 className="w-full h-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -127,16 +142,22 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
         {media.length > 1 && (
           <>
             <button
+              type="button"
               onClick={handlePrev}
               className="absolute left-2 top-1/2 -translate-y-1/2 size-10 rounded-full bg-background/50 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-white/20"
             >
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
+              <span className="material-symbols-outlined text-sm">
+                arrow_back
+              </span>
             </button>
             <button
+              type="button"
               onClick={handleNext}
               className="absolute right-2 top-1/2 -translate-y-1/2 size-10 rounded-full bg-background/50 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-white/20"
             >
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              <span className="material-symbols-outlined text-sm">
+                arrow_forward
+              </span>
             </button>
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
               {media.map((_, i) => (
@@ -163,6 +184,7 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
       {hasMedia && hasLiveUrl && (
         <div className="flex justify-center md:justify-end gap-2 mb-2">
           <button
+            type="button"
             onClick={() => setViewMode("media")}
             className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 ${
               viewMode === "media"
@@ -170,10 +192,13 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
                 : "bg-white/5 border border-white/10 text-foreground/60 hover:text-foreground"
             }`}
           >
-            <span className="material-symbols-outlined text-sm">photo_library</span>
+            <span className="material-symbols-outlined text-sm">
+              photo_library
+            </span>
             Gallery
           </button>
           <button
+            type="button"
             onClick={() => setViewMode("iframe")}
             className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 ${
               viewMode === "iframe"
@@ -193,7 +218,9 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
       ) : viewMode === "iframe" && hasLiveUrl ? (
         renderIframe()
       ) : (
-        <div className={`flex flex-col items-center justify-center bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}>
+        <div
+          className={`flex flex-col items-center justify-center bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}
+        >
           <span className="material-symbols-outlined text-4xl text-foreground/20 mb-2">
             website
           </span>
@@ -205,4 +232,3 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
     </div>
   );
 };
-

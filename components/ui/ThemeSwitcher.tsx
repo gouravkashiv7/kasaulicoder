@@ -1,7 +1,7 @@
 "use client";
 
+import { Palette, Shield, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Sun, Shield, Moon, Palette } from "lucide-react";
 
 export default function ThemeSwitcher() {
   const [theme, setTheme] = useState("theme-brand");
@@ -21,6 +21,7 @@ export default function ThemeSwitcher() {
   return (
     <div className="flex items-center gap-0.5 bg-foreground/10 border border-foreground/15 rounded-full p-1 backdrop-blur-md shadow-sm">
       <button
+        type="button"
         onClick={() => changeTheme("theme-light")}
         className={`p-1.5 rounded-full transition-all ${
           theme === "theme-light"
@@ -33,6 +34,7 @@ export default function ThemeSwitcher() {
       </button>
 
       <button
+        type="button"
         onClick={() => changeTheme("theme-brand")}
         className={`p-1.5 rounded-full transition-all ${
           theme === "theme-brand"
@@ -45,6 +47,7 @@ export default function ThemeSwitcher() {
       </button>
 
       <button
+        type="button"
         onClick={() => changeTheme("theme-dark-violet")}
         className={`p-1.5 rounded-full transition-all ${
           theme === "theme-dark-violet"

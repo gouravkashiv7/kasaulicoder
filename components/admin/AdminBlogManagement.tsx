@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { Blog } from "./types";
+import { useCallback, useEffect, useState } from "react";
+import type { Blog } from "./types";
 
 const AdminBlogManagement = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -144,6 +144,7 @@ const AdminBlogManagement = () => {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
+                        type="button"
                         onClick={() => toggleStatus(blog._id, blog.status)}
                         disabled={updatingId === blog._id}
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all disabled:opacity-50 ${

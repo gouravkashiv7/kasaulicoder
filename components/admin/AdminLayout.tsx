@@ -1,19 +1,23 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import { SidebarView } from "@/components/admin/types";
+import type { SidebarView } from "@/components/admin/types";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
   activeTab?: SidebarView;
 }
 
-export default function AdminLayout({ children, activeTab = "overview" }: AdminLayoutProps) {
+export default function AdminLayout({
+  children,
+  activeTab = "overview",
+}: AdminLayoutProps) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -99,6 +103,7 @@ export default function AdminLayout({ children, activeTab = "overview" }: AdminL
       {/* Mobile Top Bar */}
       <div className="fixed top-0 left-0 right-0 z-20 md:hidden flex items-center gap-3 px-4 h-14 bg-background/80 backdrop-blur-lg border-b border-foreground/10">
         <button
+          type="button"
           onClick={() => setMobileMenuOpen(true)}
           className="size-9 flex items-center justify-center rounded-xl bg-foreground/5 shrink-0"
         >

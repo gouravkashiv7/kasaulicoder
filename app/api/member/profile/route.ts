@@ -1,9 +1,8 @@
-import { getServerSession } from "@/backend/lib/auth";
+import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import { getServerSession } from "@/backend/lib/auth";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
-import bcrypt from "bcryptjs";
-
 
 export async function GET() {
   try {
@@ -18,7 +17,9 @@ export async function GET() {
     }
 
     await connectDB();
-    const staff = await Staff.findById(session.id).select("-password -resetPasswordToken -resetPasswordExpires");
+    const staff = await Staff.findById(session.id).select(
+      "-password -resetPasswordToken -resetPasswordExpires",
+    );
 
     if (!staff) {
       return NextResponse.json({ error: "Staff not found" }, { status: 404 });
@@ -26,7 +27,11 @@ export async function GET() {
 
     return NextResponse.json(staff);
   } catch (error: any) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -54,9 +59,10 @@ export async function PATCH(req: Request) {
     if (name) staff.name = name;
     if (email) {
       // Check if email is already taken by another person
-      const emailUsed = await Staff.findOne({ email, _id: { $ne: staff._id } }).collation(
-        EMAIL_COLLATION,
-      );
+      const emailUsed = await Staff.findOne({
+        email,
+        _id: { $ne: staff._id },
+      }).collation(EMAIL_COLLATION);
       if (emailUsed) {
         return NextResponse.json(
           { error: "Email already in use" },
@@ -82,6 +88,10 @@ export async function PATCH(req: Request) {
       },
     });
   } catch (error: any) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

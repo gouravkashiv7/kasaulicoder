@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useCallback } from "react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import GlobalHeader from "@/components/layout/GlobalHeader";
+import Link from "next/link";
+import React, { useCallback } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
 
 // Lazy load the heavy globe component for performance
 const InteractiveGlobe = dynamic(
@@ -87,7 +87,7 @@ const LoginPage = () => {
         } else {
           setMessage({ text: data.error || "Login failed", type: "error" });
         }
-      } catch (err) {
+      } catch {
         setMessage({
           text: "An error occurred. Please try again.",
           type: "error",
@@ -261,7 +261,9 @@ const LoginPage = () => {
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-primary transition-colors focus:outline-none"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                     >
                       <span className="material-symbols-outlined text-xl">
                         {showPassword ? "visibility_off" : "visibility"}

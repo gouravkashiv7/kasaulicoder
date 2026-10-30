@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import type React from "react";
 
 interface ProgramModalProps {
   showProgramModal: boolean;
@@ -49,6 +49,7 @@ const ProgramModal = ({
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setShowProgramModal(false)}
                 className="size-10 flex items-center justify-center rounded-2xl hover:bg-rose-500 hover:text-white text-foreground/20 transition-all duration-300"
               >
@@ -225,7 +226,7 @@ const ProgramModal = ({
                       onChange={(e) =>
                         setProgramForm({
                           ...programForm,
-                          sortOrder: parseInt(e.target.value) || 0,
+                          sortOrder: parseInt(e.target.value, 10) || 0,
                         })
                       }
                       className="w-20 bg-background border border-foreground/10 rounded-xl px-3 py-2 text-center text-sm font-bold focus:outline-none focus:border-primary"

@@ -1,7 +1,7 @@
-import Link from "next/link";
-import UniqueLoading from "@/components/ui/morph-loading";
-import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import UniqueLoading from "@/components/ui/morph-loading";
 
 export default function NotFound() {
   return (

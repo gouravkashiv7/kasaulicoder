@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
-import { CohortInterest } from "./types";
+import type { CohortInterest } from "./types";
 
 interface CohortProps {
   cohortInterests: CohortInterest[];
@@ -113,6 +112,7 @@ const Cohort = ({
                     <div className="flex items-center justify-end gap-2">
                       {!entry.emailSent && (
                         <button
+                          type="button"
                           onClick={() => handleMarkNotified(entry._id)}
                           className="px-3 py-1.5 bg-emerald-500 text-white rounded-lg text-[10px] font-black uppercase shadow-lg shadow-emerald-500/20 hover:scale-105 transition-all"
                         >
@@ -120,6 +120,7 @@ const Cohort = ({
                         </button>
                       )}
                       <button
+                        type="button"
                         onClick={() => handleDeleteCohortEntry(entry._id)}
                         className="size-8 flex items-center justify-center bg-rose-500/10 text-rose-500 rounded-lg hover:bg-rose-500/20 transition-all"
                         title="Delete entry"

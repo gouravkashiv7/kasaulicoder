@@ -1,7 +1,7 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useRef, useEffect, useCallback, useState } from "react";
 
 interface GlobeProps {
   className?: string;
@@ -92,7 +92,7 @@ function hexToRgbString(hex: string): string | null {
   const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
   const replacedHex = hex.replace(
     shorthandRegex,
-    (m, r, g, b) => r + r + g + g + b + b,
+    (_m, r, g, b) => r + r + g + g + b + b,
   );
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(replacedHex);
   return result
@@ -135,16 +135,12 @@ export const InteractiveGlobe = ({
       const primaryHex = computedStyle.getPropertyValue("--primary").trim();
       const secondaryHex = computedStyle.getPropertyValue("--secondary").trim();
 
-      const newColors = { ...themeColors };
-      if (primaryHex) {
-        const rgb = hexToRgbString(primaryHex);
-        if (rgb) newColors.primary = rgb;
-      }
-      if (secondaryHex) {
-        const rgb = hexToRgbString(secondaryHex);
-        if (rgb) newColors.secondary = rgb;
-      }
-      setThemeColors(newColors);
+      const primary = primaryHex ? hexToRgbString(primaryHex) : null;
+      const secondary = secondaryHex ? hexToRgbString(secondaryHex) : null;
+      setThemeColors((prev) => ({
+        primary: primary || prev.primary,
+        secondary: secondary || prev.secondary,
+      }));
     };
 
     updateColors();
@@ -348,6 +344,7 @@ export const InteractiveGlobe = ({
     autoRotateSpeed,
     connections,
     markers,
+    themeColors.primary,
   ]);
 
   useEffect(() => {

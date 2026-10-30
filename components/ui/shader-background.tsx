@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const ShaderBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -166,9 +166,9 @@ const ShaderBackground = () => {
       const match = color.match(/\d+/g);
       if (match) {
         return {
-          r: parseInt(match[0]) / 255,
-          g: parseInt(match[1]) / 255,
-          b: parseInt(match[2]) / 255,
+          r: parseInt(match[0], 10) / 255,
+          g: parseInt(match[1], 10) / 255,
+          b: parseInt(match[2], 10) / 255,
         };
       }
     }
@@ -200,6 +200,7 @@ const ShaderBackground = () => {
     return () => observer.disconnect();
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: helpers are pure; rebuild only when the theme changes
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -241,7 +242,7 @@ const ShaderBackground = () => {
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    let startTime = Date.now();
+    const startTime = Date.now();
     let animationFrameId: number;
 
     const render = () => {
@@ -250,6 +251,7 @@ const ShaderBackground = () => {
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT);
 
+      // biome-ignore lint/correctness/useHookAtTopLevel: WebGL call, not a React hook
       gl.useProgram(programInfo.program);
 
       // Get current colors from CSS variables

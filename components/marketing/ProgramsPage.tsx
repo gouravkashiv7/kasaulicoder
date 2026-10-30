@@ -1,16 +1,16 @@
 "use client";
 
-import React from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, Rocket } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import GlobalHeader from "@/components/layout/GlobalHeader";
+import React from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import NeuralBackground from "@/components/ui/flow-field-background";
-import { Button } from "@/components/ui/button";
+import GlobalHeader from "@/components/layout/GlobalHeader";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Rocket } from "lucide-react";
+import NeuralBackground from "@/components/ui/flow-field-background";
 import UniqueLoading from "@/components/ui/morph-loading";
 
 interface Program {

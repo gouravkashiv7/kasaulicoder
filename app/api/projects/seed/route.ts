@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
-import Staff from "@/backend/models/Staff";
 
 // Function to generate slug
 const generateSlug = (title: string, desc: string) => {

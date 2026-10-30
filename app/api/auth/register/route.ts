@@ -1,11 +1,10 @@
-import { rateLimit } from "@/backend/lib/rateLimit";
-import { getJwtSecret } from "@/backend/lib/auth";
-import { NextResponse } from "next/server";
-import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
-import User from "@/backend/models/User";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
-
+import { NextResponse } from "next/server";
+import { getJwtSecret } from "@/backend/lib/auth";
+import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
+import { rateLimit } from "@/backend/lib/rateLimit";
+import User from "@/backend/models/User";
 
 export async function POST(req: Request) {
   try {
@@ -17,8 +16,7 @@ export async function POST(req: Request) {
     }
     const body = await req.json();
     const { name, password, userType } = body;
-    const email =
-      typeof body.email === "string" ? body.email.trim() : "";
+    const email = typeof body.email === "string" ? body.email.trim() : "";
 
     if (!name || !email || !password || !userType) {
       return NextResponse.json(
@@ -47,7 +45,9 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    const existingUser = await User.findOne({ email }).collation(EMAIL_COLLATION);
+    const existingUser = await User.findOne({ email }).collation(
+      EMAIL_COLLATION,
+    );
 
     if (existingUser) {
       return NextResponse.json(
@@ -104,6 +104,10 @@ export async function POST(req: Request) {
 
     return response;
   } catch (error: any) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

@@ -1,6 +1,6 @@
-import { rateLimit } from "@/backend/lib/rateLimit";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
+import { rateLimit } from "@/backend/lib/rateLimit";
 import ContactRequest from "@/backend/models/ContactRequest";
 
 export async function POST(req: Request) {

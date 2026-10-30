@@ -1,12 +1,10 @@
-import React from "react";
-import GlobalHeader from "@/components/layout/GlobalHeader";
-import GlobalFooter from "@/components/layout/GlobalFooter";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
-import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 import connectDB from "@/backend/lib/db";
-import Project, { IProject } from "@/backend/models/Project";
+import Project, { type IProject } from "@/backend/models/Project";
+import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
+import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 
 export const metadata: Metadata = {
   title: "Recent Projects",

@@ -1,12 +1,12 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import ASMRStaticBackground from "@/components/ui/asmr-background";
+import GlobalHeader from "@/components/layout/GlobalHeader";
 import ShipTodayShowcase from "@/components/marketing/ShipTodayShowcase";
+import ASMRStaticBackground from "@/components/ui/asmr-background";
 
 interface Plan {
   _id: string;
@@ -141,6 +141,7 @@ const WhoWeArePricing = () => {
                     { key: "recurring", label: "Subscription" },
                   ].map((tab) => (
                     <button
+                      type="button"
                       key={tab.key}
                       onClick={() => setBillingFilter(tab.key as any)}
                       className={`px-5 py-2 rounded-lg text-sm font-bold transition-all ${
@@ -173,6 +174,7 @@ const WhoWeArePricing = () => {
                         Monthly
                       </span>
                       <button
+                        type="button"
                         onClick={() =>
                           setCycleToggle(
                             cycleToggle === "monthly" ? "yearly" : "monthly",

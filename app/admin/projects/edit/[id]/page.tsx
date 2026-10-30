@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import ProjectForm from "@/components/admin/ProjectForm";
-import { Project } from "@/components/admin/types";
+import type { Project } from "@/components/admin/types";
 
 export default function EditProjectPage() {
   const { id } = useParams();
@@ -32,7 +32,9 @@ export default function EditProjectPage() {
     <AdminLayout activeTab="projects">
       {loading ? (
         <div className="flex items-center justify-center min-h-[400px]">
-          <span className="material-symbols-outlined animate-spin text-4xl text-primary/20">refresh</span>
+          <span className="material-symbols-outlined animate-spin text-4xl text-primary/20">
+            refresh
+          </span>
         </div>
       ) : project ? (
         <ProjectForm project={project} isEditing />

@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { Project } from "@/components/admin/types";
+import { useEffect, useMemo, useState } from "react";
+import type { Project } from "@/components/admin/types";
 
 export default function AdminProjectsManagement() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -14,6 +14,7 @@ export default function AdminProjectsManagement() {
   const [filter, setFilter] = useState<"all" | "active" | "past">("all");
   const [currentUser, setCurrentUser] = useState<any>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: load once on mount
   useEffect(() => {
     const userStr = localStorage.getItem("user");
     if (userStr) {
@@ -57,7 +58,7 @@ export default function AdminProjectsManagement() {
         const data = await res.json();
         alert(data.error || "Failed to delete project");
       }
-    } catch (err) {
+    } catch {
       alert("An error occurred while deleting the project");
     }
   };
@@ -137,7 +138,9 @@ export default function AdminProjectsManagement() {
           <div>
             <h2 className="text-3xl font-black tracking-tight flex items-center gap-3">
               <span className="size-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                <span className="material-symbols-outlined text-primary text-2xl">rocket_launch</span>
+                <span className="material-symbols-outlined text-primary text-2xl">
+                  rocket_launch
+                </span>
               </span>
               Projects Console
             </h2>
@@ -149,7 +152,9 @@ export default function AdminProjectsManagement() {
             href="/admin/projects/new"
             className="flex items-center gap-2 px-6 py-3 bg-primary text-background font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 group"
           >
-            <span className="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform">add</span>
+            <span className="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform">
+              add
+            </span>
             New Project
           </Link>
         </div>
@@ -157,17 +162,41 @@ export default function AdminProjectsManagement() {
         {/* Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[
-            { label: "Total Projects", value: stats.total, icon: "inventory_2", color: "text-foreground" },
-            { label: "Active Engineering", value: stats.active, icon: "engineering", color: "text-emerald-500" },
-            { label: "Featured Highlights", value: stats.featured, icon: "star", color: "text-amber-500" },
+            {
+              label: "Total Projects",
+              value: stats.total,
+              icon: "inventory_2",
+              color: "text-foreground",
+            },
+            {
+              label: "Active Engineering",
+              value: stats.active,
+              icon: "engineering",
+              color: "text-emerald-500",
+            },
+            {
+              label: "Featured Highlights",
+              value: stats.featured,
+              icon: "star",
+              color: "text-amber-500",
+            },
           ].map((s, i) => (
-            <div key={i} className="bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-sm shadow-sm">
+            <div
+              key={i}
+              className="bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-sm shadow-sm"
+            >
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">{s.label}</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40">
+                    {s.label}
+                  </p>
                   <p className={`text-3xl font-black ${s.color}`}>{s.value}</p>
                 </div>
-                <span className={`material-symbols-outlined ${s.color}/20 text-2xl`}>{s.icon}</span>
+                <span
+                  className={`material-symbols-outlined ${s.color}/20 text-2xl`}
+                >
+                  {s.icon}
+                </span>
               </div>
             </div>
           ))}
@@ -177,7 +206,9 @@ export default function AdminProjectsManagement() {
       {/* Control Bar */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-xl">
         <div className="relative w-full md:max-w-md group">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-foreground/30 group-focus-within:text-primary transition-colors">search</span>
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-foreground/30 group-focus-within:text-primary transition-colors">
+            search
+          </span>
           <input
             type="text"
             placeholder="Search by title, slug, or tags..."
@@ -189,6 +220,7 @@ export default function AdminProjectsManagement() {
         <div className="flex gap-2 w-full md:w-auto">
           {(["all", "active", "past"] as const).map((s) => (
             <button
+              type="button"
               key={s}
               onClick={() => setFilter(s)}
               className={`flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all border ${
@@ -214,13 +246,21 @@ export default function AdminProjectsManagement() {
       <div className="space-y-4">
         {loading ? (
           <div className="py-20 flex flex-col items-center justify-center gap-4 text-foreground/20">
-            <span className="material-symbols-outlined animate-spin text-5xl">refresh</span>
-            <p className="text-xs font-black uppercase tracking-widest">Compiling entries...</p>
+            <span className="material-symbols-outlined animate-spin text-5xl">
+              refresh
+            </span>
+            <p className="text-xs font-black uppercase tracking-widest">
+              Compiling entries...
+            </p>
           </div>
         ) : filteredProjects.length === 0 ? (
           <div className="py-24 border border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center text-center">
-            <span className="material-symbols-outlined text-foreground/5 text-6xl mb-4">search_off</span>
-            <p className="text-sm font-black text-foreground/20 uppercase tracking-[0.3em]">No matching projects found</p>
+            <span className="material-symbols-outlined text-foreground/5 text-6xl mb-4">
+              search_off
+            </span>
+            <p className="text-sm font-black text-foreground/20 uppercase tracking-[0.3em]">
+              No matching projects found
+            </p>
           </div>
         ) : (
           <div className="grid gap-4">
@@ -240,15 +280,26 @@ export default function AdminProjectsManagement() {
                       {/* Thumbnail Block */}
                       <div className="relative size-16 sm:size-24 rounded-xl overflow-hidden bg-foreground/5 border border-white/10 shrink-0 shadow-lg">
                         {thumbnail ? (
-                          <Image src={thumbnail} fill alt="" className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                          <Image
+                            src={thumbnail}
+                            fill
+                            alt=""
+                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-foreground/10 bg-linear-to-br from-white/5 to-transparent">
-                            <span className="material-symbols-outlined text-3xl">image</span>
+                            <span className="material-symbols-outlined text-3xl">
+                              image
+                            </span>
                           </div>
                         )}
-                        <div className={`absolute top-1.5 left-1.5 size-2 rounded-full ring-2 ring-background ${
-                          project.status === "active" ? "bg-emerald-500 animate-pulse" : "bg-foreground/20"
-                        }`} />
+                        <div
+                          className={`absolute top-1.5 left-1.5 size-2 rounded-full ring-2 ring-background ${
+                            project.status === "active"
+                              ? "bg-emerald-500 animate-pulse"
+                              : "bg-foreground/20"
+                          }`}
+                        />
                       </div>
 
                       {/* Content Block */}
@@ -260,15 +311,19 @@ export default function AdminProjectsManagement() {
                           <div className="flex gap-2">
                             {project.featured && (
                               <span className="px-2 py-0.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-md text-[9px] font-black uppercase tracking-widest flex items-center gap-1">
-                                <span className="material-symbols-outlined text-[12px] fill-1">star</span>
+                                <span className="material-symbols-outlined text-[12px] fill-1">
+                                  star
+                                </span>
                                 Featured
                               </span>
                             )}
-                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${
-                              project.status === "active" 
-                                ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" 
-                                : "bg-foreground/5 text-foreground/40 border-white/10"
-                            }`}>
+                            <span
+                              className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${
+                                project.status === "active"
+                                  ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                  : "bg-foreground/5 text-foreground/40 border-white/10"
+                              }`}
+                            >
                               {project.status}
                             </span>
                           </div>
@@ -278,7 +333,10 @@ export default function AdminProjectsManagement() {
                         </p>
                         <div className="flex flex-wrap gap-2 pt-1">
                           {project.tags?.map((tag, i) => (
-                            <span key={i} className="text-[10px] font-bold text-foreground/30 px-2 py-0.5 bg-white/5 rounded-lg border border-white/10 uppercase tracking-tighter">
+                            <span
+                              key={i}
+                              className="text-[10px] font-bold text-foreground/30 px-2 py-0.5 bg-white/5 rounded-lg border border-white/10 uppercase tracking-tighter"
+                            >
                               #{tag}
                             </span>
                           ))}
@@ -289,6 +347,7 @@ export default function AdminProjectsManagement() {
                       <div className="flex flex-row sm:flex-col lg:flex-row items-center gap-2 w-full sm:w-auto border-t sm:border-t-0 border-white/5 pt-4 sm:pt-0">
                         <div className="flex gap-2 flex-1 sm:flex-none">
                           <button
+                            type="button"
                             onClick={() => handleToggleFeatured(project)}
                             className={`flex-1 sm:size-10 rounded-xl flex items-center justify-center transition-all border ${
                               project.featured
@@ -297,9 +356,12 @@ export default function AdminProjectsManagement() {
                             }`}
                             title="Toggle Featured"
                           >
-                            <span className="material-symbols-outlined text-[20px]">star</span>
+                            <span className="material-symbols-outlined text-[20px]">
+                              star
+                            </span>
                           </button>
                           <button
+                            type="button"
                             onClick={() => handleToggleStatus(project)}
                             className={`flex-1 sm:size-10 rounded-xl flex items-center justify-center transition-all border ${
                               project.status === "active"
@@ -308,30 +370,40 @@ export default function AdminProjectsManagement() {
                             }`}
                             title="Toggle Status"
                           >
-                            <span className="material-symbols-outlined text-[20px]">sync</span>
+                            <span className="material-symbols-outlined text-[20px]">
+                              sync
+                            </span>
                           </button>
                         </div>
                         <div className="h-8 w-px bg-white/10 hidden lg:block mx-1" />
-                         <div className="flex gap-2 flex-1 sm:flex-none">
+                        <div className="flex gap-2 flex-1 sm:flex-none">
                           <Link
                             href={`/projects/recent-projects/${project.slug}`}
                             target="_blank"
                             className="flex-1 sm:size-10 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20 flex items-center justify-center transition-all"
                             title="View Public Profile"
                           >
-                            <span className="material-symbols-outlined text-[20px]">visibility</span>
+                            <span className="material-symbols-outlined text-[20px]">
+                              visibility
+                            </span>
                           </Link>
                           <Link
                             href={`/admin/projects/edit/${project._id}`}
                             className="flex-1 sm:size-10 rounded-xl bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 flex items-center justify-center transition-all"
                             title="Edit Details"
                           >
-                            <span className="material-symbols-outlined text-[20px]">edit</span>
+                            <span className="material-symbols-outlined text-[20px]">
+                              edit
+                            </span>
                           </Link>
                           {currentUser?.role === "superadmin" && (
                             <button
+                              type="button"
                               onClick={() =>
-                                handleDelete(project._id as string, project.title)
+                                handleDelete(
+                                  project._id as string,
+                                  project.title,
+                                )
                               }
                               className="flex-1 sm:size-10 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20 flex items-center justify-center transition-all"
                               title="Delete Permanently"

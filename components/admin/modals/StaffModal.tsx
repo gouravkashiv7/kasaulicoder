@@ -1,7 +1,7 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 
@@ -194,191 +194,197 @@ const StaffModal = ({
             key="staff-modal-overlay"
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="bg-background border border-foreground/10 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl"
-          >
-            <div className="p-6 border-b border-foreground/10 flex justify-between items-center bg-foreground/5">
-              <h2 className="text-xl font-black text-foreground">
-                {editingStaff ? "Edit Staff Details" : "Onboard New Staff"}
-              </h2>
-              <button
-                onClick={() => {
-                  setShowAddModal(false);
-                  setEditingStaff(null);
-                }}
-                className="size-8 flex items-center justify-center rounded-full hover:bg-foreground/10 text-foreground/50 transition-colors"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-            <form
-              onSubmit={handleCreateStaff}
-              className="p-6 space-y-4 max-h-[70vh] overflow-y-auto"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-background border border-foreground/10 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl"
             >
-              <div className="flex flex-col items-center gap-4 mb-6">
-                <div className="size-24 rounded-2xl bg-foreground/5 border-2 border-dashed border-foreground/20 flex items-center justify-center overflow-hidden relative group">
-                  {newStaff.image ? (
-                    <img
-                      src={newStaff.image}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="material-symbols-outlined text-3xl text-foreground/20">
-                      add_a_photo
-                    </span>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={onFileChange}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                  />
-                </div>
-                {uploadError && (
-                  <p className="text-rose-500 text-[10px] font-bold">
-                    {uploadError}
-                  </p>
-                )}
-                <p className="text-[10px] font-medium text-foreground/40 text-center">
-                  Image must be &lt; 200KB.
-                  <br />
-                  For best results, use a square aspect ratio.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={newStaff.name}
-                    onChange={(e) =>
-                      setNewStaff({ ...newStaff, name: e.target.value })
-                    }
-                    className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors"
-                    placeholder="e.g. John Doe"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    disabled={!!editingStaff}
-                    value={newStaff.email}
-                    onChange={(e) =>
-                      setNewStaff({ ...newStaff, email: e.target.value })
-                    }
-                    className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors disabled:opacity-50"
-                    placeholder="john@kasaulicoder.com"
-                  />
-                </div>
-              </div>
-
-              {!editingStaff && (
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
-                    Temporary Password
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    value={newStaff.password}
-                    onChange={(e) =>
-                      setNewStaff({ ...newStaff, password: e.target.value })
-                    }
-                    className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors"
-                    placeholder="••••••••"
-                  />
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5 relative">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
-                    Role
-                  </label>
-                  <CustomRoleDropdown
-                    value={newStaff.role}
-                    onChange={(val) => setNewStaff({ ...newStaff, role: val })}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
-                    Designation
-                  </label>
-                  <input
-                    type="text"
-                    value={newStaff.designation}
-                    onChange={(e) =>
-                      setNewStaff({ ...newStaff, designation: e.target.value })
-                    }
-                    className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors"
-                    placeholder="e.g. Lead Instructor"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
-                  Bio / Role Description
-                </label>
-                <textarea
-                  value={newStaff.roleDescription}
-                  onChange={(e) =>
-                    setNewStaff({
-                      ...newStaff,
-                      roleDescription: e.target.value,
-                    })
-                  }
-                  className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors min-h-24 resize-none"
-                  placeholder="Tell us about their role…"
-                />
-              </div>
-
-              {submitError && (
-                <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500 text-xs font-bold text-center">
-                  {submitError}
-                </div>
-              )}
-
-              <div className="flex gap-3 pt-4">
+              <div className="p-6 border-b border-foreground/10 flex justify-between items-center bg-foreground/5">
+                <h2 className="text-xl font-black text-foreground">
+                  {editingStaff ? "Edit Staff Details" : "Onboard New Staff"}
+                </h2>
                 <button
                   type="button"
                   onClick={() => {
                     setShowAddModal(false);
                     setEditingStaff(null);
                   }}
-                  className="flex-1 py-3 text-foreground font-black text-xs uppercase bg-foreground/5 hover:bg-foreground/10 rounded-xl transition-all"
+                  className="size-8 flex items-center justify-center rounded-full hover:bg-foreground/10 text-foreground/50 transition-colors"
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="flex-2 py-3 bg-primary text-primary-content font-black text-xs uppercase rounded-xl hover:brightness-110 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
-                >
-                  {isSubmitting && (
-                    <div className="size-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  )}
-                  {editingStaff ? "Update Access" : "Grant Access"}
+                  <span className="material-symbols-outlined">close</span>
                 </button>
               </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
+              <form
+                onSubmit={handleCreateStaff}
+                className="p-6 space-y-4 max-h-[70vh] overflow-y-auto"
+              >
+                <div className="flex flex-col items-center gap-4 mb-6">
+                  <div className="size-24 rounded-2xl bg-foreground/5 border-2 border-dashed border-foreground/20 flex items-center justify-center overflow-hidden relative group">
+                    {newStaff.image ? (
+                      <img
+                        src={newStaff.image}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="material-symbols-outlined text-3xl text-foreground/20">
+                        add_a_photo
+                      </span>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={onFileChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                  </div>
+                  {uploadError && (
+                    <p className="text-rose-500 text-[10px] font-bold">
+                      {uploadError}
+                    </p>
+                  )}
+                  <p className="text-[10px] font-medium text-foreground/40 text-center">
+                    Image must be &lt; 200KB.
+                    <br />
+                    For best results, use a square aspect ratio.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={newStaff.name}
+                      onChange={(e) =>
+                        setNewStaff({ ...newStaff, name: e.target.value })
+                      }
+                      className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors"
+                      placeholder="e.g. John Doe"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      disabled={!!editingStaff}
+                      value={newStaff.email}
+                      onChange={(e) =>
+                        setNewStaff({ ...newStaff, email: e.target.value })
+                      }
+                      className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors disabled:opacity-50"
+                      placeholder="john@kasaulicoder.com"
+                    />
+                  </div>
+                </div>
+
+                {!editingStaff && (
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                      Temporary Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={newStaff.password}
+                      onChange={(e) =>
+                        setNewStaff({ ...newStaff, password: e.target.value })
+                      }
+                      className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5 relative">
+                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                      Role
+                    </label>
+                    <CustomRoleDropdown
+                      value={newStaff.role}
+                      onChange={(val) =>
+                        setNewStaff({ ...newStaff, role: val })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                      Designation
+                    </label>
+                    <input
+                      type="text"
+                      value={newStaff.designation}
+                      onChange={(e) =>
+                        setNewStaff({
+                          ...newStaff,
+                          designation: e.target.value,
+                        })
+                      }
+                      className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors"
+                      placeholder="e.g. Lead Instructor"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                    Bio / Role Description
+                  </label>
+                  <textarea
+                    value={newStaff.roleDescription}
+                    onChange={(e) =>
+                      setNewStaff({
+                        ...newStaff,
+                        roleDescription: e.target.value,
+                      })
+                    }
+                    className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors min-h-24 resize-none"
+                    placeholder="Tell us about their role…"
+                  />
+                </div>
+
+                {submitError && (
+                  <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500 text-xs font-bold text-center">
+                    {submitError}
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddModal(false);
+                      setEditingStaff(null);
+                    }}
+                    className="flex-1 py-3 text-foreground font-black text-xs uppercase bg-foreground/5 hover:bg-foreground/10 rounded-xl transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex-2 py-3 bg-primary text-primary-content font-black text-xs uppercase rounded-xl hover:brightness-110 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting && (
+                      <div className="size-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    )}
+                    {editingStaff ? "Update Access" : "Grant Access"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
- 
+
       {/* Cropper Modal Overlay */}
       <AnimatePresence>
         {showCropper && rawImageSrc && (
@@ -397,6 +403,7 @@ const StaffModal = ({
                   Crop Staff Photo
                 </h2>
                 <button
+                  type="button"
                   onClick={() => {
                     setShowCropper(false);
                     setRawImageSrc(null);

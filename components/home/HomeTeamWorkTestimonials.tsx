@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const HomeTeamWorkTestimonials = () => {
@@ -17,7 +16,7 @@ const HomeTeamWorkTestimonials = () => {
           const data = await res.json();
           setTeamMembers(data);
         }
-      } catch (error) {
+      } catch {
         console.error("Failed to fetch team members");
       } finally {
         setLoadingTeam(false);

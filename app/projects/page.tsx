@@ -1,5 +1,5 @@
+import type { Metadata } from "next";
 import GeneratedScreen from "@/components/marketing/GeneratedScreen";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Projects",

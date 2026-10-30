@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import UserDashboard from "@/components/auth/UserDashboard";
 import { getServerSession } from "@/backend/lib/auth";
+import UserDashboard from "@/components/auth/UserDashboard";
 
 export default async function UserDashboardPage({
   params,

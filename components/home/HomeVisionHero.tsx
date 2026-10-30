@@ -1,23 +1,23 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-
+import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import GlobalHeader from "@/components/layout/GlobalHeader";
-import GlobalFooter from "@/components/layout/GlobalFooter";
+import type React from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import HomeUpcomingEventsStats from "@/components/home/HomeUpcomingEventsStats";
-import dynamic from "next/dynamic";
-import { Suspense } from "react";
+import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
 
 const AnoAI = dynamic(
   () => import("@/components/ui/animated-shader-background"),
   { ssr: false },
 );
+
 import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 
-const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export interface ProjectType {
   _id: string;
@@ -369,7 +369,10 @@ const HomeVisionHero = () => {
               className="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap"
             >
               <Link href="/projects">
-                <button className="w-full sm:w-auto px-8 py-4 bg-linear-to-r from-primary to-secondary text-background font-black rounded-xl shadow-[0_0_30px_rgba(var(--primary-rgb),0.4)] hover:shadow-[0_0_45px_rgba(var(--primary-rgb),0.6)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-8 py-4 bg-linear-to-r from-primary to-secondary text-background font-black rounded-xl shadow-[0_0_30px_rgba(var(--primary-rgb),0.4)] hover:shadow-[0_0_45px_rgba(var(--primary-rgb),0.6)] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group"
+                >
                   <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></span>
                   <span className="relative z-10 flex items-center gap-2">
                     🚀 Explore Our Work
@@ -377,12 +380,18 @@ const HomeVisionHero = () => {
                 </button>
               </Link>
               <Link href="/register">
-                <button className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/20 text-foreground font-bold rounded-xl hover:bg-white/10 hover:border-primary/50 hover:-translate-y-1 transition-all duration-300 backdrop-blur-md flex items-center justify-center gap-2 shadow-lg">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/20 text-foreground font-bold rounded-xl hover:bg-white/10 hover:border-primary/50 hover:-translate-y-1 transition-all duration-300 backdrop-blur-md flex items-center justify-center gap-2 shadow-lg"
+                >
                   💡 Let's Build Your Solution
                 </button>
               </Link>
               <Link href="/contact">
-                <button className="w-full sm:w-auto px-8 py-4 bg-transparent border-2 border-primary/30 text-primary font-bold rounded-xl hover:bg-primary hover:text-background hover:scale-105 transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-8 py-4 bg-transparent border-2 border-primary/30 text-primary font-bold rounded-xl hover:bg-primary hover:text-background hover:scale-105 transition-all duration-300 backdrop-blur-sm flex items-center justify-center gap-2"
+                >
                   📞 Talk to Our Team
                 </button>
               </Link>
@@ -523,6 +532,7 @@ const HomeVisionHero = () => {
                   {/* Video Controls Overlay */}
                   <div className="absolute bottom-4 right-4 flex gap-2 opacity-100 md:opacity-0 md:group-hover/video:opacity-100 transition-opacity duration-300">
                     <button
+                      type="button"
                       onClick={togglePlay}
                       className="size-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/50 transition-all shadow-lg"
                       title={isPlaying ? "Pause" : "Play"}
@@ -532,6 +542,7 @@ const HomeVisionHero = () => {
                       </span>
                     </button>
                     <button
+                      type="button"
                       onClick={toggleMute}
                       className="size-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/50 transition-all shadow-lg"
                       title={isMuted ? "Unmute" : "Mute"}
@@ -739,7 +750,9 @@ const HomeVisionHero = () => {
                   >
                     <div className="aspect-video overflow-hidden relative border-b border-white/5 bg-foreground/5">
                       <div className="w-full h-full relative">
-                        {project.media && project.media.length > 0 && project.media[0].type === "image" ? (
+                        {project.media &&
+                        project.media.length > 0 &&
+                        project.media[0].type === "image" ? (
                           <Image
                             src={project.media[0].url}
                             alt={project.title}
@@ -749,25 +762,32 @@ const HomeVisionHero = () => {
                         ) : (
                           /* Premium Fallback Design */
                           <div className="flex items-center justify-center w-full h-full relative overflow-hidden group-hover:scale-110 transition-transform duration-500">
-                             {/* Dynamic Gradient Background based on title length */}
-                             <div className={`absolute inset-0 opacity-40 bg-linear-to-br ${
-                               ["from-primary/30 to-secondary/30", "from-emerald-500/30 to-teal-500/30", "from-violet-500/30 to-purple-500/30", "from-blue-500/30 to-cyan-500/30"][project.title.length % 4]
-                             }`}></div>
-                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05)_0%,transparent_70%)]"></div>
-                             
-                             {/* Large Abstract Icon/Text */}
-                             <div className="text-8xl font-black text-foreground/5 select-none tracking-tighter uppercase whitespace-nowrap">
-                               {project.title}
-                             </div>
-                             
-                             {/* Central Initials */}
-                             <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="size-20 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center shadow-2xl">
-                                  <span className="text-3xl font-black text-foreground/40 tracking-tighter uppercase">
-                                    {project.title.substring(0, 2)}
-                                  </span>
-                                </div>
-                             </div>
+                            {/* Dynamic Gradient Background based on title length */}
+                            <div
+                              className={`absolute inset-0 opacity-40 bg-linear-to-br ${
+                                [
+                                  "from-primary/30 to-secondary/30",
+                                  "from-emerald-500/30 to-teal-500/30",
+                                  "from-violet-500/30 to-purple-500/30",
+                                  "from-blue-500/30 to-cyan-500/30",
+                                ][project.title.length % 4]
+                              }`}
+                            ></div>
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05)_0%,transparent_70%)]"></div>
+
+                            {/* Large Abstract Icon/Text */}
+                            <div className="text-8xl font-black text-foreground/5 select-none tracking-tighter uppercase whitespace-nowrap">
+                              {project.title}
+                            </div>
+
+                            {/* Central Initials */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="size-20 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center shadow-2xl">
+                                <span className="text-3xl font-black text-foreground/40 tracking-tighter uppercase">
+                                  {project.title.substring(0, 2)}
+                                </span>
+                              </div>
+                            </div>
                           </div>
                         )}
                         <div className="absolute top-3 left-3 flex gap-2">
@@ -897,7 +917,10 @@ const HomeVisionHero = () => {
                     projects.
                   </p>
                   <Link href="/programs">
-                    <button className="px-8 py-4 bg-primary text-background font-black rounded-xl hover:scale-105 transition-all shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] flex items-center gap-2 group">
+                    <button
+                      type="button"
+                      className="px-8 py-4 bg-primary text-background font-black rounded-xl hover:scale-105 transition-all shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] flex items-center gap-2 group"
+                    >
                       🚀 Explore Student Programs
                       <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">
                         arrow_forward
@@ -926,6 +949,7 @@ const HomeVisionHero = () => {
                   {/* Video Controls Overlay */}
                   <div className="absolute bottom-4 right-4 flex gap-2 opacity-100 md:opacity-0 md:group-hover/student-video:opacity-100 transition-opacity duration-300">
                     <button
+                      type="button"
                       onClick={toggleStudentMute}
                       className="size-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-all hover:scale-110"
                       title={isStudentMuted ? "Unmute" : "Mute"}
@@ -935,6 +959,7 @@ const HomeVisionHero = () => {
                       </span>
                     </button>
                     <button
+                      type="button"
                       onClick={toggleStudentPlay}
                       className="size-10 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-all hover:scale-110"
                       title={isStudentPlaying ? "Pause" : "Play"}

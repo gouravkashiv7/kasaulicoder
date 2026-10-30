@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const COUNTRIES = [
   { code: "IN", name: "India", flag: "🇮🇳" },
@@ -279,6 +279,7 @@ const GlobalFooter = () => {
               Language
             </label>
             <button
+              type="button"
               onClick={() => {
                 setLangOpen(!langOpen);
                 setLocOpen(false);
@@ -336,6 +337,7 @@ const GlobalFooter = () => {
                 >
                   {LANGUAGES.map((lang) => (
                     <button
+                      type="button"
                       key={lang.code}
                       onClick={() => {
                         setSelectedLanguage(lang.code);
@@ -365,6 +367,7 @@ const GlobalFooter = () => {
               Location
             </label>
             <button
+              type="button"
               onClick={() => {
                 setLocOpen(!locOpen);
                 setLangOpen(false);
@@ -422,6 +425,7 @@ const GlobalFooter = () => {
                 >
                   {COUNTRIES.map((country) => (
                     <button
+                      type="button"
                       key={country.code}
                       onClick={() => {
                         setSelectedCountry(country.code);

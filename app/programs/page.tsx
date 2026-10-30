@@ -1,5 +1,5 @@
+import type { Metadata } from "next";
 import ProgramsPage from "@/components/marketing/ProgramsPage";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Programs",

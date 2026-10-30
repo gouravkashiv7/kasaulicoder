@@ -65,7 +65,6 @@ export const sendStaffWelcomeEmail = async (
 
   const roleLabel = getRoleLabel(role);
   const roleColor = getRoleColor(role);
-  const year = new Date().getFullYear();
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -498,7 +497,9 @@ export const sendSocialMediaAssignmentEmail = async (
                       <p style="margin:4px 0 0;font-size:16px;color:#1e293b;font-weight:700;">${esc(username)}</p>
                     </td>
                   </tr>
-                  ${password ? `
+                  ${
+                    password
+                      ? `
                   <tr>
                     <td>
                       <p style="margin:0;font-size:12px;font-weight:600;color:#94a3b8;text-transform:uppercase;">Password</p>
@@ -507,7 +508,9 @@ export const sendSocialMediaAssignmentEmail = async (
                       </div>
                     </td>
                   </tr>
-                  ` : ""}
+                  `
+                      : ""
+                  }
                 </table>
               </div>
             </td>

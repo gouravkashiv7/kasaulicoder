@@ -1,8 +1,7 @@
-import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
+import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import Blog from "@/backend/models/Blog";
-
 
 export async function PATCH(
   req: Request,

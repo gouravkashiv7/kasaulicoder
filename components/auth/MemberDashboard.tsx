@@ -1,17 +1,24 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import UniqueLoading from "@/components/ui/morph-loading";
-import { SocialMediaAccount } from "@/components/admin/types";
 import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
+import type { SocialMediaAccount } from "@/components/admin/types";
+import UniqueLoading from "@/components/ui/morph-loading";
+import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
-type SidebarView = "dashboard" | "blogs" | "submitted_blogs" | "projects" | "social-media" | "settings";
+type SidebarView =
+  | "dashboard"
+  | "blogs"
+  | "submitted_blogs"
+  | "projects"
+  | "social-media"
+  | "settings";
 
 // Adding imports for the new views
 import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement";
@@ -178,7 +185,7 @@ const BlogEditorSection = ({
         });
         setSubmittingBlog(false);
       }
-    } catch (err) {
+    } catch {
       setBlogStatus({ type: "error", message: "An error occurred" });
       setSubmittingBlog(false);
     }
@@ -236,6 +243,7 @@ const BlogEditorSection = ({
         </div>
         {editingBlog && (
           <button
+            type="button"
             onClick={() => {
               setEditingBlog(null);
               updateView("blogs"); // This logic will trigger a refresh due to the key change in parent
@@ -955,7 +963,14 @@ const MemberDashboard = () => {
     const view = searchParams.get("view") as SidebarView;
     if (
       view &&
-      ["dashboard", "blogs", "submitted_blogs", "projects", "social-media", "settings"].includes(view)
+      [
+        "dashboard",
+        "blogs",
+        "submitted_blogs",
+        "projects",
+        "social-media",
+        "settings",
+      ].includes(view)
     ) {
       setSidebarView(view);
     }
@@ -1041,7 +1056,7 @@ const MemberDashboard = () => {
           message: data.error || "Update failed",
         });
       }
-    } catch (err) {
+    } catch {
       setUpdateStatus({ type: "error", message: "An error occurred" });
     } finally {
       setUpdating(false);
@@ -1075,10 +1090,13 @@ const MemberDashboard = () => {
   };
 
   // Social Media State
-  const [socialMediaAccounts, setSocialMediaAccounts] = useState<SocialMediaAccount[]>([]);
+  const [socialMediaAccounts, setSocialMediaAccounts] = useState<
+    SocialMediaAccount[]
+  >([]);
   const [socialMediaLoading, setSocialMediaLoading] = useState(false);
   const [showSocialMediaModal, setShowSocialMediaModal] = useState(false);
-  const [editingSocialMediaAccount, setEditingSocialMediaAccount] = useState<SocialMediaAccount | null>(null);
+  const [editingSocialMediaAccount, setEditingSocialMediaAccount] =
+    useState<SocialMediaAccount | null>(null);
   const [socialMediaError, setSocialMediaError] = useState("");
   const [allStaff, setAllStaff] = useState<any[]>([]);
 
@@ -1120,12 +1138,15 @@ const MemberDashboard = () => {
     setUpdating(true);
     setSocialMediaError("");
     try {
-      let res;
+      let res: Response;
       if (editingSocialMediaAccount) {
         res = await fetch("/api/admin/social-media", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingSocialMediaAccount._id, ...formData }),
+          body: JSON.stringify({
+            id: editingSocialMediaAccount._id,
+            ...formData,
+          }),
         });
       } else {
         res = await fetch("/api/admin/social-media", {
@@ -1143,7 +1164,7 @@ const MemberDashboard = () => {
         const result = await res.json();
         setSocialMediaError(result.error || "Operation failed");
       }
-    } catch (err) {
+    } catch {
       setSocialMediaError("An error occurred");
     } finally {
       setUpdating(false);
@@ -1151,7 +1172,8 @@ const MemberDashboard = () => {
   };
 
   const handleDeleteSocialMediaAccount = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this social account?")) return;
+    if (!confirm("Are you sure you want to delete this social account?"))
+      return;
     try {
       const res = await fetch(`/api/admin/social-media?id=${id}`, {
         method: "DELETE",
@@ -1170,7 +1192,11 @@ const MemberDashboard = () => {
   const sidebarItems = [
     { id: "dashboard" as SidebarView, label: "Dashboard", icon: "dashboard" },
     { id: "blogs" as SidebarView, label: "Write Blog", icon: "edit_document" },
-    { id: "submitted_blogs" as SidebarView, label: "My Blogs", icon: "library_books" },
+    {
+      id: "submitted_blogs" as SidebarView,
+      label: "My Blogs",
+      icon: "library_books",
+    },
     { id: "projects" as SidebarView, label: "Projects", icon: "rocket_launch" },
     { id: "social-media" as SidebarView, label: "Social Media", icon: "share" },
     { id: "settings" as SidebarView, label: "Settings", icon: "settings" },
@@ -1229,6 +1255,7 @@ const MemberDashboard = () => {
             )}
           </Link>
           <button
+            type="button"
             className="ml-auto md:hidden"
             onClick={() => setMobileMenuOpen(false)}
           >
@@ -1240,6 +1267,7 @@ const MemberDashboard = () => {
         <nav className="flex-1 p-3 space-y-1">
           {filteredSidebarItems.map((item) => (
             <button
+              type="button"
               key={item.id}
               onClick={() => {
                 updateView(item.id);
@@ -1313,6 +1341,7 @@ const MemberDashboard = () => {
                   {!sidebarCollapsed && <span>Return to Site</span>}
                 </Link>
                 <button
+                  type="button"
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-3 py-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all text-xs font-bold"
                 >
@@ -1335,6 +1364,7 @@ const MemberDashboard = () => {
         {/* Mobile top bar */}
         <div className="md:hidden flex items-center gap-3 px-4 h-14 bg-background/80 backdrop-blur-lg border-b border-foreground/10 sticky top-0 z-20">
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(true)}
             className="size-9 flex items-center justify-center rounded-xl bg-foreground/5 shrink-0"
           >
@@ -1434,6 +1464,7 @@ const MemberDashboard = () => {
                     </p>
                   </div>
                   <button
+                    type="button"
                     onClick={() => updateView("blogs")}
                     className="bg-primary text-primary-content font-black px-6 py-2.5 rounded-xl hover:scale-105 transition-all shadow-lg active:scale-95 text-xs inline-flex items-center gap-2 w-fit"
                   >
@@ -1522,6 +1553,7 @@ const MemberDashboard = () => {
                         waiting for your unique insights.
                       </p>
                       <button
+                        type="button"
                         onClick={() => updateView("blogs")}
                         className="bg-primary/10 text-primary border border-primary/20 px-8 py-3 rounded-2xl font-black hover:bg-primary hover:text-white transition-all shadow-xl shadow-primary/5"
                       >
@@ -1578,6 +1610,7 @@ const MemberDashboard = () => {
 
                         <div className="flex items-center gap-3 shrink-0 self-end md:self-center pr-2">
                           <button
+                            type="button"
                             onClick={() => handleEditBlog(blog)}
                             className="size-12 flex items-center justify-center rounded-2xl bg-foreground/5 text-foreground/60 hover:bg-primary hover:text-white transition-all shadow-sm border border-foreground/5 group-hover:border-primary/20"
                             title="Refine Blog"
@@ -1616,9 +1649,7 @@ const MemberDashboard = () => {
               </motion.div>
             )}
 
-            {sidebarView === "projects" && (
-              <AdminProjectsManagement />
-            )}
+            {sidebarView === "projects" && <AdminProjectsManagement />}
 
             {sidebarView === "social-media" && (
               <SocialMediaManagement

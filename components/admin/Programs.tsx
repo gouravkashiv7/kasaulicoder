@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Program } from "./types";
+import { AnimatePresence, motion } from "framer-motion";
+import type { Program } from "./types";
 
 interface ProgramsProps {
   programs: Program[];
@@ -49,6 +48,7 @@ const Programs = ({
           {/* View Toggle */}
           <div className="flex bg-foreground/5 rounded-xl p-1 border border-foreground/10">
             <button
+              type="button"
               onClick={() => setProgramViewMode("grid")}
               className={`size-10 flex items-center justify-center rounded-lg transition-all ${
                 programViewMode === "grid"
@@ -62,6 +62,7 @@ const Programs = ({
               </span>
             </button>
             <button
+              type="button"
               onClick={() => setProgramViewMode("list")}
               className={`size-10 flex items-center justify-center rounded-lg transition-all ${
                 programViewMode === "list"
@@ -77,6 +78,7 @@ const Programs = ({
           </div>
 
           <button
+            type="button"
             onClick={() => {
               setShowProgramModal(true);
             }}
@@ -110,6 +112,7 @@ const Programs = ({
             above to begin.
           </p>
           <button
+            type="button"
             onClick={() => setShowProgramModal(true)}
             className="text-primary font-black hover:underline underline-offset-8"
           >
@@ -192,6 +195,7 @@ const Programs = ({
                       {/* Management Controls */}
                       <div className="grid grid-cols-2 gap-4 mt-auto">
                         <button
+                          type="button"
                           onClick={() => openEditProgram(prog)}
                           className="flex items-center justify-center gap-2 py-3 bg-foreground/5 hover:bg-foreground/10 text-foreground font-black rounded-2xl text-[10px] uppercase tracking-wider transition-all"
                         >
@@ -202,6 +206,7 @@ const Programs = ({
                         </button>
                         <div className="flex gap-2">
                           <button
+                            type="button"
                             onClick={() => handleToggleProgramActive(prog)}
                             className={`flex-1 flex items-center justify-center rounded-2xl transition-all border ${
                               prog.isActive
@@ -215,6 +220,7 @@ const Programs = ({
                             </span>
                           </button>
                           <button
+                            type="button"
                             onClick={() => handleToggleProgramVisibility(prog)}
                             className={`flex-1 flex items-center justify-center rounded-2xl transition-all border ${
                               prog.isVisible !== false
@@ -234,6 +240,7 @@ const Programs = ({
                             </span>
                           </button>
                           <button
+                            type="button"
                             onClick={() => handleDeleteProgram(prog._id)}
                             className="flex-1 flex items-center justify-center rounded-2xl bg-foreground/5 text-foreground/20 hover:text-rose-500 hover:bg-rose-500/5 transition-all"
                             title="Purge"
@@ -266,6 +273,7 @@ const Programs = ({
                       </div>
                       <div className="flex items-center gap-2">
                         <button
+                          type="button"
                           onClick={() => openEditProgram(prog)}
                           className="size-9 flex items-center justify-center text-foreground/40 hover:text-primary transition-colors"
                         >
@@ -274,6 +282,7 @@ const Programs = ({
                           </span>
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleToggleProgramActive(prog)}
                           className={`size-9 flex items-center justify-center rounded-lg transition-all ${
                             prog.isActive
@@ -286,6 +295,7 @@ const Programs = ({
                           </span>
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleToggleProgramVisibility(prog)}
                           className={`size-9 flex items-center justify-center rounded-lg transition-all ${
                             prog.isVisible !== false
@@ -300,6 +310,7 @@ const Programs = ({
                           </span>
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleDeleteProgram(prog._id)}
                           className="size-9 flex items-center justify-center text-foreground/20 hover:text-rose-500"
                         >

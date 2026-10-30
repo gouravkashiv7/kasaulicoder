@@ -1,8 +1,7 @@
-import React from "react";
+import type { Metadata } from "next";
 import connectDB from "@/backend/lib/db";
 import Blog from "@/backend/models/Blog";
 import BlogContent from "@/components/blogs/BlogContent";
-import { Metadata } from "next";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;

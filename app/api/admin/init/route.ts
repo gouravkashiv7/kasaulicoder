@@ -1,7 +1,7 @@
+import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
-import bcrypt from "bcryptjs";
 
 export async function POST() {
   if (process.env.NODE_ENV === "production") {
@@ -21,7 +21,7 @@ export async function POST() {
 
     const hashedPassword = await bcrypt.hash("admin@kasaulicoder", 12);
 
-    const superAdmin = await Staff.create({
+    await Staff.create({
       name: "Super Admin",
       email: "admin@kasaulicoder.com",
       password: hashedPassword,
@@ -37,6 +37,9 @@ export async function POST() {
     );
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

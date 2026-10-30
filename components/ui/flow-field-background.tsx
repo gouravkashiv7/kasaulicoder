@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface NeuralBackgroundProps {
@@ -47,8 +47,8 @@ export default function NeuralBackground({
     let height = container.clientHeight;
     let particles: Particle[] = [];
     let animationFrameId: number;
-    let mouse = { x: -1000, y: -1000 }; // Start off-screen
-    let themeColors = { primary: color, bg: "#000000" };
+    const mouse = { x: -1000, y: -1000 }; // Start off-screen
+    const themeColors = { primary: color, bg: "#000000" };
 
     const updateThemeColors = () => {
       const computed = getComputedStyle(document.documentElement);

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import AdminDashboard from "@/components/auth/AdminDashboard";
 import { getServerSession } from "@/backend/lib/auth";
+import AdminDashboard from "@/components/auth/AdminDashboard";
 
 export default async function AdminDashboardPage() {
   const session = await getServerSession();

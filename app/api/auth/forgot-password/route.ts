@@ -1,12 +1,11 @@
-import { rateLimit } from "@/backend/lib/rateLimit";
-import { getJwtSecret } from "@/backend/lib/auth";
+import { SignJWT } from "jose";
 import { NextResponse } from "next/server";
+import { getJwtSecret } from "@/backend/lib/auth";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
+import { sendPasswordResetEmail } from "@/backend/lib/email";
+import { rateLimit } from "@/backend/lib/rateLimit";
 import Staff from "@/backend/models/Staff";
 import User from "@/backend/models/User";
-import { SignJWT } from "jose";
-import { sendPasswordResetEmail } from "@/backend/lib/email";
-
 
 export async function POST(req: Request) {
   try {
@@ -17,8 +16,7 @@ export async function POST(req: Request) {
       );
     }
     const body = await req.json();
-    const email =
-      typeof body.email === "string" ? body.email.trim() : "";
+    const email = typeof body.email === "string" ? body.email.trim() : "";
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -42,13 +40,17 @@ export async function POST(req: Request) {
       // So I'll return success even if not found, to prevent email enumeration
       // HOWEVER, the user said "if correct email is entered... send him a link"
       // Usually it's better to say "If an account exists with this email, you will receive a reset link."
-      return NextResponse.json({ 
-        message: "If an account exists with this email, you will receive a reset link shortly." 
+      return NextResponse.json({
+        message:
+          "If an account exists with this email, you will receive a reset link shortly.",
       });
     }
 
     if (!account.isActive) {
-      return NextResponse.json({ error: "Your account is deactivated. Please contact support." }, { status: 403 });
+      return NextResponse.json(
+        { error: "Your account is deactivated. Please contact support." },
+        { status: 403 },
+      );
     }
 
     const token = await new SignJWT({
@@ -74,18 +76,25 @@ export async function POST(req: Request) {
       (process.env.NODE_ENV !== "production" ? "http://localhost:3000" : "");
     if (!origin) {
       console.error("NEXT_PUBLIC_BASE_URL is not set; cannot send reset link");
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 },
+      );
     }
 
     const resetUrl = `${origin}/reset-password?token=${token}`;
 
     await sendPasswordResetEmail(account.email, account.name, resetUrl);
 
-    return NextResponse.json({ 
-      message: "If an account exists with this email, you will receive a reset link shortly." 
+    return NextResponse.json({
+      message:
+        "If an account exists with this email, you will receive a reset link shortly.",
     });
   } catch (error: any) {
     console.error("Forgot password error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

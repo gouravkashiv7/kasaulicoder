@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
-import { Plan } from "./types";
+import type { Plan } from "./types";
 
 interface PricingProps {
   plans: Plan[];
@@ -39,6 +38,7 @@ const Pricing = ({
           </p>
         </div>
         <button
+          type="button"
           onClick={() => {
             setShowPlanModal(true);
           }}
@@ -62,6 +62,7 @@ const Pricing = ({
             No pricing plans found in the system.
           </p>
           <button
+            type="button"
             onClick={() => setShowPlanModal(true)}
             className="text-primary font-bold hover:underline"
           >
@@ -132,6 +133,7 @@ const Pricing = ({
                 </div>
                 <div className="flex gap-2">
                   <button
+                    type="button"
                     onClick={() => openEditPlan(plan)}
                     className="flex-1 py-2.5 bg-foreground/5 hover:bg-foreground/10 text-foreground font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2"
                   >
@@ -141,6 +143,7 @@ const Pricing = ({
                     Modify
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleTogglePlanActive(plan)}
                     className={`size-10 flex items-center justify-center rounded-xl transition-all border ${
                       plan.isActive
@@ -154,6 +157,7 @@ const Pricing = ({
                     </span>
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleDeletePlan(plan._id)}
                     className="size-10 flex items-center justify-center rounded-xl bg-orange-500/10 text-orange-500 border border-orange-500/20 hover:bg-orange-500/20 transition-all"
                     title="Delete Permanently"

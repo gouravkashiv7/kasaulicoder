@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 
 interface ManagementProps {
@@ -59,7 +58,7 @@ const Management = ({
       rows = rows.filter((u) => u.userType === userTypeFilter);
     }
     if (userDateFilter !== "all") {
-      const days = parseInt(userDateFilter);
+      const days = parseInt(userDateFilter, 10);
       const cutoff = new Date();
       cutoff.setDate(cutoff.getDate() - days);
       rows = rows.filter((u) => new Date(u.createdAt) >= cutoff);
@@ -104,6 +103,7 @@ const Management = ({
 
       <div className="flex gap-4 mb-8">
         <button
+          type="button"
           onClick={() => setActiveTab("users")}
           className={`px-6 py-2 rounded-lg font-bold transition-all ${
             activeTab === "users"
@@ -114,6 +114,7 @@ const Management = ({
           Registered Members
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab("staff")}
           className={`px-6 py-2 rounded-lg font-bold transition-all ${
             activeTab === "staff"
@@ -126,6 +127,7 @@ const Management = ({
 
         {activeTab === "staff" && (
           <button
+            type="button"
             onClick={() => setShowAddModal(true)}
             className="ml-auto px-6 py-2 bg-primary text-primary-content font-bold rounded-lg hover:brightness-110 flex items-center gap-2"
           >
@@ -154,6 +156,7 @@ const Management = ({
             <div className="flex gap-1 bg-foreground/5 rounded-xl p-1 shrink-0">
               {(["all", "student", "professional"] as const).map((v) => (
                 <button
+                  type="button"
                   key={v}
                   onClick={() => setUserTypeFilter(v)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
@@ -176,6 +179,7 @@ const Management = ({
             <div className="flex gap-1 bg-foreground/5 rounded-xl p-1 shrink-0">
               {(["all", "7", "30", "90"] as const).map((v) => (
                 <button
+                  type="button"
                   key={v}
                   onClick={() => setUserDateFilter(v)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
@@ -196,6 +200,7 @@ const Management = ({
                 { field: "name" as const, label: "Name" },
               ].map(({ field, label }) => (
                 <button
+                  type="button"
                   key={field}
                   onClick={() => {
                     if (userSortField === field) {
@@ -303,6 +308,7 @@ const Management = ({
                       <div className="flex items-center gap-2">
                         {activeTab === "users" ? (
                           <button
+                            type="button"
                             onClick={() => handleToggleUserStatus(item)}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
                               item.isActive !== false
@@ -320,6 +326,7 @@ const Management = ({
                         ) : (
                           <>
                             <button
+                              type="button"
                               onClick={() => handleToggleStaffStatus(item)}
                               className={`flex items-center justify-center size-8 rounded-lg transition-all ${
                                 item.isActive !== false
@@ -339,6 +346,7 @@ const Management = ({
                               </span>
                             </button>
                             <button
+                              type="button"
                               onClick={() => openEditStaff(item)}
                               className="px-3 py-1.5 bg-foreground/5 hover:bg-foreground/10 text-foreground/70 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
                             >

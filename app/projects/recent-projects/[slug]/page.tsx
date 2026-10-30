@@ -1,14 +1,13 @@
-import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 import { notFound } from "next/navigation";
-import GlobalHeader from "@/components/layout/GlobalHeader";
-import GlobalFooter from "@/components/layout/GlobalFooter";
 import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
+import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
+import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 import "@/backend/models/Staff"; // Ensure Staff schema is registered for populate
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
@@ -45,9 +44,7 @@ export async function generateMetadata(props: {
       title: project.title,
       description: project.outcome || project.desc?.substring(0, 160),
       images:
-        project.media && project.media.length > 0 
-          ? [project.media[0].url] 
-          : [],
+        project.media && project.media.length > 0 ? [project.media[0].url] : [],
     },
   };
 }
@@ -118,7 +115,10 @@ export default async function RecentProjectPage(props: {
                 {project.members && project.members.length > 0 ? (
                   <div className="space-y-6">
                     {project.members.map((member: any) => (
-                      <div key={member._id} className="flex flex-col items-center text-center group">
+                      <div
+                        key={member._id}
+                        className="flex flex-col items-center text-center group"
+                      >
                         <div className="size-16 rounded-full bg-foreground/10 relative overflow-hidden border-2 border-white/10 mb-3 group-hover:border-primary/50 transition-colors">
                           {member.image ? (
                             <Image
@@ -164,7 +164,9 @@ export default async function RecentProjectPage(props: {
                       rel="noopener noreferrer"
                       className="w-full py-4 rounded-xl bg-white text-black font-black flex items-center justify-center gap-2 hover:bg-white/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      <span className="material-symbols-outlined">smart_display</span>
+                      <span className="material-symbols-outlined">
+                        smart_display
+                      </span>
                       Watch Demo Video
                     </a>
                   )}
@@ -175,7 +177,9 @@ export default async function RecentProjectPage(props: {
                       rel="noopener noreferrer"
                       className="w-full py-4 rounded-xl bg-primary text-primary-content font-black flex items-center justify-center gap-2 hover:brightness-110 transition-all hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      <span className="material-symbols-outlined">open_in_new</span>
+                      <span className="material-symbols-outlined">
+                        open_in_new
+                      </span>
                       Visit Project
                     </a>
                   )}

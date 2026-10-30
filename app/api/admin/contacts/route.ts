@@ -1,8 +1,7 @@
-import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
+import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import ContactRequest from "@/backend/models/ContactRequest";
-
 
 // GET all contact requests (superadmin only)
 export async function GET() {
@@ -27,7 +26,10 @@ export async function GET() {
     return NextResponse.json(requests);
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -71,6 +73,9 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ message: "Marked as read", data: updated });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

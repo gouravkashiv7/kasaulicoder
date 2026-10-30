@@ -1,14 +1,13 @@
-import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 import { notFound } from "next/navigation";
-import GlobalHeader from "@/components/layout/GlobalHeader";
-import GlobalFooter from "@/components/layout/GlobalFooter";
 import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
+import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
+import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
 import "@/backend/models/Staff"; // Ensure Staff schema is registered for populate
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
@@ -45,9 +44,7 @@ export async function generateMetadata(props: {
       title: project.title,
       description: project.outcome || project.desc?.substring(0, 160),
       images:
-        project.media && project.media.length > 0 
-          ? [project.media[0].url] 
-          : [],
+        project.media && project.media.length > 0 ? [project.media[0].url] : [],
     },
   };
 }

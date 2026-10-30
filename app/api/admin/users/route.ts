@@ -1,12 +1,11 @@
-import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
+import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
-import User from "@/backend/models/User";
 import {
-  sendAccountDeactivationEmail,
   sendAccountActivationEmail,
+  sendAccountDeactivationEmail,
 } from "@/backend/lib/email";
-
+import User from "@/backend/models/User";
 
 export async function GET() {
   try {
@@ -27,7 +26,10 @@ export async function GET() {
     return NextResponse.json(users);
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -55,7 +57,7 @@ export async function PATCH(req: Request) {
     }
 
     // Toggle logic: Explicitly check for false, everything else toggles to false.
-    const currentStatus = user.isActive === false ? false : true;
+    const currentStatus = user.isActive !== false;
     user.isActive = !currentStatus;
     await user.save();
 
@@ -76,6 +78,9 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ isActive: user.isActive });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

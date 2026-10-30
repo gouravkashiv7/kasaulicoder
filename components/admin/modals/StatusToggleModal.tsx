@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface StatusToggleModalProps {
   toggleConfirm: {
@@ -56,6 +55,7 @@ const StatusToggleModal = ({
 
             <div className="flex flex-col gap-3">
               <button
+                type="button"
                 disabled={toggleConfirm.isSubmitting}
                 onClick={() => executeStatusToggle(true)}
                 className={`py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
@@ -70,6 +70,7 @@ const StatusToggleModal = ({
                 Confirm & Notify User
               </button>
               <button
+                type="button"
                 disabled={toggleConfirm.isSubmitting}
                 onClick={() => executeStatusToggle(false)}
                 className="py-3 bg-foreground/5 text-foreground font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-foreground/10 transition-all"
@@ -77,6 +78,7 @@ const StatusToggleModal = ({
                 Confirm Silently
               </button>
               <button
+                type="button"
                 disabled={toggleConfirm.isSubmitting}
                 onClick={() => setToggleConfirm(null)}
                 className="mt-2 text-foreground/30 hover:text-foreground font-bold text-[10px] uppercase tracking-widest transition-colors"

@@ -1,7 +1,7 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface SocialMediaModalProps {
   showModal: boolean;
@@ -24,31 +24,47 @@ const SocialMediaModal = ({
   isSubmitting,
   error,
 }: SocialMediaModalProps) => {
-  const PREDEFINED_PLATFORMS = ["Twitter", "Facebook", "Instagram", "LinkedIn", "YouTube"];
-  
+  const PREDEFINED_PLATFORMS = [
+    "Twitter",
+    "Facebook",
+    "Instagram",
+    "LinkedIn",
+    "YouTube",
+  ];
+
   const [formData, setFormData] = useState({
-    platform: editingAccount?.platform && PREDEFINED_PLATFORMS.includes(editingAccount.platform) 
-      ? editingAccount.platform 
-      : (editingAccount?.platform ? "Other" : "Twitter"),
-    customPlatform: editingAccount?.platform && !PREDEFINED_PLATFORMS.includes(editingAccount.platform)
-      ? editingAccount.platform
-      : "",
+    platform:
+      editingAccount?.platform &&
+      PREDEFINED_PLATFORMS.includes(editingAccount.platform)
+        ? editingAccount.platform
+        : editingAccount?.platform
+          ? "Other"
+          : "Twitter",
+    customPlatform:
+      editingAccount?.platform &&
+      !PREDEFINED_PLATFORMS.includes(editingAccount.platform)
+        ? editingAccount.platform
+        : "",
     username: editingAccount?.username || "",
     password: editingAccount?.password || "",
-    managedBy: editingAccount?.managedBy?._id || editingAccount?.managedBy || "",
+    managedBy:
+      editingAccount?.managedBy?._id || editingAccount?.managedBy || "",
     platformUrl: editingAccount?.platformUrl || "",
     isActive: editingAccount?.isActive !== false,
   });
 
   React.useEffect(() => {
     if (editingAccount) {
-      const isPredefined = PREDEFINED_PLATFORMS.includes(editingAccount.platform);
+      const isPredefined = PREDEFINED_PLATFORMS.includes(
+        editingAccount.platform,
+      );
       setFormData({
         platform: isPredefined ? editingAccount.platform : "Other",
         customPlatform: isPredefined ? "" : editingAccount.platform,
         username: editingAccount.username,
         password: editingAccount.password || "",
-        managedBy: editingAccount.managedBy?._id || editingAccount.managedBy || "",
+        managedBy:
+          editingAccount.managedBy?._id || editingAccount.managedBy || "",
         platformUrl: editingAccount.platformUrl || "",
         isActive: editingAccount.isActive !== false,
       });
@@ -69,7 +85,10 @@ const SocialMediaModal = ({
     e.preventDefault();
     const submissionData = {
       ...formData,
-      platform: formData.platform === "Other" ? formData.customPlatform : formData.platform,
+      platform:
+        formData.platform === "Other"
+          ? formData.customPlatform
+          : formData.platform,
     };
     onSave(submissionData);
   };
@@ -77,7 +96,10 @@ const SocialMediaModal = ({
   return (
     <AnimatePresence>
       {showModal && (
-        <div key="social-media-modal-overlay" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div
+          key="social-media-modal-overlay"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -89,6 +111,7 @@ const SocialMediaModal = ({
                 {editingAccount ? "Edit Social Account" : "Add Social Account"}
               </h2>
               <button
+                type="button"
                 onClick={() => {
                   setShowModal(false);
                   setEditingAccount(null);
@@ -99,12 +122,18 @@ const SocialMediaModal = ({
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className={`grid ${formData.platform === "Other" ? "grid-cols-1" : "grid-cols-2"} gap-4 transition-all`}>
+              <div
+                className={`grid ${formData.platform === "Other" ? "grid-cols-1" : "grid-cols-2"} gap-4 transition-all`}
+              >
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">Platform</label>
+                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                    Platform
+                  </label>
                   <select
                     value={formData.platform}
-                    onChange={(e) => setFormData({ ...formData, platform: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, platform: e.target.value })
+                    }
                     className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 appearance-none"
                   >
                     <option value="Twitter">Twitter (X)</option>
@@ -117,17 +146,24 @@ const SocialMediaModal = ({
                 </div>
 
                 {formData.platform === "Other" && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-1.5"
                   >
-                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">Platform Name</label>
+                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                      Platform Name
+                    </label>
                     <input
                       type="text"
                       required
                       value={formData.customPlatform}
-                      onChange={(e) => setFormData({ ...formData, customPlatform: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          customPlatform: e.target.value,
+                        })
+                      }
                       className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40"
                       placeholder="Enter platform name"
                     />
@@ -135,12 +171,16 @@ const SocialMediaModal = ({
                 )}
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">Username</label>
+                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                    Username
+                  </label>
                   <input
                     type="text"
                     required
                     value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, username: e.target.value })
+                    }
                     className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40"
                     placeholder="@username"
                   />
@@ -148,23 +188,31 @@ const SocialMediaModal = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">Password</label>
+                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  Password
+                </label>
                 <input
                   type="text"
                   required
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                   className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40"
                   placeholder="••••••••"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">Managed By</label>
+                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  Managed By
+                </label>
                 <select
                   required
                   value={formData.managedBy}
-                  onChange={(e) => setFormData({ ...formData, managedBy: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, managedBy: e.target.value })
+                  }
                   className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 appearance-none"
                 >
                   <option value="">Select Staff Member</option>
@@ -177,11 +225,15 @@ const SocialMediaModal = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">Platform URL (Optional)</label>
+                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  Platform URL (Optional)
+                </label>
                 <input
                   type="url"
                   value={formData.platformUrl}
-                  onChange={(e) => setFormData({ ...formData, platformUrl: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, platformUrl: e.target.value })
+                  }
                   className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40"
                   placeholder="https://platform.com/profile"
                 />

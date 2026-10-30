@@ -1,14 +1,14 @@
 "use client";
 
-import type React from "react";
-import { useState, useRef, useEffect } from "react";
 import {
-  motion,
   AnimatePresence,
+  motion,
   useMotionValue,
-  useTransform,
   useSpring,
+  useTransform,
 } from "framer-motion";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface LocationMapProps {
   location?: string;

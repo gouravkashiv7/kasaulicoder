@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
-import { ContactRequest } from "./types";
+import type { ContactRequest } from "./types";
 
 interface RequestsProps {
   contactRequests: ContactRequest[];
@@ -115,6 +114,7 @@ const Requests = ({
 
                 {!req.isRead && (
                   <button
+                    type="button"
                     onClick={() => handleMarkAsRead(req._id)}
                     className="shrink-0 size-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all border border-primary/20 group"
                     title="Mark as read"

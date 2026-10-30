@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 /**
  * Counter Example Component
@@ -20,12 +20,14 @@ export const CounterExample = () => {
       <h2 className="text-xl font-semibold">{count}</h2>
       <div className="flex gap-2">
         <button
+          type="button"
           onClick={() => setCount((prev) => prev - 1)}
           className="px-4 py-2 border rounded-md hover:bg-accent transition-colors"
         >
           -
         </button>
         <button
+          type="button"
           onClick={() => setCount((prev) => prev + 1)}
           className="px-4 py-2 border rounded-md hover:bg-accent transition-colors"
         >

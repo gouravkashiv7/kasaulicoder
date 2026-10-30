@@ -44,6 +44,7 @@ export async function PUT(req: Request) {
     );
     return NextResponse.json(updatedProject, { status: 200 });
   } catch (error: any) {
+    console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },
@@ -84,6 +85,7 @@ export async function DELETE(req: Request) {
       { status: 200 },
     );
   } catch (error: any) {
+    console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 },

@@ -1,8 +1,7 @@
-import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
+import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import Program from "@/backend/models/Program";
-
 
 export async function POST() {
   try {

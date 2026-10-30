@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { SidebarView } from "./types";
+import Link from "next/link";
+import React from "react";
+import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+import type { SidebarView } from "./types";
 
 interface SidebarProps {
   sidebarView: SidebarView;
@@ -140,6 +140,7 @@ const Sidebar = ({
         </Link>
         {/* Close button — mobile only */}
         <button
+          type="button"
           className="ml-auto md:hidden text-foreground/50 hover:text-foreground"
           onClick={() => setMobileMenuOpen(false)}
         >
@@ -151,6 +152,7 @@ const Sidebar = ({
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
         {sidebarItems.map((item) => (
           <button
+            type="button"
             key={item.id}
             onClick={() => {
               setSidebarView(item.id);
@@ -234,6 +236,7 @@ const Sidebar = ({
         </Link>
 
         <button
+          type="button"
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-500/70 hover:text-rose-500 hover:bg-rose-500/5 transition-all"
         >
@@ -255,6 +258,7 @@ const Sidebar = ({
         </button>
         {/* Collapse toggle — desktop only */}
         <button
+          type="button"
           onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
           className="hidden md:flex w-full items-center justify-center gap-3 px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all"
         >

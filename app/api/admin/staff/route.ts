@@ -1,14 +1,13 @@
-import { getServerSession } from "@/backend/lib/auth";
-import { NextResponse } from "next/server";
-import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
-import Staff from "@/backend/models/Staff";
 import bcrypt from "bcryptjs";
+import { NextResponse } from "next/server";
+import { getServerSession } from "@/backend/lib/auth";
+import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import {
-  sendStaffWelcomeEmail,
-  sendAccountDeactivationEmail,
   sendAccountActivationEmail,
+  sendAccountDeactivationEmail,
+  sendStaffWelcomeEmail,
 } from "@/backend/lib/email";
-
+import Staff from "@/backend/models/Staff";
 
 export async function GET() {
   try {
@@ -24,7 +23,7 @@ export async function GET() {
 
     await connectDB();
 
-    // If not superadmin, maybe return a limited selection? 
+    // If not superadmin, maybe return a limited selection?
     // For now, allow all admin types to see the staff list names/ids.
     const staffMembers = await Staff.find({})
       .select("name email role designation image isActive")
@@ -33,7 +32,10 @@ export async function GET() {
     return NextResponse.json(staffMembers);
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -80,7 +82,9 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    const existingStaff = await Staff.findOne({ email }).collation(EMAIL_COLLATION);
+    const existingStaff = await Staff.findOne({ email }).collation(
+      EMAIL_COLLATION,
+    );
 
     if (existingStaff) {
       return NextResponse.json(
@@ -129,7 +133,10 @@ export async function POST(req: Request) {
     );
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -158,7 +165,7 @@ export async function PATCH(req: Request) {
     }
 
     // Toggle logic: Explicitly check for false, everything else toggles to false.
-    const currentStatus = staff.isActive === false ? false : true;
+    const currentStatus = staff.isActive !== false;
     staff.isActive = !currentStatus;
     await staff.save();
 
@@ -179,7 +186,10 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ isActive: staff.isActive });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -242,6 +252,9 @@ export async function PUT(req: Request) {
     });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

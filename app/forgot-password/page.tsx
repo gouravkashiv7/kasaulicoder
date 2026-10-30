@@ -1,15 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import GlobalHeader from "@/components/layout/GlobalHeader";
+import type React from "react";
+import { useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [message, setMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,10 +33,16 @@ export default function ForgotPasswordPage() {
         setMessage({ text: data.message, type: "success" });
         setEmail("");
       } else {
-        setMessage({ text: data.error || "Failed to process request", type: "error" });
+        setMessage({
+          text: data.error || "Failed to process request",
+          type: "error",
+        });
       }
-    } catch (err) {
-      setMessage({ text: "An error occurred. Please try again.", type: "error" });
+    } catch {
+      setMessage({
+        text: "An error occurred. Please try again.",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -41,7 +51,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-display relative overflow-hidden">
       <GlobalHeader />
-      
+
       <main className="flex-1 flex items-center justify-center pt-24 pb-12 px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
@@ -51,7 +61,8 @@ export default function ForgotPasswordPage() {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-black mb-3">Forgot Password</h1>
             <p className="text-foreground/60 text-sm">
-              Enter your email address and we'll send you a link to reset your access key.
+              Enter your email address and we'll send you a link to reset your
+              access key.
             </p>
           </div>
 
@@ -102,8 +113,13 @@ export default function ForgotPasswordPage() {
           </form>
 
           <div className="mt-8 pt-6 border-t border-foreground/5 text-center">
-            <Link href="/login" className="text-xs font-black text-foreground/40 hover:text-primary transition-colors flex items-center justify-center gap-2">
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
+            <Link
+              href="/login"
+              className="text-xs font-black text-foreground/40 hover:text-primary transition-colors flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined text-sm">
+                arrow_back
+              </span>
               Back to Login
             </Link>
           </div>

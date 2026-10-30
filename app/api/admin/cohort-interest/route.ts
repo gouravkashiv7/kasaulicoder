@@ -1,8 +1,7 @@
-import { getServerSession } from "@/backend/lib/auth";
 import { NextResponse } from "next/server";
+import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import NextCohortInterest from "@/backend/models/NextCohortInterest";
-
 
 // GET all cohort-interest signups (admin only)
 export async function GET() {
@@ -28,7 +27,10 @@ export async function GET() {
     return NextResponse.json({ entries, total, notNotified });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -65,7 +67,10 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ message: "Marked as notified", data: updated });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -95,6 +100,9 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ message: "Entry removed" });
   } catch (error: any) {
     console.error(error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

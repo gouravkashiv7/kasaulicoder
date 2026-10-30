@@ -1,11 +1,9 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
-import Image from "next/image";
-import GlobalHeader from "@/components/layout/GlobalHeader";
+import Link from "next/link";
 import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
 
 const PrivacyPolicy = () => {
   return (
