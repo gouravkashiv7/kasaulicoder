@@ -11,5 +11,5 @@ export default async function AdminDashboardPage() {
     ["superadmin", "admin", "editor"].includes(session.role);
   if (!hasAccess) redirect("/");
 
-  return <AdminDashboard role={session.role} />;
+  return <AdminDashboard role={session.role} isDirector={session.isDirector} />;
 }

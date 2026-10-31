@@ -7,7 +7,8 @@ export type SidebarView =
   | "programs"
   | "blogs"
   | "projects"
-  | "social-media";
+  | "social-media"
+  | "policies";
 
 export interface Program {
   _id: string;
@@ -204,4 +205,33 @@ export interface ToggleConfirm {
   name: string;
   isSubmitting: boolean;
   error?: string;
+}
+
+/** A board director as returned by /api/director/* routes. */
+export interface DirectorRef {
+  id: string;
+  name: string;
+  email: string;
+  image?: string;
+}
+
+export interface PolicyRecord {
+  _id: string;
+  title: string;
+  body: string;
+  kind: "general" | "revenue-split";
+  split?: {
+    companyBps: number;
+    directors: Array<{ staff: { _id: string; name: string }; bps: number }>;
+  };
+  proposedBy: { _id: string; name: string };
+  votes: Array<{
+    staff: { _id: string; name: string };
+    vote: "yes" | "no";
+    comment?: string;
+    at: string;
+  }>;
+  status: "proposed" | "approved" | "rejected" | "superseded";
+  decidedAt?: string;
+  createdAt: string;
 }

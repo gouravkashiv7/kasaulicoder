@@ -8,6 +8,7 @@ import type { SidebarView } from "./types";
 
 interface SidebarProps {
   role?: string;
+  isDirector?: boolean;
   sidebarView: SidebarView;
   setSidebarView: (view: SidebarView) => void;
   sidebarCollapsed: boolean;
@@ -21,6 +22,7 @@ interface SidebarProps {
 
 const Sidebar = ({
   role,
+  isDirector,
   sidebarView,
   setSidebarView,
   sidebarCollapsed,
@@ -87,8 +89,15 @@ const Sidebar = ({
       label: "Social Media",
       icon: "share",
     },
+    {
+      id: "policies" as SidebarView,
+      label: "Policies",
+      icon: "gavel",
+      directorOnly: true,
+    },
   ].filter((item) => {
     if (item.superOnly && !isSuperAdmin) return false;
+    if (item.directorOnly && !isDirector) return false;
     return true;
   });
 

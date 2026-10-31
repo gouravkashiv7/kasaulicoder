@@ -19,6 +19,7 @@ import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
 // Modals
 import StaffModal from "@/components/admin/modals/StaffModal";
 import StatusToggleModal from "@/components/admin/modals/StatusToggleModal";
+import Policies from "@/components/admin/director/Policies";
 import Overview from "@/components/admin/Overview";
 import Pricing from "@/components/admin/Pricing";
 import Programs from "@/components/admin/Programs";
@@ -81,9 +82,10 @@ const EMPTY_PROGRAM: ProgramForm = {
 interface AdminDashboardProps {
   // Role comes from the verified server session so the first paint is correct
   role: string;
+  isDirector: boolean;
 }
 
-const AdminDashboard = ({ role }: AdminDashboardProps) => {
+const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
   const searchParams = useSearchParams();
 
   // Only used for the viewer's own id (social media credential access)
@@ -115,6 +117,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
       "projects",
       "social-media",
     ];
+    if (isDirector) allTabs.push("policies");
     if (isSuperAdmin) return allTabs;
     // Staff (admin role) restricted tabs
     return allTabs.filter(
@@ -123,7 +126,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
           t,
         ),
     );
-  }, [isSuperAdmin]);
+  }, [isSuperAdmin, isDirector]);
 
   // The URL is the single source of truth for the active tab, so a click can
   // never be overwritten by a stale copy of the previous tab.
@@ -1018,6 +1021,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
 
       <AdminSidebar
         role={role}
+        isDirector={isDirector}
         sidebarView={sidebarView}
         setSidebarView={setSidebarView}
         sidebarCollapsed={sidebarCollapsed}
@@ -1115,6 +1119,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
                 handleDeleteProgram={handleDeleteProgram}
               />
             )}
+            {sidebarView === "policies" && isDirector && <Policies />}
             {sidebarView === "blogs" && <AdminBlogManagement />}
             {sidebarView === "projects" && <AdminProjectsManagement />}
             {sidebarView === "social-media" && (
