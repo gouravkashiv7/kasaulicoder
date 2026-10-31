@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { useDirectorBadges } from "@/components/admin/director/useDirectorBadges";
 import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
 import type { SocialMediaAccount } from "@/components/admin/types";
 import UniqueLoading from "@/components/ui/morph-loading";
@@ -940,6 +941,8 @@ const MemberDashboard = () => {
     name: "",
     email: "",
     password: "",
+    designation: "",
+    roleDescription: "",
   });
   const [updateStatus, setUpdateStatus] = useState<{
     type: "success" | "error";
@@ -993,6 +996,8 @@ const MemberDashboard = () => {
           name: data.name,
           email: data.email,
           password: "",
+          designation: data.designation || "",
+          roleDescription: data.roleDescription || "",
         });
       } else {
         router.push("/login?type=admin");
@@ -1034,7 +1039,14 @@ const MemberDashboard = () => {
 
       if (res.ok) {
         setUpdateStatus({ type: "success", message: data.message });
-        setUser({ ...user, name: profileData.name, email: profileData.email });
+        setUser({
+          ...user,
+          name: profileData.name,
+          email: profileData.email,
+          // The server trims and caps these, so show what was actually saved
+          designation: data.user.designation ?? user.designation,
+          roleDescription: data.user.roleDescription ?? user.roleDescription,
+        });
         setProfileData({ ...profileData, password: "" });
 
         // Update local storage too
@@ -1202,6 +1214,29 @@ const MemberDashboard = () => {
     { id: "settings" as SidebarView, label: "Settings", icon: "settings" },
   ];
 
+  const isDirector = user?.isDirector === true;
+  const directorBadges = useDirectorBadges(isDirector, sidebarView);
+  const directorLinks = [
+    {
+      tab: "finance",
+      label: "Finance",
+      icon: "account_balance",
+      badge: directorBadges.finance,
+    },
+    {
+      tab: "policies",
+      label: "Policies",
+      icon: "gavel",
+      badge: directorBadges.policies,
+    },
+    {
+      tab: "discussions",
+      label: "Discussions",
+      icon: "forum",
+      badge: directorBadges.discussions,
+    },
+  ];
+
   const filteredSidebarItems = sidebarItems.filter((item) => {
     if (["projects", "social-media"].includes(item.id)) {
       return user?.role === "admin" || user?.role === "editor";
@@ -1289,6 +1324,41 @@ const MemberDashboard = () => {
               )}
             </button>
           ))}
+
+          {isDirector && (
+            <div className="pt-3 mt-3 border-t border-foreground/10 space-y-1">
+              {!sidebarCollapsed && (
+                <p className="px-3 pb-1 text-[10px] font-black uppercase tracking-widest text-foreground/30">
+                  Directors
+                </p>
+              )}
+              {directorLinks.map((link) => (
+                <Link
+                  key={link.tab}
+                  href={`/admin/dashboard?tab=${link.tab}`}
+                  className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all relative text-foreground/50 hover:text-foreground hover:bg-foreground/5"
+                >
+                  <span className="material-symbols-outlined text-xl shrink-0">
+                    {link.icon}
+                  </span>
+                  {!sidebarCollapsed && (
+                    <span className="text-sm font-bold whitespace-nowrap">
+                      {link.label}
+                    </span>
+                  )}
+                  {link.badge > 0 && (
+                    <span
+                      className={`${
+                        sidebarCollapsed ? "absolute top-1 right-1" : "ml-auto"
+                      } bg-rose-500 text-white text-[10px] font-black min-w-5 h-5 rounded-full flex items-center justify-center px-1`}
+                    >
+                      {link.badge}
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </div>
+          )}
         </nav>
 
         {/* User profile footer in sidebar */}
@@ -1763,6 +1833,58 @@ const MemberDashboard = () => {
                         className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold"
                       />
                     </div>
+
+                    {user?.role === "admin" && (
+                      <>
+                        <div className="space-y-2">
+                          <label
+                            htmlFor="profile-designation"
+                            className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1"
+                          >
+                            Designation
+                          </label>
+                          <input
+                            id="profile-designation"
+                            type="text"
+                            maxLength={100}
+                            value={profileData.designation}
+                            onChange={(e) =>
+                              setProfileData({
+                                ...profileData,
+                                designation: e.target.value,
+                              })
+                            }
+                            placeholder="e.g. Co-Founder & CTO"
+                            className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label
+                            htmlFor="profile-bio"
+                            className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1"
+                          >
+                            Role description
+                          </label>
+                          <textarea
+                            id="profile-bio"
+                            rows={4}
+                            maxLength={500}
+                            value={profileData.roleDescription}
+                            onChange={(e) =>
+                              setProfileData({
+                                ...profileData,
+                                roleDescription: e.target.value,
+                              })
+                            }
+                            placeholder="Tell us about your role…"
+                            className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold resize-y"
+                          />
+                          <p className="text-[11px] text-foreground/40 ml-1">
+                            Shown on your dashboard and the public team section.
+                          </p>
+                        </div>
+                      </>
+                    )}
 
                     <div className="pt-4">
                       <button

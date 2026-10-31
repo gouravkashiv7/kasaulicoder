@@ -273,6 +273,29 @@ const Sidebar = ({
             </AnimatePresence>
           </Link>
 
+          {!isSuperAdmin && (
+            <Link
+              href="/member/dashboard"
+              className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all"
+            >
+              <span className="material-symbols-outlined text-xl shrink-0">
+                badge
+              </span>
+              <AnimatePresence>
+                {!sidebarCollapsed && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    exit={{ opacity: 0, width: 0 }}
+                    className="text-sm font-bold whitespace-nowrap overflow-hidden"
+                  >
+                    My Workspace
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </Link>
+          )}
+
           <button
             type="button"
             onClick={handleLogout}

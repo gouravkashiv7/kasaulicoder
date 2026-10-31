@@ -24,5 +24,15 @@
 - `modals/StaffModal.tsx`: the "Board director" checkbox
 - `components/auth/AdminDashboard.tsx`: tab list and rendering (`isDirector` prop from `app/admin/dashboard/page.tsx`)
 
+**MemberHub (`components/auth/MemberDashboard.tsx`)**
+- "Directors" sidebar group for `isDirector` users (links into the admin panel,
+  badges via `useDirectorBadges`).
+- Settings: admins edit their own **Designation** (max 100) and **Role
+  description** (max 500) next to name, email and password.
+- `app/api/member/profile/route.ts` (PATCH) accepts `designation` and
+  `roleDescription` for `admin` and `superadmin` roles only; other roles stay
+  read-only.
+- `AdminSidebar.tsx`: **My Workspace** link for non-superadmins.
+
 **Config:** `tsconfig.json` enables `allowImportingTsExtensions` (tests import
 `.ts` files); `package.json` has `pnpm test`.

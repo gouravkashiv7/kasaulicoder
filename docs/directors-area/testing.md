@@ -61,4 +61,12 @@ directors are flagged. A revenue split must cover every active director, so the
 split checks would fail (the test accounts and the real directors would all
 count). Re-running needs either a separate test database, or temporarily
 un-flagging the real directors, which is not recommended on live data.
-`cleanup.cjs` deletes only records created by `E2E-TEST` staff.
+`cleanup.cjs` deletes only records created by `E2E-TEST` staff. It finds them by
+`designation: "E2E-TEST"`, so if a test changes that field (as the profile-edit
+check did), delete the account by email instead.
+
+## MemberHub changes (2026-10-31)
+Checked in the browser with one temporary director account, deleted afterwards:
+the Directors group appears, Finance opens in the admin panel with the real
+directors' share cards, My Workspace links back, and Settings saves designation
+and role description (PATCH 200, "Profile updated successfully").

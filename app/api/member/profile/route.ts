@@ -47,7 +47,8 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    const { name, email, password } = await req.json();
+    const { name, email, password, designation, roleDescription } =
+      await req.json();
 
     await connectDB();
     const staff = await Staff.findById(session.id);
@@ -72,6 +73,16 @@ export async function PATCH(req: Request) {
       staff.email = email;
     }
 
+    // Admins maintain their own title and bio; other roles keep them read-only
+    if (session.role === "admin" || session.role === "superadmin") {
+      if (typeof designation === "string") {
+        staff.designation = designation.trim().slice(0, 100);
+      }
+      if (typeof roleDescription === "string") {
+        staff.roleDescription = roleDescription.trim().slice(0, 500);
+      }
+    }
+
     if (password) {
       staff.password = await bcrypt.hash(password, 12);
     }
@@ -85,6 +96,8 @@ export async function PATCH(req: Request) {
         name: staff.name,
         email: staff.email,
         role: staff.role,
+        designation: staff.designation,
+        roleDescription: staff.roleDescription,
       },
     });
   } catch (error: any) {

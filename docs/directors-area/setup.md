@@ -10,6 +10,13 @@ split must cover exactly the active directors).
 No revenue split policy exists yet, so payments can't be recorded until one is
 proposed and approved.
 
+## Where directors find it
+Admins who are not superadmins land in **MemberHub** (`/member/dashboard`) after
+login. Directors see a **Directors** group there (Finance, Policies,
+Discussions, with the same badges as the admin panel). These links open the
+admin panel (`/admin/dashboard?tab=...`). The admin panel's sidebar has a
+**My Workspace** link back to MemberHub.
+
 ## Turn it on
 1. Sign in as a superadmin → **Management → Staff** → edit each director →
    tick **Board director** → save. The tabs appear for them at next load.
