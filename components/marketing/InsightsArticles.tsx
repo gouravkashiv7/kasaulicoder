@@ -59,7 +59,7 @@ const InsightsArticles = () => {
         <section className="px-6 mb-20">
           <div className="max-w-7xl mx-auto">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 1, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-12"
             >

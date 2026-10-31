@@ -115,7 +115,7 @@ const LoginPage = () => {
 
       <main className="flex-1 flex items-center justify-center pt-24 pb-12 px-4 relative z-10">
         <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
+          initial={{ opacity: 1, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="w-full max-w-6xl overflow-hidden glass-morphism border-white/5 dark:border-white/10 rounded-4xl sm:rounded-[2.5rem] shadow-2xl relative"
@@ -151,7 +151,7 @@ const LoginPage = () => {
                   className={`relative z-10 flex-1 py-2.5 px-4 text-xs font-black rounded-xl transition-colors duration-500 ${
                     loginType === "user"
                       ? "text-primary-content"
-                      : "text-foreground/50 hover:text-foreground/80"
+                      : "text-foreground/70 hover:text-foreground"
                   }`}
                 >
                   User Login
@@ -163,7 +163,7 @@ const LoginPage = () => {
                   className={`relative z-10 flex-1 py-2.5 px-4 text-xs font-black rounded-xl transition-colors duration-500 ${
                     loginType === "admin"
                       ? "text-white"
-                      : "text-foreground/50 hover:text-foreground/80"
+                      : "text-foreground/70 hover:text-foreground"
                   }`}
                 >
                   Admin Login
@@ -211,7 +211,7 @@ const LoginPage = () => {
 
               <form className="space-y-5" onSubmit={handleSubmit}>
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-1">
                     Email Address
                   </label>
                   <div className="relative group">
@@ -233,7 +233,7 @@ const LoginPage = () => {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between ml-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70">
                       Password
                     </label>
                     <Link

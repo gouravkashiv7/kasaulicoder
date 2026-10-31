@@ -44,7 +44,7 @@ export default function ProjectShowcaseCard({
             <span className="size-2.5 rounded-full bg-foreground/20" />
             <span className="size-2.5 rounded-full bg-foreground/20" />
           </span>
-          <span className="flex-1 min-w-0 truncate text-center text-xs text-foreground/50 font-medium pr-10">
+          <span className="flex-1 min-w-0 truncate text-center text-xs text-foreground/70 font-medium pr-10">
             {host ?? project.title}
           </span>
         </div>
@@ -69,7 +69,7 @@ export default function ProjectShowcaseCard({
           large ? "lg:col-span-5 lg:pt-0 lg:pr-6" : "flex-1"
         }`}
       >
-        <p className="text-sm font-semibold text-foreground/50 mb-2">
+        <p className="text-sm font-semibold text-foreground/70 mb-2">
           {project.status === "active" ? "In development" : "Completed project"}
         </p>
         <Heading

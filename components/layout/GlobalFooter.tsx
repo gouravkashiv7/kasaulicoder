@@ -145,7 +145,7 @@ const GlobalFooter = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto mt-14 pt-8 border-t border-foreground/10 text-sm text-foreground/50">
+      <div className="max-w-7xl mx-auto mt-14 pt-8 border-t border-foreground/10 text-sm text-foreground/70">
         © {new Date().getFullYear()} KasauliCoder. All rights reserved.
       </div>
     </footer>

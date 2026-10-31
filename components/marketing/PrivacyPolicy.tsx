@@ -15,7 +15,7 @@ const PrivacyPolicy = () => {
       <main className="relative z-10 flex-1 pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-12"
           >
@@ -28,7 +28,7 @@ const PrivacyPolicy = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="space-y-12 text-foreground opacity-80"

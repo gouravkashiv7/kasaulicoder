@@ -15,7 +15,7 @@
 .theme-light {
   --background: #fffbf5; /* Warmer off-white with subtle amber tint */
   --foreground: #1c1917; /* Warm stone-900 */
-  --primary: #b45309; /* Amber-700 — 4.5:1+ on the cream background and with --primary-content */
+  --primary: #92400e; /* Amber-800 — keeps 4.5:1+ for small primary text on tinted backgrounds */
   --primary-content: #fffbeb;
   --secondary: #0f766e; /* Deep Teal — sophisticated contrast with amber */
   --glass: rgba(255, 251, 245, 0.75);
@@ -336,4 +336,12 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Reserve the icon's square before the Material Symbols font loads, so the
+   ligature text (e.g. "deployed_code") never reflows the page when it swaps. */
+.material-symbols-outlined {
+  width: 1em;
+  height: 1em;
+  overflow: hidden;
 }

@@ -30,7 +30,7 @@ const emptyForm = {
 const fieldClass =
   "w-full bg-foreground/5 border border-foreground/15 rounded-xl focus:ring-2 focus:ring-primary/25 focus:border-primary text-foreground placeholder:text-foreground/35 px-4 py-3 outline-none transition-colors disabled:opacity-60 [&>option]:bg-background";
 const labelClass = "block text-sm font-semibold mb-2 text-foreground/85";
-const optionalClass = "font-normal text-foreground/50";
+const optionalClass = "font-normal text-foreground/70";
 
 const ContactForm = ({ initialService }: { initialService?: string }) => {
   const initialServiceTitle =
@@ -258,7 +258,7 @@ const ContactForm = ({ initialService }: { initialService?: string }) => {
                   />
                   <p
                     id="contact-query-hint"
-                    className="mt-2 text-sm text-foreground/55"
+                    className="mt-2 text-sm text-foreground/70"
                   >
                     What you want to build or improve, who will use it, and any
                     existing systems it needs to work with.
