@@ -637,3 +637,71 @@ export const sendPasswordResetEmail = async (
     html,
   });
 };
+
+export const sendContactRejectionEmail = async (
+  email: string,
+  name: string,
+  reason: string,
+): Promise<void> => {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Update on your request - Kasaulicoder</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+          <tr>
+            <td style="background:#1a1a2e;padding:30px 48px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:800;letter-spacing:-0.5px;">Update on Your Request</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:40px 48px 32px;">
+              <p style="margin:0 0 16px;font-size:16px;color:#374151;line-height:1.7;">
+                Hello <strong>${esc(name)}</strong>,
+              </p>
+              <p style="margin:0 0 24px;font-size:16px;color:#4b5563;line-height:1.7;">
+                Thank you for reaching out to Kasaulicoder. After reviewing your consultation request, we are unable to move forward with it at this time.
+              </p>
+              <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:24px;">
+                <p style="margin:0 0 6px;font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Reason</p>
+                <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;white-space:pre-wrap;">${esc(reason)}</p>
+              </div>
+              <p style="margin:0 0 24px;font-size:15px;color:#4b5563;line-height:1.7;">
+                You are welcome to submit a new request in the future if your requirements change.
+              </p>
+              <p style="margin:0;font-size:15px;color:#374151;">
+                Regards,<br/>
+                <strong>Kasaulicoder Team</strong>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 48px 40px;">
+              <div style="border-top:1px solid #e2e8f0;padding-top:24px;text-align:center;">
+                <img src="https://kasaulicoder.com/mail.png" alt="Kasaulicoder Logo" width="110" style="display:block;margin:0 auto 12px;max-width:110px;" />
+                <p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.7;">
+                  © Kasauli coder 2026 | All Rights Reserved
+                </p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  await transporter.sendMail({
+    from: `"Kasaulicoder" <${process.env.SMTP_FROM || "info@kasaulicoder.com"}>`,
+    to: email,
+    subject: "Update on your Kasaulicoder consultation request",
+    html,
+  });
+};

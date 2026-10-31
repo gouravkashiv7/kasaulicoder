@@ -72,9 +72,22 @@ export interface ContactRequest {
   budget?: string;
   timeline?: string;
   isRead: boolean;
+  status?: "pending" | "rejected";
+  rejectionReason?: string;
+  rejectedAt?: string;
+  rejectionEmailSent?: boolean;
   ipAddress: string;
   device: string;
   createdAt: string;
+}
+
+export interface RejectConfirm {
+  id: string;
+  name: string;
+  email: string;
+  reason: string;
+  isSubmitting: boolean;
+  error?: string;
 }
 
 export interface CohortInterest {

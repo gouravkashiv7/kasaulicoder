@@ -10,6 +10,10 @@ export interface IContactRequest extends Document {
   budget?: string;
   timeline?: string;
   isRead: boolean;
+  status: "pending" | "rejected";
+  rejectionReason?: string;
+  rejectedAt?: Date;
+  rejectionEmailSent?: boolean;
   ipAddress: string;
   device: string;
   createdAt: Date;
@@ -31,6 +35,14 @@ const ContactRequestSchema: Schema = new Schema(
     budget: { type: String },
     timeline: { type: String },
     isRead: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ["pending", "rejected"],
+      default: "pending",
+    },
+    rejectionReason: { type: String },
+    rejectedAt: { type: Date },
+    rejectionEmailSent: { type: Boolean },
     ipAddress: { type: String, default: "unknown" },
     device: { type: String, default: "unknown" },
   },

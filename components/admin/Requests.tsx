@@ -8,6 +8,9 @@ interface RequestsProps {
   contactsLoading: boolean;
   unreadCount: number;
   handleMarkAsRead: (id: string) => void;
+  handleReject: (req: ContactRequest) => void;
+  notice?: string;
+  onDismissNotice?: () => void;
 }
 
 const Requests = ({
@@ -15,6 +18,9 @@ const Requests = ({
   contactsLoading,
   unreadCount,
   handleMarkAsRead,
+  handleReject,
+  notice,
+  onDismissNotice,
 }: RequestsProps) => {
   return (
     <motion.div
@@ -34,6 +40,23 @@ const Requests = ({
             : "All caught up! No new requests."}
         </p>
       </div>
+
+      {notice && (
+        <div
+          role="alert"
+          className="mb-4 flex items-start justify-between gap-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-600 text-xs font-bold"
+        >
+          <span>{notice}</span>
+          <button
+            type="button"
+            onClick={onDismissNotice}
+            aria-label="Dismiss"
+            className="shrink-0 hover:opacity-70"
+          >
+            <span className="material-symbols-outlined text-sm">close</span>
+          </button>
+        </div>
+      )}
 
       {contactsLoading ? (
         <div className="p-20 text-center animate-pulse text-primary font-bold">
@@ -55,9 +78,11 @@ const Requests = ({
               key={req._id}
               layout
               className={`bg-background/40 backdrop-blur-xl border rounded-2xl p-4 md:p-6 transition-all ${
-                req.isRead
-                  ? "border-foreground/5 opacity-70"
-                  : "border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.05)]"
+                req.status === "rejected"
+                  ? "border-rose-500/20 opacity-70"
+                  : req.isRead
+                    ? "border-foreground/5 opacity-70"
+                    : "border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.05)]"
               }`}
             >
               <div className="flex items-start justify-between gap-4">
@@ -75,7 +100,12 @@ const Requests = ({
                     >
                       {req.userType}
                     </span>
-                    {!req.isRead && (
+                    {req.status === "rejected" && (
+                      <span className="bg-rose-500/15 text-rose-500 text-[10px] font-black uppercase px-2.5 py-1 rounded-full">
+                        Rejected
+                      </span>
+                    )}
+                    {!req.isRead && req.status !== "rejected" && (
                       <span className="bg-rose-500 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-full animate-pulse">
                         New
                       </span>
@@ -134,20 +164,49 @@ const Requests = ({
                       {req.query}
                     </p>
                   </div>
+                  {req.status === "rejected" && req.rejectionReason && (
+                    <div className="mt-3 bg-rose-500/5 rounded-xl p-4 border border-rose-500/20">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-rose-500 mb-1">
+                        Rejection reason
+                        {req.rejectionEmailSent
+                          ? " · emailed to requester"
+                          : " · not emailed"}
+                      </p>
+                      <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap break-words">
+                        {req.rejectionReason}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
-                {!req.isRead && (
-                  <button
-                    type="button"
-                    onClick={() => handleMarkAsRead(req._id)}
-                    className="shrink-0 size-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all border border-primary/20 group"
-                    title="Mark as read"
-                  >
-                    <span className="material-symbols-outlined group-hover:scale-110 transition-transform">
-                      done_all
-                    </span>
-                  </button>
-                )}
+                <div className="shrink-0 flex flex-col gap-2">
+                  {!req.isRead && req.status !== "rejected" && (
+                    <button
+                      type="button"
+                      onClick={() => handleMarkAsRead(req._id)}
+                      className="size-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all border border-primary/20 group"
+                      title="Mark as read"
+                      aria-label={`Mark request from ${req.name} as read`}
+                    >
+                      <span className="material-symbols-outlined group-hover:scale-110 transition-transform">
+                        done_all
+                      </span>
+                    </button>
+                  )}
+                  {req.status !== "rejected" && (
+                    <button
+                      type="button"
+                      onClick={() => handleReject(req)}
+                      className="size-10 flex items-center justify-center rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 transition-all border border-rose-500/20 group"
+                      title="Reject request"
+                      aria-label={`Reject request from ${req.name}`}
+                    >
+                      <span className="material-symbols-outlined group-hover:scale-110 transition-transform">
+                        block
+                      </span>
+                    </button>
+                  )}
+                </div>
               </div>
             </motion.div>
           ))}

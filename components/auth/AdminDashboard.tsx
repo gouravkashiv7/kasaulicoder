@@ -14,6 +14,7 @@ import Cohort from "@/components/admin/Cohort";
 import Management from "@/components/admin/Management";
 import PlanModal from "@/components/admin/modals/PlanModal";
 import ProgramModal from "@/components/admin/modals/ProgramModal";
+import RejectRequestModal from "@/components/admin/modals/RejectRequestModal";
 import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
 // Modals
 import StaffModal from "@/components/admin/modals/StaffModal";
@@ -33,6 +34,7 @@ import type {
   PlanForm,
   Program,
   ProgramForm,
+  RejectConfirm,
   SidebarView,
   SocialMediaAccount,
   SocialMediaFormData,
@@ -219,6 +221,13 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
   const [toggleConfirm, setToggleConfirm] = useState<ToggleConfirm | null>(
     null,
   );
+
+  // Reject Request Confirmation
+  const [rejectConfirm, setRejectConfirm] = useState<RejectConfirm | null>(
+    null,
+  );
+
+  const [requestNotice, setRequestNotice] = useState("");
 
   // API Callbacks
   // Fetchers never flip their loading flag back on: loading starts true, and a
@@ -514,6 +523,58 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const openRejectRequest = (req: ContactRequest) => {
+    setRejectConfirm({
+      id: req._id,
+      name: req.name,
+      email: req.email,
+      reason: "",
+      isSubmitting: false,
+    });
+  };
+
+  const executeReject = async (sendEmail: boolean) => {
+    if (!rejectConfirm) return;
+    const { id, reason } = rejectConfirm;
+    setRejectConfirm({
+      ...rejectConfirm,
+      isSubmitting: true,
+      error: undefined,
+    });
+    try {
+      const res = await fetch("/api/admin/contacts", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, action: "reject", reason, sendEmail }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setContactRequests((prev) =>
+          prev.map((r) => (r._id === id ? { ...r, ...data.data } : r)),
+        );
+        setRejectConfirm(null);
+        setRequestNotice(data.emailError || "");
+      } else {
+        setRejectConfirm((prev) =>
+          prev
+            ? {
+                ...prev,
+                isSubmitting: false,
+                error: data.error || "Failed to reject request",
+              }
+            : null,
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      setRejectConfirm((prev) =>
+        prev
+          ? { ...prev, isSubmitting: false, error: "Something went wrong" }
+          : null,
+      );
     }
   };
 
@@ -891,7 +952,9 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
     setShowSocialMediaModal(true);
   };
 
-  const unreadCount = contactRequests.filter((r) => !r.isRead).length;
+  const unreadCount = contactRequests.filter(
+    (r) => !r.isRead && r.status !== "rejected",
+  ).length;
 
   if (authError) {
     return (
@@ -1012,6 +1075,9 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
                 contactsLoading={contactsLoading}
                 unreadCount={unreadCount}
                 handleMarkAsRead={handleMarkAsRead}
+                handleReject={openRejectRequest}
+                notice={requestNotice}
+                onDismissNotice={() => setRequestNotice("")}
               />
             )}
             {sidebarView === "pricing" && (
@@ -1114,6 +1180,12 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
         toggleConfirm={toggleConfirm}
         setToggleConfirm={setToggleConfirm}
         executeStatusToggle={executeStatusToggle}
+      />
+
+      <RejectRequestModal
+        rejectConfirm={rejectConfirm}
+        setRejectConfirm={setRejectConfirm}
+        executeReject={executeReject}
       />
 
       <SocialMediaModal
