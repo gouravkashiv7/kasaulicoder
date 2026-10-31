@@ -70,3 +70,10 @@ Checked in the browser with one temporary director account, deleted afterwards:
 the Directors group appears, Finance opens in the admin panel with the real
 directors' share cards, My Workspace links back, and Settings saves designation
 and role description (PATCH 200, "Profile updated successfully").
+
+Follow-up, same method: a photo injected into the file picker came out as a
+400×400 JPEG (about 2 KB) and was saved; designation and bio set directly in the
+page with no change event were saved too (this had failed once before the form
+read values at submit); the server returned 400 for a non-image, a JPEG with
+fake bytes and a 250 KB photo, and removing the photo worked. The temporary
+account was deleted by email afterwards.

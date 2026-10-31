@@ -29,9 +29,17 @@
   badges via `useDirectorBadges`).
 - Settings: admins edit their own **Designation** (max 100) and **Role
   description** (max 500) next to name, email and password.
-- `app/api/member/profile/route.ts` (PATCH) accepts `designation` and
-  `roleDescription` for `admin` and `superadmin` roles only; other roles stay
-  read-only.
+- Settings also has a **profile photo** control (admins only): the browser
+  centre-crops to a 400×400 JPEG (`lib/imageResize.ts`), shows a preview, and
+  sends it only when it changed. **Remove** clears it.
+- "Update Profile" reads the field values from the form at submit time, so
+  autofill, password managers and scripted fills are saved even when no change
+  event fired.
+- `app/api/member/profile/route.ts` (PATCH) accepts `designation`,
+  `roleDescription` and `image` for `admin` and `superadmin` roles only; other
+  roles stay read-only. The photo must be a JPEG/PNG/WebP data URL whose bytes
+  match its type and is at most 200 KB; `""` removes it. It is validated before
+  anything is changed.
 - `AdminSidebar.tsx`: **My Workspace** link for non-superadmins.
 
 **Config:** `tsconfig.json` enables `allowImportingTsExtensions` (tests import
