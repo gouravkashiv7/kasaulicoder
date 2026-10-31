@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import type { ToggleConfirm } from "../types";
 
 interface StatusToggleModalProps {
   toggleConfirm: {
@@ -11,7 +12,7 @@ interface StatusToggleModalProps {
     isSubmitting: boolean;
     error?: string;
   } | null;
-  setToggleConfirm: (val: any) => void;
+  setToggleConfirm: (val: ToggleConfirm | null) => void;
   executeStatusToggle: (sendEmail: boolean) => void;
 }
 

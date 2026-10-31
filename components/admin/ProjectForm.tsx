@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useEffect, useState } from "react";
-import type { Project } from "@/components/admin/types";
+import type { DirectoryRecord, Project } from "@/components/admin/types";
+import { useRowKeys } from "./useRowKeys";
 
 interface ProjectFormProps {
   project?: Project;
@@ -34,7 +36,9 @@ export default function ProjectForm({
     members: [] as string[],
   });
 
-  const [staffList, setStaffList] = useState<any[]>([]);
+  const mediaRows = useRowKeys(formData.media.length);
+
+  const [staffList, setStaffList] = useState<DirectoryRecord[]>([]);
 
   useEffect(() => {
     const fetchStaff = async () => {
@@ -42,7 +46,9 @@ export default function ProjectForm({
         const res = await fetch("/api/admin/staff");
         if (res.ok) {
           const data = await res.json();
-          setStaffList(data.filter((s: any) => s.role !== "superadmin"));
+          setStaffList(
+            data.filter((s: DirectoryRecord) => s.role !== "superadmin"),
+          );
         }
       } catch (err) {
         console.error("Failed to fetch staff:", err);
@@ -66,7 +72,7 @@ export default function ProjectForm({
         status: project.status || "active",
         featured: project.featured || false,
         members:
-          project.members?.map((m: any) =>
+          project.members?.map((m: Project["members"][number] | string) =>
             typeof m === "string" ? m : m._id,
           ) || [],
       });
@@ -282,10 +288,13 @@ export default function ProjectForm({
               >
                 <div className="size-6 rounded-lg bg-foreground/10 overflow-hidden relative shrink-0">
                   {staff.image ? (
-                    <img
+                    <Image
                       src={staff.image}
                       alt={staff.name}
-                      className="size-full object-cover"
+                      fill
+                      sizes="24px"
+                      unoptimized
+                      className="object-cover"
                     />
                   ) : (
                     <div className="size-full flex items-center justify-center text-[10px] font-black uppercase tracking-tighter">
@@ -365,7 +374,7 @@ export default function ProjectForm({
                 layout
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                key={idx}
+                key={mediaRows.keys[idx]}
                 className="flex gap-3 items-center group/media"
               >
                 <div
@@ -384,9 +393,13 @@ export default function ProjectForm({
                   placeholder={`${item.type} URL (e.g., https://...)`}
                   value={item.url}
                   onChange={(e) => {
-                    const newMedia = [...formData.media];
-                    newMedia[idx].url = e.target.value;
-                    setFormData((p) => ({ ...p, media: newMedia }));
+                    const url = e.target.value;
+                    setFormData((p) => ({
+                      ...p,
+                      media: p.media.map((m, i) =>
+                        i === idx ? { ...m, url } : m,
+                      ),
+                    }));
                   }}
                   className="flex-1 bg-background border border-white/10 rounded-2xl px-4 py-2.5 text-xs outline-none focus:border-primary/50 transition-all shadow-inner"
                   required
@@ -394,10 +407,11 @@ export default function ProjectForm({
                 <button
                   type="button"
                   onClick={() => {
+                    mediaRows.removeKey(idx);
                     const newMedia = formData.media.filter((_, i) => i !== idx);
                     setFormData((p) => ({ ...p, media: newMedia }));
                   }}
-                  className="size-10 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20 flex items-center justify-center transition-all opacity-0 group-hover/media:opacity-100"
+                  className="size-10 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20 flex items-center justify-center transition-all opacity-0 group-hover/media:opacity-100 focus-visible:opacity-100"
                 >
                   <span className="material-symbols-outlined text-sm">
                     delete
@@ -432,7 +446,10 @@ export default function ProjectForm({
                 id="project-status"
                 value={formData.status}
                 onChange={(e) =>
-                  setFormData((p) => ({ ...p, status: e.target.value as any }))
+                  setFormData((p) => ({
+                    ...p,
+                    status: e.target.value as "active" | "past",
+                  }))
                 }
                 className="w-full bg-background border border-white/10 rounded-2xl px-5 py-3 text-sm outline-none focus:border-primary/50 transition-all appearance-none"
               >

@@ -114,3 +114,79 @@ export interface SocialMediaAccount {
   createdAt: string;
   updatedAt: string;
 }
+
+/** A row from /api/admin/users or /api/admin/staff. */
+export interface DirectoryRecord {
+  _id: string;
+  name: string;
+  email: string;
+  role?: string;
+  userType?: "student" | "professional";
+  designation?: string;
+  roleDescription?: string;
+  image?: string;
+  isActive?: boolean;
+  createdAt: string;
+}
+
+/** The signed-in admin as cached in localStorage by the login flow. */
+export interface CurrentUser {
+  _id?: string;
+  id?: string;
+  name?: string;
+  email?: string;
+  role?: string;
+}
+
+export interface StaffForm {
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+  designation: string;
+  roleDescription: string;
+  image: string;
+}
+
+export interface PlanForm {
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  billingType: "one_time" | "recurring";
+  billingCycle: "monthly" | "yearly";
+  features: string[];
+  targetAudience: "student" | "professional" | "both";
+  isFeatured: boolean;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+export interface ProgramForm {
+  name: string;
+  tagline: string;
+  description: string;
+  image: string;
+  features: string[];
+  isActive: boolean;
+  isVisible: boolean;
+  sortOrder: number;
+}
+
+export interface SocialMediaFormData {
+  platform: string;
+  username: string;
+  password: string;
+  managedBy: string;
+  platformUrl: string;
+  isActive: boolean;
+}
+
+export interface ToggleConfirm {
+  id: string;
+  type: "users" | "staff";
+  currentStatus: boolean;
+  name: string;
+  isSubmitting: boolean;
+  error?: string;
+}

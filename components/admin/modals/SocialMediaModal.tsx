@@ -2,17 +2,29 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
+import type {
+  DirectoryRecord,
+  SocialMediaAccount,
+  SocialMediaFormData,
+} from "../types";
 
 interface SocialMediaModalProps {
   showModal: boolean;
   setShowModal: (show: boolean) => void;
-  editingAccount: any;
-  setEditingAccount: (account: any) => void;
-  staffList: any[];
-  onSave: (data: any) => void;
+  editingAccount: SocialMediaAccount | null;
+  setEditingAccount: (account: SocialMediaAccount | null) => void;
+  staffList: DirectoryRecord[];
+  onSave: (data: SocialMediaFormData) => void;
   isSubmitting: boolean;
   error?: string;
 }
+
+// The API may return the manager populated (object) or as a bare id
+const managerId = (account: SocialMediaAccount | null): string => {
+  const manager: unknown = account?.managedBy;
+  if (typeof manager === "string") return manager;
+  return (manager as { _id?: string } | null | undefined)?._id ?? "";
+};
 
 const SocialMediaModal = ({
   showModal,
@@ -47,8 +59,7 @@ const SocialMediaModal = ({
         : "",
     username: editingAccount?.username || "",
     password: editingAccount?.password || "",
-    managedBy:
-      editingAccount?.managedBy?._id || editingAccount?.managedBy || "",
+    managedBy: managerId(editingAccount),
     platformUrl: editingAccount?.platformUrl || "",
     isActive: editingAccount?.isActive !== false,
   });
@@ -65,8 +76,7 @@ const SocialMediaModal = ({
         customPlatform: isPredefined ? "" : editingAccount.platform,
         username: editingAccount.username,
         password: editingAccount.password || "",
-        managedBy:
-          editingAccount.managedBy?._id || editingAccount.managedBy || "",
+        managedBy: managerId(editingAccount),
         platformUrl: editingAccount.platformUrl || "",
         isActive: editingAccount.isActive !== false,
       });

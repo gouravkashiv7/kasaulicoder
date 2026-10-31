@@ -27,13 +27,20 @@ import SocialMediaManagement from "@/components/admin/SocialMediaManagement";
 import type {
   CohortInterest,
   ContactRequest,
+  CurrentUser,
+  DirectoryRecord,
   Plan,
+  PlanForm,
   Program,
+  ProgramForm,
   SidebarView,
   SocialMediaAccount,
+  SocialMediaFormData,
+  StaffForm,
+  ToggleConfirm,
 } from "@/components/admin/types";
 
-const EMPTY_STAFF = {
+const EMPTY_STAFF: StaffForm = {
   name: "",
   email: "",
   password: "",
@@ -43,7 +50,7 @@ const EMPTY_STAFF = {
   image: "",
 };
 
-const EMPTY_PLAN = {
+const EMPTY_PLAN: PlanForm = {
   name: "",
   description: "",
   price: 0,
@@ -57,7 +64,7 @@ const EMPTY_PLAN = {
   sortOrder: 0,
 };
 
-const EMPTY_PROGRAM = {
+const EMPTY_PROGRAM: ProgramForm = {
   name: "",
   tagline: "",
   description: "",
@@ -77,7 +84,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
   const searchParams = useSearchParams();
 
   // Only used for the viewer's own id (social media credential access)
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -132,7 +139,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
   // Main State
   const [activeTab, setActiveTab] = useState<"users" | "staff">("users");
   const activeTabRef = useRef<"users" | "staff">("users");
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<DirectoryRecord[]>([]);
   // Lists start in a loading state so the empty state never flashes before the
   // first fetch; later refetches are silent and keep the current rows on screen.
   const [loading, setLoading] = useState(true);
@@ -184,7 +191,9 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
 
   // Staff Management Modal
   const [showAddModal, setShowAddModal] = useState(false);
-  const [editingStaff, setEditingStaff] = useState<any>(null);
+  const [editingStaff, setEditingStaff] = useState<DirectoryRecord | null>(
+    null,
+  );
   const [newStaff, setNewStaff] = useState(EMPTY_STAFF);
   const [uploadError, setUploadError] = useState("");
   const [submitError, setSubmitError] = useState("");
@@ -200,21 +209,16 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
     useState<SocialMediaAccount | null>(null);
   const [socialMediaError, setSocialMediaError] = useState("");
   const [socialMediaSubmitting, setSocialMediaSubmitting] = useState(false);
-  const [allStaff, setAllStaff] = useState<any[]>([]);
+  const [allStaff, setAllStaff] = useState<DirectoryRecord[]>([]);
 
   // UI State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Status Toggle Confirmation
-  const [toggleConfirm, setToggleConfirm] = useState<{
-    id: string;
-    type: "users" | "staff";
-    currentStatus: boolean;
-    name: string;
-    isSubmitting: boolean;
-    error?: string;
-  } | null>(null);
+  const [toggleConfirm, setToggleConfirm] = useState<ToggleConfirm | null>(
+    null,
+  );
 
   // API Callbacks
   // Fetchers never flip their loading flag back on: loading starts true, and a
@@ -240,7 +244,8 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
       if (staffRes.ok) {
         const staffData = await staffRes.json();
         setTotalStaff(
-          staffData.filter((s: any) => s.role !== "superadmin").length,
+          staffData.filter((s: DirectoryRecord) => s.role !== "superadmin")
+            .length,
         );
       }
     } catch (err) {
@@ -429,7 +434,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
     window.location.href = "/login";
   };
 
-  const handleToggleUserStatus = (item: any) => {
+  const handleToggleUserStatus = (item: DirectoryRecord) => {
     setToggleConfirm({
       id: item._id,
       type: "users",
@@ -439,7 +444,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
     });
   };
 
-  const handleToggleStaffStatus = (item: any) => {
+  const handleToggleStaffStatus = (item: DirectoryRecord) => {
     setToggleConfirm({
       id: item._id,
       type: "staff",
@@ -559,7 +564,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
     setShowAddModal(true);
   };
 
-  const openEditStaff = (staff: any) => {
+  const openEditStaff = (staff: DirectoryRecord) => {
     setSubmitError("");
     setUploadError("");
     setEditingStaff(staff);
@@ -567,7 +572,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
       name: staff.name,
       email: staff.email,
       password: "",
-      role: staff.role,
+      role: staff.role ?? "admin",
       designation: staff.designation || "",
       roleDescription: staff.roleDescription || "",
       image: staff.image || "",
@@ -828,7 +833,9 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
     reader.readAsDataURL(file);
   };
 
-  const handleSaveSocialMediaAccount = async (formData: any) => {
+  const handleSaveSocialMediaAccount = async (
+    formData: SocialMediaFormData,
+  ) => {
     setSocialMediaSubmitting(true);
     setSocialMediaError("");
     try {

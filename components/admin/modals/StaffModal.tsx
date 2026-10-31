@@ -1,17 +1,19 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import React, { useRef, useState } from "react";
-import Cropper from "react-cropper";
+import Cropper, { type ReactCropperElement } from "react-cropper";
+import type { DirectoryRecord, StaffForm } from "../types";
 import "cropperjs/dist/cropper.css";
 
 interface StaffModalProps {
   showAddModal: boolean;
   setShowAddModal: (show: boolean) => void;
-  editingStaff: any;
-  setEditingStaff: (staff: any) => void;
-  newStaff: any;
-  setNewStaff: React.Dispatch<React.SetStateAction<any>>;
+  editingStaff: DirectoryRecord | null;
+  setEditingStaff: (staff: DirectoryRecord | null) => void;
+  newStaff: StaffForm;
+  setNewStaff: React.Dispatch<React.SetStateAction<StaffForm>>;
   handleCreateStaff: (e: React.FormEvent) => void;
   isSubmitting: boolean;
   uploadError: string;
@@ -179,7 +181,7 @@ const StaffModal = ({
 }: StaffModalProps) => {
   const [rawImageSrc, setRawImageSrc] = useState<string | null>(null);
   const [showCropper, setShowCropper] = useState(false);
-  const cropperRef = useRef<any>(null);
+  const cropperRef = useRef<ReactCropperElement>(null);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -204,7 +206,7 @@ const StaffModal = ({
     const canvas = cropper.getCroppedCanvas({ width: 256, height: 256 });
     const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
 
-    setNewStaff((prev: any) => ({ ...prev, image: dataUrl }));
+    setNewStaff((prev) => ({ ...prev, image: dataUrl }));
     setUploadError("");
     setShowCropper(false);
     setRawImageSrc(null);
@@ -246,10 +248,13 @@ const StaffModal = ({
                 <div className="flex flex-col items-center gap-4 mb-6">
                   <div className="size-24 rounded-2xl bg-foreground/5 border-2 border-dashed border-foreground/20 flex items-center justify-center overflow-hidden relative group">
                     {newStaff.image ? (
-                      <img
+                      <Image
                         src={newStaff.image}
                         alt="Preview"
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="96px"
+                        unoptimized
+                        className="object-cover"
                       />
                     ) : (
                       <span className="material-symbols-outlined text-3xl text-foreground/20">

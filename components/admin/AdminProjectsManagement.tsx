@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import type { Project } from "@/components/admin/types";
+import type { CurrentUser, Project } from "@/components/admin/types";
 
 export default function AdminProjectsManagement() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -12,7 +12,7 @@ export default function AdminProjectsManagement() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "past">("all");
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: load once on mount
   useEffect(() => {

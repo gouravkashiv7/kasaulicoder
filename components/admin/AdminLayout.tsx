@@ -64,7 +64,9 @@ export default function AdminLayout({
 
       if (contactsRes.ok) {
         const contacts = await contactsRes.json();
-        setUnreadCount(contacts.filter((r: any) => !r.isRead).length);
+        setUnreadCount(
+          contacts.filter((r: { isRead: boolean }) => !r.isRead).length,
+        );
       }
       if (cohortRes.ok) {
         const cohort = await cohortRes.json();

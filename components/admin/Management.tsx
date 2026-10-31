@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { DirectoryRecord } from "./types";
 
 interface ManagementProps {
   activeTab: "users" | "staff";
@@ -15,12 +16,12 @@ interface ManagementProps {
   setUserSortField: (f: "userType" | "createdAt" | "name") => void;
   userSortDir: "asc" | "desc";
   setUserSortDir: (d: "asc" | "desc") => void;
-  data: any[];
+  data: DirectoryRecord[];
   loading: boolean;
   onAddStaff: () => void;
-  handleToggleUserStatus: (item: any) => void;
-  handleToggleStaffStatus: (item: any) => void;
-  openEditStaff: (item: any) => void;
+  handleToggleUserStatus: (item: DirectoryRecord) => void;
+  handleToggleStaffStatus: (item: DirectoryRecord) => void;
+  openEditStaff: (item: DirectoryRecord) => void;
 }
 
 const Management = ({
@@ -46,7 +47,7 @@ const Management = ({
   // logic to compute displayed rows
   let rows =
     activeTab === "staff"
-      ? data.filter((item: any) => item.role !== "superadmin")
+      ? data.filter((item) => item.role !== "superadmin")
       : [...data];
 
   if (activeTab === "users") {

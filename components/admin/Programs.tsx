@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import type { Program } from "./types";
 
 interface ProgramsProps {
@@ -168,10 +169,13 @@ const Programs = ({
                       {/* Image Preview */}
                       <div className="aspect-video bg-foreground/5 rounded-2xl mb-6 overflow-hidden relative group-hover:shadow-lg transition-all duration-500">
                         {prog.image ? (
-                          <img
+                          <Image
                             src={prog.image}
                             alt={prog.name}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            fill
+                            sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
+                            unoptimized
+                            className="object-cover group-hover:scale-110 transition-transform duration-700"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center uppercase text-[10px] font-black text-foreground/10 tracking-widest">
@@ -256,12 +260,15 @@ const Programs = ({
                     </>
                   ) : (
                     <>
-                      <div className="size-12 shrink-0 bg-foreground/5 rounded-xl overflow-hidden border border-foreground/10">
+                      <div className="size-12 shrink-0 bg-foreground/5 rounded-xl overflow-hidden border border-foreground/10 relative">
                         {prog.image && (
-                          <img
+                          <Image
                             src={prog.image}
                             alt=""
-                            className="w-full h-full object-cover"
+                            fill
+                            sizes="48px"
+                            unoptimized
+                            className="object-cover"
                           />
                         )}
                       </div>

@@ -2,13 +2,15 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import type React from "react";
+import type { Plan, PlanForm } from "../types";
+import { useRowKeys } from "../useRowKeys";
 
 interface PlanModalProps {
   showPlanModal: boolean;
   setShowPlanModal: (show: boolean) => void;
-  editingPlan: any;
-  planForm: any;
-  setPlanForm: React.Dispatch<React.SetStateAction<any>>;
+  editingPlan: Plan | null;
+  planForm: PlanForm;
+  setPlanForm: React.Dispatch<React.SetStateAction<PlanForm>>;
   handlePlanSubmit: (e: React.FormEvent) => void;
   planSubmitting: boolean;
   planError: string;
@@ -24,6 +26,8 @@ const PlanModal = ({
   planSubmitting,
   planError,
 }: PlanModalProps) => {
+  const featureRows = useRowKeys(planForm.features.length);
+
   return (
     <AnimatePresence>
       {showPlanModal && (
@@ -173,7 +177,7 @@ const PlanModal = ({
                     onChange={(e) =>
                       setPlanForm({
                         ...planForm,
-                        billingType: e.target.value as any,
+                        billingType: e.target.value as PlanForm["billingType"],
                       })
                     }
                     className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors appearance-none"
@@ -196,7 +200,8 @@ const PlanModal = ({
                       onChange={(e) =>
                         setPlanForm({
                           ...planForm,
-                          billingCycle: e.target.value as any,
+                          billingCycle: e.target
+                            .value as PlanForm["billingCycle"],
                         })
                       }
                       className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors appearance-none"
@@ -222,7 +227,8 @@ const PlanModal = ({
                     onChange={(e) =>
                       setPlanForm({
                         ...planForm,
-                        targetAudience: e.target.value as any,
+                        targetAudience: e.target
+                          .value as PlanForm["targetAudience"],
                       })
                     }
                     className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors appearance-none"
@@ -285,7 +291,7 @@ const PlanModal = ({
                 </div>
                 <div className="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
                   {planForm.features.map((feature: string, idx: number) => (
-                    <div key={idx} className="flex gap-2">
+                    <div key={featureRows.keys[idx]} className="flex gap-2">
                       <input
                         type="text"
                         value={feature}
@@ -300,8 +306,9 @@ const PlanModal = ({
                       <button
                         type="button"
                         onClick={() => {
+                          featureRows.removeKey(idx);
                           const newF = planForm.features.filter(
-                            (_: any, i: number) => i !== idx,
+                            (_, i) => i !== idx,
                           );
                           setPlanForm({
                             ...planForm,

@@ -1,14 +1,17 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import type React from "react";
+import type { Program, ProgramForm } from "../types";
+import { useRowKeys } from "../useRowKeys";
 
 interface ProgramModalProps {
   showProgramModal: boolean;
   setShowProgramModal: (show: boolean) => void;
-  editingProgram: any;
-  programForm: any;
-  setProgramForm: React.Dispatch<React.SetStateAction<any>>;
+  editingProgram: Program | null;
+  programForm: ProgramForm;
+  setProgramForm: React.Dispatch<React.SetStateAction<ProgramForm>>;
   handleProgramImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleProgramSubmit: (e: React.FormEvent) => void;
   programSubmitting: boolean;
@@ -26,6 +29,8 @@ const ProgramModal = ({
   programSubmitting,
   programError,
 }: ProgramModalProps) => {
+  const featureRows = useRowKeys(programForm.features.length);
+
   return (
     <AnimatePresence>
       {showProgramModal && (
@@ -68,10 +73,13 @@ const ProgramModal = ({
                   <div className="aspect-4/5 rounded-4xl bg-foreground/5 border-2 border-dashed border-foreground/10 flex items-center justify-center overflow-hidden relative group transition-all hover:border-primary/40">
                     {programForm.image ? (
                       <>
-                        <img
+                        <Image
                           src={programForm.image}
                           alt="Program"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          fill
+                          sizes="192px"
+                          unoptimized
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <span className="material-symbols-outlined text-white text-3xl">
@@ -191,7 +199,7 @@ const ProgramModal = ({
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {programForm.features.map((feature: string, idx: number) => (
-                    <div key={idx} className="flex gap-2">
+                    <div key={featureRows.keys[idx]} className="flex gap-2">
                       <input
                         type="text"
                         placeholder={`Module #${idx + 1}`}
@@ -206,8 +214,9 @@ const ProgramModal = ({
                       <button
                         type="button"
                         onClick={() => {
+                          featureRows.removeKey(idx);
                           const newF = programForm.features.filter(
-                            (_: any, i: number) => i !== idx,
+                            (_, i) => i !== idx,
                           );
                           setProgramForm({
                             ...programForm,

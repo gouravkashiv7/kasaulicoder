@@ -1,13 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useState } from "react";
 import type { SocialMediaAccount } from "./types";
 
 interface SocialMediaManagementProps {
   accounts: SocialMediaAccount[];
   loading: boolean;
-  currentUser: any;
+  currentUser: { id?: string } | null;
   isSuperAdmin: boolean;
   onAdd: () => void;
   onEdit: (account: SocialMediaAccount) => void;
@@ -203,9 +204,12 @@ const SocialMediaManagement = ({
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         {account.managedBy?.image ? (
-                          <img
+                          <Image
                             src={account.managedBy.image}
                             alt=""
+                            width={24}
+                            height={24}
+                            unoptimized
                             className="size-6 rounded-full object-cover"
                           />
                         ) : (
