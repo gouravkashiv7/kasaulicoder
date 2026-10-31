@@ -1,8 +1,7 @@
-import { SignJWT } from "jose";
 import { NextResponse } from "next/server";
-import { getJwtSecret } from "@/backend/lib/auth";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import { sendPasswordResetEmail } from "@/backend/lib/email";
+import { issuePasswordResetLink } from "@/backend/lib/passwordReset";
 import { rateLimit } from "@/backend/lib/rateLimit";
 import Staff from "@/backend/models/Staff";
 import User from "@/backend/models/User";
@@ -53,36 +52,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const token = await new SignJWT({
-      id: account._id.toString(),
-      email: account.email,
-      type: accountType,
-      resetPassword: true,
-    })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime("1h")
-      .sign(getJwtSecret());
-
-    // Save token to DB for one-time use validation
-    account.resetPasswordToken = token;
-    account.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
-    await account.save();
-
-    // Never build the link from the Host header: a forged header would
-    // send the reset token to an attacker-controlled domain.
-    const origin =
-      process.env.NEXT_PUBLIC_BASE_URL ||
-      (process.env.NODE_ENV !== "production" ? "http://localhost:3000" : "");
-    if (!origin) {
-      console.error("NEXT_PUBLIC_BASE_URL is not set; cannot send reset link");
+    const resetUrl = await issuePasswordResetLink(account, accountType);
+    if (!resetUrl) {
       return NextResponse.json(
         { error: "Internal server error" },
         { status: 500 },
       );
     }
-
-    const resetUrl = `${origin}/reset-password?token=${token}`;
 
     await sendPasswordResetEmail(account.email, account.name, resetUrl);
 

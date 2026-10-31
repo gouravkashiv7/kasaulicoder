@@ -22,6 +22,11 @@ interface ManagementProps {
   handleToggleUserStatus: (item: DirectoryRecord) => void;
   handleToggleStaffStatus: (item: DirectoryRecord) => void;
   openEditStaff: (item: DirectoryRecord) => void;
+  onMailAdmins: () => void;
+  onSendReset: (item: DirectoryRecord) => void;
+  resetSendingId: string | null;
+  notice: string;
+  onDismissNotice: () => void;
 }
 
 const Management = ({
@@ -43,6 +48,11 @@ const Management = ({
   handleToggleUserStatus,
   handleToggleStaffStatus,
   openEditStaff,
+  onMailAdmins,
+  onSendReset,
+  resetSendingId,
+  notice,
+  onDismissNotice,
 }: ManagementProps) => {
   // logic to compute displayed rows
   let rows =
@@ -127,16 +137,43 @@ const Management = ({
         </button>
 
         {activeTab === "staff" && (
-          <button
-            type="button"
-            onClick={onAddStaff}
-            className="ml-auto px-4 md:px-6 py-2 bg-primary text-primary-content font-bold rounded-lg hover:brightness-110 flex items-center gap-2"
-          >
-            <span className="material-symbols-outlined text-sm">add</span>
-            Add Staff
-          </button>
+          <div className="ml-auto flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={onMailAdmins}
+              className="px-4 md:px-6 py-2 bg-foreground/5 text-foreground/80 font-bold rounded-lg hover:bg-foreground/10 flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-sm">mail</span>
+              Email All Admins
+            </button>
+            <button
+              type="button"
+              onClick={onAddStaff}
+              className="px-4 md:px-6 py-2 bg-primary text-primary-content font-bold rounded-lg hover:brightness-110 flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-sm">add</span>
+              Add Staff
+            </button>
+          </div>
         )}
       </div>
+
+      {notice && (
+        <div
+          role="alert"
+          className="mb-4 flex items-start justify-between gap-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-600 text-xs font-bold"
+        >
+          <span>{notice}</span>
+          <button
+            type="button"
+            onClick={onDismissNotice}
+            aria-label="Dismiss"
+            className="shrink-0 hover:opacity-70"
+          >
+            <span className="material-symbols-outlined text-sm">close</span>
+          </button>
+        </div>
+      )}
 
       {activeTab === "users" && (
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
@@ -356,6 +393,24 @@ const Management = ({
                               </span>
                               Edit
                             </button>
+                            {item.isActive !== false && (
+                              <button
+                                type="button"
+                                onClick={() => onSendReset(item)}
+                                disabled={resetSendingId !== null}
+                                title={`Email ${item.name} a password reset link`}
+                                className="px-3 py-1.5 bg-foreground/5 hover:bg-foreground/10 text-foreground/70 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <span className="material-symbols-outlined text-sm">
+                                  {resetSendingId === item._id
+                                    ? "hourglass_top"
+                                    : "lock_reset"}
+                                </span>
+                                {resetSendingId === item._id
+                                  ? "Sending…"
+                                  : "Send Reset"}
+                              </button>
+                            )}
                           </>
                         )}
                       </div>

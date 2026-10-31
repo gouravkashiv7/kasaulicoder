@@ -706,6 +706,52 @@ export const sendContactRejectionEmail = async (
   });
 };
 
+export interface AdminBroadcastEmailOptions {
+  toEmails: string[];
+  senderName: string;
+  senderEmail: string;
+  subject: string;
+  message: string;
+}
+
+// Superadmin mailing every admin at once. Recipients go in BCC so admins do
+// not see each other's addresses; replies go to the sending superadmin.
+export const sendAdminBroadcastEmail = async (
+  options: AdminBroadcastEmailOptions,
+): Promise<void> => {
+  const from = process.env.ADMIN_FROM || "admin@kasaulicoder.com";
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>${esc(options.subject)}</title></head>
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <tr><td style="background:#1a1a2e;padding:24px 40px;">
+          <p style="margin:0;color:#9ca3af;font-size:12px;letter-spacing:0.5px;text-transform:uppercase;">Message to all admins</p>
+          <h1 style="margin:6px 0 0;color:#ffffff;font-size:20px;font-weight:800;">${esc(options.subject)}</h1>
+        </td></tr>
+        <tr><td style="padding:32px 40px;">
+          <p style="margin:0 0 20px;font-size:14px;color:#6b7280;"><strong>${esc(options.senderName)}</strong> (Super Admin) wrote:</p>
+          <p style="margin:0;font-size:15px;color:#374151;line-height:1.7;white-space:pre-wrap;">${esc(options.message)}</p>
+          <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;">Reply to this email to answer ${esc(options.senderName)} directly.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  await transporter.sendMail({
+    from: `"Kasaulicoder Admin" <${from}>`,
+    replyTo: `"${options.senderName.replace(/["\r\n]/g, "")}" <${options.senderEmail}>`,
+    to: from,
+    bcc: options.toEmails,
+    subject: options.subject,
+    html,
+  });
+};
+
 export interface DirectorEmailOptions {
   toEmails: string[];
   senderName: string;

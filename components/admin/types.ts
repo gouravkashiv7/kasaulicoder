@@ -93,6 +93,14 @@ export interface RejectConfirm {
   error?: string;
 }
 
+export interface MailAdminsForm {
+  subject: string;
+  message: string;
+  recipientCount: number | null;
+  isSubmitting: boolean;
+  error?: string;
+}
+
 export interface CohortInterest {
   _id: string;
   email: string;

@@ -16,6 +16,7 @@ import Finance from "@/components/admin/director/Finance";
 import Policies from "@/components/admin/director/Policies";
 import { useDirectorBadges } from "@/components/admin/director/useDirectorBadges";
 import Management from "@/components/admin/Management";
+import MailAdminsModal from "@/components/admin/modals/MailAdminsModal";
 import PlanModal from "@/components/admin/modals/PlanModal";
 import ProgramModal from "@/components/admin/modals/ProgramModal";
 import RejectRequestModal from "@/components/admin/modals/RejectRequestModal";
@@ -34,6 +35,7 @@ import type {
   ContactRequest,
   CurrentUser,
   DirectoryRecord,
+  MailAdminsForm,
   Plan,
   PlanForm,
   Program,
@@ -236,6 +238,11 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
   );
 
   const [requestNotice, setRequestNotice] = useState("");
+
+  // Email all admins / send reset links (superadmin)
+  const [mailForm, setMailForm] = useState<MailAdminsForm | null>(null);
+  const [resetSendingId, setResetSendingId] = useState<string | null>(null);
+  const [staffNotice, setStaffNotice] = useState("");
 
   // API Callbacks
   // Fetchers never flip their loading flag back on: loading starts true, and a
@@ -469,6 +476,98 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
       name: item.name,
       isSubmitting: false,
     });
+  };
+
+  const openMailAdmins = async () => {
+    setStaffNotice("");
+    setMailForm({
+      subject: "",
+      message: "",
+      recipientCount: null,
+      isSubmitting: false,
+    });
+    try {
+      const res = await fetch("/api/admin/staff/broadcast");
+      const result = await res.json().catch(() => ({}));
+      setMailForm((prev) =>
+        prev
+          ? {
+              ...prev,
+              recipientCount: res.ok ? (result.count ?? 0) : 0,
+              error: res.ok
+                ? undefined
+                : result.error || "Could not check recipients",
+            }
+          : null,
+      );
+    } catch (err) {
+      console.error(err);
+      setMailForm((prev) =>
+        prev
+          ? { ...prev, recipientCount: 0, error: "Something went wrong" }
+          : null,
+      );
+    }
+  };
+
+  const executeMailAdmins = async () => {
+    if (!mailForm) return;
+    setMailForm({ ...mailForm, isSubmitting: true, error: undefined });
+    try {
+      const res = await fetch("/api/admin/staff/broadcast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: mailForm.subject,
+          message: mailForm.message,
+        }),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setMailForm(null);
+        setStaffNotice(result.message || "Email sent");
+      } else {
+        setMailForm((prev) =>
+          prev
+            ? {
+                ...prev,
+                isSubmitting: false,
+                error: result.error || "Could not send the email",
+              }
+            : null,
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      setMailForm((prev) =>
+        prev
+          ? { ...prev, isSubmitting: false, error: "Something went wrong" }
+          : null,
+      );
+    }
+  };
+
+  const handleSendReset = async (item: DirectoryRecord) => {
+    setStaffNotice("");
+    setResetSendingId(item._id);
+    try {
+      const res = await fetch("/api/admin/staff/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: item._id }),
+      });
+      const result = await res.json().catch(() => ({}));
+      setStaffNotice(
+        res.ok
+          ? result.message || `Reset email sent to ${item.email}`
+          : result.error || "Could not send the reset email",
+      );
+    } catch (err) {
+      console.error(err);
+      setStaffNotice("Something went wrong");
+    } finally {
+      setResetSendingId(null);
+    }
   };
 
   const executeStatusToggle = async (sendEmail: boolean) => {
@@ -1078,6 +1177,11 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
                 handleToggleUserStatus={handleToggleUserStatus}
                 handleToggleStaffStatus={handleToggleStaffStatus}
                 openEditStaff={openEditStaff}
+                onMailAdmins={openMailAdmins}
+                onSendReset={handleSendReset}
+                resetSendingId={resetSendingId}
+                notice={staffNotice}
+                onDismissNotice={() => setStaffNotice("")}
               />
             )}
             {sidebarView === "requests" && (
@@ -1200,6 +1304,12 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
         rejectConfirm={rejectConfirm}
         setRejectConfirm={setRejectConfirm}
         executeReject={executeReject}
+      />
+
+      <MailAdminsModal
+        mailForm={mailForm}
+        setMailForm={setMailForm}
+        executeSend={executeMailAdmins}
       />
 
       <SocialMediaModal
