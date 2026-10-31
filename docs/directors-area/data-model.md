@@ -1,0 +1,17 @@
+# Data model
+
+All collections are Mongoose models in `backend/models/`. Amounts are in paise.
+
+| Model | File | Fields |
+|-------|------|--------|
+| Staff (changed) | `Staff.ts` | `isDirector: boolean` (default false) |
+| Policy | `Policy.ts` | `title`, `body` (Markdown), `kind` (`general` \| `revenue-split`), `split { companyBps, directors[{staff, bps}] }`, `proposedBy`, `votes[{staff, vote yes/no, comment, at}]`, `status` (`proposed` \| `approved` \| `rejected` \| `superseded`), `decidedAt` |
+| Client | `Client.ts` | `name`, `email`, `phone`, `notes`, `isActive`, `createdBy` |
+| Payment | `Payment.ts` | `client`, `amountPaise`, `receivedOn`, `reference`, `note`, `attachment`, `recordedBy`, `allocation { policy, companyPaise, shares[{staff, paise}] }`, `status` (`recorded` \| `void`), `voidReason`, `voidedBy`, `voidedAt` |
+| Expense | `Expense.ts` | `purpose`, `amountPaise`, `attachment`, `requestedBy`, `approvals[{staff, decision approve/reject, comment, at}]`, `status` (`pending` \| `approved` \| `rejected` \| `released`), `release { by, at, reference, attachment }` |
+| Attachment | `Attachment.ts` | `data` (Buffer), `mime`, `size`, `uploadedBy` |
+| Thread | `Thread.ts` | `title`, `createdBy`, `lastMessageAt`, `readBy` (map staff id → date) |
+| ThreadMessage | `ThreadMessage.ts` | `thread`, `author`, `body`, `emails[{to[], subject, sentBy, at}]` |
+
+Mongo collection names are the Mongoose defaults: `staffs`, `policies`,
+`clients`, `payments`, `expenses`, `attachments`, `threads`, `threadmessages`.
