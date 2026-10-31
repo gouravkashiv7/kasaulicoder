@@ -90,6 +90,12 @@ const Sidebar = ({
       icon: "share",
     },
     {
+      id: "finance" as SidebarView,
+      label: "Finance",
+      icon: "account_balance",
+      directorOnly: true,
+    },
+    {
       id: "policies" as SidebarView,
       label: "Policies",
       icon: "gavel",

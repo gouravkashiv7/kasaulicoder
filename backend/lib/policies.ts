@@ -22,3 +22,10 @@ export async function applyOutcome(
     );
   }
 }
+
+// The revenue split currently in force, or null if none has been approved.
+export async function getActiveSplit() {
+  return Policy.findOne({ kind: "revenue-split", status: "approved" })
+    .sort({ decidedAt: -1 })
+    .lean();
+}

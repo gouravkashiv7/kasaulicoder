@@ -8,7 +8,8 @@ export type SidebarView =
   | "blogs"
   | "projects"
   | "social-media"
-  | "policies";
+  | "policies"
+  | "finance";
 
 export interface Program {
   _id: string;
@@ -233,5 +234,62 @@ export interface PolicyRecord {
   }>;
   status: "proposed" | "approved" | "rejected" | "superseded";
   decidedAt?: string;
+  createdAt: string;
+}
+
+export interface FinanceSummary {
+  receivedPaise: number;
+  companyEarnedPaise: number;
+  companyBalancePaise: number;
+  awaitingReleasePaise: number;
+  releasedPaise: number;
+  directorShares: Array<{ id: string; name: string; paise: number }>;
+  awaitingMyApproval: number;
+}
+
+export interface ClientRecord {
+  _id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  notes?: string;
+  isActive: boolean;
+}
+
+export interface PaymentRecord {
+  _id: string;
+  client: { _id: string; name: string } | null;
+  amountPaise: number;
+  receivedOn: string;
+  reference?: string;
+  note?: string;
+  attachment?: string;
+  recordedBy: { _id: string; name: string };
+  allocation: {
+    companyPaise: number;
+    shares: Array<{ staff: { _id: string; name: string }; paise: number }>;
+  };
+  status: "recorded" | "void";
+  voidReason?: string;
+}
+
+export interface ExpenseRecord {
+  _id: string;
+  purpose: string;
+  amountPaise: number;
+  attachment: string;
+  requestedBy: { _id: string; name: string };
+  approvals: Array<{
+    staff: { _id: string; name: string };
+    decision: "approve" | "reject";
+    comment?: string;
+  }>;
+  status: "pending" | "approved" | "rejected" | "released";
+  release?: {
+    by?: { _id: string; name: string };
+    at?: string;
+    reference?: string;
+    attachment?: string;
+  };
   createdAt: string;
 }

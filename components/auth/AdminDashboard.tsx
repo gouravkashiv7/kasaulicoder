@@ -19,6 +19,7 @@ import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
 // Modals
 import StaffModal from "@/components/admin/modals/StaffModal";
 import StatusToggleModal from "@/components/admin/modals/StatusToggleModal";
+import Finance from "@/components/admin/director/Finance";
 import Policies from "@/components/admin/director/Policies";
 import Overview from "@/components/admin/Overview";
 import Pricing from "@/components/admin/Pricing";
@@ -117,7 +118,7 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
       "projects",
       "social-media",
     ];
-    if (isDirector) allTabs.push("policies");
+    if (isDirector) allTabs.push("finance", "policies");
     if (isSuperAdmin) return allTabs;
     // Staff (admin role) restricted tabs
     return allTabs.filter(
@@ -1119,6 +1120,7 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
                 handleDeleteProgram={handleDeleteProgram}
               />
             )}
+            {sidebarView === "finance" && isDirector && <Finance />}
             {sidebarView === "policies" && isDirector && <Policies />}
             {sidebarView === "blogs" && <AdminBlogManagement />}
             {sidebarView === "projects" && <AdminProjectsManagement />}
