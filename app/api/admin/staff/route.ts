@@ -26,7 +26,7 @@ export async function GET() {
     // If not superadmin, maybe return a limited selection?
     // For now, allow all admin types to see the staff list names/ids.
     const staffMembers = await Staff.find({})
-      .select("name email role designation image isActive")
+      .select("name email role designation image isActive isDirector")
       .sort({ createdAt: -1 });
 
     return NextResponse.json(staffMembers);
@@ -51,8 +51,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    const { name, email, password, role, designation, roleDescription, image } =
-      await req.json();
+    const {
+      name,
+      email,
+      password,
+      role,
+      designation,
+      roleDescription,
+      image,
+      isDirector,
+    } = await req.json();
 
     if (!name || !email || !password || !role) {
       return NextResponse.json(
@@ -104,6 +112,7 @@ export async function POST(req: Request) {
       roleDescription,
       image,
       isActive: true,
+      isDirector: isDirector === true,
     });
 
     // Send welcome email (fire-and-forget — don't block the response)
@@ -205,7 +214,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    const { id, name, role, designation, roleDescription, image } =
+    const { id, name, role, designation, roleDescription, image, isDirector } =
       await req.json();
 
     if (!id) {
@@ -223,6 +232,7 @@ export async function PUT(req: Request) {
     if (role) staff.role = role;
     if (designation !== undefined) staff.designation = designation;
     if (roleDescription !== undefined) staff.roleDescription = roleDescription;
+    if (typeof isDirector === "boolean") staff.isDirector = isDirector;
 
     if (image) {
       const base64Data = image.split(",")[1];

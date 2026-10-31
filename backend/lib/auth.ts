@@ -1,5 +1,6 @@
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
 import User from "@/backend/models/User";
@@ -25,6 +26,7 @@ export type Session = {
   role: string;
   type: "admin" | "user";
   userType?: string;
+  isDirector: boolean;
 };
 
 // Verifies the auth cookie and re-checks the account in the DB, so
@@ -46,7 +48,9 @@ export async function getServerSession(): Promise<Session | null> {
     await connectDB();
     const account =
       type === "admin"
-        ? await Staff.findById(payload.id).select("name email role isActive")
+        ? await Staff.findById(payload.id).select(
+            "name email role isActive isDirector",
+          )
         : await User.findById(payload.id).select(
             "name email role userType isActive",
           );
@@ -60,8 +64,31 @@ export async function getServerSession(): Promise<Session | null> {
       role: account.role,
       type,
       userType: account.userType,
+      isDirector: type === "admin" && account.isDirector === true,
     };
   } catch {
     return null;
   }
+}
+
+// Gate for the directors-only area. Returns the session, or the error
+// response the route should send back.
+export async function requireDirector(): Promise<
+  { session: Session } | { error: NextResponse }
+> {
+  const session = await getServerSession();
+  if (!session) {
+    return {
+      error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
+    };
+  }
+  if (session.type !== "admin" || !session.isDirector) {
+    return {
+      error: NextResponse.json(
+        { error: "Access denied. Directors only." },
+        { status: 403 },
+      ),
+    };
+  }
+  return { session };
 }

@@ -50,6 +50,7 @@ const EMPTY_STAFF: StaffForm = {
   designation: "",
   roleDescription: "",
   image: "",
+  isDirector: false,
 };
 
 const EMPTY_PLAN: PlanForm = {
@@ -637,6 +638,7 @@ const AdminDashboard = ({ role }: AdminDashboardProps) => {
       designation: staff.designation || "",
       roleDescription: staff.roleDescription || "",
       image: staff.image || "",
+      isDirector: staff.isDirector === true,
     });
     setShowAddModal(true);
   };

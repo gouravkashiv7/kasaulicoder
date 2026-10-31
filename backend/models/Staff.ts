@@ -9,6 +9,7 @@ export interface IStaff extends Document {
   roleDescription?: string;
   image?: string;
   isActive: boolean;
+  isDirector: boolean;
   lastLogin?: Date;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
@@ -36,6 +37,7 @@ const StaffSchema: Schema = new Schema(
     roleDescription: { type: String },
     image: { type: String },
     isActive: { type: Boolean, default: true },
+    isDirector: { type: Boolean, default: false },
     lastLogin: { type: Date },
     resetPasswordToken: { type: String, select: false },
     resetPasswordExpires: { type: Date, select: false },

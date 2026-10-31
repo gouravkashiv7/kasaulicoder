@@ -139,6 +139,7 @@ export interface DirectoryRecord {
   roleDescription?: string;
   image?: string;
   isActive?: boolean;
+  isDirector?: boolean;
   createdAt: string;
 }
 
@@ -159,6 +160,7 @@ export interface StaffForm {
   designation: string;
   roleDescription: string;
   image: string;
+  isDirector: boolean;
 }
 
 export interface PlanForm {

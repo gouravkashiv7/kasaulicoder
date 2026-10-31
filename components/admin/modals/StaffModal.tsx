@@ -383,6 +383,28 @@ const StaffModal = ({
                   </div>
                 </div>
 
+                <label
+                  htmlFor="staff-is-director"
+                  className="flex items-start gap-3 rounded-xl border border-foreground/10 bg-foreground/5 px-4 py-3 cursor-pointer"
+                >
+                  <input
+                    id="staff-is-director"
+                    type="checkbox"
+                    checked={newStaff.isDirector}
+                    onChange={(e) =>
+                      setNewStaff({ ...newStaff, isDirector: e.target.checked })
+                    }
+                    className="mt-0.5 size-4 accent-primary"
+                  />
+                  <span className="text-sm">
+                    <span className="font-bold block">Board director</span>
+                    <span className="text-xs text-foreground/50">
+                      Access to Finance, Policies and Discussions, and a vote on
+                      approvals.
+                    </span>
+                  </span>
+                </label>
+
                 <div className="space-y-1.5">
                   <label
                     htmlFor="staff-bio-role-description"
