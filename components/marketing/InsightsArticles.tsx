@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import GlobalHeader from "@/components/layout/GlobalHeader";
-import PageLoading from "@/components/ui/page-loading";
 
 type ViewType = "grid" | "list";
 
@@ -50,15 +49,6 @@ const InsightsArticles = () => {
     const words = text ? text.split(/\s+/).length : 0;
     return Math.ceil(words / wordsPerMinute) + 2;
   };
-
-  if (loading) {
-    return (
-      <PageLoading
-        title="Loading Blogs"
-        subtitle="Fetching latest insights..."
-      />
-    );
-  }
 
   return (
     <div className="font-display text-foreground min-h-screen selection:bg-primary selection:text-background">
@@ -137,7 +127,19 @@ const InsightsArticles = () => {
         </section>
 
         <div className="max-w-7xl mx-auto px-6">
-          {filteredArticles.length > 0 ? (
+          {loading ? (
+            <div
+              aria-busy="true"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="h-96 rounded-3xl glass-panel animate-pulse"
+                />
+              ))}
+            </div>
+          ) : filteredArticles.length > 0 ? (
             <>
               {/* Featured Hero (Visible when not searching and in grid mode) */}
               {viewType === "grid" && featuredArticle && searchQuery === "" && (
@@ -156,6 +158,8 @@ const InsightsArticles = () => {
                         src={featuredArticle.mainImageUrl}
                         alt={featuredArticle.title}
                         fill
+                        priority
+                        sizes="(min-width: 768px) 50vw, 100vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-1000"
                       />
                       <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent md:hidden" />
@@ -165,7 +169,7 @@ const InsightsArticles = () => {
                         <span className="px-3 py-1 bg-primary/20 text-primary text-[10px] font-black uppercase tracking-widest rounded-full border border-primary/30">
                           Featured
                         </span>
-                        <span className="text-foreground/40 text-[10px] font-bold uppercase tracking-widest">
+                        <span className="text-foreground/60 text-[10px] font-bold uppercase tracking-widest">
                           {calculateReadingTime(featuredArticle.content || "")}{" "}
                           Min Read
                         </span>
@@ -196,7 +200,7 @@ const InsightsArticles = () => {
                             {featuredArticle.authorId?.name ||
                               featuredArticle.writtenBy}
                           </p>
-                          <p className="text-[10px] text-foreground/40 uppercase font-black tracking-widest">
+                          <p className="text-[10px] text-foreground/60 uppercase font-black tracking-widest">
                             {new Date(
                               featuredArticle.createdAt,
                             ).toLocaleDateString("en-US", {
@@ -252,6 +256,7 @@ const InsightsArticles = () => {
                               src={article.mainImageUrl}
                               alt={article.title}
                               fill
+                              sizes="(min-width: 768px) 33vw, 100vw"
                               className="object-cover group-hover:scale-110 transition-transform duration-700"
                             />
                             <div className="absolute inset-0 bg-linear-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -265,7 +270,7 @@ const InsightsArticles = () => {
                               <span className="text-[10px] font-black uppercase text-primary tracking-widest px-2 py-0.5 bg-primary/10 rounded-full">
                                 {article.tagline.split(" ")[0] || "Tech"}
                               </span>
-                              <span className="text-[10px] font-bold text-foreground/40 uppercase">
+                              <span className="text-[10px] font-bold text-foreground/60 uppercase">
                                 {calculateReadingTime(article.content || "")}{" "}
                                 MIN READ
                               </span>
@@ -301,7 +306,7 @@ const InsightsArticles = () => {
                                 <p className="text-xs font-bold truncate">
                                   {article.authorId?.name || article.writtenBy}
                                 </p>
-                                <p className="text-[9px] text-foreground/40 uppercase font-black">
+                                <p className="text-[9px] text-foreground/60 uppercase font-black">
                                   {new Date(
                                     article.createdAt,
                                   ).toLocaleDateString()}

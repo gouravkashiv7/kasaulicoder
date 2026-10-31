@@ -11,6 +11,15 @@ import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 const LogoGif = ({ size }: { size: number }) => {
   const [loaded, setLoaded] = useState(false);
   const [isLight, setIsLight] = useState(false);
+  // The 400 KB animated GIF is decoration; fetch it once the page has loaded.
+  const [gifSrc, setGifSrc] = useState<string>();
+
+  useEffect(() => {
+    const showGif = () => setGifSrc("/logo.gif");
+    if (document.readyState === "complete") showGif();
+    else window.addEventListener("load", showGif, { once: true });
+    return () => window.removeEventListener("load", showGif);
+  }, []);
 
   useEffect(() => {
     const check = () =>
@@ -47,7 +56,7 @@ const LogoGif = ({ size }: { size: number }) => {
       />
       {/* GIF: loads eagerly, fades in once ready */}
       <img
-        src="/logo.gif"
+        src={gifSrc}
         alt="KasauliCoder Logo"
         width={size}
         height={size}

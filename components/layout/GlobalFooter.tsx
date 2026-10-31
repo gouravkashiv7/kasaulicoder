@@ -43,6 +43,7 @@ const LogoGif = ({ size }: { size: number }) => {
       {/* GIF: fades in once loaded */}
       <img
         src="/logo.gif"
+        loading="lazy"
         alt="KasauliCoder Logo"
         width={size}
         height={size}

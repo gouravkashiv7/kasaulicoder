@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import GlobalHeader from "@/components/layout/GlobalHeader";
@@ -22,6 +22,34 @@ const AnoAI = dynamic(
   () => import("@/components/ui/animated-shader-background"),
   { ssr: false },
 );
+
+// Heavy decoration (WebGL background, brand video) waits until the page has
+// loaded and the browser is idle, so it never competes with first paint.
+const useAfterLoad = () => {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    let idleId: number | undefined;
+    const start = () => {
+      const run = () => {
+        if (!cancelled) setReady(true);
+      };
+      if ("requestIdleCallback" in window) {
+        idleId = window.requestIdleCallback(run, { timeout: 2000 });
+      } else {
+        setTimeout(run, 200);
+      }
+    };
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
+    return () => {
+      cancelled = true;
+      window.removeEventListener("load", start);
+      if (idleId !== undefined) window.cancelIdleCallback(idleId);
+    };
+  }, []);
+  return ready;
+};
 
 const businessHelp = [
   {
@@ -77,13 +105,14 @@ const strengths = [
   },
 ];
 
+// Hero copy stays visible before hydration (it is the LCP); only the slide-in animates.
 const heroContainer = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 1 },
   visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
 };
 
 const heroItem = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 1, y: 16 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 
@@ -93,6 +122,14 @@ const HomeVisionHero = ({
   projects?: ShowcaseProject[];
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const afterLoad = useAfterLoad();
+  // The full-screen shader is too costly for phones, so only larger screens get it.
+  const [showBackground, setShowBackground] = useState(false);
+  useEffect(() => {
+    if (afterLoad) {
+      setShowBackground(window.matchMedia("(min-width: 768px)").matches);
+    }
+  }, [afterLoad]);
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
 
@@ -118,9 +155,11 @@ const HomeVisionHero = ({
 
   return (
     <div className="font-sans text-foreground antialiased overflow-x-hidden relative">
-      <Suspense fallback={null}>
-        <AnoAI />
-      </Suspense>
+      {showBackground && (
+        <Suspense fallback={null}>
+          <AnoAI />
+        </Suspense>
+      )}
       <GlobalHeader />
 
       <main className="relative z-10">
@@ -277,7 +316,7 @@ const HomeVisionHero = ({
                 <div className="aspect-video rounded-2xl overflow-hidden relative group/video">
                   <video
                     ref={videoRef}
-                    src="/kasaulicoder.mp4"
+                    src={afterLoad ? "/kasaulicoder.mp4" : undefined}
                     autoPlay
                     muted={isMuted}
                     loop

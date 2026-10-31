@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Outfit, Plus_Jakarta_Sans } from "next/font/google"; // Updated fonts
+import Script from "next/script";
 import "./globals.css";
 import MotionProvider from "@/components/ui/motion-provider";
 import { serviceGroups } from "@/lib/services";
@@ -110,18 +111,29 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
+// Light is the site default; a theme picked in ThemeSwitcher wins. Runs before
+// first paint so loading screens and SSR output never flash the wrong theme.
+const themeInitScript = `try{var t=localStorage.getItem("app-theme")||"theme-light";var c=document.documentElement.classList;c.remove("theme-light","theme-brand","theme-dark-violet");c.add(t)}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-pt-22.5 scroll-smooth">
+    <html
+      lang="en"
+      className="theme-light scroll-pt-22.5 scroll-smooth"
+      suppressHydrationWarning
+    >
       <head>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
         <link
           rel="stylesheet"
           // biome-ignore lint/suspicious/useGoogleFontDisplay: block avoids flashing icon ligature names as text
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block"
         />
       </head>
       <body

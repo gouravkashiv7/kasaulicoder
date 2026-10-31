@@ -15,7 +15,7 @@
 .theme-light {
   --background: #fffbf5; /* Warmer off-white with subtle amber tint */
   --foreground: #1c1917; /* Warm stone-900 */
-  --primary: #d97706; /* Deeper amber-600 — better contrast */
+  --primary: #b45309; /* Amber-700 — 4.5:1+ on the cream background and with --primary-content */
   --primary-content: #fffbeb;
   --secondary: #0f766e; /* Deep Teal — sophisticated contrast with amber */
   --glass: rgba(255, 251, 245, 0.75);

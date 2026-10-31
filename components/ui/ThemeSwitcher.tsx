@@ -3,18 +3,25 @@
 import { Palette, Shield, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
+const THEMES = ["theme-light", "theme-brand", "theme-dark-violet"];
+
+const applyTheme = (theme: string) => {
+  document.documentElement.classList.remove(...THEMES);
+  document.documentElement.classList.add(theme);
+};
+
 export default function ThemeSwitcher() {
-  const [theme, setTheme] = useState("theme-brand");
+  const [theme, setTheme] = useState("theme-light");
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("app-theme") || "theme-brand";
+    const savedTheme = localStorage.getItem("app-theme") || "theme-light";
     setTheme(savedTheme);
-    document.documentElement.className = savedTheme;
+    applyTheme(savedTheme);
   }, []);
 
   const changeTheme = (newTheme: string) => {
     setTheme(newTheme);
-    document.documentElement.className = newTheme;
+    applyTheme(newTheme);
     localStorage.setItem("app-theme", newTheme);
   };
 
