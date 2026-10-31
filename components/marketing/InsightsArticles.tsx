@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 import PageLoading from "@/components/ui/page-loading";
-import ShaderBackground from "@/components/ui/shader-background";
 
 type ViewType = "grid" | "list";
 
@@ -63,7 +62,6 @@ const InsightsArticles = () => {
 
   return (
     <div className="font-display text-foreground min-h-screen selection:bg-primary selection:text-background">
-      <ShaderBackground />
       <GlobalHeader />
 
       <main className="pt-32 pb-24">
