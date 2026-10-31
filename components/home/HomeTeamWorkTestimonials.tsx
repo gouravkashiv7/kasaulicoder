@@ -53,7 +53,7 @@ const HomeTeamWorkTestimonials = () => {
               key={member._id || member.name}
               className="flex flex-col rounded-3xl border border-foreground/10 bg-background/70 backdrop-blur-md p-3"
             >
-              <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-foreground/5 flex items-center justify-center">
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-foreground/5 flex items-center justify-center">
                 {member.image ? (
                   <Image
                     src={member.image}
