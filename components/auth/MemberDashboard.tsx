@@ -5,13 +5,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type React from "react";
+import type { ComponentProps } from "react";
 import { useCallback, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useDirectorBadges } from "@/components/admin/director/useDirectorBadges";
 import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
-import type { SocialMediaAccount } from "@/components/admin/types";
+import type {
+  DirectoryRecord,
+  SocialMediaAccount,
+  SocialMediaFormData,
+} from "@/components/admin/types";
 import UniqueLoading from "@/components/ui/morph-loading";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+import { squareAvatar } from "@/lib/imageResize";
 
 type SidebarView =
   | "dashboard"
@@ -25,29 +31,59 @@ type SidebarView =
 import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement";
 import SocialMediaManagement from "@/components/admin/SocialMediaManagement";
 
+interface MemberUser {
+  _id?: string;
+  id?: string;
+  name: string;
+  email?: string;
+  role?: string;
+  image?: string;
+  designation?: string;
+  roleDescription?: string;
+  createdAt?: string;
+  isDirector?: boolean;
+}
+
+interface MemberBlog {
+  _id: string;
+  title: string;
+  slug?: string;
+  mainImageUrl: string;
+  tagline: string;
+  description?: string;
+  content?: string;
+  writtenBy?: string;
+  status: string;
+  createdAt: string;
+}
+
 interface BlogEditorSectionProps {
-  user: any;
-  editingBlog: any;
-  setEditingBlog: (blog: any) => void;
+  user: MemberUser | null;
+  editingBlog: MemberBlog | null;
+  setEditingBlog: (blog: MemberBlog | null) => void;
   updateView: (view: SidebarView) => void;
   fetchBlogs: () => void;
 }
 
 // Safe Image wrapper for MDX to prevent missing width/height crashes
-const SafeImage = (props: any) => {
-  // eslint-disable-next-line @next/next/no-img-element
-  if (!props.src) return null;
-  if (!props.width || !props.height) {
+const SafeImage = ({
+  src,
+  alt,
+  title,
+  width,
+  height,
+}: ComponentProps<"img">) => {
+  if (typeof src !== "string" || !src) return null;
+  if (!width || !height) {
     return (
       <div className="relative w-full aspect-video overflow-hidden rounded-2xl border border-foreground/10 my-8 bg-foreground/5">
         <Image
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
           className="object-cover"
-          alt={props.alt || "Blog image"}
-          {...props}
-          width={undefined}
-          height={undefined}
+          alt={alt || "Blog image"}
+          title={title}
+          src={src}
         />
       </div>
     );
@@ -55,8 +91,11 @@ const SafeImage = (props: any) => {
   return (
     <Image
       className="rounded-2xl border border-foreground/10 my-8"
-      alt={props.alt || "Blog image"}
-      {...props}
+      alt={alt || "Blog image"}
+      title={title}
+      src={src}
+      width={Number(width)}
+      height={Number(height)}
     />
   );
 };
@@ -85,7 +124,7 @@ const BlogEditorSection = ({
   const [submittingBlog, setSubmittingBlog] = useState(false);
   const [showAiPrompter, setShowAiPrompter] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
-  const [mdxSource, setMdxSource] = useState<any>(null);
+  const [mdxSource, setMdxSource] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
 
   // Live MDX Preview Serialization
@@ -332,13 +371,17 @@ const BlogEditorSection = ({
               {/* Title & Slug */}
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1">
+                  <label
+                    htmlFor="member-field-373"
+                    className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1"
+                  >
                     <span className="material-symbols-outlined text-xs">
                       title
                     </span>
                     Blog Title <span className="text-primary">*</span>
                   </label>
                   <input
+                    id="member-field-373"
                     type="text"
                     required
                     value={blogData.title}
@@ -354,7 +397,10 @@ const BlogEditorSection = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1">
+                  <label
+                    htmlFor="member-field-395"
+                    className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1"
+                  >
                     <span className="material-symbols-outlined text-xs">
                       link
                     </span>
@@ -362,6 +408,7 @@ const BlogEditorSection = ({
                   </label>
                   <div className="relative">
                     <input
+                      id="member-field-395"
                       type="text"
                       value={blogData.slug}
                       onChange={(e) =>
@@ -380,13 +427,17 @@ const BlogEditorSection = ({
               {/* Image & Display Name */}
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1">
+                  <label
+                    htmlFor="member-field-421"
+                    className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1"
+                  >
                     <span className="material-symbols-outlined text-xs">
                       image
                     </span>
                     Cover Image URL <span className="text-primary">*</span>
                   </label>
                   <input
+                    id="member-field-421"
                     type="url"
                     value={blogData.mainImageUrl}
                     onChange={(e) =>
@@ -405,13 +456,17 @@ const BlogEditorSection = ({
 
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1">
+                <label
+                  htmlFor="member-field-446"
+                  className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1"
+                >
                   <span className="material-symbols-outlined text-xs">
                     short_text
                   </span>
                   Tagline & Meta Summary <span className="text-primary">*</span>
                 </label>
                 <input
+                  id="member-field-446"
                   type="text"
                   value={blogData.tagline}
                   onChange={(e) =>
@@ -426,13 +481,17 @@ const BlogEditorSection = ({
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1">
+                <label
+                  htmlFor="member-field-467"
+                  className="text-[10px] font-black uppercase tracking-widest text-foreground/30 flex items-center gap-2 ml-1"
+                >
                   <span className="material-symbols-outlined text-xs">
                     description
                   </span>
                   Meta Description <span className="text-primary">*</span>
                 </label>
                 <textarea
+                  id="member-field-467"
                   value={blogData.description}
                   onChange={(e) =>
                     setBlogData({
@@ -456,9 +515,9 @@ const BlogEditorSection = ({
                       code
                     </span>
                   </div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">
                     {previewMode ? "Visual Canvas" : "Blog Blueprint (MDX/JSX)"}
-                  </label>
+                  </p>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -846,10 +905,8 @@ Output ONLY the MDX content.`;
                     {mdxSource ? (
                       <ReactMarkdown
                         components={{
-                          img: ({ node, ...props }: any) => (
-                            <SafeImage {...props} />
-                          ),
-                          p: ({ node, ...props }: any) => (
+                          img: ({ node, ...props }) => <SafeImage {...props} />,
+                          p: ({ node, ...props }) => (
                             <div className="leading-relaxed mb-4" {...props} />
                           ),
                         }}
@@ -929,7 +986,7 @@ const MemberDashboard = () => {
   const [sidebarView, setSidebarView] = useState<SidebarView>("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<MemberUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
@@ -943,6 +1000,7 @@ const MemberDashboard = () => {
     password: "",
     designation: "",
     roleDescription: "",
+    image: "",
   });
   const [updateStatus, setUpdateStatus] = useState<{
     type: "success" | "error";
@@ -998,6 +1056,7 @@ const MemberDashboard = () => {
           password: "",
           designation: data.designation || "",
           roleDescription: data.roleDescription || "",
+          image: data.image || "",
         });
       } else {
         router.push("/login?type=admin");
@@ -1023,16 +1082,49 @@ const MemberDashboard = () => {
     router.push("/login?type=admin");
   };
 
-  const handleUpdateProfile = async (e: React.FormEvent) => {
+  const handlePhotoPick = async (file: File | undefined) => {
+    if (!file) return;
+    setUpdateStatus(null);
+    try {
+      const image = await squareAvatar(file);
+      setProfileData((prev) => ({ ...prev, image }));
+    } catch (err) {
+      setUpdateStatus({
+        type: "error",
+        message:
+          err instanceof Error ? err.message : "Could not use that photo",
+      });
+    }
+  };
+
+  const handleUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setUpdating(true);
     setUpdateStatus(null);
 
     try {
+      // Read what is in the fields right now, so browser autofill, password
+      // managers and anything else that sets a value without a change event
+      // are saved too.
+      const form = new FormData(e.currentTarget);
+      const field = (key: keyof typeof profileData) =>
+        String(form.get(key) ?? profileData[key]);
+      const submitted = {
+        name: field("name"),
+        email: field("email"),
+        password: field("password"),
+        designation: field("designation"),
+        roleDescription: field("roleDescription"),
+        image: profileData.image,
+      };
+      // Only send the photo when it changed
+      const { image, ...text } = submitted;
+      const payload = image !== (user?.image ?? "") ? { ...text, image } : text;
+
       const res = await fetch("/api/member/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profileData),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -1041,13 +1133,14 @@ const MemberDashboard = () => {
         setUpdateStatus({ type: "success", message: data.message });
         setUser({
           ...user,
-          name: profileData.name,
-          email: profileData.email,
+          name: submitted.name,
+          email: submitted.email,
           // The server trims and caps these, so show what was actually saved
-          designation: data.user.designation ?? user.designation,
-          roleDescription: data.user.roleDescription ?? user.roleDescription,
+          designation: data.user.designation ?? user?.designation,
+          roleDescription: data.user.roleDescription ?? user?.roleDescription,
+          image: data.user.image ?? user?.image,
         });
-        setProfileData({ ...profileData, password: "" });
+        setProfileData({ ...submitted, password: "" });
 
         // Update local storage too
         const stored = localStorage.getItem("user");
@@ -1057,8 +1150,9 @@ const MemberDashboard = () => {
             "user",
             JSON.stringify({
               ...parsed,
-              name: profileData.name,
-              email: profileData.email,
+              name: submitted.name,
+              email: submitted.email,
+              image: data.user.image ?? parsed.image,
             }),
           );
         }
@@ -1096,7 +1190,7 @@ const MemberDashboard = () => {
     }
   }, [sidebarView, fetchBlogs]);
 
-  const handleEditBlog = (blog: any) => {
+  const handleEditBlog = (blog: MemberBlog) => {
     setEditingBlog(blog);
     updateView("blogs");
   };
@@ -1110,7 +1204,7 @@ const MemberDashboard = () => {
   const [editingSocialMediaAccount, setEditingSocialMediaAccount] =
     useState<SocialMediaAccount | null>(null);
   const [socialMediaError, setSocialMediaError] = useState("");
-  const [allStaff, setAllStaff] = useState<any[]>([]);
+  const [allStaff, setAllStaff] = useState<DirectoryRecord[]>([]);
 
   const fetchSocialMediaAccounts = useCallback(async () => {
     setSocialMediaLoading(true);
@@ -1146,7 +1240,9 @@ const MemberDashboard = () => {
     }
   }, [sidebarView, fetchSocialMediaAccounts, fetchAllStaff]);
 
-  const handleSaveSocialMediaAccount = async (formData: any) => {
+  const handleSaveSocialMediaAccount = async (
+    formData: SocialMediaFormData,
+  ) => {
     setUpdating(true);
     setSocialMediaError("");
     try {
@@ -1197,9 +1293,9 @@ const MemberDashboard = () => {
   };
 
   // Submitted Blogs State
-  const [blogs, setBlogs] = useState<any[]>([]);
+  const [blogs, setBlogs] = useState<MemberBlog[]>([]);
   const [fetchingBlogs, setFetchingBlogs] = useState(false);
-  const [editingBlog, setEditingBlog] = useState<any>(null);
+  const [editingBlog, setEditingBlog] = useState<MemberBlog | null>(null);
 
   const sidebarItems = [
     { id: "dashboard" as SidebarView, label: "Dashboard", icon: "dashboard" },
@@ -1499,7 +1595,9 @@ const MemberDashboard = () => {
                     </p>
                     <p className="text-xs text-foreground/60 mt-3 leading-relaxed">
                       Member since{" "}
-                      {new Date(user?.createdAt).toLocaleDateString()}
+                      {user?.createdAt
+                        ? new Date(user.createdAt).toLocaleDateString()
+                        : "—"}
                     </p>
                   </div>
                 </div>
@@ -1575,9 +1673,9 @@ const MemberDashboard = () => {
                         icon: "trending_up",
                         color: "secondary",
                       },
-                    ].map((stat, i) => (
+                    ].map((stat) => (
                       <div
-                        key={i}
+                        key={stat.label}
                         className="glass-panel p-4 rounded-2xl border border-foreground/5"
                       >
                         <div className="flex items-center gap-3 mb-2">
@@ -1779,13 +1877,74 @@ const MemberDashboard = () => {
                       </div>
                     )}
 
+                    {user?.role === "admin" && (
+                      <div className="flex items-center gap-5">
+                        <div className="size-20 rounded-2xl border border-foreground/10 bg-foreground/5 overflow-hidden flex items-center justify-center shrink-0">
+                          {profileData.image ? (
+                            // biome-ignore lint/performance/noImgElement: data URL preview
+                            <img
+                              src={profileData.image}
+                              alt="Your profile"
+                              className="size-full object-cover"
+                            />
+                          ) : (
+                            <span className="material-symbols-outlined text-3xl text-foreground/30">
+                              person
+                            </span>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap gap-2">
+                            <label
+                              htmlFor="profile-photo"
+                              className="cursor-pointer px-4 py-2 rounded-xl bg-primary/10 text-primary text-xs font-black hover:bg-primary/20 transition-all"
+                            >
+                              {profileData.image
+                                ? "Change photo"
+                                : "Upload photo"}
+                            </label>
+                            <input
+                              id="profile-photo"
+                              type="file"
+                              accept="image/*"
+                              className="sr-only"
+                              onChange={(e) => {
+                                handlePhotoPick(e.target.files?.[0]);
+                                e.target.value = "";
+                              }}
+                            />
+                            {profileData.image && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setProfileData({ ...profileData, image: "" })
+                                }
+                                className="px-4 py-2 rounded-xl text-xs font-black text-rose-500 hover:bg-rose-500/10 transition-all"
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-foreground/40">
+                            Square crop from the centre. Saved when you press
+                            Update Profile.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="grid gap-6 md:grid-cols-2">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">
+                        <label
+                          htmlFor="member-field-1824"
+                          className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1"
+                        >
                           Full Name
                         </label>
                         <input
+                          id="member-field-1824"
                           type="text"
+                          name="name"
                           value={profileData.name}
                           onChange={(e) =>
                             setProfileData({
@@ -1798,11 +1957,16 @@ const MemberDashboard = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">
+                        <label
+                          htmlFor="member-field-1841"
+                          className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1"
+                        >
                           Email Address
                         </label>
                         <input
+                          id="member-field-1841"
                           type="email"
+                          name="email"
                           value={profileData.email}
                           onChange={(e) =>
                             setProfileData({
@@ -1817,11 +1981,16 @@ const MemberDashboard = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">
+                      <label
+                        htmlFor="member-field-1860"
+                        className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1"
+                      >
                         New Password (leave blank to keep current)
                       </label>
                       <input
+                        id="member-field-1860"
                         type="password"
+                        name="password"
                         value={profileData.password}
                         onChange={(e) =>
                           setProfileData({
@@ -1845,6 +2014,7 @@ const MemberDashboard = () => {
                           </label>
                           <input
                             id="profile-designation"
+                            name="designation"
                             type="text"
                             maxLength={100}
                             value={profileData.designation}
@@ -1867,6 +2037,7 @@ const MemberDashboard = () => {
                           </label>
                           <textarea
                             id="profile-bio"
+                            name="roleDescription"
                             rows={4}
                             maxLength={500}
                             value={profileData.roleDescription}

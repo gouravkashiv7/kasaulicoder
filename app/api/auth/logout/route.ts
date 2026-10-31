@@ -15,7 +15,7 @@ export async function POST() {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

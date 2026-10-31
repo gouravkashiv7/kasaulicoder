@@ -32,16 +32,27 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    let account: any;
+    type LoginAccount = {
+      _id: { toString(): string };
+      email: string;
+      password: string;
+      name?: string;
+      role?: string;
+      userType?: string | null;
+      pic?: string | null;
+      image?: string | null;
+      isActive?: boolean;
+    };
+    let account: LoginAccount | null;
 
     if (loginType === "admin") {
-      account = await Staff.findOne({ email: email.trim() })
+      account = (await Staff.findOne({ email: email.trim() })
         .collation(EMAIL_COLLATION)
-        .select("+password");
+        .select("+password")) as unknown as LoginAccount | null;
     } else {
-      account = await User.findOne({ email: email.trim() })
+      account = (await User.findOne({ email: email.trim() })
         .collation(EMAIL_COLLATION)
-        .select("+password");
+        .select("+password")) as unknown as LoginAccount | null;
     }
 
     if (!account) {
@@ -114,7 +125,7 @@ export async function POST(req: Request) {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

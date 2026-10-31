@@ -18,7 +18,7 @@ export async function GET() {
       .sort({ role: -1 }); // superadmin first, then admin
 
     return NextResponse.json(teamMembers, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

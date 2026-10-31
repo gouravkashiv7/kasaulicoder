@@ -160,9 +160,9 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
               </span>
             </button>
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-              {media.map((_, i) => (
+              {media.map((item, i) => (
                 <div
-                  key={i}
+                  key={item.url}
                   className={`size-1.5 rounded-full transition-all ${
                     i === currentIndex ? "bg-primary w-4" : "bg-white/30"
                   }`}

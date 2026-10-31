@@ -66,7 +66,7 @@ export async function POST(
       { message: "Comment posted successfully.", comment: newComment },
       { status: 201 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error posting comment:", error);
     return NextResponse.json(
       { error: "Internal server error" },

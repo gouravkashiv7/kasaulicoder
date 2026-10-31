@@ -25,7 +25,7 @@ export async function GET() {
     ]);
 
     return NextResponse.json({ entries, total, notNotified });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -65,7 +65,7 @@ export async function PATCH(req: Request) {
     }
 
     return NextResponse.json({ message: "Marked as notified", data: updated });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -98,7 +98,7 @@ export async function DELETE(req: Request) {
     await NextCohortInterest.findByIdAndDelete(id);
 
     return NextResponse.json({ message: "Entry removed" });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

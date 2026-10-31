@@ -85,7 +85,10 @@ export default function ForgotPasswordPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">
+              <label
+                htmlFor="forgot-field-88"
+                className="block text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1"
+              >
                 Email Address
               </label>
               <div className="relative group">
@@ -93,6 +96,7 @@ export default function ForgotPasswordPage() {
                   mail
                 </span>
                 <input
+                  id="forgot-field-88"
                   type="email"
                   required
                   value={email}

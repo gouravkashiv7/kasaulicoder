@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Cropper from "react-cropper";
+import Cropper, { type ReactCropperElement } from "react-cropper";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import "cropperjs/dist/cropper.css";
 
@@ -65,7 +65,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
   const [showCropper, setShowCropper] = useState(false);
   const [croppedPic, setCroppedPic] = useState<string | null>(null);
   const [picError, setPicError] = useState("");
-  const cropperRef = useRef<HTMLImageElement>(null);
+  const cropperRef = useRef<ReactCropperElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -169,7 +169,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
   };
 
   const handleCropDone = () => {
-    const cropper = (cropperRef.current as any)?.cropper;
+    const cropper = cropperRef.current?.cropper;
     if (!cropper) return;
     const canvas = cropper.getCroppedCanvas({ width: 256, height: 256 });
     const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
@@ -738,7 +738,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                           </div>
                         ) : (
                           <Link
-                            href={(action as any).href}
+                            href={"href" in action ? action.href : "#"}
                             className="flex items-center gap-3 p-4 bg-background/40 border border-foreground/10 rounded-xl transition-all group hover:border-primary/30"
                           >
                             <div className="size-10 rounded-lg bg-foreground/5 flex items-center justify-center group-hover:text-primary transition-colors">
@@ -1002,13 +1002,16 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                     <div className="p-6 flex items-center gap-6">
                       <div className="relative shrink-0">
                         <div
-                          className={`size-24 rounded-2xl overflow-hidden border-2 ${isStudent ? "border-secondary/30" : "border-primary/30"} bg-foreground/5`}
+                          className={`relative size-24 rounded-2xl overflow-hidden border-2 ${isStudent ? "border-secondary/30" : "border-primary/30"} bg-foreground/5`}
                         >
                           {croppedPic ? (
-                            <img
+                            <Image
+                              unoptimized
+                              fill
+                              sizes="96px"
                               src={croppedPic}
                               alt="Avatar"
-                              className="w-full h-full object-cover"
+                              className="object-cover"
                             />
                           ) : (
                             <div
@@ -1074,10 +1077,14 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                     </div>
                     <div className="p-4 sm:p-6 space-y-5">
                       <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2">
+                        <label
+                          htmlFor="profile-field-1077"
+                          className="block text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2"
+                        >
                           Display Name
                         </label>
                         <input
+                          id="profile-field-1077"
                           type="text"
                           value={settingsForm.name}
                           onChange={(e) =>
@@ -1091,10 +1098,14 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2">
+                        <label
+                          htmlFor="profile-field-1094"
+                          className="block text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2"
+                        >
                           Email Address
                         </label>
                         <input
+                          id="profile-field-1094"
                           type="email"
                           value={settingsForm.email}
                           onChange={(e) =>

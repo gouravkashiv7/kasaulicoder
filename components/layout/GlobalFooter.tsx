@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { serviceGroups } from "@/lib/services";
@@ -25,7 +26,8 @@ const LogoGif = ({ size }: { size: number }) => {
   return (
     <span className="relative block" style={{ width: size, height: size }}>
       {/* Fallback: logo.png shown instantly */}
-      <img
+      <Image
+        unoptimized
         src="/logo.png"
         alt=""
         aria-hidden
@@ -41,7 +43,8 @@ const LogoGif = ({ size }: { size: number }) => {
         }}
       />
       {/* GIF: fades in once loaded */}
-      <img
+      <Image
+        unoptimized
         src="/logo.gif"
         loading="lazy"
         alt="KasauliCoder Logo"

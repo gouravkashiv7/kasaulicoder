@@ -1,10 +1,22 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+
+interface HeaderUser {
+  id?: string;
+  name?: string;
+  email?: string;
+  role?: string;
+  userType?: string;
+  loginType?: string;
+  pic?: string;
+  image?: string;
+}
 
 // Logo: shows logo.png immediately, cross-fades to animated logo.gif once loaded.
 // In theme-light, applies CSS invert (white→black); all other themes: no filter.
@@ -39,7 +51,8 @@ const LogoGif = ({ size }: { size: number }) => {
     // Relative container: png sits beneath, gif fades in on top
     <span className="relative block" style={{ width: size, height: size }}>
       {/* Fallback: logo.png shown instantly */}
-      <img
+      <Image
+        unoptimized
         src="/logo.png"
         alt=""
         aria-hidden
@@ -55,21 +68,24 @@ const LogoGif = ({ size }: { size: number }) => {
         }}
       />
       {/* GIF: loads eagerly, fades in once ready */}
-      <img
-        src={gifSrc}
-        alt="KasauliCoder Logo"
-        width={size}
-        height={size}
-        onLoad={() => setLoaded(true)}
-        className="absolute inset-0 object-contain"
-        style={{
-          width: size,
-          height: size,
-          filter: filterStyle,
-          opacity: loaded ? 1 : 0,
-          transition: "opacity 0.4s ease",
-        }}
-      />
+      {gifSrc && (
+        <Image
+          unoptimized
+          src={gifSrc}
+          alt="KasauliCoder Logo"
+          width={size}
+          height={size}
+          onLoad={() => setLoaded(true)}
+          className="absolute inset-0 object-contain"
+          style={{
+            width: size,
+            height: size,
+            filter: filterStyle,
+            opacity: loaded ? 1 : 0,
+            transition: "opacity 0.4s ease",
+          }}
+        />
+      )}
     </span>
   );
 };
@@ -81,7 +97,7 @@ const GlobalHeader = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<HeaderUser | null>(null);
   const [sessionExpired, setSessionExpired] = useState(false);
   const pathname = usePathname();
 
@@ -361,8 +377,11 @@ const GlobalHeader = ({
                     </span>
                     {/* Image Overlay */}
                     {(user.pic || user.image) && (
-                      <img
-                        src={user.pic || user.image}
+                      <Image
+                        unoptimized
+                        fill
+                        sizes="40px"
+                        src={user.pic || user.image || ""}
                         alt={user.name || "User"}
                         className="absolute inset-0 size-full object-cover transition-opacity duration-300 opacity-0"
                         onLoad={(e) => {
@@ -549,8 +568,11 @@ const GlobalHeader = ({
                         </span>
                         {/* Image Overlay */}
                         {(user.pic || user.image) && (
-                          <img
-                            src={user.pic || user.image}
+                          <Image
+                            unoptimized
+                            fill
+                            sizes="40px"
+                            src={user.pic || user.image || ""}
                             alt={user.name || "User"}
                             className="absolute inset-0 size-full object-cover transition-opacity duration-300 opacity-0"
                             onLoad={(e) => {

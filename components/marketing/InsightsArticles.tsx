@@ -9,8 +9,20 @@ import GlobalHeader from "@/components/layout/GlobalHeader";
 
 type ViewType = "grid" | "list";
 
+interface Article {
+  _id: string;
+  slug: string;
+  title: string;
+  tagline: string;
+  content?: string;
+  mainImageUrl: string;
+  writtenBy?: string;
+  authorId?: { name: string; image?: string };
+  createdAt: string;
+}
+
 const InsightsArticles = () => {
-  const [articles, setArticles] = useState<any[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewType, setViewType] = useState<ViewType>("grid");

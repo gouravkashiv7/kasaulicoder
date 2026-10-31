@@ -30,7 +30,7 @@ export async function GET() {
       .sort({ createdAt: -1 });
 
     return NextResponse.json(staffMembers);
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -140,7 +140,7 @@ export async function POST(req: Request) {
       },
       { status: 201 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -193,7 +193,7 @@ export async function PATCH(req: Request) {
     }
 
     return NextResponse.json({ isActive: staff.isActive });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -260,7 +260,7 @@ export async function PUT(req: Request) {
         designation: staff.designation,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

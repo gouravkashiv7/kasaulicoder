@@ -148,7 +148,7 @@ export async function PATCH(
       "no-store, max-age=0, must-revalidate",
     );
     return response;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating member blog:", error);
     return NextResponse.json(
       { error: "Internal server error" },

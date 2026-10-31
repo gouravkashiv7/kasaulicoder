@@ -28,7 +28,7 @@ export async function PUT(req: Request) {
 
     // Permission check: superadmin OR member
     const isMember = project.members.some(
-      (mId: any) => mId.toString() === session.id,
+      (mId: { toString(): string }) => mId.toString() === session.id,
     );
     if (session.role !== "superadmin" && !isMember) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
@@ -36,14 +36,14 @@ export async function PUT(req: Request) {
 
     const body = pickProjectFields(await req.json());
     // Only superadmins may change membership
-    if (session.role !== "superadmin") delete (body as any).members;
+    if (session.role !== "superadmin") delete body.members;
     const updatedProject = await Project.findByIdAndUpdate(
       id,
       { $set: body },
       { new: true, runValidators: true },
     );
     return NextResponse.json(updatedProject, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
@@ -84,7 +84,7 @@ export async function DELETE(req: Request) {
       { message: "Project deleted successfully" },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal Server Error" },

@@ -19,7 +19,8 @@ export function pickProjectFields(body: unknown): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   if (!body || typeof body !== "object") return out;
   for (const key of ALLOWED) {
-    if (key in (body as object)) out[key] = (body as any)[key];
+    if (key in (body as object))
+      out[key] = (body as Record<string, unknown>)[key];
   }
   return out;
 }

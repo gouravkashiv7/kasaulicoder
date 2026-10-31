@@ -20,7 +20,7 @@ export async function GET() {
       .sort({ createdAt: -1 });
 
     return NextResponse.json(projects, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("API GET Projects error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
@@ -54,11 +54,11 @@ export async function POST(req: Request) {
 
     const newProject = await Project.create({
       ...body,
-      slug: (body as any).slug || slug,
+      slug: (body.slug as string | undefined) || slug,
     });
 
     return NextResponse.json(newProject, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("API POST Project error:", error);
     return NextResponse.json(
       { error: "Failed to create project" },

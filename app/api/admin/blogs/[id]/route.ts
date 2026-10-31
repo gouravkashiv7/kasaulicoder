@@ -58,7 +58,7 @@ export async function PATCH(
       },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating blog status:", error);
     return NextResponse.json(
       { error: "Internal server error" },

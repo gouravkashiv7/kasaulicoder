@@ -15,7 +15,7 @@ export async function GET() {
       .populate("authorId", "name image");
 
     return NextResponse.json({ blogs }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching public blogs:", error);
     return NextResponse.json(
       { error: "Internal server error" },

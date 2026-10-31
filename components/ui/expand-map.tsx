@@ -151,6 +151,7 @@ export function LocationMap({
               <div className="absolute inset-0 bg-muted" />
 
               <svg
+                aria-hidden="true"
                 className="absolute inset-0 w-full h-full"
                 preserveAspectRatio="none"
               >
@@ -205,7 +206,7 @@ export function LocationMap({
                 {/* Secondary streets */}
                 {[20, 50, 80].map((y, i) => (
                   <motion.line
-                    key={`h-${i}`}
+                    key={`h-${y}`}
                     x1="0%"
                     y1={`${y}%`}
                     x2="100%"
@@ -219,7 +220,7 @@ export function LocationMap({
                 ))}
                 {[15, 45, 55, 85].map((x, i) => (
                   <motion.line
-                    key={`v-${i}`}
+                    key={`v-${x}`}
                     x1={`${x}%`}
                     y1="0%"
                     x2={`${x}%`}
@@ -283,6 +284,7 @@ export function LocationMap({
                 }}
               >
                 <svg
+                  aria-hidden="true"
                   width="32"
                   height="32"
                   viewBox="0 0 24 24"
@@ -311,7 +313,12 @@ export function LocationMap({
           animate={{ opacity: isExpanded ? 0 : 0.03 }}
           transition={{ duration: 0.3 }}
         >
-          <svg width="100%" height="100%" className="absolute inset-0">
+          <svg
+            aria-hidden="true"
+            width="100%"
+            height="100%"
+            className="absolute inset-0"
+          >
             <defs>
               <pattern
                 id="grid"
@@ -345,6 +352,7 @@ export function LocationMap({
               >
                 {/* Map Icon SVG */}
                 <motion.svg
+                  aria-hidden="true"
                   width="18"
                   height="18"
                   viewBox="0 0 24 24"

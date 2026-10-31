@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
+import type { ComponentProps } from "react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import GlobalFooter from "@/components/layout/GlobalFooter";
@@ -37,7 +38,7 @@ type BlogType = {
 
 const BlogContent = ({ slug }: { slug: string }) => {
   const [blog, setBlog] = useState<BlogType | null>(null);
-  const [jsxSource, setJsxSource] = useState<any>(null);
+  const [jsxSource, setJsxSource] = useState<string | null>(null);
   const [comments, setComments] = useState<CommentType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -100,19 +101,24 @@ const BlogContent = ({ slug }: { slug: string }) => {
     }
   };
 
-  const SafeImage = (props: any) => {
-    if (!props.src) return null;
-    if (!props.width || !props.height) {
+  const SafeImage = ({
+    src,
+    alt,
+    title,
+    width,
+    height,
+  }: ComponentProps<"img">) => {
+    if (typeof src !== "string" || !src) return null;
+    if (!width || !height) {
       return (
         <div className="relative w-full aspect-video overflow-hidden rounded-2xl border border-foreground/10 my-8 bg-foreground/5">
           <Image
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
             className="object-cover"
-            alt={props.alt || "Blog image"}
-            {...props}
-            width={undefined}
-            height={undefined}
+            alt={alt || "Blog image"}
+            title={title}
+            src={src}
           />
         </div>
       );
@@ -120,8 +126,11 @@ const BlogContent = ({ slug }: { slug: string }) => {
     return (
       <Image
         className="rounded-2xl border border-foreground/10 my-8"
-        alt={props.alt || "Blog image"}
-        {...props}
+        alt={alt || "Blog image"}
+        title={title}
+        src={src}
+        width={Number(width)}
+        height={Number(height)}
       />
     );
   };
@@ -234,8 +243,8 @@ const BlogContent = ({ slug }: { slug: string }) => {
               {jsxSource ? (
                 <ReactMarkdown
                   components={{
-                    img: ({ node, ...props }: any) => <SafeImage {...props} />,
-                    p: ({ node, ...props }: any) => (
+                    img: ({ node, ...props }) => <SafeImage {...props} />,
+                    p: ({ node, ...props }) => (
                       <div
                         className="leading-relaxed text-foreground/80 mb-4"
                         {...props}

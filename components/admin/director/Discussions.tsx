@@ -225,9 +225,9 @@ const Discussions = () => {
         </p>
       )}
       {notice && (
-        <p role="status" className="mb-4 text-sm font-bold text-emerald-500">
+        <output className="mb-4 block text-sm font-bold text-emerald-500">
           {notice}
-        </p>
+        </output>
       )}
 
       {loading ? (

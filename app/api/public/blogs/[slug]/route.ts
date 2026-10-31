@@ -38,7 +38,7 @@ export async function GET(
     }).sort({ createdAt: -1 });
 
     return NextResponse.json({ blog, comments }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching single public blog:", error);
     return NextResponse.json(
       { error: "Internal server error" },

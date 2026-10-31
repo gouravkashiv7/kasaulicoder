@@ -89,7 +89,10 @@ const ResetPasswordForm = () => {
   return (
     <form onSubmit={handleSubmit} className="sm:space-y-6">
       <div className="space-y-2">
-        <label className="block text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">
+        <label
+          htmlFor="reset-field-92"
+          className="block text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1"
+        >
           New Password
         </label>
         <div className="relative group">
@@ -97,6 +100,7 @@ const ResetPasswordForm = () => {
             lock
           </span>
           <input
+            id="reset-field-92"
             type="password"
             required
             value={formData.password}
@@ -110,7 +114,10 @@ const ResetPasswordForm = () => {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1">
+        <label
+          htmlFor="reset-field-113"
+          className="block text-[10px] font-black uppercase tracking-widest text-foreground/50 ml-1"
+        >
           Confirm Password
         </label>
         <div className="relative group">
@@ -118,6 +125,7 @@ const ResetPasswordForm = () => {
             lock_reset
           </span>
           <input
+            id="reset-field-113"
             type="password"
             required
             value={formData.confirmPassword}

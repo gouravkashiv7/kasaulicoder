@@ -27,7 +27,7 @@ export async function GET(_req: Request) {
     const blogs = await Blog.find({}).sort({ createdAt: -1 });
 
     return NextResponse.json({ blogs }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching admin blogs:", error);
     return NextResponse.json(
       { error: "Internal server error" },

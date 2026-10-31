@@ -31,7 +31,7 @@ export async function GET() {
     });
 
     return NextResponse.json(programs);
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(newProgram, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -132,7 +132,7 @@ export async function PUT(req: Request) {
     }
 
     return NextResponse.json(updatedProgram);
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -166,7 +166,7 @@ export async function DELETE(req: Request) {
     }
 
     return NextResponse.json({ message: "Program deleted successfully" });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

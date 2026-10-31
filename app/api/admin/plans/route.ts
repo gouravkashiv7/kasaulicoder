@@ -21,7 +21,7 @@ export async function GET() {
     await connectDB();
     const plans = await Plan.find().sort({ sortOrder: 1 });
     return NextResponse.json({ plans }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
       { message: "Plan created", plan },
       { status: 201 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -130,7 +130,7 @@ export async function PUT(req: Request) {
       { message: "Plan updated", plan },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -165,7 +165,7 @@ export async function DELETE(req: Request) {
     }
 
     return NextResponse.json({ message: "Plan deleted" }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

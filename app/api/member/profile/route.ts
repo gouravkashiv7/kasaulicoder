@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import { parseImageDataUrl } from "@/backend/lib/attachments";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
@@ -26,7 +27,7 @@ export async function GET() {
     }
 
     return NextResponse.json(staff);
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -47,8 +48,30 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    const { name, email, password, designation, roleDescription } =
+    const { name, email, password, designation, roleDescription, image } =
       await req.json();
+
+    // Validate the photo before changing anything. "" removes it.
+    const canEditProfileText =
+      session.role === "admin" || session.role === "superadmin";
+    let newImage: string | undefined;
+    if (canEditProfileText && typeof image === "string") {
+      if (image === "") {
+        newImage = "";
+      } else {
+        const parsed = parseImageDataUrl(image);
+        if ("error" in parsed) {
+          return NextResponse.json({ error: parsed.error }, { status: 400 });
+        }
+        if (parsed.data.length > 200 * 1024) {
+          return NextResponse.json(
+            { error: "Photo exceeds the 200KB limit. Try a smaller image." },
+            { status: 400 },
+          );
+        }
+        newImage = image;
+      }
+    }
 
     await connectDB();
     const staff = await Staff.findById(session.id);
@@ -74,7 +97,8 @@ export async function PATCH(req: Request) {
     }
 
     // Admins maintain their own title and bio; other roles keep them read-only
-    if (session.role === "admin" || session.role === "superadmin") {
+    if (canEditProfileText) {
+      if (newImage !== undefined) staff.image = newImage;
       if (typeof designation === "string") {
         staff.designation = designation.trim().slice(0, 100);
       }
@@ -98,9 +122,10 @@ export async function PATCH(req: Request) {
         role: staff.role,
         designation: staff.designation,
         roleDescription: staff.roleDescription,
+        image: staff.image,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

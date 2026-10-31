@@ -24,7 +24,7 @@ export async function GET() {
       .select("-password")
       .sort({ createdAt: -1 });
     return NextResponse.json(users);
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -76,7 +76,7 @@ export async function PATCH(req: Request) {
     }
 
     return NextResponse.json({ isActive: user.isActive });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

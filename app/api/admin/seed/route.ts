@@ -28,8 +28,8 @@ export async function POST() {
       });
       results.student = "Created";
     }
-  } catch (e: any) {
-    results.student = `Error: ${e.message}`;
+  } catch (e) {
+    results.student = `Error: ${e instanceof Error ? e.message : String(e)}`;
   }
 
   // ── 2. Test Professional ─────────────────────────────────────────
@@ -50,8 +50,8 @@ export async function POST() {
       });
       results.professional = "Created";
     }
-  } catch (e: any) {
-    results.professional = `Error: ${e.message}`;
+  } catch (e) {
+    results.professional = `Error: ${e instanceof Error ? e.message : String(e)}`;
   }
 
   // ── 3. SuperAdmin (Staff) ────────────────────────────────────────
@@ -71,8 +71,8 @@ export async function POST() {
       });
       results.admin = "Created";
     }
-  } catch (e: any) {
-    results.admin = `Error: ${e.message}`;
+  } catch (e) {
+    results.admin = `Error: ${e instanceof Error ? e.message : String(e)}`;
   }
 
   return NextResponse.json({ message: "Seed complete", results });

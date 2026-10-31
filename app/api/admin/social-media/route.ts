@@ -14,10 +14,11 @@ const ALLOWED = [
   "isActive",
 ] as const;
 
-function pickFields(body: any) {
+function pickFields(body: unknown) {
   const out: Record<string, unknown> = {};
+  if (!body || typeof body !== "object") return out;
   for (const key of ALLOWED) {
-    if (body && key in body) out[key] = body[key];
+    if (key in body) out[key] = (body as Record<string, unknown>)[key];
   }
   return out;
 }

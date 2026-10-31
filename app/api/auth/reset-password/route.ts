@@ -86,10 +86,18 @@ export async function POST(req: Request) {
     return NextResponse.json({
       message: "Password updated successfully! You can now log in.",
     });
-  } catch (error: any) {
+  } catch (error) {
     // Log only the error type: messages can echo the token
-    console.error("Reset password error:", error?.name);
-    if (error.code === "ERR_JWT_EXPIRED") {
+    console.error(
+      "Reset password error:",
+      error instanceof Error ? error.name : "unknown",
+    );
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "ERR_JWT_EXPIRED"
+    ) {
       return NextResponse.json(
         { error: "Reset link has expired. Please request a new one." },
         { status: 400 },

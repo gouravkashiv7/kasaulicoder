@@ -25,7 +25,7 @@ export async function GET() {
     const requests = await ContactRequest.find({}).sort({ createdAt: -1 });
 
     return NextResponse.json(requests);
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -132,7 +132,7 @@ export async function PATCH(req: Request) {
     }
 
     return NextResponse.json({ message: "Marked as read", data: updated });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

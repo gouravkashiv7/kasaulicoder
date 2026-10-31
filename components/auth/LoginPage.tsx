@@ -211,7 +211,10 @@ const LoginPage = () => {
 
               <form className="space-y-5" onSubmit={handleSubmit}>
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-1">
+                  <label
+                    htmlFor="login-field-214"
+                    className="block text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-1"
+                  >
                     Email Address
                   </label>
                   <div className="relative group">
@@ -219,6 +222,7 @@ const LoginPage = () => {
                       mail
                     </span>
                     <input
+                      id="login-field-214"
                       type="email"
                       required
                       value={formData.email}
@@ -233,7 +237,10 @@ const LoginPage = () => {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between ml-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70">
+                    <label
+                      htmlFor="login-field-236"
+                      className="text-[10px] font-black uppercase tracking-widest text-foreground/70"
+                    >
                       Password
                     </label>
                     <Link
@@ -248,6 +255,7 @@ const LoginPage = () => {
                       lock
                     </span>
                     <input
+                      id="login-field-236"
                       type={showPassword ? "text" : "password"}
                       required
                       value={formData.password}

@@ -17,16 +17,13 @@ export async function GET() {
   const { id, type } = auth;
   await connectDB();
 
-  let account: any;
+  let account: unknown;
   if (type === "admin") {
-    account = await Staff.findById(id).select(
+    const staff = await Staff.findById(id).select(
       "-password -resetPasswordToken -resetPasswordExpires",
     );
-    if (account) {
-      // Normalize image to pic for frontend
-      account = account.toObject();
-      account.pic = account.image || null;
-    }
+    // Normalize image to pic for frontend
+    account = staff ? { ...staff.toObject(), pic: staff.image || null } : null;
   } else {
     account = await User.findById(id).select(
       "-password -resetPasswordToken -resetPasswordExpires",
