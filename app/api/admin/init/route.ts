@@ -19,11 +19,23 @@ export async function POST() {
       );
     }
 
-    const hashedPassword = await bcrypt.hash("admin@kasaulicoder", 12);
+    // No default password lives in the code: supply one via the environment.
+    const initPassword = process.env.ADMIN_INIT_PASSWORD;
+    if (!initPassword || initPassword.length < 12) {
+      return NextResponse.json(
+        {
+          error:
+            "Set ADMIN_INIT_PASSWORD (at least 12 characters) before running init",
+        },
+        { status: 400 },
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(initPassword, 12);
 
     await Staff.create({
       name: "Super Admin",
-      email: "admin@kasaulicoder.com",
+      email: process.env.ADMIN_INIT_EMAIL || "admin@kasaulicoder.com",
       password: hashedPassword,
       role: "superadmin",
       isActive: true,
