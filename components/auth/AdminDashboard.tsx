@@ -149,8 +149,8 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
   }, []);
 
   // Main State
-  const [activeTab, setActiveTab] = useState<"users" | "staff">("users");
-  const activeTabRef = useRef<"users" | "staff">("users");
+  const [activeTab, setActiveTab] = useState<"users" | "staff">("staff");
+  const activeTabRef = useRef<"users" | "staff">("staff");
   const [data, setData] = useState<DirectoryRecord[]>([]);
   // Lists start in a loading state so the empty state never flashes before the
   // first fetch; later refetches are silent and keep the current rows on screen.

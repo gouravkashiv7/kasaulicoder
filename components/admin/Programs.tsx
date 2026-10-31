@@ -93,7 +93,7 @@ const Programs = ({
         <div className="p-12 md:p-24 text-center">
           <div className="size-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-6"></div>
           <p className="text-primary font-bold animate-pulse tracking-widest text-sm uppercase">
-            Fetching program data…
+            Loading programs…
           </p>
         </div>
       ) : programs.length === 0 ? (
@@ -104,18 +104,18 @@ const Programs = ({
             </span>
           </div>
           <h3 className="text-xl font-black text-foreground mb-3">
-            No Programs found
+            No programs yet
           </h3>
           <p className="text-foreground/40 font-bold mb-8 max-w-xs mx-auto">
-            You haven&apos;t added any educational paths yet. Click the button
-            above to begin.
+            You haven&apos;t added any programs yet. Use the button above to
+            create one.
           </p>
           <button
             type="button"
             onClick={onCreate}
             className="text-primary font-black hover:underline underline-offset-8"
           >
-            Create Your First Program →
+            Create your first program
           </button>
         </div>
       ) : (
@@ -249,7 +249,7 @@ const Programs = ({
                             type="button"
                             onClick={() => handleDeleteProgram(prog._id)}
                             className="flex-1 flex items-center justify-center rounded-2xl bg-foreground/5 text-foreground/20 hover:text-rose-500 hover:bg-rose-500/5 transition-all"
-                            title="Purge"
+                            title="Delete program"
                           >
                             <span className="material-symbols-outlined text-lg">
                               delete

@@ -49,7 +49,7 @@ const Pricing = ({
 
       {plansLoading ? (
         <div className="p-20 text-center animate-pulse text-primary font-bold text-lg">
-          Synchronizing pricing data...
+          Loading pricing plans…
         </div>
       ) : plans.length === 0 ? (
         <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-10 md:p-20 text-center">
@@ -57,14 +57,14 @@ const Pricing = ({
             payments
           </span>
           <p className="text-foreground/40 font-bold mb-6">
-            No pricing plans found in the system.
+            No pricing plans yet.
           </p>
           <button
             type="button"
             onClick={onCreate}
             className="text-primary font-bold hover:underline"
           >
-            Click here to create your first plan
+            Create your first plan
           </button>
         </div>
       ) : (
@@ -158,7 +158,7 @@ const Pricing = ({
                     type="button"
                     onClick={() => handleDeletePlan(plan._id)}
                     className="size-10 flex items-center justify-center rounded-xl bg-orange-500/10 text-orange-500 border border-orange-500/20 hover:bg-orange-500/20 transition-all"
-                    title="Delete Permanently"
+                    title="Delete plan"
                   >
                     <span className="material-symbols-outlined text-lg">
                       delete_forever

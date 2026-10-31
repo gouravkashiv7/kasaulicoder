@@ -50,7 +50,7 @@ const ProgramModal = ({
                   {editingProgram ? "Update Program" : "Architect New Program"}
                 </h2>
                 <p className="text-[10px] font-bold text-foreground/30 uppercase tracking-[0.2em]">
-                  Learning Path Configuration
+                  Program details
                 </p>
               </div>
               <button
@@ -115,7 +115,7 @@ const ProgramModal = ({
                       htmlFor="program-program-identity"
                       className="text-[10px] font-black uppercase text-foreground/40 ml-2 tracking-widest"
                     >
-                      Program Identity
+                      Program name
                     </label>
                     <input
                       id="program-program-identity"
@@ -135,7 +135,7 @@ const ProgramModal = ({
                       htmlFor="program-marketing-tagline"
                       className="text-[10px] font-black uppercase text-foreground/40 ml-2 tracking-widest"
                     >
-                      Marketing Tagline
+                      Tagline
                     </label>
                     <input
                       id="program-marketing-tagline"
@@ -160,7 +160,7 @@ const ProgramModal = ({
                   htmlFor="program-comprehensive-overview"
                   className="text-[10px] font-black uppercase text-foreground/40 ml-2 tracking-widest"
                 >
-                  Comprehensive Overview
+                  Description
                 </label>
                 <textarea
                   id="program-comprehensive-overview"
@@ -182,7 +182,7 @@ const ProgramModal = ({
               <div className="space-y-3">
                 <div className="flex items-center justify-between ml-2">
                   <p className="text-[10px] font-black uppercase text-foreground/40 tracking-widest">
-                    Core Modules / Features
+                    Features
                   </p>
                   <button
                     type="button"

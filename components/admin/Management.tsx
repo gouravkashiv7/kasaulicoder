@@ -140,17 +140,6 @@ const Management = ({
       <div className="flex flex-wrap gap-3 md:gap-4 mb-8">
         <button
           type="button"
-          onClick={() => setActiveTab("users")}
-          className={`px-4 md:px-6 py-2 rounded-lg font-bold text-sm md:text-base transition-all ${
-            activeTab === "users"
-              ? "bg-primary text-primary-content"
-              : "bg-foreground/5 text-foreground/60 hover:text-foreground"
-          }`}
-        >
-          Registered Members
-        </button>
-        <button
-          type="button"
           onClick={() => setActiveTab("staff")}
           className={`px-4 md:px-6 py-2 rounded-lg font-bold text-sm md:text-base transition-all ${
             activeTab === "staff"
@@ -161,6 +150,17 @@ const Management = ({
           Team Members
         </button>
 
+        <button
+          type="button"
+          onClick={() => setActiveTab("users")}
+          className={`px-4 md:px-6 py-2 rounded-lg font-bold text-sm md:text-base transition-all ${
+            activeTab === "users"
+              ? "bg-primary text-primary-content"
+              : "bg-foreground/5 text-foreground/60 hover:text-foreground"
+          }`}
+        >
+          Registered Members
+        </button>
         {activeTab === "staff" && (
           <div className="ml-auto flex flex-wrap gap-3">
             <button
@@ -297,7 +297,7 @@ const Management = ({
       <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl overflow-hidden shadow-2xl">
         {loading ? (
           <div className="p-20 text-center animate-pulse text-primary font-bold">
-            Fetching records from the mainframe…
+            Loading records…
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -477,8 +477,8 @@ const Management = ({
                       {userSearch ||
                       userDateFilter !== "all" ||
                       userTypeFilter !== "all"
-                        ? "No users match your filters."
-                        : "No records found in this sector."}
+                        ? "No members match your filters."
+                        : "No records found."}
                     </td>
                   </tr>
                 )}

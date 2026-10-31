@@ -69,12 +69,11 @@ const SocialMediaManagement = ({
       <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl overflow-hidden shadow-2xl">
         {loading ? (
           <div className="p-20 text-center animate-pulse text-primary font-bold">
-            Syncing platform data…
+            Loading accounts…
           </div>
         ) : accounts.length === 0 ? (
           <div className="p-20 text-center text-foreground/50">
-            No social media accounts configured. Add your first one to get
-            started.
+            No social media accounts yet. Add the first account to get started.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -197,7 +196,7 @@ const SocialMediaManagement = ({
                           <span className="material-symbols-outlined text-sm">
                             lock
                           </span>
-                          Access Restricted
+                          Restricted
                         </div>
                       )}
                     </td>

@@ -86,7 +86,7 @@ const StatusToggleModal = ({
                 onClick={() => executeStatusToggle(false)}
                 className="py-3 bg-foreground/5 text-foreground font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-foreground/10 transition-all"
               >
-                Confirm Silently
+                Confirm without notifying
               </button>
               <button
                 type="button"

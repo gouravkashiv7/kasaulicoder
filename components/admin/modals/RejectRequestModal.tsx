@@ -104,7 +104,7 @@ const RejectRequestModal = ({
                 onClick={() => executeReject(false)}
                 className="py-3 bg-foreground/5 text-foreground font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-foreground/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Reject Silently
+                Reject without email
               </button>
               <button
                 type="button"

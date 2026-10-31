@@ -58,7 +58,7 @@ const Cohort = ({
 
       {cohortLoading ? (
         <div className="p-20 text-center animate-pulse text-emerald-500 font-bold">
-          Accessing waitlist records...
+          Loading waitlist…
         </div>
       ) : cohortInterests.length === 0 ? (
         <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-10 md:p-20 text-center">

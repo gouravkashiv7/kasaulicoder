@@ -142,10 +142,10 @@ export default function AdminProjectsManagement() {
                   rocket_launch
                 </span>
               </span>
-              Projects Console
+              Projects
             </h1>
             <p className="text-foreground/50 text-sm mt-2 font-medium">
-              Manage and showcase your engineering milestones.
+              Manage the projects shown on the website.
             </p>
           </div>
           <Link
@@ -250,7 +250,7 @@ export default function AdminProjectsManagement() {
               refresh
             </span>
             <p className="text-xs font-black uppercase tracking-widest">
-              Compiling entries...
+              Loading projects…
             </p>
           </div>
         ) : filteredProjects.length === 0 ? (
@@ -354,7 +354,7 @@ export default function AdminProjectsManagement() {
                                 ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
                                 : "bg-foreground/5 text-foreground/20 border-foreground/10 hover:text-foreground/40"
                             }`}
-                            title="Toggle Featured"
+                            title="Feature on website"
                           >
                             <span className="material-symbols-outlined text-[20px]">
                               star
@@ -368,7 +368,7 @@ export default function AdminProjectsManagement() {
                                 ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                                 : "bg-foreground/5 text-foreground/20 border-foreground/10 hover:text-foreground/40"
                             }`}
-                            title="Toggle Status"
+                            title="Change status"
                           >
                             <span className="material-symbols-outlined text-[20px]">
                               sync
@@ -381,7 +381,7 @@ export default function AdminProjectsManagement() {
                             href={`/projects/recent-projects/${project.slug}`}
                             target="_blank"
                             className="flex-1 sm:size-10 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20 flex items-center justify-center transition-all"
-                            title="View Public Profile"
+                            title="View on website"
                           >
                             <span className="material-symbols-outlined text-[20px]">
                               visibility
@@ -390,7 +390,7 @@ export default function AdminProjectsManagement() {
                           <Link
                             href={`/admin/projects/edit/${project._id}`}
                             className="flex-1 sm:size-10 rounded-xl bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 flex items-center justify-center transition-all"
-                            title="Edit Details"
+                            title="Edit project"
                           >
                             <span className="material-symbols-outlined text-[20px]">
                               edit
@@ -406,7 +406,7 @@ export default function AdminProjectsManagement() {
                                 )
                               }
                               className="flex-1 sm:size-10 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20 flex items-center justify-center transition-all"
-                              title="Delete Permanently"
+                              title="Delete project"
                             >
                               <span className="material-symbols-outlined text-[20px]">
                                 delete

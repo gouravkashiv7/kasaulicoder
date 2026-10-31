@@ -41,7 +41,7 @@ const Overview = ({
         <p className="text-foreground/50">
           {isSuper
             ? "Welcome back, Superadmin. Here's your summary."
-            : "Welcome back. Access your assigned projects and tasks below."}
+            : "Welcome back. Your assigned projects and tools are listed below."}
         </p>
       </div>
 

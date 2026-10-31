@@ -273,7 +273,7 @@ const BlogEditorSection = ({
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black mb-2 tracking-tight">
-            {editingBlog ? "Refine Your Blog" : "Compose New Blog"}
+            {editingBlog ? "Edit Blog Post" : "New Blog Post"}
           </h1>
           <p className="text-foreground/50 font-medium leading-relaxed max-w-lg">
             {editingBlog
@@ -309,10 +309,10 @@ const BlogEditorSection = ({
               <UniqueLoading variant="morph" size="lg" />
               <div className="text-center space-y-2">
                 <h3 className="text-2xl font-black tracking-tight text-foreground">
-                  {editingBlog ? "Pushing Updates..." : "Publishing Blog..."}
+                  {editingBlog ? "Saving changes…" : "Saving blog post…"}
                 </h3>
                 <p className="text-sm font-medium text-foreground/40 italic">
-                  Synchronizing with the creative neural engine...
+                  This usually takes a few seconds.
                 </p>
               </div>
             </div>
@@ -571,7 +571,7 @@ const BlogEditorSection = ({
                             </span>
                           </div>
                           <h3 className="text-sm font-black uppercase tracking-widest text-primary">
-                            AI Genesis Prompt
+                            AI Content Prompt
                           </h3>
                         </div>
                         <button
@@ -969,10 +969,10 @@ Output ONLY the MDX content.`;
                   {editingBlog ? "update" : "send"}
                 </span>
                 {submittingBlog
-                  ? "Synchronizing..."
+                  ? "Saving…"
                   : editingBlog
                     ? "Update Blog"
-                    : "Initiate Blog Publication"}
+                    : "Submit Blog Post"}
               </button>
             </div>
           </div>
@@ -1703,7 +1703,7 @@ const MemberDashboard = () => {
                     <div className="flex flex-col items-center justify-center py-24 glass-panel rounded-3xl border border-foreground/5">
                       <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
                       <p className="text-xs font-black uppercase tracking-widest text-foreground/20">
-                        Synchronizing Vault...
+                        Loading your blog posts…
                       </p>
                     </div>
                   ) : blogs.length === 0 ? (
@@ -1781,7 +1781,7 @@ const MemberDashboard = () => {
                             type="button"
                             onClick={() => handleEditBlog(blog)}
                             className="size-12 flex items-center justify-center rounded-2xl bg-foreground/5 text-foreground/60 hover:bg-primary hover:text-white transition-all shadow-sm border border-foreground/5 group-hover:border-primary/20"
-                            title="Refine Blog"
+                            title="Edit blog post"
                           >
                             <span className="material-symbols-outlined text-xl">
                               edit_note

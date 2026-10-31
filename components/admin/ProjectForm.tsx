@@ -221,7 +221,7 @@ export default function ProjectForm({
               htmlFor="project-full-story-case-study"
               className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]"
             >
-              Full Story / Case Study
+              Case study
             </label>
             <textarea
               id="project-full-story-case-study"
@@ -230,7 +230,7 @@ export default function ProjectForm({
               onChange={(e) =>
                 setFormData((p) => ({ ...p, content: e.target.value }))
               }
-              placeholder="Deep dive into the challenges, solution, and technical stack (Supports Markdown)..."
+              placeholder="Describe the challenge, the solution and the technology used (Markdown supported)…"
               className="w-full bg-background border border-white/10 rounded-2xl px-5 py-3 text-sm outline-none focus:border-primary/50 transition-all shadow-inner resize-none"
             />
           </div>
@@ -246,18 +246,16 @@ export default function ProjectForm({
             </div>
             <div>
               <h4 className="text-sm font-black text-primary uppercase tracking-widest mb-1">
-                Display Logic Guide
+                How the project preview is chosen
               </h4>
               <p className="text-xs text-foreground/60 leading-relaxed">
-                <strong>Priority 1:</strong> Custom Media added below will be
-                shown as a carousel.
+                <strong>1.</strong> Media added below is shown as a carousel.
                 <br />
-                <strong>Priority 2:</strong> Default Website Preview will be
-                rendered using the <strong>Live URL</strong> if no media is
-                added.
+                <strong>2.</strong> If no media is added, a preview of the
+                <strong> Live URL</strong> is shown.
                 <br />
-                <strong>Priority 3:</strong> If both are missing, a system
-                placeholder will be shown.
+                <strong>3.</strong> If both are missing, a default placeholder
+                is shown.
               </p>
             </div>
           </div>
@@ -270,7 +268,7 @@ export default function ProjectForm({
               Project Team Members
             </h3>
             <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-[0.2em] mt-1">
-              Assign members who worked on this project
+              Select the team members who worked on this project
             </p>
           </div>
 
@@ -319,7 +317,7 @@ export default function ProjectForm({
             ))}
             {staffList.length === 0 && (
               <p className="text-xs text-foreground/30 italic">
-                Loading staff members...
+                Loading team members…
               </p>
             )}
           </div>
@@ -333,7 +331,7 @@ export default function ProjectForm({
                 Project Media
               </h3>
               <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-[0.2em] mt-1">
-                Images or Video demos
+                Images and videos
               </p>
             </div>
             <div className="flex gap-2">
@@ -425,7 +423,7 @@ export default function ProjectForm({
                   web_asset
                 </span>
                 <p className="text-[10px] font-black text-foreground/20 uppercase tracking-[0.3em]">
-                  No custom media added — Fallback active
+                  No media added. A default preview will be shown.
                 </p>
               </div>
             )}

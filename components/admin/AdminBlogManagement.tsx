@@ -92,7 +92,8 @@ const AdminBlogManagement = () => {
                     colSpan={5}
                     className="px-6 py-8 text-center text-foreground/50"
                   >
-                    No blogs found. Wait for staff members to draft them.
+                    No blog posts yet. Posts drafted by team members will appear
+                    here.
                   </td>
                 </tr>
               ) : (

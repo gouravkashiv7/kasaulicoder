@@ -247,7 +247,7 @@ const SocialMediaModal = ({
                   }
                   className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 appearance-none"
                 >
-                  <option value="">Select Staff Member</option>
+                  <option value="">Select team member</option>
                   {staffList.map((staff) => (
                     <option key={staff._id} value={staff._id}>
                       {staff.name} ({staff.role})
