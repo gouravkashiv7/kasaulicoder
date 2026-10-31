@@ -126,12 +126,21 @@ const AnoAI = () => {
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
+    // With reduced motion, draw a single still frame instead of animating
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const renderStill = () => {
+      if (reduceMotion) renderer.render(scene, camera);
+    };
+
     // Watch for theme changes
     const observer = new MutationObserver(() => {
       const newTheme = getThemeColors();
       material.uniforms.uColorPrimary.value.set(newTheme.primary);
       material.uniforms.uColorSecondary.value.set(newTheme.secondary);
       material.uniforms.uBrightness.value = newTheme.isLight ? 0.6 : 1.2;
+      renderStill();
     });
 
     observer.observe(document.documentElement, {
@@ -152,7 +161,12 @@ const AnoAI = () => {
       material.uniforms.iTime.value += 0.016;
       renderer.render(scene, camera);
     };
-    requestAnimationFrame(animate);
+    if (reduceMotion) {
+      material.uniforms.iTime.value = 12;
+      renderStill();
+    } else {
+      frameId = requestAnimationFrame(animate);
+    }
 
     const handleResize = () => {
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -160,6 +174,7 @@ const AnoAI = () => {
         window.innerWidth,
         window.innerHeight,
       );
+      renderStill();
     };
     window.addEventListener("resize", handleResize);
 

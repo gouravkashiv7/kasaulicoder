@@ -2,133 +2,96 @@
 
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import GlobalHeader from "@/components/layout/GlobalHeader";
+import ProjectShowcaseCard from "@/components/projects/ProjectShowcaseCard";
+import {
+  Icon,
+  primaryButton,
+  SectionIntro,
+  secondaryButton,
+  textLink,
+} from "@/components/ui/marketing";
+import type { ShowcaseProject } from "@/lib/projects";
+import { serviceGroups } from "@/lib/services";
 
 const AnoAI = dynamic(
   () => import("@/components/ui/animated-shader-background"),
   { ssr: false },
 );
 
-export interface ProjectType {
-  _id: string;
-  title: string;
-  slug: string;
-  outcome: string;
-  desc: string;
-  media: { type: "image" | "video"; url: string }[];
-  tags: string[];
-  status: "active" | "past";
-  featured: boolean;
-  members: Array<{
-    _id: string;
-    name: string;
-    image?: string;
-    designation?: string;
-  }>;
-}
-
-const services = [
-  {
-    icon: "code",
-    title: "SaaS Product Development",
-    desc: "We design and build SaaS products and custom software from architecture to deployment, for businesses turning an idea or an internal process into software their customers can use.",
-  },
-  {
-    icon: "account_tree",
-    title: "Business Automation",
-    desc: "Custom workflows and integrations that connect the tools your team already uses, reducing repetitive manual work and re-entered data.",
-  },
-  {
-    icon: "search",
-    title: "SEO Services",
-    desc: "Search engine optimization that makes your website easier for customers to find, supporting steady organic traffic over time.",
-  },
-  {
-    icon: "web",
-    title: "UI/UX and Web Development",
-    desc: "Modern, responsive websites and web applications with clear interfaces, so visitors can understand your offering and take action.",
-  },
-  {
-    icon: "cloud",
-    title: "Cloud Infrastructure",
-    desc: "Cloud hosting and deployment set up for your applications, with the monitoring needed to keep them running reliably as usage grows.",
-  },
-  {
-    icon: "support_agent",
-    title: "Ongoing Technical Support",
-    desc: "Maintenance, updates and technical support after launch, so your software stays current and issues are dealt with.",
-  },
-];
-
 const businessHelp = [
   {
-    icon: "deployed_code",
-    title: "Build software",
-    desc: "From SaaS products to custom web applications, built around how your business works.",
+    need: "A product or internal system built",
+    answer:
+      "SaaS products, custom web applications and platforms, designed around how your business and customers work.",
+    service: "product-engineering",
   },
   {
-    icon: "language",
-    title: "Improve your digital presence",
-    desc: "Better web experiences and SEO, so customers can find you and use your site with ease.",
+    need: "Less manual, repetitive work",
+    answer:
+      "Automations and integrations so data is entered once and routine steps run without someone chasing them.",
+    service: "business-automation",
   },
   {
-    icon: "sync_alt",
-    title: "Automate workflows",
-    desc: "Integrations and automation that take repetitive tasks off your team.",
+    need: "To be found and chosen online",
+    answer:
+      "A faster, clearer website that search engines can read properly and visitors can act on.",
+    service: "seo-digital-growth",
   },
   {
-    icon: "dns",
-    title: "Keep it running",
-    desc: "Cloud infrastructure and technical support once your software is live.",
+    need: "Software that keeps running",
+    answer:
+      "Hosting, deployment and technical support once your software is live.",
+    service: "cloud-support",
   },
 ];
 
 const strengths = [
   {
-    icon: "target",
     title: "Business-focused development",
-    desc: "We start from what your business needs to achieve, then choose the technology to fit.",
+    desc: "We start from what the software has to do for your business, then choose the technology that fits it.",
   },
   {
-    icon: "memory",
     title: "Modern technology",
-    desc: "Software built with current tools such as Next.js, React and TypeScript.",
+    desc: "Our projects are built with current, well-supported tools such as Next.js, React, Node.js, TypeScript and MongoDB.",
   },
   {
-    icon: "palette",
-    title: "Thoughtful design",
-    desc: "Interfaces that are clear and easy to use on desktop, tablet and mobile.",
+    title: "Thoughtful product design",
+    desc: "Interfaces planned around the people who use them, and built to work on desktop, tablet and mobile.",
   },
   {
-    icon: "stacks",
     title: "Scalable architecture",
-    desc: "Software structured so it can grow with your users and requirements.",
+    desc: "Code and data structured so the software can take on more users, locations and features later.",
   },
   {
-    icon: "build",
-    title: "Long-term technical support",
-    desc: "Continued maintenance and support after your product goes live.",
-  },
-  {
-    icon: "forum",
     title: "Transparent communication",
-    desc: "Regular updates, so you know where your project stands.",
+    desc: "We keep you informed about progress and about any decision that affects scope, cost or timing.",
+  },
+  {
+    title: "Technical support",
+    desc: "We can stay on after launch to maintain, update and support the software we build.",
   },
 ];
 
-const primaryButton =
-  "inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 bg-linear-to-r from-primary to-secondary text-background font-black rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
-const secondaryButton =
-  "inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/20 text-foreground font-bold rounded-xl hover:bg-white/10 hover:border-primary/50 hover:-translate-y-0.5 transition-all duration-300 backdrop-blur-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+const heroContainer = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
+};
 
-const HomeVisionHero = () => {
-  const [projects, setProjects] = useState<ProjectType[]>([]);
+const heroItem = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+};
 
+const HomeVisionHero = ({
+  projects = [],
+}: {
+  projects?: ShowcaseProject[];
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -151,69 +114,38 @@ const HomeVisionHero = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await fetch("/api/projects");
-        if (res.ok) {
-          const data = await res.json();
-          setProjects(data);
-        }
-      } catch (err) {
-        console.error("Error fetching projects", err);
-      }
-    };
-    fetchProjects();
-  }, []);
-
-  const featuredProjects = projects.filter((p) => p.featured);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  };
+  const [leadProject, ...otherProjects] = projects;
 
   return (
-    <div className="font-display text-foreground antialiased overflow-x-hidden relative">
+    <div className="font-sans text-foreground antialiased overflow-x-hidden relative">
       <Suspense fallback={null}>
         <AnoAI />
       </Suspense>
       <GlobalHeader />
 
-      <main className="pt-28">
-        {/* Hero Section */}
-        <section className="relative min-h-[85vh] flex items-center justify-center px-6 overflow-hidden bg-transparent">
+      <main className="relative z-10">
+        {/* Hero */}
+        <section className="relative min-h-svh flex items-center px-4 sm:px-6 pt-32 pb-20">
+          {/* Localized scrim keeps the copy readable over the aurora */}
+          <div
+            className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_55%_at_50%_50%,color-mix(in_oklab,var(--background)_78%,transparent)_0%,transparent_100%)]"
+            aria-hidden="true"
+          />
           <motion.div
-            variants={containerVariants}
+            variants={heroContainer}
             initial="hidden"
             animate="visible"
-            className="relative z-10 max-w-4xl text-center"
+            className="relative max-w-5xl mx-auto text-center"
           >
-            <motion.div
-              variants={itemVariants}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-8"
+            <motion.p
+              variants={heroItem}
+              className="font-display text-base sm:text-lg font-semibold text-primary mb-6"
             >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-                SaaS Product Development & Digital Solutions
-              </span>
-            </motion.div>
+              SaaS &amp; software product development
+            </motion.p>
             <motion.h1
-              variants={itemVariants}
-              className="text-4xl md:text-6xl font-black mb-6 leading-tight tracking-tight text-foreground"
+              variants={heroItem}
+              className="font-display text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[0.98] text-balance text-foreground mb-8"
             >
               SaaS Solutions that{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary">
@@ -221,29 +153,29 @@ const HomeVisionHero = () => {
               </span>
             </motion.h1>
             <motion.p
-              variants={itemVariants}
-              className="text-lg md:text-xl text-foreground/70 mb-10 max-w-2xl mx-auto leading-relaxed"
+              variants={heroItem}
+              className="text-lg sm:text-xl text-foreground/80 leading-relaxed max-w-2xl mx-auto mb-10 text-pretty"
             >
-              KasauliCoder designs and develops SaaS products, modern web
-              applications, and business solutions. From software development
-              and automation to SEO and cloud infrastructure, we help businesses
-              build and improve their digital presence.
+              We design and develop SaaS products, custom software, and modern
+              digital solutions. From business automation and SEO to cloud
+              infrastructure, we help businesses build and improve their digital
+              presence.
             </motion.p>
             <motion.div
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+              variants={heroItem}
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-sm sm:max-w-none mx-auto"
             >
               <Link href="/contact" className={primaryButton}>
                 Discuss a Project
-                <span
-                  className="material-symbols-outlined text-xl"
-                  aria-hidden="true"
-                >
-                  arrow_forward
-                </span>
               </Link>
-              <Link href="/#services" className={secondaryButton}>
-                Explore Services
+              <Link href="/services" className={secondaryButton}>
+                Explore Our Services
+              </Link>
+            </motion.div>
+            <motion.div variants={heroItem} className="mt-7">
+              <Link href="/projects" className={textLink}>
+                View Our Projects
+                <Icon name="arrow_forward" className="text-lg" />
               </Link>
             </motion.div>
           </motion.div>
@@ -252,113 +184,97 @@ const HomeVisionHero = () => {
         {/* Services */}
         <section
           id="services"
-          className="py-24 px-6 bg-transparent relative z-10 scroll-mt-24"
+          aria-labelledby="services-heading"
+          className="px-4 sm:px-6 py-20 sm:py-28 scroll-mt-24"
         >
           <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mb-14 text-center"
-            >
-              <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
-                Services
-              </h2>
-              <h3 className="text-3xl md:text-5xl font-black text-foreground mb-6 leading-tight">
-                What We Build for Businesses
-              </h3>
-              <p className="text-lg text-foreground/70 max-w-2xl mx-auto leading-relaxed">
-                Software development, automation, search visibility and
-                infrastructure, all from one team.
-              </p>
-            </motion.div>
+            <SectionIntro
+              id="services-heading"
+              title="Four ways we help businesses build with software"
+              lead="Each engagement draws on one or more of these capabilities, delivered by the same team so design, development and infrastructure fit together."
+            />
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.map((service, i) => (
-                <motion.div
-                  key={service.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.08 * i, duration: 0.5 }}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                  className="group flex flex-col gap-5 p-7 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/40 transition-colors duration-300"
+            <div className="grid md:grid-cols-2 gap-px rounded-3xl overflow-hidden border border-foreground/10 bg-foreground/10">
+              {serviceGroups.map((group) => (
+                <div
+                  key={group.id}
+                  className="flex flex-col p-7 sm:p-10 bg-background/85 backdrop-blur-md"
                 >
-                  <div className="size-12 rounded-xl bg-primary/10 border border-primary/20 shrink-0 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
-                    <span
-                      className="material-symbols-outlined text-primary text-2xl"
-                      aria-hidden="true"
-                    >
-                      {service.icon}
+                  <div className="flex items-center gap-4 mb-5">
+                    <span className="size-12 shrink-0 rounded-xl bg-primary/10 border border-primary/25 flex items-center justify-center">
+                      <Icon
+                        name={group.icon}
+                        className="text-primary text-2xl"
+                      />
                     </span>
+                    <h3 className="font-display text-2xl font-bold tracking-tight text-foreground">
+                      {group.title}
+                    </h3>
                   </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
-                      {service.title}
-                    </h4>
-                    <p className="text-foreground/70 text-sm leading-relaxed">
-                      {service.desc}
-                    </p>
-                  </div>
-                </motion.div>
+                  <p className="text-foreground/75 leading-relaxed mb-6">
+                    {group.summary}
+                  </p>
+                  <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-8 text-sm text-foreground/70">
+                    {group.includes.map((item) => (
+                      <li key={item} className="flex gap-2.5">
+                        <Icon
+                          name="check"
+                          className="text-primary text-lg leading-5 shrink-0"
+                        />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={`/services#${group.id}`}
+                    className={`${textLink} mt-auto text-sm`}
+                  >
+                    {group.title} in detail
+                    <Icon name="arrow_forward" className="text-base" />
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
         {/* How We Help Businesses */}
-        <section className="py-24 px-6 bg-transparent relative z-10">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
-                How We Help
+        <section
+          aria-labelledby="help-heading"
+          className="px-4 sm:px-6 py-20 sm:py-28"
+        >
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            <div className="lg:col-span-6">
+              <h2
+                id="help-heading"
+                className="font-display text-3xl sm:text-4xl lg:text-[3.25rem] font-black tracking-tight leading-[1.08] text-balance mb-6"
+              >
+                How we help businesses
               </h2>
-              <h3 className="text-3xl md:text-5xl font-black text-foreground mb-6 leading-tight">
-                Software and a digital presence that work for your business
-              </h3>
-              <p className="text-lg text-foreground/70 mb-10 leading-relaxed">
-                Whether you need a new product, a better website or fewer manual
-                tasks, our services cover the software side of running and
-                growing a business.
+              <p className="text-lg text-foreground/70 leading-relaxed mb-10 max-w-xl">
+                Most requests start with a business problem rather than a
+                technology. These are the ones we are asked to solve most often.
               </p>
-              <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-8">
+              <dl className="divide-y divide-foreground/10 border-y border-foreground/10">
                 {businessHelp.map((item) => (
-                  <li key={item.title} className="flex gap-4">
-                    <div className="size-10 rounded-lg bg-primary/10 border border-primary/20 shrink-0 flex items-center justify-center">
-                      <span
-                        className="material-symbols-outlined text-primary text-xl"
-                        aria-hidden="true"
-                      >
-                        {item.icon}
-                      </span>
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-foreground mb-1">
-                        {item.title}
-                      </h4>
-                      <p className="text-sm text-foreground/70 leading-relaxed">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </li>
+                  <div
+                    key={item.need}
+                    className="grid sm:grid-cols-5 gap-2 sm:gap-6 py-5"
+                  >
+                    <dt className="sm:col-span-2 font-display font-bold text-foreground">
+                      {item.need}
+                    </dt>
+                    <dd className="sm:col-span-3 text-sm text-foreground/70 leading-relaxed">
+                      {item.answer}
+                    </dd>
+                  </div>
                 ))}
-              </ul>
-            </motion.div>
+              </dl>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="relative"
-            >
-              <div className="absolute -inset-2 bg-linear-to-r from-primary/20 to-secondary/20 blur-3xl rounded-3xl opacity-50"></div>
-              <div className="relative glass-morphism rounded-3xl p-3 border border-white/10">
-                <div className="aspect-video rounded-2xl overflow-hidden relative border border-white/5 group/video">
+            <div className="lg:col-span-6 relative">
+              <div className="rounded-3xl p-2 sm:p-3 border border-foreground/10 bg-background/70 backdrop-blur-md">
+                <div className="aspect-video rounded-2xl overflow-hidden relative group/video">
                   <video
                     ref={videoRef}
                     src="/kasaulicoder.mp4"
@@ -366,6 +282,7 @@ const HomeVisionHero = () => {
                     muted={isMuted}
                     loop
                     playsInline
+                    preload="metadata"
                     aria-label="KasauliCoder brand video"
                     className="w-full h-full object-cover"
                   />
@@ -373,148 +290,59 @@ const HomeVisionHero = () => {
                     <button
                       type="button"
                       onClick={togglePlay}
-                      className="size-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/50 transition-all shadow-lg"
+                      className="size-10 rounded-full bg-black/50 backdrop-blur-md border border-white/15 flex items-center justify-center hover:bg-black/70 transition-colors focus-visible:outline-2 focus-visible:outline-primary"
                       aria-label={isPlaying ? "Pause video" : "Play video"}
                     >
-                      <span
-                        className="material-symbols-outlined text-white text-xl leading-none"
-                        aria-hidden="true"
-                      >
-                        {isPlaying ? "pause" : "play_arrow"}
-                      </span>
+                      <Icon
+                        name={isPlaying ? "pause" : "play_arrow"}
+                        className="text-white text-xl leading-none"
+                      />
                     </button>
                     <button
                       type="button"
                       onClick={toggleMute}
-                      className="size-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/50 transition-all shadow-lg"
+                      className="size-10 rounded-full bg-black/50 backdrop-blur-md border border-white/15 flex items-center justify-center hover:bg-black/70 transition-colors focus-visible:outline-2 focus-visible:outline-primary"
                       aria-label={isMuted ? "Unmute video" : "Mute video"}
                     >
-                      <span
-                        className="material-symbols-outlined text-white text-xl leading-none"
-                        aria-hidden="true"
-                      >
-                        {isMuted ? "volume_off" : "volume_up"}
-                      </span>
+                      <Icon
+                        name={isMuted ? "volume_off" : "volume_up"}
+                        className="text-white text-xl leading-none"
+                      />
                     </button>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
-        {/* Featured Projects — shown only when genuine featured projects exist */}
-        {featuredProjects.length > 0 && (
-          <section className="py-24 px-6 relative overflow-hidden bg-transparent">
-            <div className="max-w-7xl mx-auto relative z-10">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-center mb-14"
-              >
-                <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
-                  Projects
-                </h2>
-                <h3 className="text-3xl md:text-5xl font-black text-foreground mb-6 leading-tight">
-                  Featured Projects
-                </h3>
-                <p className="text-lg text-foreground/70 max-w-2xl mx-auto leading-relaxed">
-                  A selection of software and digital solutions we have built.
-                </p>
-              </motion.div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {featuredProjects.map((project, i) => (
-                  <motion.div
-                    key={project._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.15 * i }}
-                    whileHover={{ y: -5 }}
-                    className="group relative flex flex-col bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-primary/50 transition-colors shadow-lg"
-                  >
-                    <div className="aspect-video overflow-hidden relative border-b border-white/5 bg-foreground/5">
-                      <div className="w-full h-full relative">
-                        {project.media &&
-                        project.media.length > 0 &&
-                        project.media[0].type === "image" ? (
-                          <Image
-                            src={project.media[0].url}
-                            alt={project.title}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="flex items-center justify-center w-full h-full relative overflow-hidden">
-                            <div className="absolute inset-0 opacity-40 bg-linear-to-br from-primary/30 to-secondary/30"></div>
-                            <div className="relative size-20 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center shadow-2xl">
-                              <span className="text-3xl font-black text-foreground/40 tracking-tighter uppercase">
-                                {project.title.substring(0, 2)}
-                              </span>
-                            </div>
-                          </div>
-                        )}
-                        <div className="absolute top-3 left-3 flex gap-2">
-                          <span
-                            className={`px-2 py-1 text-[10px] font-black uppercase tracking-widest rounded shadow-sm flex items-center gap-1 backdrop-blur-md ${
-                              project.status === "active"
-                                ? "bg-primary/90 text-background border border-primary/20"
-                                : "bg-background/80 text-foreground border border-white/10"
-                            }`}
-                          >
-                            {project.status === "active"
-                              ? "In Development"
-                              : "Completed"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-6 flex flex-col flex-1">
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.tags?.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-1 bg-white/5 border border-white/10 text-[10px] font-bold text-foreground/70 uppercase tracking-widest rounded-md"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <h4 className="text-xl font-black text-foreground mb-1 line-clamp-1">
-                        {project.title}
-                      </h4>
-                      {project.outcome && (
-                        <p className="text-primary text-sm font-bold mb-3 line-clamp-2">
-                          {project.outcome}
-                        </p>
-                      )}
-                      <p className="text-foreground/70 text-sm mb-6 flex-1 line-clamp-3 leading-relaxed">
-                        {project.desc}
-                      </p>
-                      <Link
-                        href={`/projects/${
-                          project.status === "active"
-                            ? "active-projects"
-                            : "recent-projects"
-                        }/${project.slug}`}
-                        className="text-primary text-sm font-bold flex items-center justify-between group/link pt-4 border-t border-white/5 mt-auto"
-                      >
-                        View Project
-                        <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center group-hover/link:bg-primary group-hover/link:text-background transition-colors duration-300">
-                          <span
-                            className="material-symbols-outlined text-[16px] group-hover/link:translate-x-0.5 transition-transform"
-                            aria-hidden="true"
-                          >
-                            arrow_forward
-                          </span>
-                        </div>
-                      </Link>
-                    </div>
-                  </motion.div>
-                ))}
+        {/* Featured Projects — only genuine projects with screenshots */}
+        {leadProject && (
+          <section
+            id="projects"
+            aria-labelledby="projects-heading"
+            className="px-4 sm:px-6 py-20 sm:py-28 scroll-mt-24"
+          >
+            <div className="max-w-7xl mx-auto">
+              <SectionIntro
+                id="projects-heading"
+                title="Featured projects"
+                lead="Software we have designed, built and deployed. The screenshots are taken from the applications themselves."
+              />
+              <div className="flex flex-col gap-6 lg:gap-8">
+                <ProjectShowcaseCard project={leadProject} variant="large" />
+                {otherProjects.length > 0 && (
+                  <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+                    {otherProjects.map((project) => (
+                      <ProjectShowcaseCard
+                        key={project._id}
+                        project={project}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-              <div className="mt-12 text-center">
+              <div className="mt-12 flex justify-center">
                 <Link href="/projects" className={secondaryButton}>
                   View All Projects
                 </Link>
@@ -523,113 +351,100 @@ const HomeVisionHero = () => {
           </section>
         )}
 
-        {/* Why KasauliCoder */}
-        <section className="py-24 px-6 bg-transparent relative z-10">
+        {/* Why KasauliCoder — on a darker band so text stays readable over the aurora */}
+        <section
+          aria-labelledby="why-heading"
+          className="px-4 sm:px-6 py-20 sm:py-28 bg-background/80 border-y border-foreground/5"
+        >
           <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-14"
-            >
-              <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
-                Why KasauliCoder
-              </h2>
-              <h3 className="text-3xl md:text-5xl font-black text-foreground leading-tight">
-                How We Work
-              </h3>
-            </motion.div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {strengths.map((item, i) => (
-                <motion.div
+            <SectionIntro
+              id="why-heading"
+              title="Why work with KasauliCoder"
+              lead="What you can expect from us when we build or look after your software."
+            />
+            <dl className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-10 lg:gap-x-14">
+              {strengths.map((item) => (
+                <div
                   key={item.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.08 * i, duration: 0.5 }}
-                  className="group flex gap-4 p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/40 transition-colors duration-300"
+                  className="border-t border-foreground/15 pt-6 pb-10"
                 >
-                  <div className="size-12 rounded-xl bg-primary/10 border border-primary/20 shrink-0 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
-                    <span
-                      className="material-symbols-outlined text-primary text-2xl"
-                      aria-hidden="true"
-                    >
-                      {item.icon}
-                    </span>
-                  </div>
-                  <div>
-                    <h4 className="text-foreground font-bold mb-1">
-                      {item.title}
-                    </h4>
-                    <p className="text-foreground/70 text-sm leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-                </motion.div>
+                  <dt className="font-display text-xl font-bold text-foreground mb-3">
+                    {item.title}
+                  </dt>
+                  <dd className="text-foreground/70 leading-relaxed">
+                    {item.desc}
+                  </dd>
+                </div>
               ))}
-            </div>
+            </dl>
           </div>
         </section>
 
         {/* About */}
-        <section className="py-24 px-6 bg-transparent relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
+        <section
+          aria-labelledby="about-heading"
+          className="px-4 sm:px-6 py-20 sm:py-28"
+        >
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+            <h2
+              id="about-heading"
+              className="lg:col-span-5 font-display text-3xl sm:text-4xl lg:text-[3.25rem] font-black tracking-tight leading-[1.08] text-balance"
+            >
               About KasauliCoder
             </h2>
-            <h3 className="text-3xl md:text-5xl font-black text-foreground mb-6 leading-tight">
-              A software company named after the hills of Kasauli
-            </h3>
-            <p className="text-lg text-foreground/70 leading-relaxed mb-8">
-              KasauliCoder builds software products and digital solutions for
-              businesses. Our work spans SaaS product development, web
-              applications, business automation, SEO, UI/UX and cloud
-              infrastructure.
-            </p>
-            <Link href="/about" className={secondaryButton}>
-              Learn More About Us
-            </Link>
-          </motion.div>
+            <div className="lg:col-span-7 text-lg text-foreground/75 leading-relaxed space-y-5 max-w-2xl">
+              <p>
+                KasauliCoder is a software product development company, named
+                after the hill town of Kasauli in Himachal Pradesh. We design,
+                build and support SaaS products, web applications and the
+                digital systems businesses rely on every day.
+              </p>
+              <p>
+                Our approach is practical: understand the business problem
+                first, design an interface people can use without training, and
+                build on an architecture that can be maintained and extended
+                after launch.
+              </p>
+              <Link href="/about" className={`${textLink} text-base`}>
+                More about our company
+                <Icon name="arrow_forward" className="text-lg" />
+              </Link>
+            </div>
+          </div>
         </section>
 
         <HomeTeamWorkTestimonials />
 
-        {/* Contact CTA */}
-        <section className="py-24 px-6 bg-transparent">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="max-w-5xl mx-auto glass-morphism border border-primary/20 rounded-3xl p-10 md:p-14 text-center neon-glow"
-          >
-            <h2 className="text-3xl md:text-4xl font-black text-foreground mb-5 leading-tight">
+        {/* Final CTA */}
+        <section
+          aria-labelledby="cta-heading"
+          className="px-4 sm:px-6 py-20 sm:py-28"
+        >
+          <div className="relative max-w-5xl mx-auto rounded-3xl border border-primary/25 bg-background/80 backdrop-blur-xl px-6 py-14 sm:p-16 text-center overflow-hidden">
+            <div
+              className="absolute inset-x-0 -top-px h-px bg-linear-to-r from-transparent via-primary to-transparent"
+              aria-hidden="true"
+            />
+            <h2
+              id="cta-heading"
+              className="font-display text-3xl sm:text-5xl font-black tracking-tight leading-[1.08] text-balance mb-6"
+            >
               Have a Digital Product or Business Solution in Mind?
             </h2>
-            <p className="text-foreground/70 mb-10 text-lg max-w-2xl mx-auto leading-relaxed">
-              Tell us about your requirements and what you would like built or
-              improved. We will get back to you to discuss the next steps.
+            <p className="text-lg text-foreground/70 leading-relaxed max-w-2xl mx-auto mb-10">
+              Tell us what you want to build or improve. We will read your
+              requirements, get back to you to discuss them, and suggest a
+              sensible way to proceed.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-sm sm:max-w-none mx-auto">
               <Link href="/contact" className={primaryButton}>
-                Discuss a Project
-                <span
-                  className="material-symbols-outlined text-xl"
-                  aria-hidden="true"
-                >
-                  arrow_forward
-                </span>
+                Discuss Your Project
               </Link>
-              <Link href="/#services" className={secondaryButton}>
-                Explore Services
+              <Link href="/pricing" className={secondaryButton}>
+                Request a Proposal
               </Link>
             </div>
-          </motion.div>
+          </div>
         </section>
       </main>
 

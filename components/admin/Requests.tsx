@@ -24,8 +24,8 @@ const Requests = ({
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="mb-10">
-        <h1 className="text-3xl font-black mb-2 text-foreground">
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-black mb-2 text-foreground">
           Consultation Requests
         </h1>
         <p className="text-foreground/50">
@@ -40,7 +40,7 @@ const Requests = ({
           Loading requests...
         </div>
       ) : contactRequests.length === 0 ? (
-        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-20 text-center">
+        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-10 md:p-20 text-center">
           <span className="material-symbols-outlined text-5xl text-foreground/20 mb-4 block">
             inbox
           </span>
@@ -54,7 +54,7 @@ const Requests = ({
             <motion.div
               key={req._id}
               layout
-              className={`bg-background/40 backdrop-blur-xl border rounded-2xl p-6 transition-all ${
+              className={`bg-background/40 backdrop-blur-xl border rounded-2xl p-4 md:p-6 transition-all ${
                 req.isRead
                   ? "border-foreground/5 opacity-70"
                   : "border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.05)]"
@@ -63,7 +63,7 @@ const Requests = ({
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2 flex-wrap">
-                    <h3 className="font-black text-foreground text-lg">
+                    <h3 className="font-black text-foreground text-lg break-words">
                       {req.name}
                     </h3>
                     <span
@@ -86,7 +86,7 @@ const Requests = ({
                       <span className="material-symbols-outlined text-sm">
                         mail
                       </span>
-                      {req.email}
+                      <span className="break-all">{req.email}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="material-symbols-outlined text-sm">
@@ -105,6 +105,30 @@ const Requests = ({
                       </div>
                     )}
                   </div>
+                  {(req.company ||
+                    req.service ||
+                    req.budget ||
+                    req.timeline) && (
+                    <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-xs mb-4">
+                      {[
+                        ["Company", req.company],
+                        ["Service", req.service],
+                        ["Budget", req.budget],
+                        ["Timeline", req.timeline],
+                      ]
+                        .filter(([, value]) => value)
+                        .map(([label, value]) => (
+                          <div key={label} className="flex gap-2">
+                            <dt className="text-foreground/40 font-bold">
+                              {label}:
+                            </dt>
+                            <dd className="text-foreground/80 break-words">
+                              {value}
+                            </dd>
+                          </div>
+                        ))}
+                    </dl>
+                  )}
                   <div className="bg-foreground/5 rounded-xl p-4 border border-foreground/5">
                     <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
                       {req.query}

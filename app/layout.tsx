@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Outfit, Plus_Jakarta_Sans } from "next/font/google"; // Updated fonts
 import "./globals.css";
+import MotionProvider from "@/components/ui/motion-provider";
+import { serviceGroups } from "@/lib/services";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -22,6 +24,18 @@ const jetBrainsMono = JetBrains_Mono({
 
 const baseUrl = "https://kasaulicoder.com";
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "KasauliCoder",
+  url: baseUrl,
+  logo: `${baseUrl}/logo.png`,
+  slogan: "SaaS Solutions that Drive Growth",
+  description:
+    "KasauliCoder is a SaaS and software product development company building SaaS products, custom software and web applications, with business automation, SEO, cloud infrastructure and technical support.",
+  knowsAbout: serviceGroups.flatMap((group) => group.includes),
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
@@ -29,10 +43,11 @@ export const metadata: Metadata = {
     template: "%s | KasauliCoder",
   },
   description:
-    "KasauliCoder designs and develops SaaS products, web applications and business automation, with SEO, UI/UX, cloud infrastructure and ongoing technical support.",
+    "KasauliCoder is a SaaS and software product development company. We build SaaS products, custom software and web applications, with business automation, SEO, UI/UX, cloud infrastructure and technical support.",
   keywords: [
     "KasauliCoder",
-    "SaaS Development",
+    "SaaS Product Development",
+    "Software Product Development",
     "Custom Software Development",
     "Web Application Development",
     "Business Automation",
@@ -55,13 +70,13 @@ export const metadata: Metadata = {
     siteName: "KasauliCoder",
     title: "KasauliCoder | SaaS Solutions that Drive Growth",
     description:
-      "SaaS product development, web applications, business automation, SEO, UI/UX and cloud infrastructure for businesses.",
+      "SaaS and software product development: SaaS products, custom software, business automation, SEO, UI/UX and cloud infrastructure for businesses.",
     images: [
       {
         url: "/logowithbg.png",
-        width: 1200,
-        height: 630,
-        alt: "KasauliCoder",
+        width: 1024,
+        height: 819,
+        alt: "KasauliCoder logo",
       },
     ],
   },
@@ -69,7 +84,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "KasauliCoder | SaaS Solutions that Drive Growth",
     description:
-      "SaaS product development, web applications, business automation, SEO, UI/UX and cloud infrastructure for businesses.",
+      "SaaS and software product development: SaaS products, custom software, business automation, SEO, UI/UX and cloud infrastructure for businesses.",
     creator: "@kasaulicoder",
     images: ["/logowithbg.png"],
   },
@@ -112,7 +127,14 @@ export default function RootLayout({
       <body
         className={`${plusJakartaSans.variable} ${outfit.variable} ${jetBrainsMono.variable} antialiased bg-background-dark text-slate-100`}
       >
-        {children}
+        <script
+          type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static JSON-LD built from constants
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );

@@ -67,6 +67,10 @@ export interface ContactRequest {
   email: string;
   userType: "student" | "professional";
   query: string;
+  company?: string;
+  service?: string;
+  budget?: string;
+  timeline?: string;
   isRead: boolean;
   ipAddress: string;
   device: string;

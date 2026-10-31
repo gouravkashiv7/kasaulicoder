@@ -1,43 +1,37 @@
-import { Home } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import GlobalFooter from "@/components/layout/GlobalFooter";
+import GlobalHeader from "@/components/layout/GlobalHeader";
+import { primaryButton, secondaryButton } from "@/components/ui/marketing";
 import UniqueLoading from "@/components/ui/morph-loading";
 
 export default function NotFound() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[85vh] px-4 text-center bg-zinc-950 text-zinc-100">
-      <div className="mb-10">
-        <UniqueLoading variant="morph" size="lg" className="mx-auto" />
-      </div>
-
-      <div className="space-y-4">
-        <h1 className="text-8xl font-black tracking-tight text-white mb-2">
-          404
-        </h1>
-
-        <h2 className="text-3xl md:text-4xl font-bold text-zinc-200">
-          Lost in the Digital Wilderness?
-        </h2>
-
-        <p className="text-zinc-400 max-w-lg mx-auto text-lg leading-relaxed mb-10">
-          The page you're searching for has either moved to a new dimension or
-          vanished into the digital void. Don't worry, even the best coders take
-          a wrong turn sometimes.
+    <div className="min-h-screen flex flex-col bg-background text-foreground font-sans overflow-x-hidden">
+      <GlobalHeader />
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-36 pb-24 text-center">
+        <div className="mb-10">
+          <UniqueLoading variant="morph" size="lg" className="mx-auto" />
+        </div>
+        <p className="font-display text-lg font-semibold text-primary mb-4">
+          Error 404
         </p>
-
-        <div className="flex justify-center">
-          <Link href="/">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white gap-2 px-10 py-7 text-xl rounded-full border-none transition-all hover:scale-105 active:scale-95 shadow-lg shadow-blue-900/20">
-              <Home className="w-6 h-6" />
-              Return Home
-            </Button>
+        <h1 className="font-display text-4xl sm:text-6xl font-black tracking-tight mb-6">
+          Page not found
+        </h1>
+        <p className="text-lg text-foreground/70 max-w-lg leading-relaxed mb-10">
+          The page you are looking for does not exist or has moved. Use the
+          links below to find what you need.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-sm sm:max-w-none justify-center">
+          <Link href="/" className={primaryButton}>
+            Go to the homepage
+          </Link>
+          <Link href="/services" className={secondaryButton}>
+            Explore Our Services
           </Link>
         </div>
-      </div>
-
-      <div className="mt-20 text-xs text-zinc-600 font-mono">
-        <p>[ error_code: PAGE_NOT_FOUND_EXCEPTION ]</p>
-      </div>
+      </main>
+      <GlobalFooter />
     </div>
   );
 }

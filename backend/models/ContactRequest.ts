@@ -5,6 +5,10 @@ export interface IContactRequest extends Document {
   email: string;
   userType: "student" | "professional";
   query: string;
+  company?: string;
+  service?: string;
+  budget?: string;
+  timeline?: string;
   isRead: boolean;
   ipAddress: string;
   device: string;
@@ -22,6 +26,10 @@ const ContactRequestSchema: Schema = new Schema(
       required: true,
     },
     query: { type: String, required: true },
+    company: { type: String },
+    service: { type: String },
+    budget: { type: String },
+    timeline: { type: String },
     isRead: { type: Boolean, default: false },
     ipAddress: { type: String, default: "unknown" },
     device: { type: String, default: "unknown" },

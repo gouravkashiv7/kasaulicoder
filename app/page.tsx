@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
+import { getShowcaseProjectsSafe } from "@/backend/lib/showcase";
 import HomeVisionHero from "@/components/home/HomeVisionHero";
 
 export const metadata: Metadata = {
-  title: "KasauliCoder | SaaS Solutions that Drive Growth",
+  title: {
+    absolute: "KasauliCoder | SaaS Solutions that Drive Growth",
+  },
   description:
-    "We design and develop SaaS products, modern web applications and business automation. SEO, UI/UX, cloud infrastructure and ongoing technical support for businesses.",
+    "KasauliCoder designs and develops SaaS products, custom software and web applications, with business automation, SEO, UI/UX, cloud infrastructure and technical support for businesses.",
+  alternates: { canonical: "/" },
 };
 
-export default function Home() {
-  return (
-    <main>
-      <HomeVisionHero />
-    </main>
-  );
+// Read projects on each request so newly added projects appear without a redeploy.
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const projects = await getShowcaseProjectsSafe({ limit: 3 });
+  return <HomeVisionHero projects={projects} />;
 }

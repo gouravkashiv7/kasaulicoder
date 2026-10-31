@@ -4,7 +4,8 @@ import ProposalRequest from "@/components/marketing/ProposalRequest";
 export const metadata: Metadata = {
   title: "Request a Proposal",
   description:
-    "Every KasauliCoder project is scoped to your requirements. Tell us about your project and request a proposal.",
+    "KasauliCoder scopes every project to your requirements instead of selling fixed packages. Tell us about your project and request a proposal.",
+  alternates: { canonical: "/pricing" },
 };
 
 export default function PricingPage() {

@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, useInView, type Variants } from "framer-motion";
-import { Plus } from "lucide-react";
 import type React from "react";
 import { useRef } from "react";
 
@@ -55,11 +54,6 @@ const techStack = [
     name: "Node.js",
     path: "M10.455 12.637v7.423l6.432-3.711V8.926l-6.432-3.712V12.637zm-1.545 1.782l-6.425-3.71v7.42l6.425 3.708v-7.418zm1.545-12.235l6.432 3.712 6.425-3.712-6.425-3.712-6.432 3.712zm7.977 15.545l6.425-3.71V8.926l-6.425 3.71v7.419zM0 6.645v13.355l11.564 6.671 11.564-6.671V6.645L11.564-.027 0 6.645z",
     color: "#5FA04E",
-  },
-  {
-    name: "SASS",
-    path: "M17.883 12.443c-.768-1.516-2.583-2.628-4.562-2.854-1.12-.132-2.106.147-2.674.724a.8.8 0 00-.03.029c.404-.08.835-.095 1.258-.023 1.979.227 3.528 1.408 4.296 2.923.768 1.516.634 3.313-.374 4.541l.035.07c1.373-1.157 1.821-3.9 1.051-5.41zm-6.627-.852c.266-.271.742-.426 1.341-.355.989.112 1.848.742 2.228 1.487.38.744.316 1.523-.081 2.072a1.862 1.862 0 01-.19.226c.338-.284.582-.676.679-1.145.186-.906-.11-1.841-.758-2.569-.648-.727-1.544-1.094-2.45-1.002-.303.031-.595.109-.861.233-.217.102-.416.23-.59.382l.682.671zM12 0a12 12 0 100 24 12 12 0 000-24zm5.035 18.238c-.368.528-.905.972-1.579 1.278l.006.012c-1.884.708-3.953.511-5.69-.533l-.006-.011c-1.398-.842-2.286-2.18-2.618-3.693-.418-1.9.336-3.826 1.734-4.885.59-.447 1.267-.741 1.983-.861.32-.054.606-.328.606-.653 0-.36-.291-.652-.651-.652-.162 0-.325.029-.473.085-1.042.39-4.873 2.628-4.873 7.828 0 2.2-.006 4.41 1.734 6.136 1.739 1.727 4.053 2.053 6.19 1.637 2.138-.417 3.931-1.743 4.886-3.791.134-.286.01-.628-.276-.761-.286-.134-.627-.01-.762.276z",
-    color: "#CC6699",
   },
   {
     name: "Git",
@@ -120,8 +114,8 @@ const TechStack = () => {
           </div>
           <div className="lg:max-w-md">
             <p className="text-sm sm:text-base lg:text-lg text-foreground/60 font-medium leading-relaxed italic border-l-2 border-primary/30 pl-4 sm:pl-6">
-              The technologies we use to build web applications and software for
-              businesses.
+              Core technologies we use to build web applications and software
+              for businesses.
             </p>
           </div>
         </div>
@@ -147,7 +141,7 @@ const TechStack = () => {
                   style={{ "--hover-color": tech.color } as React.CSSProperties}
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <title>{tech.name} logo</title>
+                  <title>{`${tech.name} logo`}</title>
                   <path d={tech.path} />
                 </svg>
                 <span className="text-xs sm:text-sm font-semibold text-foreground/70 group-hover:text-foreground transition-colors duration-300">
@@ -155,17 +149,6 @@ const TechStack = () => {
                 </span>
               </motion.div>
             ))}
-
-            <motion.div
-              variants={itemVariants}
-              whileHover={{ scale: 1.02 }}
-              className="flex items-center gap-2 px-5 py-3 bg-transparent border border-dashed border-foreground/20 hover:border-foreground/40 rounded-full cursor-default text-foreground/50 hover:text-foreground/80 transition-all group"
-            >
-              <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
-              <span className="text-xs sm:text-sm font-medium">
-                and many more...
-              </span>
-            </motion.div>
           </motion.div>
         </div>
       </div>

@@ -162,6 +162,10 @@ const ASMRStaticBackground: React.FC = () => {
       }
     };
 
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
     const render = () => {
       ctx.fillStyle = themeColors.background;
       ctx.globalAlpha = 0.18;
@@ -173,7 +177,8 @@ const ASMRStaticBackground: React.FC = () => {
         p.draw();
       });
 
-      animationFrameId = requestAnimationFrame(render);
+      // With reduced motion, keep the first drawn frame still
+      if (!reduceMotion) animationFrameId = requestAnimationFrame(render);
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -199,7 +204,10 @@ const ASMRStaticBackground: React.FC = () => {
     // Debounce resize to avoid layout thrashing on mobile orientation changes
     const debouncedInit = () => {
       clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(init, 200);
+      resizeTimeout = setTimeout(() => {
+        init();
+        if (reduceMotion) render();
+      }, 200);
     };
     window.addEventListener("resize", debouncedInit);
     window.addEventListener("mousemove", handleMouseMove);

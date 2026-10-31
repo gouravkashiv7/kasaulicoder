@@ -78,7 +78,7 @@ const GlobalHeader = ({
 
   const navLinks = [
     { title: "Home", href: "/" },
-    { title: "Services", href: "/#services" },
+    { title: "Services", href: "/services" },
     { title: "Projects", href: "/projects" },
     { title: "About", href: "/about" },
     { title: "Blog", href: "/blogs" },

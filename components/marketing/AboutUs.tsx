@@ -1,202 +1,205 @@
-"use client";
-
-import { motion } from "framer-motion";
 import Link from "next/link";
+import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import GlobalHeader from "@/components/layout/GlobalHeader";
+import AuroraBackground from "@/components/ui/aurora-background";
+import {
+  Icon,
+  primaryButton,
+  SectionIntro,
+  secondaryButton,
+  textLink,
+} from "@/components/ui/marketing";
+import { serviceGroups } from "@/lib/services";
 
-const capabilities = [
+const approach = [
   {
-    title: "Software Products",
-    desc: "SaaS product development and custom software and web applications, designed around the needs of the businesses that use them.",
-    icon: "code",
+    title: "Start with the business problem",
+    desc: "Before choosing tools, we work out what the software has to achieve, who will use it and what it needs to connect to.",
   },
   {
-    title: "Digital Presence",
-    desc: "Modern UI/UX and web development together with search engine optimization, so your business is easy to find and easy to use online.",
-    icon: "web",
+    title: "Design for the people using it",
+    desc: "Screens and flows are planned around real tasks, so customers and staff can use the product without a manual.",
   },
   {
-    title: "Operations & Infrastructure",
-    desc: "Business process automation and integrations, cloud infrastructure, and ongoing technical support to keep your software running.",
-    icon: "dns",
+    title: "Build to be maintained",
+    desc: "Clear data models, typed code and sensible structure, so the software can be extended after the first release.",
+  },
+  {
+    title: "Deploy and support",
+    desc: "We set up hosting and deployment, and can stay on to maintain and support what we have built.",
   },
 ];
 
-const principles = [
-  "Business-focused development",
-  "Clear, transparent communication",
-  "Technical support after launch",
-];
-
-const AboutUs = () => {
+const AboutUs = ({ technologies }: { technologies: string[] }) => {
   return (
-    <div className="bg-background text-foreground min-h-screen font-display selection:bg-primary selection:text-primary-content overflow-hidden relative">
-      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,var(--primary)_0.03,transparent_50%)] opacity-20"></div>
-
+    <div className="font-sans text-foreground antialiased overflow-x-hidden relative">
+      <AuroraBackground />
       <GlobalHeader />
 
-      <main className="relative z-10 pt-28">
-        {/* Hero Section */}
-        <section className="py-24 px-6 relative overflow-hidden">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-block px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded text-xs font-bold uppercase tracking-widest mb-6"
-            >
-              About KasauliCoder
-            </motion.span>
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl md:text-6xl font-black leading-tight mb-8 tracking-tighter"
-            >
-              Software products and digital solutions{" "}
-              <span className="text-primary italic">for businesses.</span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-foreground opacity-70 text-xl max-w-3xl mx-auto"
-            >
-              KasauliCoder designs and develops SaaS products, web applications
-              and business solutions, and supports the businesses that rely on
-              them.
-            </motion.p>
+      <main className="relative z-10">
+        {/* Intro */}
+        <section className="relative px-4 sm:px-6 pt-36 sm:pt-44 pb-20 sm:pb-28">
+          <div
+            className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_70%_60%_at_30%_50%,color-mix(in_oklab,var(--background)_75%,transparent)_0%,transparent_100%)]"
+            aria-hidden="true"
+          />
+          <div className="relative max-w-7xl mx-auto grid lg:grid-cols-12 gap-10 lg:gap-16 items-end">
+            <div className="lg:col-span-7">
+              <p className="font-display text-base sm:text-lg font-semibold text-primary mb-5">
+                About KasauliCoder
+              </p>
+              <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.02] text-balance">
+                A SaaS and software product development company
+              </h1>
+            </div>
+            <div className="lg:col-span-5 text-lg text-foreground/80 leading-relaxed space-y-5">
+              <p>
+                KasauliCoder designs, develops and supports software for
+                businesses: SaaS products, custom web applications, business
+                automation, SEO, and the cloud infrastructure they run on.
+              </p>
+              <p>
+                The company takes its name from Kasauli, the hill town in
+                Himachal Pradesh where it has its roots.
+              </p>
+            </div>
           </div>
         </section>
 
-        {/* Capabilities */}
-        <section className="py-20 px-6 bg-primary/5">
+        {/* What we do */}
+        <section
+          aria-labelledby="capabilities-heading"
+          className="px-4 sm:px-6 py-20 sm:py-28 bg-background/80 border-y border-foreground/5"
+        >
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-14">
-              <h2 className="text-sm font-bold text-primary uppercase tracking-[0.3em] mb-4">
-                What We Do
-              </h2>
-              <h3 className="text-3xl md:text-4xl font-black tracking-tight">
-                Our areas of work
-              </h3>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              {capabilities.map((item, i) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="p-8 glass-card border-glass-border rounded-2xl hover:border-primary/30 transition-colors group"
+            <SectionIntro
+              id="capabilities-heading"
+              title="What we do"
+              lead="Our software and digital capabilities, grouped the way businesses usually ask for them."
+            />
+            <ul className="grid sm:grid-cols-2 gap-x-10 lg:gap-x-14">
+              {serviceGroups.map((group) => (
+                <li
+                  key={group.id}
+                  className="flex gap-5 border-t border-foreground/15 pt-6 pb-10"
                 >
-                  <div className="size-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
-                    <span
-                      className="material-symbols-outlined text-primary text-3xl"
-                      aria-hidden="true"
+                  <Icon
+                    name={group.icon}
+                    className="text-primary text-3xl shrink-0"
+                  />
+                  <div>
+                    <h3 className="font-display text-xl font-bold mb-2">
+                      {group.title}
+                    </h3>
+                    <p className="text-foreground/70 leading-relaxed mb-4">
+                      {group.summary}
+                    </p>
+                    <Link
+                      href={`/services#${group.id}`}
+                      className={`${textLink} text-sm`}
                     >
-                      {item.icon}
-                    </span>
+                      Service details
+                      <span className="sr-only">: {group.title}</span>
+                    </Link>
                   </div>
-                  <h3 className="text-2xl font-black mb-4 tracking-tight">
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* Approach */}
+        <section
+          aria-labelledby="approach-heading"
+          className="px-4 sm:px-6 py-20 sm:py-28"
+        >
+          <div className="max-w-7xl mx-auto">
+            <SectionIntro
+              id="approach-heading"
+              title="How we approach building products"
+            />
+            <ol className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {approach.map((item) => (
+                <li
+                  key={item.title}
+                  className="rounded-3xl border border-foreground/10 bg-background/80 backdrop-blur-md p-7"
+                >
+                  <h3 className="font-display text-lg font-bold mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-foreground opacity-70 leading-relaxed">
+                  <p className="text-foreground/70 leading-relaxed text-sm">
                     {item.desc}
                   </p>
-                </motion.div>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
         </section>
 
-        {/* Identity Section */}
-        <section className="py-24 px-6 relative">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="aspect-square bg-card rounded-3xl overflow-hidden border border-glass-border relative max-w-md w-full mx-auto"
-            >
-              <div className="absolute inset-0 bg-linear-to-tr from-primary/20 to-transparent"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span
-                  className="material-symbols-outlined text-[120px] text-primary/20"
-                  aria-hidden="true"
-                >
-                  settings_suggest
-                </span>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="space-y-6"
-            >
-              <h2 className="text-3xl md:text-4xl font-black leading-tight tracking-tight">
-                A software company with its roots in{" "}
-                <span className="text-primary italic">Kasauli.</span>
-              </h2>
-              <p className="text-foreground opacity-70 text-lg leading-relaxed">
-                KasauliCoder takes its name from Kasauli, the hill town in
-                Himachal Pradesh. That identity shapes the brand; the work
-                itself is practical: building dependable software for the
-                businesses we work with.
-              </p>
-              <ul className="space-y-3 pt-2">
-                {principles.map((item) => (
+        {/* Technology — derived from the tags on published projects */}
+        {technologies.length > 0 && (
+          <section
+            aria-labelledby="technology-heading"
+            className="px-4 sm:px-6 py-20 sm:py-28"
+          >
+            <div className="max-w-7xl mx-auto">
+              <SectionIntro
+                id="technology-heading"
+                title="Technology we work with"
+                lead="These are the frameworks, databases and platforms used in the projects in our portfolio."
+              >
+                <Link href="/projects" className={`${textLink} mt-4`}>
+                  See the projects
+                  <Icon name="arrow_forward" className="text-lg" />
+                </Link>
+              </SectionIntro>
+              <ul className="flex flex-wrap gap-3">
+                {technologies.map((tech) => (
                   <li
-                    key={item}
-                    className="flex items-center gap-3 font-medium text-foreground opacity-90"
+                    key={tech}
+                    className="px-4 py-2 rounded-xl border border-foreground/15 bg-background/70 backdrop-blur-md text-sm font-semibold text-foreground/80"
                   >
-                    <span
-                      className="material-symbols-outlined text-primary text-xl"
-                      aria-hidden="true"
-                    >
-                      check_circle
-                    </span>
-                    {item}
+                    {tech}
                   </li>
                 ))}
               </ul>
-            </motion.div>
-          </div>
-        </section>
+            </div>
+          </section>
+        )}
 
-        {/* Call to Action */}
-        <section className="py-24 px-6 border-t border-glass-border">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto glass-card border-glass-border rounded-3xl p-12 text-center relative overflow-hidden group"
-          >
-            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-            <h2 className="text-3xl md:text-4xl font-black mb-6 tracking-tight relative z-10">
-              Have a project in mind?
+        <HomeTeamWorkTestimonials />
+
+        {/* Working with us */}
+        <section
+          aria-labelledby="work-with-us-heading"
+          className="px-4 sm:px-6 py-20 sm:py-28"
+        >
+          <div className="relative max-w-5xl mx-auto rounded-3xl border border-primary/25 bg-background/80 backdrop-blur-xl px-6 py-14 sm:p-16 text-center overflow-hidden">
+            <div
+              className="absolute inset-x-0 -top-px h-px bg-linear-to-r from-transparent via-primary to-transparent"
+              aria-hidden="true"
+            />
+            <h2
+              id="work-with-us-heading"
+              className="font-display text-3xl sm:text-5xl font-black tracking-tight leading-[1.08] text-balance mb-6"
+            >
+              Working with KasauliCoder
             </h2>
-            <p className="text-foreground opacity-70 text-lg mb-10 max-w-2xl mx-auto relative z-10">
-              Tell us what you would like built or improved and we will get back
-              to you to discuss it.
+            <p className="text-lg text-foreground/70 leading-relaxed max-w-2xl mx-auto mb-10">
+              Send us your requirements through the contact form. We will
+              discuss them with you and, if we are a good fit, send a proposal
+              scoped to your project.
             </p>
-            <div className="flex flex-wrap justify-center gap-4 relative z-10">
-              <Link
-                href="/contact"
-                className="bg-primary text-primary-content font-bold px-8 py-4 rounded-xl hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/30 transition-all text-sm uppercase tracking-widest"
-              >
-                Discuss a Project
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-sm sm:max-w-none mx-auto">
+              <Link href="/contact" className={primaryButton}>
+                Discuss Your Project
               </Link>
-              <Link
-                href="/projects"
-                className="glass-panel border-glass-border font-bold px-8 py-4 rounded-xl hover:bg-white/5 transition-colors text-sm uppercase tracking-widest"
-              >
-                View Projects
+              <Link href="/projects" className={secondaryButton}>
+                View Our Projects
               </Link>
             </div>
-          </motion.div>
+          </div>
         </section>
       </main>
 

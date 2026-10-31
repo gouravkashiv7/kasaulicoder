@@ -4,17 +4,12 @@
   "description": "SaaS Solutions that Drive Growth",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#38bdf8",
+  "background_color": "#0a1214",
+  "theme_color": "#06d6e0",
   "icons": [
     {
-      "src": "/logowithbg.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/logowithbg.png",
-      "sizes": "512x512",
+      "src": "/logo.png",
+      "sizes": "500x500",
       "type": "image/png"
     }
   ]

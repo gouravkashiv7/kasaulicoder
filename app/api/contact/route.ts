@@ -11,9 +11,13 @@ export async function POST(req: Request) {
         { status: 429 },
       );
     }
-    const { name, email, userType, query } = await req.json();
+    const body = await req.json();
+    const { name, email, query } = body;
+    // All public enquiries are business enquiries; userType is kept for
+    // existing records and the admin view.
+    const userType = body.userType ?? "professional";
 
-    if (!name || !email || !userType || !query) {
+    if (!name || !email || !query) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 },
@@ -25,6 +29,20 @@ export async function POST(req: Request) {
         { error: "Invalid user type selected" },
         { status: 400 },
       );
+    }
+
+    // Optional business details from the enquiry form
+    const optional: Record<string, string> = {};
+    for (const key of ["company", "service", "budget", "timeline"]) {
+      const value = body[key];
+      if (value === undefined || value === null || value === "") continue;
+      if (typeof value !== "string" || value.length > 200) {
+        return NextResponse.json(
+          { error: `Invalid ${key} value` },
+          { status: 400 },
+        );
+      }
+      optional[key] = value.trim();
     }
 
     await connectDB();
@@ -41,6 +59,7 @@ export async function POST(req: Request) {
       email,
       userType,
       query,
+      ...optional,
       ipAddress: ipAddress.split(",")[0].trim(),
       device,
     });

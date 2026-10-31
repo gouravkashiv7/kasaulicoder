@@ -12,14 +12,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static routes
   const staticRoutes = [
     "",
+    "/services",
     "/projects",
-    "/blogs",
-    "/pricing",
+    "/projects/recent-projects",
     "/about",
+    "/pricing",
     "/contact",
+    "/blogs",
     "/privacy",
     "/terms",
-    "/login",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified,
@@ -27,9 +28,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "" ? 1 : 0.8,
   }));
 
-  // Dynamic Project Routes (Active)
+  // Dynamic Project Routes (Active). Only projects with a screenshot are
+  // listed publicly, so only those are included here.
   const activeProjects = await Project.find(
-    { status: "active" },
+    { status: "active", "media.type": "image" },
     "slug updatedAt",
   );
   const activeProjectRoutes = activeProjects.map((p) => ({
@@ -41,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic Project Routes (Recent/Past)
   const recentProjects = await Project.find(
-    { status: "past" },
+    { status: "past", "media.type": "image" },
     "slug updatedAt",
   );
   const recentProjectRoutes = recentProjects.map((p) => ({
