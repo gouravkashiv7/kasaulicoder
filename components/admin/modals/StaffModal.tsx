@@ -145,10 +145,10 @@ const CustomRoleDropdown = ({
                     </p>
                     <p className="text-[10px] text-foreground/40 font-medium">
                       {role.id === "admin"
-                        ? "Full access to dashboard"
+                        ? "Blogs, projects, social media; edits own profile"
                         : role.id === "editor"
-                          ? "Can manage content & plans"
-                          : "Handle requests & support"}
+                          ? "Blogs, projects, social media"
+                          : "Writes blogs only"}
                     </p>
                   </div>
                   {value === role.id && (
@@ -228,7 +228,7 @@ const StaffModal = ({
             >
               <div className="p-6 border-b border-foreground/10 flex justify-between items-center bg-foreground/5">
                 <h2 className="text-xl font-black text-foreground">
-                  {editingStaff ? "Edit Staff Details" : "Onboard New Staff"}
+                  {editingStaff ? "Edit Team Member" : "Add Team Member"}
                 </h2>
                 <button
                   type="button"
@@ -410,7 +410,7 @@ const StaffModal = ({
                     htmlFor="staff-bio-role-description"
                     className="text-[10px] font-black uppercase text-foreground/40 ml-1"
                   >
-                    Bio / Role Description
+                    Role description
                   </label>
                   <textarea
                     id="staff-bio-role-description"
@@ -475,7 +475,7 @@ const StaffModal = ({
             >
               <div className="p-6 border-b border-foreground/10 flex items-center justify-between bg-foreground/5">
                 <h2 className="font-black text-foreground text-lg">
-                  Crop Staff Photo
+                  Crop Photo
                 </h2>
                 <button
                   type="button"

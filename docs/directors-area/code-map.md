@@ -42,5 +42,19 @@
   anything is changed.
 - `AdminSidebar.tsx`: **My Workspace** link for non-superadmins.
 
+**Management (superadmin, `?tab=management`)**
+- Team Members are grouped into **Admins**, **Editors** and **Support** (with
+  counts, sorted by name) and directors carry a **Director** badge.
+- `GET /api/admin/staff` now returns `roleDescription` and `createdAt`. It
+  previously omitted both, so the edit dialog opened with an empty role
+  description (and saving would have blanked it) and "Joined" had no date.
+- Wording: "Team member" for people with staff accounts (modal titles "Add Team
+  Member" / "Edit Team Member", button "Add Team Member"), "Role" for the access
+  level, "Designation" for the job title, "Role description" for the text shown
+  on the dashboard and team section.
+- Role descriptions in the dropdown match real access: Admin = blogs, projects,
+  social media, edits own profile; Editor = blogs, projects, social media;
+  Support = writes blogs only.
+
 **Config:** `tsconfig.json` enables `allowImportingTsExtensions` (tests import
 `.ts` files); `package.json` has `pnpm test`.

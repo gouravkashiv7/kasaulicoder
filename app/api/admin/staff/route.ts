@@ -26,7 +26,9 @@ export async function GET() {
     // If not superadmin, maybe return a limited selection?
     // For now, allow all admin types to see the staff list names/ids.
     const staffMembers = await Staff.find({})
-      .select("name email role designation image isActive isDirector")
+      .select(
+        "name email role designation roleDescription image isActive isDirector createdAt",
+      )
       .sort({ createdAt: -1 });
 
     return NextResponse.json(staffMembers);
@@ -129,7 +131,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        message: "Staff member created successfully",
+        message: "Team member created successfully",
         staff: {
           id: newStaff._id,
           name: newStaff.name,
@@ -251,7 +253,7 @@ export async function PUT(req: Request) {
     await staff.save();
 
     return NextResponse.json({
-      message: "Staff member updated successfully",
+      message: "Team member updated successfully",
       staff: {
         id: staff._id,
         name: staff.name,

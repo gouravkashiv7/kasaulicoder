@@ -36,6 +36,13 @@ disabled until a subject is entered. No console errors.
 **Cleanup:** every test record was deleted, confirmed by counts (all director
 collections empty, zero `E2E-TEST` staff).
 
+## Management screen (2026-10-31)
+Checked as a temporary superadmin with a temporary editor and support member
+(deleted afterwards): grouped sections and Director badges render, join dates
+are valid, and the edit dialog opens with the role description, designation and
+Director checkbox filled in for both a real member (not saved) and a test one.
+All five real role descriptions were confirmed intact in the database.
+
 ## Not verified
 - **A real email send.** Only the validation path was tested, because sending
   would use the live SMTP account. Try it once after setting up the sender.
