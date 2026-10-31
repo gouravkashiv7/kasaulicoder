@@ -4,11 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
-import type { SidebarView } from "./types";
+import type { DirectorBadges, SidebarView } from "./types";
 
 interface SidebarProps {
   role?: string;
   isDirector?: boolean;
+  directorBadges?: DirectorBadges;
   sidebarView: SidebarView;
   setSidebarView: (view: SidebarView) => void;
   sidebarCollapsed: boolean;
@@ -23,6 +24,7 @@ interface SidebarProps {
 const Sidebar = ({
   role,
   isDirector,
+  directorBadges,
   sidebarView,
   setSidebarView,
   sidebarCollapsed,
@@ -93,12 +95,21 @@ const Sidebar = ({
       id: "finance" as SidebarView,
       label: "Finance",
       icon: "account_balance",
+      badge: directorBadges?.finance,
       directorOnly: true,
     },
     {
       id: "policies" as SidebarView,
       label: "Policies",
       icon: "gavel",
+      badge: directorBadges?.policies,
+      directorOnly: true,
+    },
+    {
+      id: "discussions" as SidebarView,
+      label: "Discussions",
+      icon: "forum",
+      badge: directorBadges?.discussions,
       directorOnly: true,
     },
   ].filter((item) => {

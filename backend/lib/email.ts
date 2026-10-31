@@ -705,3 +705,57 @@ export const sendContactRejectionEmail = async (
     html,
   });
 };
+
+export interface DirectorEmailOptions {
+  toEmails: string[];
+  senderName: string;
+  senderEmail: string;
+  subject: string;
+  note?: string;
+  threadTitle: string;
+  quotedAuthor: string;
+  quotedBody: string;
+}
+
+// Directors emailing each other from the shared admin mailbox. Replies go to
+// the sending director, not the shared inbox.
+export const sendDirectorEmail = async (
+  options: DirectorEmailOptions,
+): Promise<void> => {
+  const noteBlock = options.note
+    ? `<p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.7;white-space:pre-wrap;">${esc(options.note)}</p>`
+    : "";
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>${esc(options.subject)}</title></head>
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <tr><td style="background:#1a1a2e;padding:24px 40px;">
+          <p style="margin:0;color:#9ca3af;font-size:12px;letter-spacing:0.5px;text-transform:uppercase;">Directors' discussion</p>
+          <h1 style="margin:6px 0 0;color:#ffffff;font-size:20px;font-weight:800;">${esc(options.threadTitle)}</h1>
+        </td></tr>
+        <tr><td style="padding:32px 40px;">
+          <p style="margin:0 0 20px;font-size:14px;color:#6b7280;"><strong>${esc(options.senderName)}</strong> shared this with you:</p>
+          ${noteBlock}
+          <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;">
+            <p style="margin:0 0 6px;font-size:12px;font-weight:700;color:#6b7280;">${esc(options.quotedAuthor)} wrote</p>
+            <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;white-space:pre-wrap;">${esc(options.quotedBody)}</p>
+          </div>
+          <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;">Reply to this email to answer ${esc(options.senderName)} directly.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  await transporter.sendMail({
+    from: `"Kasaulicoder Directors" <${process.env.ADMIN_FROM || "admin@kasaulicoder.com"}>`,
+    replyTo: `"${options.senderName.replace(/["\r\n]/g, "")}" <${options.senderEmail}>`,
+    to: options.toEmails,
+    subject: options.subject,
+    html,
+  });
+};

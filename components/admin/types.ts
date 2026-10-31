@@ -9,7 +9,8 @@ export type SidebarView =
   | "projects"
   | "social-media"
   | "policies"
-  | "finance";
+  | "finance"
+  | "discussions";
 
 export interface Program {
   _id: string;
@@ -292,4 +293,33 @@ export interface ExpenseRecord {
     attachment?: string;
   };
   createdAt: string;
+}
+
+export interface DiscussionThread {
+  _id: string;
+  title: string;
+  createdBy: { _id: string; name: string };
+  lastMessageAt: string;
+  preview: string;
+  messageCount: number;
+  unread: boolean;
+}
+
+export interface DiscussionMessage {
+  _id: string;
+  author: { _id: string; name: string };
+  body: string;
+  createdAt: string;
+  emails: Array<{
+    to: string[];
+    subject: string;
+    sentBy?: { _id: string; name: string };
+    at: string;
+  }>;
+}
+
+export interface DirectorBadges {
+  policies: number;
+  finance: number;
+  discussions: number;
 }

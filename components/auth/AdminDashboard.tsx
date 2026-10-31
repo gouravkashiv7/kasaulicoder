@@ -11,6 +11,10 @@ import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement"
 // Components
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import Cohort from "@/components/admin/Cohort";
+import Discussions from "@/components/admin/director/Discussions";
+import Finance from "@/components/admin/director/Finance";
+import Policies from "@/components/admin/director/Policies";
+import { useDirectorBadges } from "@/components/admin/director/useDirectorBadges";
 import Management from "@/components/admin/Management";
 import PlanModal from "@/components/admin/modals/PlanModal";
 import ProgramModal from "@/components/admin/modals/ProgramModal";
@@ -19,8 +23,6 @@ import SocialMediaModal from "@/components/admin/modals/SocialMediaModal";
 // Modals
 import StaffModal from "@/components/admin/modals/StaffModal";
 import StatusToggleModal from "@/components/admin/modals/StatusToggleModal";
-import Finance from "@/components/admin/director/Finance";
-import Policies from "@/components/admin/director/Policies";
 import Overview from "@/components/admin/Overview";
 import Pricing from "@/components/admin/Pricing";
 import Programs from "@/components/admin/Programs";
@@ -118,7 +120,7 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
       "projects",
       "social-media",
     ];
-    if (isDirector) allTabs.push("finance", "policies");
+    if (isDirector) allTabs.push("finance", "policies", "discussions");
     if (isSuperAdmin) return allTabs;
     // Staff (admin role) restricted tabs
     return allTabs.filter(
@@ -134,6 +136,7 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
   const tabFromUrl = searchParams.get("tab") as SidebarView | null;
   const sidebarView: SidebarView =
     tabFromUrl && validAdminTabs.includes(tabFromUrl) ? tabFromUrl : "overview";
+  const directorBadges = useDirectorBadges(isDirector, sidebarView);
 
   const setSidebarView = useCallback((tab: SidebarView) => {
     const params = new URLSearchParams(window.location.search);
@@ -1023,6 +1026,7 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
       <AdminSidebar
         role={role}
         isDirector={isDirector}
+        directorBadges={directorBadges}
         sidebarView={sidebarView}
         setSidebarView={setSidebarView}
         sidebarCollapsed={sidebarCollapsed}
@@ -1122,6 +1126,7 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
             )}
             {sidebarView === "finance" && isDirector && <Finance />}
             {sidebarView === "policies" && isDirector && <Policies />}
+            {sidebarView === "discussions" && isDirector && <Discussions />}
             {sidebarView === "blogs" && <AdminBlogManagement />}
             {sidebarView === "projects" && <AdminProjectsManagement />}
             {sidebarView === "social-media" && (
