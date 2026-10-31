@@ -6,7 +6,7 @@ import type { Plan } from "./types";
 interface PricingProps {
   plans: Plan[];
   plansLoading: boolean;
-  setShowPlanModal: (show: boolean) => void;
+  onCreate: () => void;
   openEditPlan: (plan: Plan) => void;
   handleDeletePlan: (id: string) => void;
   handleTogglePlanActive: (plan: Plan) => void;
@@ -15,7 +15,7 @@ interface PricingProps {
 const Pricing = ({
   plans,
   plansLoading,
-  setShowPlanModal,
+  onCreate,
   openEditPlan,
   handleDeletePlan,
   handleTogglePlanActive,
@@ -30,7 +30,7 @@ const Pricing = ({
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-black mb-2 text-foreground">
+          <h1 className="text-2xl md:text-3xl font-black mb-2 text-foreground">
             Pricing Plans
           </h1>
           <p className="text-foreground/50">
@@ -39,10 +39,8 @@ const Pricing = ({
         </div>
         <button
           type="button"
-          onClick={() => {
-            setShowPlanModal(true);
-          }}
-          className="px-6 py-3 bg-primary text-primary-content font-black rounded-xl hover:brightness-110 flex items-center gap-2 shadow-lg shadow-primary/20 transition-all"
+          onClick={onCreate}
+          className="px-6 py-3 bg-primary text-primary-content font-black rounded-xl hover:brightness-110 flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all"
         >
           <span className="material-symbols-outlined">add_circle</span>
           Create New Plan
@@ -54,7 +52,7 @@ const Pricing = ({
           Synchronizing pricing data...
         </div>
       ) : plans.length === 0 ? (
-        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-20 text-center">
+        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-10 md:p-20 text-center">
           <span className="material-symbols-outlined text-6xl text-foreground/10 mb-6 block">
             payments
           </span>
@@ -63,7 +61,7 @@ const Pricing = ({
           </p>
           <button
             type="button"
-            onClick={() => setShowPlanModal(true)}
+            onClick={onCreate}
             className="text-primary font-bold hover:underline"
           >
             Click here to create your first plan
@@ -71,7 +69,7 @@ const Pricing = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {plans
+          {[...plans]
             .sort((a, b) => a.sortOrder - b.sortOrder)
             .map((plan) => (
               <div
@@ -114,9 +112,9 @@ const Pricing = ({
                   <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30">
                     Key Features
                   </p>
-                  {plan.features.slice(0, 4).map((f, i) => (
+                  {plan.features.slice(0, 4).map((f) => (
                     <div
-                      key={i}
+                      key={f}
                       className="flex items-center gap-2 text-xs text-foreground/60"
                     >
                       <span className="material-symbols-outlined text-sm text-emerald-500 shrink-0">

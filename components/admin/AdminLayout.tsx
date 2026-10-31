@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,12 +18,12 @@ export default function AdminLayout({
   activeTab = "overview",
 }: AdminLayoutProps) {
   const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState<string>();
   const router = useRouter();
 
   // Sidebar & UI State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [cohortNotNotified, setCohortNotNotified] = useState(0);
 
@@ -36,7 +35,14 @@ export default function AdminLayout({
       return;
     }
 
-    const user = JSON.parse(storedUser);
+    let user: { role: string };
+    try {
+      user = JSON.parse(storedUser);
+    } catch {
+      localStorage.removeItem("user");
+      router.push("/login");
+      return;
+    }
     const hasAccess = ["superadmin", "admin", "editor"].includes(user.role);
 
     if (!hasAccess) {
@@ -44,16 +50,9 @@ export default function AdminLayout({
       return;
     }
 
+    setRole(user.role);
     setLoading(false);
   }, [router]);
-
-  // Responsive Check
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
 
   // Fetch badges (unread counts)
   const fetchBadges = useCallback(async () => {
@@ -104,7 +103,11 @@ export default function AdminLayout({
       <div className="fixed top-0 left-0 right-0 z-20 md:hidden flex items-center gap-3 px-4 h-14 bg-background/80 backdrop-blur-lg border-b border-foreground/10">
         <button
           type="button"
-          onClick={() => setMobileMenuOpen(true)}
+          aria-label="Open navigation menu"
+          onClick={() => {
+            setSidebarCollapsed(false);
+            setMobileMenuOpen(true);
+          }}
           className="size-9 flex items-center justify-center rounded-xl bg-foreground/5 shrink-0"
         >
           <span className="material-symbols-outlined text-xl text-foreground/70">
@@ -128,6 +131,7 @@ export default function AdminLayout({
       </div>
 
       <AdminSidebar
+        role={role}
         sidebarView={activeTab}
         setSidebarView={handleSetSidebarView}
         sidebarCollapsed={sidebarCollapsed}
@@ -139,16 +143,16 @@ export default function AdminLayout({
         handleLogout={handleLogout}
       />
 
-      <motion.main
-        animate={{ marginLeft: isMobile ? 0 : sidebarCollapsed ? 72 : 260 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="flex-1 min-h-screen w-full relative"
+      <main
+        className={`flex-1 min-w-0 min-h-screen w-full relative transition-[margin] duration-300 ease-in-out ${
+          sidebarCollapsed ? "md:ml-[72px]" : "md:ml-[260px]"
+        }`}
       >
         <div className="h-14 md:hidden" />
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
           {children}
         </div>
-      </motion.main>
+      </main>
     </div>
   );
 }

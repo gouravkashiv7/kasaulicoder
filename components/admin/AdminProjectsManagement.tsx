@@ -136,21 +136,21 @@ export default function AdminProjectsManagement() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h2 className="text-3xl font-black tracking-tight flex items-center gap-3">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-3">
               <span className="size-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 <span className="material-symbols-outlined text-primary text-2xl">
                   rocket_launch
                 </span>
               </span>
               Projects Console
-            </h2>
+            </h1>
             <p className="text-foreground/50 text-sm mt-2 font-medium">
               Manage and showcase your engineering milestones.
             </p>
           </div>
           <Link
             href="/admin/projects/new"
-            className="flex items-center gap-2 px-6 py-3 bg-primary text-background font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 group"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-primary text-background font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 group"
           >
             <span className="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform">
               add
@@ -180,10 +180,10 @@ export default function AdminProjectsManagement() {
               icon: "star",
               color: "text-amber-500",
             },
-          ].map((s, i) => (
+          ].map((s) => (
             <div
-              key={i}
-              className="bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-sm shadow-sm"
+              key={s.label}
+              className="bg-foreground/5 border border-foreground/10 p-5 rounded-2xl backdrop-blur-sm shadow-sm"
             >
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
@@ -193,7 +193,7 @@ export default function AdminProjectsManagement() {
                   <p className={`text-3xl font-black ${s.color}`}>{s.value}</p>
                 </div>
                 <span
-                  className={`material-symbols-outlined ${s.color}/20 text-2xl`}
+                  className={`material-symbols-outlined ${s.color} opacity-30 text-2xl`}
                 >
                   {s.icon}
                 </span>
@@ -204,7 +204,7 @@ export default function AdminProjectsManagement() {
       </div>
 
       {/* Control Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-xl">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-foreground/5 border border-foreground/10 p-4 rounded-2xl backdrop-blur-xl">
         <div className="relative w-full md:max-w-md group">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-foreground/30 group-focus-within:text-primary transition-colors">
             search
@@ -214,7 +214,7 @@ export default function AdminProjectsManagement() {
             placeholder="Search by title, slug, or tags..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-background border border-white/10 rounded-xl pl-12 pr-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-all shadow-inner"
+            className="w-full bg-background border border-foreground/10 rounded-xl pl-12 pr-4 py-2.5 text-sm outline-none focus:border-primary/50 transition-all shadow-inner"
           />
         </div>
         <div className="flex gap-2 w-full md:w-auto">
@@ -226,7 +226,7 @@ export default function AdminProjectsManagement() {
               className={`flex-1 md:flex-none px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all border ${
                 filter === s
                   ? "bg-primary text-background border-primary"
-                  : "bg-white/5 text-foreground/40 border-white/10 hover:border-white/20 hover:text-foreground"
+                  : "bg-foreground/5 text-foreground/40 border-foreground/10 hover:border-foreground/20 hover:text-foreground"
               }`}
             >
               {s}
@@ -254,7 +254,7 @@ export default function AdminProjectsManagement() {
             </p>
           </div>
         ) : filteredProjects.length === 0 ? (
-          <div className="py-24 border border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center text-center">
+          <div className="py-24 border border-dashed border-foreground/10 rounded-3xl flex flex-col items-center justify-center text-center">
             <span className="material-symbols-outlined text-foreground/5 text-6xl mb-4">
               search_off
             </span>
@@ -274,11 +274,11 @@ export default function AdminProjectsManagement() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.98 }}
-                    className="group relative bg-white/5 border border-white/10 hover:border-primary/30 p-4 sm:p-5 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5"
+                    className="group relative bg-foreground/5 border border-foreground/10 hover:border-primary/30 p-4 sm:p-5 rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5"
                   >
-                    <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center">
                       {/* Thumbnail Block */}
-                      <div className="relative size-16 sm:size-24 rounded-xl overflow-hidden bg-foreground/5 border border-white/10 shrink-0 shadow-lg">
+                      <div className="relative size-16 sm:size-24 rounded-xl overflow-hidden bg-foreground/5 border border-foreground/10 shrink-0 shadow-lg">
                         {thumbnail ? (
                           <Image
                             src={thumbnail}
@@ -287,7 +287,7 @@ export default function AdminProjectsManagement() {
                             className="object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-foreground/10 bg-linear-to-br from-white/5 to-transparent">
+                          <div className="w-full h-full flex items-center justify-center text-foreground/10 bg-linear-to-br from-foreground/5 to-transparent">
                             <span className="material-symbols-outlined text-3xl">
                               image
                             </span>
@@ -321,21 +321,21 @@ export default function AdminProjectsManagement() {
                               className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${
                                 project.status === "active"
                                   ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                                  : "bg-foreground/5 text-foreground/40 border-white/10"
+                                  : "bg-foreground/5 text-foreground/40 border-foreground/10"
                               }`}
                             >
                               {project.status}
                             </span>
                           </div>
                         </div>
-                        <p className="text-sm font-medium text-foreground/50 italic truncate max-w-lg">
+                        <p className="text-sm font-medium text-foreground/50 italic truncate max-w-full sm:max-w-lg">
                           {project.outcome}
                         </p>
                         <div className="flex flex-wrap gap-2 pt-1">
-                          {project.tags?.map((tag, i) => (
+                          {project.tags?.map((tag) => (
                             <span
-                              key={i}
-                              className="text-[10px] font-bold text-foreground/30 px-2 py-0.5 bg-white/5 rounded-lg border border-white/10 uppercase tracking-tighter"
+                              key={tag}
+                              className="text-[10px] font-bold text-foreground/30 px-2 py-0.5 bg-foreground/5 rounded-lg border border-foreground/10 uppercase tracking-tighter"
                             >
                               #{tag}
                             </span>
@@ -344,7 +344,7 @@ export default function AdminProjectsManagement() {
                       </div>
 
                       {/* Action Block */}
-                      <div className="flex flex-row sm:flex-col lg:flex-row items-center gap-2 w-full sm:w-auto border-t sm:border-t-0 border-white/5 pt-4 sm:pt-0">
+                      <div className="flex flex-row sm:flex-col lg:flex-row items-center gap-2 w-full sm:w-auto border-t sm:border-t-0 border-foreground/5 pt-4 sm:pt-0">
                         <div className="flex gap-2 flex-1 sm:flex-none">
                           <button
                             type="button"
@@ -352,7 +352,7 @@ export default function AdminProjectsManagement() {
                             className={`flex-1 sm:size-10 rounded-xl flex items-center justify-center transition-all border ${
                               project.featured
                                 ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                                : "bg-white/5 text-foreground/20 border-white/10 hover:text-foreground/40"
+                                : "bg-foreground/5 text-foreground/20 border-foreground/10 hover:text-foreground/40"
                             }`}
                             title="Toggle Featured"
                           >
@@ -366,7 +366,7 @@ export default function AdminProjectsManagement() {
                             className={`flex-1 sm:size-10 rounded-xl flex items-center justify-center transition-all border ${
                               project.status === "active"
                                 ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                                : "bg-white/5 text-foreground/20 border-white/10 hover:text-foreground/40"
+                                : "bg-foreground/5 text-foreground/20 border-foreground/10 hover:text-foreground/40"
                             }`}
                             title="Toggle Status"
                           >
@@ -375,7 +375,7 @@ export default function AdminProjectsManagement() {
                             </span>
                           </button>
                         </div>
-                        <div className="h-8 w-px bg-white/10 hidden lg:block mx-1" />
+                        <div className="h-8 w-px bg-foreground/10 hidden lg:block mx-1" />
                         <div className="flex gap-2 flex-1 sm:flex-none">
                           <Link
                             href={`/projects/recent-projects/${project.slug}`}

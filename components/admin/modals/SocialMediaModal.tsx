@@ -53,6 +53,8 @@ const SocialMediaModal = ({
     isActive: editingAccount?.isActive !== false,
   });
 
+  // Reset every time the modal opens, so a second "Add" never shows old input
+  // biome-ignore lint/correctness/useExhaustiveDependencies: showModal is the reset trigger
   React.useEffect(() => {
     if (editingAccount) {
       const isPredefined = PREDEFINED_PLATFORMS.includes(
@@ -79,7 +81,7 @@ const SocialMediaModal = ({
         isActive: true,
       });
     }
-  }, [editingAccount]);
+  }, [editingAccount, showModal]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,13 +125,17 @@ const SocialMediaModal = ({
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div
-                className={`grid ${formData.platform === "Other" ? "grid-cols-1" : "grid-cols-2"} gap-4 transition-all`}
+                className={`grid ${formData.platform === "Other" ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"} gap-4 transition-all`}
               >
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  <label
+                    htmlFor="social-platform"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
                     Platform
                   </label>
                   <select
+                    id="social-platform"
                     value={formData.platform}
                     onChange={(e) =>
                       setFormData({ ...formData, platform: e.target.value })
@@ -151,10 +157,14 @@ const SocialMediaModal = ({
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-1.5"
                   >
-                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                    <label
+                      htmlFor="social-platform-name"
+                      className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                    >
                       Platform Name
                     </label>
                     <input
+                      id="social-platform-name"
                       type="text"
                       required
                       value={formData.customPlatform}
@@ -171,10 +181,14 @@ const SocialMediaModal = ({
                 )}
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  <label
+                    htmlFor="social-username"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
                     Username
                   </label>
                   <input
+                    id="social-username"
                     type="text"
                     required
                     value={formData.username}
@@ -188,10 +202,14 @@ const SocialMediaModal = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                <label
+                  htmlFor="social-password"
+                  className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                >
                   Password
                 </label>
                 <input
+                  id="social-password"
                   type="text"
                   required
                   value={formData.password}
@@ -204,10 +222,14 @@ const SocialMediaModal = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                <label
+                  htmlFor="social-managed-by"
+                  className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                >
                   Managed By
                 </label>
                 <select
+                  id="social-managed-by"
                   required
                   value={formData.managedBy}
                   onChange={(e) =>
@@ -225,10 +247,14 @@ const SocialMediaModal = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                <label
+                  htmlFor="social-platform-url-optional"
+                  className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                >
                   Platform URL (Optional)
                 </label>
                 <input
+                  id="social-platform-url-optional"
                   type="url"
                   value={formData.platformUrl}
                   onChange={(e) =>

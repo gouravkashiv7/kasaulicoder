@@ -46,18 +46,34 @@ const roles = [
 const CustomRoleDropdown = ({
   value,
   onChange,
+  labelledBy,
 }: {
   value: string;
   onChange: (val: string) => void;
+  labelledBy: string;
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const selectedRole = roles.find((r) => r.id === value) || roles[0];
 
+  // Escape closes the menu (keyboard users have no backdrop to click)
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen]);
+
   return (
     <div className="relative">
-      <div
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-labelledby={labelledBy}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm flex items-center justify-between cursor-pointer hover:border-primary/40 transition-colors"
+        className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm flex items-center justify-between cursor-pointer hover:border-primary/40 transition-colors text-left"
       >
         <div className="flex items-center gap-2">
           <span
@@ -74,29 +90,37 @@ const CustomRoleDropdown = ({
         >
           expand_more
         </span>
-      </div>
+      </button>
 
       <AnimatePresence>
         {isOpen && (
           <>
-            <div
-              className="fixed inset-0 z-60"
+            <button
+              type="button"
+              tabIndex={-1}
+              aria-label="Close role menu"
+              className="fixed inset-0 z-60 cursor-default"
               onClick={() => setIsOpen(false)}
             />
             <motion.div
+              role="listbox"
+              aria-labelledby={labelledBy}
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               className="absolute left-0 right-0 top-full mt-2 bg-background border border-foreground/10 rounded-2xl shadow-2xl z-70 overflow-hidden p-1.5"
             >
               {roles.map((role) => (
-                <div
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={value === role.id}
                   key={role.id}
                   onClick={() => {
                     onChange(role.id);
                     setIsOpen(false);
                   }}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all ${
+                  className={`w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all ${
                     value === role.id
                       ? "bg-primary/10"
                       : "hover:bg-foreground/5"
@@ -130,7 +154,7 @@ const CustomRoleDropdown = ({
                       check
                     </span>
                   )}
-                </div>
+                </button>
               ))}
             </motion.div>
           </>
@@ -217,7 +241,7 @@ const StaffModal = ({
               </div>
               <form
                 onSubmit={handleCreateStaff}
-                className="p-6 space-y-4 max-h-[70vh] overflow-y-auto"
+                className="p-4 sm:p-6 space-y-4 max-h-[70dvh] overflow-y-auto"
               >
                 <div className="flex flex-col items-center gap-4 mb-6">
                   <div className="size-24 rounded-2xl bg-foreground/5 border-2 border-dashed border-foreground/20 flex items-center justify-center overflow-hidden relative group">
@@ -251,12 +275,16 @@ const StaffModal = ({
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                    <label
+                      htmlFor="staff-full-name"
+                      className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                    >
                       Full Name
                     </label>
                     <input
+                      id="staff-full-name"
                       type="text"
                       required
                       value={newStaff.name}
@@ -268,10 +296,14 @@ const StaffModal = ({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                    <label
+                      htmlFor="staff-email-address"
+                      className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                    >
                       Email Address
                     </label>
                     <input
+                      id="staff-email-address"
                       type="email"
                       required
                       disabled={!!editingStaff}
@@ -287,10 +319,14 @@ const StaffModal = ({
 
                 {!editingStaff && (
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                    <label
+                      htmlFor="staff-temporary-password"
+                      className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                    >
                       Temporary Password
                     </label>
                     <input
+                      id="staff-temporary-password"
                       type="password"
                       required
                       value={newStaff.password}
@@ -303,12 +339,16 @@ const StaffModal = ({
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5 relative">
-                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                    <p
+                      id="staff-role-label"
+                      className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                    >
                       Role
-                    </label>
+                    </p>
                     <CustomRoleDropdown
+                      labelledBy="staff-role-label"
                       value={newStaff.role}
                       onChange={(val) =>
                         setNewStaff({ ...newStaff, role: val })
@@ -316,10 +356,14 @@ const StaffModal = ({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                    <label
+                      htmlFor="staff-designation"
+                      className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                    >
                       Designation
                     </label>
                     <input
+                      id="staff-designation"
                       type="text"
                       value={newStaff.designation}
                       onChange={(e) =>
@@ -335,10 +379,14 @@ const StaffModal = ({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  <label
+                    htmlFor="staff-bio-role-description"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
                     Bio / Role Description
                   </label>
                   <textarea
+                    id="staff-bio-role-description"
                     value={newStaff.roleDescription}
                     onChange={(e) =>
                       setNewStaff({

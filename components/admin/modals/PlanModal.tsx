@@ -53,14 +53,18 @@ const PlanModal = ({
             </div>
             <form
               onSubmit={handlePlanSubmit}
-              className="p-6 space-y-4 max-h-[80vh] overflow-y-auto"
+              className="p-4 sm:p-6 space-y-4 max-h-[80dvh] overflow-y-auto"
             >
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5 flex-1">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  <label
+                    htmlFor="plan-plan-name"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
                     Plan Name
                   </label>
                   <input
+                    id="plan-plan-name"
                     type="text"
                     required
                     value={planForm.name}
@@ -72,10 +76,14 @@ const PlanModal = ({
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  <label
+                    htmlFor="plan-display-order-low-to-high"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
                     Display Order (Low to High)
                   </label>
                   <input
+                    id="plan-display-order-low-to-high"
                     type="number"
                     value={planForm.sortOrder}
                     onChange={(e) =>
@@ -90,10 +98,14 @@ const PlanModal = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                <label
+                  htmlFor="plan-description"
+                  className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                >
                   Description
                 </label>
                 <textarea
+                  id="plan-description"
                   required
                   value={planForm.description}
                   onChange={(e) =>
@@ -104,12 +116,16 @@ const PlanModal = ({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  <label
+                    htmlFor="plan-price"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
                     Price
                   </label>
                   <input
+                    id="plan-price"
                     type="number"
                     required
                     value={planForm.price}
@@ -123,10 +139,14 @@ const PlanModal = ({
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  <label
+                    htmlFor="plan-currency"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
                     Currency
                   </label>
                   <select
+                    id="plan-currency"
                     value={planForm.currency}
                     onChange={(e) =>
                       setPlanForm({ ...planForm, currency: e.target.value })
@@ -139,12 +159,16 @@ const PlanModal = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  <label
+                    htmlFor="plan-billing-type"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
                     Billing Type
                   </label>
                   <select
+                    id="plan-billing-type"
                     value={planForm.billingType}
                     onChange={(e) =>
                       setPlanForm({
@@ -160,10 +184,14 @@ const PlanModal = ({
                 </div>
                 {planForm.billingType === "recurring" && (
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                    <label
+                      htmlFor="plan-billing-cycle"
+                      className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                    >
                       Billing Cycle
                     </label>
                     <select
+                      id="plan-billing-cycle"
                       value={planForm.billingCycle}
                       onChange={(e) =>
                         setPlanForm({
@@ -180,12 +208,16 @@ const PlanModal = ({
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  <label
+                    htmlFor="plan-target-audience"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
                     Target Audience
                   </label>
                   <select
+                    id="plan-target-audience"
                     value={planForm.targetAudience}
                     onChange={(e) =>
                       setPlanForm({
@@ -235,9 +267,9 @@ const PlanModal = ({
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 ml-1">
+                  <p className="text-[10px] font-black uppercase text-foreground/40 ml-1">
                     Features List
-                  </label>
+                  </p>
                   <button
                     type="button"
                     onClick={() =>

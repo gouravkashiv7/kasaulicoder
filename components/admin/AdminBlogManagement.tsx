@@ -39,8 +39,8 @@ const AdminBlogManagement = () => {
       });
 
       if (res.ok) {
-        setBlogs(
-          blogs.map((blog) =>
+        setBlogs((prev) =>
+          prev.map((blog) =>
             blog._id === blogId ? { ...blog, status: newStatus } : blog,
           ),
         );
@@ -64,13 +64,18 @@ const AdminBlogManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-black">Blog Management ({blogs.length})</h2>
+      <div>
+        <h1 className="text-2xl md:text-3xl font-black mb-2 text-foreground">
+          Blog Management ({blogs.length})
+        </h1>
+        <p className="text-foreground/50">
+          Review and publish posts drafted by the team.
+        </p>
       </div>
 
       <div className="bg-background/40 border border-foreground/10 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full min-w-[640px] text-left border-collapse">
             <thead>
               <tr className="bg-foreground/5 border-b border-foreground/10 text-[10px] uppercase tracking-widest text-foreground/50 font-black">
                 <th className="px-6 py-4 font-black">Image & Title</th>

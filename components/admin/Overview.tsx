@@ -46,7 +46,7 @@ const Overview = ({
       </div>
 
       {isSuper && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-10">
           {/* Total Users */}
           <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-primary/30 transition-colors">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-colors"></div>
@@ -102,9 +102,10 @@ const Overview = ({
           </div>
 
           {/* Cohort Waitlist */}
-          <div
+          <button
+            type="button"
             onClick={() => setSidebarView("cohort")}
-            className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-emerald-500/30 transition-colors cursor-pointer"
+            className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-6 relative overflow-hidden group hover:border-emerald-500/30 transition-colors cursor-pointer text-left w-full"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/10 transition-colors"></div>
             <div className="relative">
@@ -125,15 +126,16 @@ const Overview = ({
                 </p>
               )}
             </div>
-          </div>
+          </button>
         </div>
       )}
 
       {!isSuper && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          <div
+          <button
+            type="button"
             onClick={() => setSidebarView("projects")}
-            className="p-8 rounded-3xl bg-primary/10 border border-primary/20 hover:bg-primary/20 transition-all cursor-pointer group"
+            className="p-6 md:p-8 rounded-3xl bg-primary/10 border border-primary/20 hover:bg-primary/20 transition-all cursor-pointer group text-left w-full"
           >
             <span className="material-symbols-outlined text-4xl text-primary mb-4 group-hover:scale-110 transition-transform">
               rocket_launch
@@ -142,10 +144,11 @@ const Overview = ({
             <p className="text-foreground/60 text-sm">
               View and manage the projects you are currently assigned to.
             </p>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             onClick={() => setSidebarView("social-media")}
-            className="p-8 rounded-3xl bg-secondary/10 border border-secondary/20 hover:bg-secondary/20 transition-all cursor-pointer group"
+            className="p-6 md:p-8 rounded-3xl bg-secondary/10 border border-secondary/20 hover:bg-secondary/20 transition-all cursor-pointer group text-left w-full"
           >
             <span className="material-symbols-outlined text-4xl text-secondary mb-4 group-hover:scale-110 transition-transform">
               share
@@ -154,7 +157,7 @@ const Overview = ({
             <p className="text-foreground/60 text-sm">
               Manage connected social media platforms and accounts.
             </p>
-          </div>
+          </button>
         </div>
       )}
 

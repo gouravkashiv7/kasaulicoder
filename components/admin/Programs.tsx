@@ -8,7 +8,7 @@ interface ProgramsProps {
   programsLoading: boolean;
   programViewMode: "grid" | "list";
   setProgramViewMode: (mode: "grid" | "list") => void;
-  setShowProgramModal: (show: boolean) => void;
+  onCreate: () => void;
   openEditProgram: (program: Program) => void;
   handleToggleProgramActive: (program: Program) => void;
   handleToggleProgramVisibility: (program: Program) => void;
@@ -20,7 +20,7 @@ const Programs = ({
   programsLoading,
   programViewMode,
   setProgramViewMode,
-  setShowProgramModal,
+  onCreate,
   openEditProgram,
   handleToggleProgramActive,
   handleToggleProgramVisibility,
@@ -36,7 +36,7 @@ const Programs = ({
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-black mb-2 text-foreground">
+          <h1 className="text-2xl md:text-3xl font-black mb-2 text-foreground">
             Curriculum Programs
           </h1>
           <p className="text-foreground/50">
@@ -44,7 +44,7 @@ const Programs = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between md:justify-end gap-4">
           {/* View Toggle */}
           <div className="flex bg-foreground/5 rounded-xl p-1 border border-foreground/10">
             <button
@@ -79,9 +79,7 @@ const Programs = ({
 
           <button
             type="button"
-            onClick={() => {
-              setShowProgramModal(true);
-            }}
+            onClick={onCreate}
             className="px-6 py-3 bg-primary text-primary-content font-black rounded-xl hover:brightness-110 flex items-center gap-2 shadow-xl shadow-primary/20 transition-all active:scale-95"
           >
             <span className="material-symbols-outlined">add_circle</span>
@@ -91,14 +89,14 @@ const Programs = ({
       </div>
 
       {programsLoading ? (
-        <div className="p-24 text-center">
+        <div className="p-12 md:p-24 text-center">
           <div className="size-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-6"></div>
           <p className="text-primary font-bold animate-pulse tracking-widest text-sm uppercase">
             Fetching program data…
           </p>
         </div>
       ) : programs.length === 0 ? (
-        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-3xl p-24 text-center">
+        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-3xl p-10 md:p-24 text-center">
           <div className="size-24 bg-foreground/5 rounded-full flex items-center justify-center mx-auto mb-8">
             <span className="material-symbols-outlined text-5xl text-foreground/10">
               terminal
@@ -113,7 +111,7 @@ const Programs = ({
           </p>
           <button
             type="button"
-            onClick={() => setShowProgramModal(true)}
+            onClick={onCreate}
             className="text-primary font-black hover:underline underline-offset-8"
           >
             Create Your First Program →
@@ -123,12 +121,12 @@ const Programs = ({
         <div
           className={
             programViewMode === "grid"
-              ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
+              ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8"
               : "space-y-4"
           }
         >
           <AnimatePresence mode="popLayout">
-            {programs
+            {[...programs]
               .sort((a, b) => a.sortOrder - b.sortOrder)
               .map((prog) => (
                 <motion.div
@@ -140,15 +138,19 @@ const Programs = ({
                   className={`${
                     programViewMode === "grid"
                       ? "bg-background/40 backdrop-blur-xl border rounded-4xl p-6 group"
-                      : "bg-background/40 backdrop-blur-xl border rounded-2xl p-4 flex items-center gap-4"
+                      : "bg-background/40 backdrop-blur-xl border rounded-2xl p-4 flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4"
                   } transition-all relative overflow-hidden ${
                     prog.isActive
                       ? "border-foreground/10 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5"
                       : "border-rose-500/10 opacity-60"
                   }`}
                 >
-                  {/* Status Badges */}
-                  <div className="absolute top-4 right-4 flex gap-2 z-10">
+                  {/* Status Badges (grid cards only; list rows show them inline) */}
+                  <div
+                    className={`absolute top-4 right-4 flex gap-2 z-10 ${
+                      programViewMode === "grid" ? "" : "hidden"
+                    }`}
+                  >
                     {!prog.isActive && (
                       <span className="bg-rose-500 text-white text-[9px] font-black uppercase px-2 py-1 rounded-lg">
                         Inactive
@@ -270,6 +272,20 @@ const Programs = ({
                         <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-tighter truncate">
                           {prog.tagline || "Untitled Path"}
                         </p>
+                        {(!prog.isActive || prog.isVisible === false) && (
+                          <div className="flex gap-1.5 mt-1">
+                            {!prog.isActive && (
+                              <span className="bg-rose-500 text-white text-[9px] font-black uppercase px-1.5 py-0.5 rounded">
+                                Inactive
+                              </span>
+                            )}
+                            {prog.isVisible === false && (
+                              <span className="bg-amber-500 text-white text-[9px] font-black uppercase px-1.5 py-0.5 rounded">
+                                Hidden
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         <button

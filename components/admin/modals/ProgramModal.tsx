@@ -103,10 +103,14 @@ const ProgramModal = ({
 
                 <div className="flex-1 space-y-4 w-full">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-2 tracking-widest">
+                    <label
+                      htmlFor="program-program-identity"
+                      className="text-[10px] font-black uppercase text-foreground/40 ml-2 tracking-widest"
+                    >
                       Program Identity
                     </label>
                     <input
+                      id="program-program-identity"
                       type="text"
                       required
                       placeholder="e.g. Master React & Next.js"
@@ -119,10 +123,14 @@ const ProgramModal = ({
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-foreground/40 ml-2 tracking-widest">
+                    <label
+                      htmlFor="program-marketing-tagline"
+                      className="text-[10px] font-black uppercase text-foreground/40 ml-2 tracking-widest"
+                    >
                       Marketing Tagline
                     </label>
                     <input
+                      id="program-marketing-tagline"
                       type="text"
                       placeholder="e.g. From zero to deployment in 12 weeks"
                       value={programForm.tagline}
@@ -140,10 +148,14 @@ const ProgramModal = ({
 
               {/* Description */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase text-foreground/40 ml-2 tracking-widest">
+                <label
+                  htmlFor="program-comprehensive-overview"
+                  className="text-[10px] font-black uppercase text-foreground/40 ml-2 tracking-widest"
+                >
                   Comprehensive Overview
                 </label>
                 <textarea
+                  id="program-comprehensive-overview"
                   required
                   rows={3}
                   placeholder="Describe the learning outcomes and scope…"
@@ -161,9 +173,9 @@ const ProgramModal = ({
               {/* Features & Curriculum Details */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between ml-2">
-                  <label className="text-[10px] font-black uppercase text-foreground/40 tracking-widest">
+                  <p className="text-[10px] font-black uppercase text-foreground/40 tracking-widest">
                     Core Modules / Features
-                  </label>
+                  </p>
                   <button
                     type="button"
                     onClick={() =>
@@ -216,11 +228,15 @@ const ProgramModal = ({
               {/* Settings */}
               <div className="bg-foreground/2 rounded-4xl p-6 border border-foreground/5 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-1.5 text-center md:text-left">
-                  <label className="text-[10px] font-black uppercase text-foreground/30 tracking-widest block mb-2">
+                  <label
+                    htmlFor="program-sort-order"
+                    className="text-[10px] font-black uppercase text-foreground/30 tracking-widest block mb-2"
+                  >
                     Placement
                   </label>
                   <div className="flex flex-col items-center md:items-start gap-1">
                     <input
+                      id="program-sort-order"
                       type="number"
                       value={programForm.sortOrder}
                       onChange={(e) =>
@@ -239,27 +255,31 @@ const ProgramModal = ({
 
                 <div className="flex flex-col items-center justify-center gap-4">
                   <div className="flex items-center gap-3">
-                    <div
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={programForm.isActive}
+                      aria-label="Active"
                       onClick={() =>
                         setProgramForm({
                           ...programForm,
                           isActive: !programForm.isActive,
                         })
                       }
-                      className={`w-12 h-6 rounded-full cursor-pointer transition-all p-1 ${
+                      className={`w-12 h-6 rounded-full cursor-pointer transition-all p-1 block ${
                         programForm.isActive
                           ? "bg-emerald-500"
                           : "bg-foreground/10"
                       }`}
                     >
-                      <div
-                        className={`size-4 bg-white rounded-full transition-all ${
+                      <span
+                        className={`block size-4 bg-white rounded-full transition-all ${
                           programForm.isActive
                             ? "translate-x-6"
                             : "translate-x-0"
                         }`}
                       />
-                    </div>
+                    </button>
                     <span className="text-[10px] font-black uppercase text-foreground/60 tracking-wider">
                       Active
                     </span>
@@ -268,27 +288,31 @@ const ProgramModal = ({
 
                 <div className="flex flex-col items-center justify-center gap-4">
                   <div className="flex items-center gap-3">
-                    <div
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={programForm.isVisible}
+                      aria-label="Visible on site"
                       onClick={() =>
                         setProgramForm({
                           ...programForm,
                           isVisible: !programForm.isVisible,
                         })
                       }
-                      className={`w-12 h-6 rounded-full cursor-pointer transition-all p-1 ${
+                      className={`w-12 h-6 rounded-full cursor-pointer transition-all p-1 block ${
                         programForm.isVisible
                           ? "bg-primary"
                           : "bg-foreground/10"
                       }`}
                     >
-                      <div
-                        className={`size-4 bg-white rounded-full transition-all ${
+                      <span
+                        className={`block size-4 bg-white rounded-full transition-all ${
                           programForm.isVisible
                             ? "translate-x-6"
                             : "translate-x-0"
                         }`}
                       />
-                    </div>
+                    </button>
                     <span className="text-[10px] font-black uppercase text-foreground/60 tracking-wider">
                       Visible
                     </span>

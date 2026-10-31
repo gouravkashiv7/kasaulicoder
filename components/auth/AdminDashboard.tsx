@@ -1,11 +1,11 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import type React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AdminBlogManagement from "@/components/admin/AdminBlogManagement";
 import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement";
 // Components
@@ -33,23 +33,64 @@ import type {
   SocialMediaAccount,
 } from "@/components/admin/types";
 
-const AdminDashboard = () => {
-  const router = useRouter();
+const EMPTY_STAFF = {
+  name: "",
+  email: "",
+  password: "",
+  role: "admin",
+  designation: "",
+  roleDescription: "",
+  image: "",
+};
+
+const EMPTY_PLAN = {
+  name: "",
+  description: "",
+  price: 0,
+  currency: "INR",
+  billingType: "one_time" as "one_time" | "recurring",
+  billingCycle: "monthly" as "monthly" | "yearly",
+  features: [""],
+  targetAudience: "both" as "student" | "professional" | "both",
+  isFeatured: false,
+  isActive: true,
+  sortOrder: 0,
+};
+
+const EMPTY_PROGRAM = {
+  name: "",
+  tagline: "",
+  description: "",
+  image: "",
+  features: [""],
+  isActive: true,
+  isVisible: true,
+  sortOrder: 0,
+};
+
+interface AdminDashboardProps {
+  // Role comes from the verified server session so the first paint is correct
+  role: string;
+}
+
+const AdminDashboard = ({ role }: AdminDashboardProps) => {
   const searchParams = useSearchParams();
 
+  // Only used for the viewer's own id (social media credential access)
   const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
     const userStr = localStorage.getItem("user");
     if (userStr) {
-      setCurrentUser(JSON.parse(userStr));
+      try {
+        setCurrentUser(JSON.parse(userStr));
+      } catch {
+        localStorage.removeItem("user");
+      }
     }
   }, []);
 
-  const isSuperAdmin = useMemo(
-    () => currentUser?.role === "superadmin",
-    [currentUser],
-  );
+  const isSuperAdmin = role === "superadmin";
 
   // Navigation Logic
   const validAdminTabs = useMemo<SidebarView[]>(() => {
@@ -74,45 +115,29 @@ const AdminDashboard = () => {
     );
   }, [isSuperAdmin]);
 
+  // The URL is the single source of truth for the active tab, so a click can
+  // never be overwritten by a stale copy of the previous tab.
   const tabFromUrl = searchParams.get("tab") as SidebarView | null;
+  const sidebarView: SidebarView =
+    tabFromUrl && validAdminTabs.includes(tabFromUrl) ? tabFromUrl : "overview";
 
-  const [sidebarView, setSidebarViewState] = useState<SidebarView>("overview");
-
-  useEffect(() => {
-    if (tabFromUrl && validAdminTabs.includes(tabFromUrl)) {
-      setSidebarViewState(tabFromUrl);
-    } else if (currentUser && !validAdminTabs.includes(sidebarView)) {
-      // Default to first valid tab if current one is restricted
-      setSidebarViewState(validAdminTabs[0] || "overview");
-    }
-  }, [tabFromUrl, validAdminTabs, currentUser, sidebarView]);
-
-  const setSidebarView = useCallback(
-    (tab: SidebarView) => {
-      setSidebarViewState(tab);
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("tab", tab);
-      router.replace(`?${params.toString()}`, { scroll: false });
-    },
-    [router, searchParams],
-  );
-
-  useEffect(() => {
-    if (
-      tabFromUrl &&
-      validAdminTabs.includes(tabFromUrl) &&
-      tabFromUrl !== sidebarView
-    ) {
-      setSidebarViewState(tabFromUrl);
-    }
-  }, [tabFromUrl, sidebarView, validAdminTabs]);
+  const setSidebarView = useCallback((tab: SidebarView) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("tab", tab);
+    // replaceState is picked up by useSearchParams without a server round trip
+    window.history.replaceState(null, "", `?${params.toString()}`);
+    window.scrollTo({ top: 0 });
+  }, []);
 
   // Main State
   const [activeTab, setActiveTab] = useState<"users" | "staff">("users");
+  const activeTabRef = useRef<"users" | "staff">("users");
   const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  // Lists start in a loading state so the empty state never flashes before the
+  // first fetch; later refetches are silent and keep the current rows on screen.
+  const [loading, setLoading] = useState(true);
   const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
-  const [contactsLoading, setContactsLoading] = useState(false);
+  const [contactsLoading, setContactsLoading] = useState(true);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalStaff, setTotalStaff] = useState(0);
   const [authError, setAuthError] = useState("");
@@ -132,22 +157,10 @@ const AdminDashboard = () => {
 
   // Plans State
   const [plans, setPlans] = useState<Plan[]>([]);
-  const [plansLoading, setPlansLoading] = useState(false);
+  const [plansLoading, setPlansLoading] = useState(true);
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
-  const [planForm, setPlanForm] = useState({
-    name: "",
-    description: "",
-    price: 0,
-    currency: "INR",
-    billingType: "one_time" as "one_time" | "recurring",
-    billingCycle: "monthly" as "monthly" | "yearly",
-    features: [""],
-    targetAudience: "both" as "student" | "professional" | "both",
-    isFeatured: false,
-    isActive: true,
-    sortOrder: 0,
-  });
+  const [planForm, setPlanForm] = useState(EMPTY_PLAN);
   const [planSubmitting, setPlanSubmitting] = useState(false);
   const [planError, setPlanError] = useState("");
 
@@ -155,23 +168,14 @@ const AdminDashboard = () => {
   const [cohortInterests, setCohortInterests] = useState<CohortInterest[]>([]);
   const [cohortTotal, setCohortTotal] = useState(0);
   const [cohortNotNotified, setCohortNotNotified] = useState(0);
-  const [cohortLoading, setCohortLoading] = useState(false);
+  const [cohortLoading, setCohortLoading] = useState(true);
 
   // Programs State
   const [programs, setPrograms] = useState<Program[]>([]);
-  const [programsLoading, setProgramsLoading] = useState(false);
+  const [programsLoading, setProgramsLoading] = useState(true);
   const [showProgramModal, setShowProgramModal] = useState(false);
   const [editingProgram, setEditingProgram] = useState<Program | null>(null);
-  const [programForm, setProgramForm] = useState({
-    name: "",
-    tagline: "",
-    description: "",
-    image: "",
-    features: [""],
-    isActive: true,
-    isVisible: true,
-    sortOrder: 0,
-  });
+  const [programForm, setProgramForm] = useState(EMPTY_PROGRAM);
   const [programSubmitting, setProgramSubmitting] = useState(false);
   const [programError, setProgramError] = useState("");
   const [programViewMode, setProgramViewMode] = useState<"grid" | "list">(
@@ -181,15 +185,7 @@ const AdminDashboard = () => {
   // Staff Management Modal
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingStaff, setEditingStaff] = useState<any>(null);
-  const [newStaff, setNewStaff] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "admin",
-    designation: "",
-    roleDescription: "",
-    image: "",
-  });
+  const [newStaff, setNewStaff] = useState(EMPTY_STAFF);
   const [uploadError, setUploadError] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -198,17 +194,17 @@ const AdminDashboard = () => {
   const [socialMediaAccounts, setSocialMediaAccounts] = useState<
     SocialMediaAccount[]
   >([]);
-  const [socialMediaLoading, setSocialMediaLoading] = useState(false);
+  const [socialMediaLoading, setSocialMediaLoading] = useState(true);
   const [showSocialMediaModal, setShowSocialMediaModal] = useState(false);
   const [editingSocialMediaAccount, setEditingSocialMediaAccount] =
     useState<SocialMediaAccount | null>(null);
   const [socialMediaError, setSocialMediaError] = useState("");
+  const [socialMediaSubmitting, setSocialMediaSubmitting] = useState(false);
   const [allStaff, setAllStaff] = useState<any[]>([]);
 
   // UI State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   // Status Toggle Confirmation
   const [toggleConfirm, setToggleConfirm] = useState<{
@@ -217,17 +213,12 @@ const AdminDashboard = () => {
     currentStatus: boolean;
     name: string;
     isSubmitting: boolean;
+    error?: string;
   } | null>(null);
 
-  // Responsive Check
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
   // API Callbacks
+  // Fetchers never flip their loading flag back on: loading starts true, and a
+  // refetch swaps in fresh data without replacing the list with a spinner.
   const fetchOverviewData = useCallback(async () => {
     try {
       const [usersRes, staffRes] = await Promise.all([
@@ -258,8 +249,7 @@ const AdminDashboard = () => {
   }, []);
 
   const fetchContacts = useCallback(async () => {
-    if (currentUser?.role !== "superadmin") return;
-    setContactsLoading(true);
+    if (!isSuperAdmin) return;
     try {
       const res = await fetch("/api/admin/contacts");
       if (res.status === 403) {
@@ -277,27 +267,36 @@ const AdminDashboard = () => {
     } finally {
       setContactsLoading(false);
     }
-  }, [currentUser?.role]);
+  }, [isSuperAdmin]);
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
+    const tab = activeTab;
     try {
       const endpoint =
-        activeTab === "users" ? "/api/admin/users" : "/api/admin/staff";
+        tab === "users" ? "/api/admin/users" : "/api/admin/staff";
       const res = await fetch(endpoint);
       const result = await res.json();
-      if (res.ok) {
+      // Ignore a response for a tab the admin has already switched away from
+      if (res.ok && activeTabRef.current === tab) {
         setData(result);
       }
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (activeTabRef.current === tab) setLoading(false);
     }
   }, [activeTab]);
 
+  const changeManagementTab = (tab: "users" | "staff") => {
+    if (tab === activeTabRef.current) return;
+    activeTabRef.current = tab;
+    // Users and staff rows have different shapes; never show one under the other
+    setData([]);
+    setLoading(true);
+    setActiveTab(tab);
+  };
+
   const fetchPlans = useCallback(async () => {
-    setPlansLoading(true);
     try {
       const res = await fetch("/api/admin/plans");
       if (res.ok) {
@@ -312,7 +311,6 @@ const AdminDashboard = () => {
   }, []);
 
   const fetchCohortInterests = useCallback(async () => {
-    setCohortLoading(true);
     try {
       const res = await fetch("/api/admin/cohort-interest");
       if (res.ok) {
@@ -329,7 +327,6 @@ const AdminDashboard = () => {
   }, []);
 
   const fetchPrograms = useCallback(async () => {
-    setProgramsLoading(true);
     try {
       const res = await fetch("/api/admin/programs");
       if (res.ok) {
@@ -344,7 +341,6 @@ const AdminDashboard = () => {
   }, []);
 
   const fetchSocialMediaAccounts = useCallback(async () => {
-    setSocialMediaLoading(true);
     try {
       const res = await fetch("/api/admin/social-media");
       if (res.ok) {
@@ -370,14 +366,38 @@ const AdminDashboard = () => {
     }
   }, []);
 
-  // Lifecycle
+  // Lifecycle: refetch whenever a panel is opened so it never shows data from
+  // the previous visit. Contacts and cohort are also refreshed on every
+  // navigation because the sidebar badges depend on them.
   useEffect(() => {
-    fetchPlans();
-    fetchCohortInterests();
-    fetchPrograms();
-    fetchSocialMediaAccounts();
-    fetchAllStaff();
+    if (isSuperAdmin) {
+      fetchContacts();
+      fetchCohortInterests();
+    }
+    switch (sidebarView) {
+      case "overview":
+        if (isSuperAdmin) fetchOverviewData();
+        break;
+      case "management":
+        fetchData();
+        break;
+      case "pricing":
+        fetchPlans();
+        break;
+      case "programs":
+        fetchPrograms();
+        break;
+      case "social-media":
+        fetchSocialMediaAccounts();
+        if (isSuperAdmin) fetchAllStaff();
+        break;
+    }
   }, [
+    sidebarView,
+    isSuperAdmin,
+    fetchOverviewData,
+    fetchContacts,
+    fetchData,
     fetchPlans,
     fetchCohortInterests,
     fetchPrograms,
@@ -385,21 +405,18 @@ const AdminDashboard = () => {
     fetchAllStaff,
   ]);
 
-  // Overview counts and contact requests are superadmin-only endpoints
+  // New requests and waitlist signups arrive while the tab is in the
+  // background; catch up when the admin comes back.
   useEffect(() => {
     if (!isSuperAdmin) return;
-    fetchOverviewData();
-    fetchContacts();
-  }, [isSuperAdmin, fetchOverviewData, fetchContacts]);
-
-  useEffect(() => {
-    if (sidebarView === "management") {
-      fetchData();
-    }
-    if (sidebarView === "social-media") {
-      fetchSocialMediaAccounts();
-    }
-  }, [sidebarView, fetchData, fetchSocialMediaAccounts]);
+    const refresh = () => {
+      fetchContacts();
+      fetchCohortInterests();
+      fetchOverviewData();
+    };
+    window.addEventListener("focus", refresh);
+    return () => window.removeEventListener("focus", refresh);
+  }, [isSuperAdmin, fetchContacts, fetchCohortInterests, fetchOverviewData]);
 
   // Handlers
   const handleLogout = async () => {
@@ -447,7 +464,7 @@ const AdminDashboard = () => {
         body: JSON.stringify({ id: toggleConfirm.id, sendEmail }),
       });
 
-      const result = await res.json();
+      const result = await res.json().catch(() => ({}));
       if (res.ok) {
         setData((prev) =>
           prev.map((item) =>
@@ -456,11 +473,25 @@ const AdminDashboard = () => {
               : item,
           ),
         );
+        setToggleConfirm(null);
+      } else {
+        setToggleConfirm((prev) =>
+          prev
+            ? {
+                ...prev,
+                isSubmitting: false,
+                error: result.error || "Could not update status",
+              }
+            : null,
+        );
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setToggleConfirm(null);
+      setToggleConfirm((prev) =>
+        prev
+          ? { ...prev, isSubmitting: false, error: "Something went wrong" }
+          : null,
+      );
     }
   };
 
@@ -504,17 +535,10 @@ const AdminDashboard = () => {
       if (res.ok) {
         setShowAddModal(false);
         setEditingStaff(null);
-        setNewStaff({
-          name: "",
-          email: "",
-          password: "",
-          role: "admin",
-          designation: "",
-          roleDescription: "",
-          image: "",
-        });
+        setNewStaff(EMPTY_STAFF);
         fetchData();
         fetchOverviewData();
+        fetchAllStaff();
       } else {
         const result = await res.json();
         setSubmitError(result.error || "Operation failed");
@@ -526,7 +550,18 @@ const AdminDashboard = () => {
     }
   };
 
+  // "Add" must start from a blank form, not whatever was last edited or typed
+  const openNewStaff = () => {
+    setEditingStaff(null);
+    setNewStaff(EMPTY_STAFF);
+    setSubmitError("");
+    setUploadError("");
+    setShowAddModal(true);
+  };
+
   const openEditStaff = (staff: any) => {
+    setSubmitError("");
+    setUploadError("");
     setEditingStaff(staff);
     setNewStaff({
       name: staff.name,
@@ -573,19 +608,7 @@ const AdminDashboard = () => {
       if (res.ok) {
         setShowPlanModal(false);
         setEditingPlan(null);
-        setPlanForm({
-          name: "",
-          description: "",
-          price: 0,
-          currency: "INR",
-          billingType: "one_time",
-          billingCycle: "monthly",
-          features: [""],
-          targetAudience: "both",
-          isFeatured: false,
-          isActive: true,
-          sortOrder: 0,
-        });
+        setPlanForm(EMPTY_PLAN);
         fetchPlans();
       } else {
         const result = await res.json();
@@ -598,7 +621,15 @@ const AdminDashboard = () => {
     }
   };
 
+  const openNewPlan = () => {
+    setEditingPlan(null);
+    setPlanForm(EMPTY_PLAN);
+    setPlanError("");
+    setShowPlanModal(true);
+  };
+
   const openEditPlan = (plan: Plan) => {
+    setPlanError("");
     setEditingPlan(plan);
     setPlanForm({
       name: plan.name,
@@ -666,8 +697,13 @@ const AdminDashboard = () => {
         method: "DELETE",
       });
       if (res.ok) {
+        // Deleting a pending entry also shrinks the "to be notified" count
+        const removed = cohortInterests.find((e) => e._id === id);
         setCohortInterests((prev) => prev.filter((e) => e._id !== id));
-        setCohortTotal((n) => n - 1);
+        setCohortTotal((n) => Math.max(0, n - 1));
+        if (removed && !removed.emailSent) {
+          setCohortNotNotified((n) => Math.max(0, n - 1));
+        }
       }
     } catch (err) {
       console.error(err);
@@ -700,16 +736,7 @@ const AdminDashboard = () => {
       if (res.ok) {
         setShowProgramModal(false);
         setEditingProgram(null);
-        setProgramForm({
-          name: "",
-          tagline: "",
-          description: "",
-          image: "",
-          features: [""],
-          isActive: true,
-          isVisible: true,
-          sortOrder: 0,
-        });
+        setProgramForm(EMPTY_PROGRAM);
         fetchPrograms();
       } else {
         const result = await res.json();
@@ -722,7 +749,15 @@ const AdminDashboard = () => {
     }
   };
 
+  const openNewProgram = () => {
+    setEditingProgram(null);
+    setProgramForm(EMPTY_PROGRAM);
+    setProgramError("");
+    setShowProgramModal(true);
+  };
+
   const openEditProgram = (program: Program) => {
+    setProgramError("");
     setEditingProgram(program);
     setProgramForm({
       name: program.name,
@@ -794,7 +829,7 @@ const AdminDashboard = () => {
   };
 
   const handleSaveSocialMediaAccount = async (formData: any) => {
-    setIsSubmitting(true);
+    setSocialMediaSubmitting(true);
     setSocialMediaError("");
     try {
       let res: Response;
@@ -826,7 +861,7 @@ const AdminDashboard = () => {
     } catch {
       setSocialMediaError("An error occurred");
     } finally {
-      setIsSubmitting(false);
+      setSocialMediaSubmitting(false);
     }
   };
 
@@ -844,6 +879,7 @@ const AdminDashboard = () => {
   };
 
   const openEditSocialMedia = (account: SocialMediaAccount) => {
+    setSocialMediaError("");
     setEditingSocialMediaAccount(account);
     setShowSocialMediaModal(true);
   };
@@ -880,7 +916,12 @@ const AdminDashboard = () => {
       <div className="fixed top-0 left-0 right-0 z-20 md:hidden flex items-center gap-3 px-4 h-14 bg-background/80 backdrop-blur-lg border-b border-foreground/10">
         <button
           type="button"
-          onClick={() => setMobileMenuOpen(true)}
+          aria-label="Open navigation menu"
+          onClick={() => {
+            // The drawer is always full width; a desktop-collapsed rail would hide labels
+            setSidebarCollapsed(false);
+            setMobileMenuOpen(true);
+          }}
           className="size-9 flex items-center justify-center rounded-xl bg-foreground/5 shrink-0"
         >
           <span className="material-symbols-outlined text-xl text-foreground/70">
@@ -904,6 +945,7 @@ const AdminDashboard = () => {
       </div>
 
       <AdminSidebar
+        role={role}
         sidebarView={sidebarView}
         setSidebarView={setSidebarView}
         sidebarCollapsed={sidebarCollapsed}
@@ -915,20 +957,20 @@ const AdminDashboard = () => {
         handleLogout={handleLogout}
       />
 
-      <motion.main
-        animate={{ marginLeft: isMobile ? 0 : sidebarCollapsed ? 72 : 260 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="flex-1 min-h-screen w-full"
+      <main
+        className={`flex-1 min-w-0 min-h-screen w-full transition-[margin] duration-300 ease-in-out ${
+          sidebarCollapsed ? "md:ml-[72px]" : "md:ml-[260px]"
+        }`}
       >
         <div className="h-14 md:hidden" />
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
           <AnimatePresence mode="wait">
             {sidebarView === "overview" && (
               <Overview
-                role={currentUser?.role}
+                role={role}
                 totalUsers={totalUsers}
                 totalStaff={totalStaff}
-                unreadCount={contactRequests.filter((r) => !r.isRead).length}
+                unreadCount={unreadCount}
                 cohortTotal={cohortTotal}
                 cohortNotNotified={cohortNotNotified}
                 contactRequests={contactRequests}
@@ -938,7 +980,7 @@ const AdminDashboard = () => {
             {sidebarView === "management" && (
               <Management
                 activeTab={activeTab}
-                setActiveTab={setActiveTab}
+                setActiveTab={changeManagementTab}
                 userSearch={userSearch}
                 setUserSearch={setUserSearch}
                 userTypeFilter={userTypeFilter}
@@ -951,7 +993,7 @@ const AdminDashboard = () => {
                 setUserSortDir={setUserSortDir}
                 data={data}
                 loading={loading}
-                setShowAddModal={setShowAddModal}
+                onAddStaff={openNewStaff}
                 handleToggleUserStatus={handleToggleUserStatus}
                 handleToggleStaffStatus={handleToggleStaffStatus}
                 openEditStaff={openEditStaff}
@@ -969,7 +1011,7 @@ const AdminDashboard = () => {
               <Pricing
                 plans={plans}
                 plansLoading={plansLoading}
-                setShowPlanModal={setShowPlanModal}
+                onCreate={openNewPlan}
                 openEditPlan={openEditPlan}
                 handleDeletePlan={handleDeletePlan}
                 handleTogglePlanActive={handleTogglePlanActive}
@@ -991,7 +1033,7 @@ const AdminDashboard = () => {
                 programsLoading={programsLoading}
                 programViewMode={programViewMode}
                 setProgramViewMode={setProgramViewMode}
-                setShowProgramModal={setShowProgramModal}
+                onCreate={openNewProgram}
                 openEditProgram={openEditProgram}
                 handleToggleProgramActive={handleToggleProgramActive}
                 handleToggleProgramVisibility={handleToggleProgramVisibility}
@@ -1006,12 +1048,13 @@ const AdminDashboard = () => {
                 loading={socialMediaLoading}
                 currentUser={
                   currentUser
-                    ? { id: currentUser._id || currentUser.id, ...currentUser }
+                    ? { ...currentUser, id: currentUser._id || currentUser.id }
                     : null
                 }
                 isSuperAdmin={isSuperAdmin}
                 onAdd={() => {
                   setEditingSocialMediaAccount(null);
+                  setSocialMediaError("");
                   setShowSocialMediaModal(true);
                 }}
                 onEdit={openEditSocialMedia}
@@ -1020,7 +1063,7 @@ const AdminDashboard = () => {
             )}
           </AnimatePresence>
         </div>
-      </motion.main>
+      </main>
 
       {/* Modals */}
       <StaffModal
@@ -1073,7 +1116,7 @@ const AdminDashboard = () => {
         setEditingAccount={setEditingSocialMediaAccount}
         staffList={allStaff.filter((staff) => staff.role !== "superadmin")}
         onSave={handleSaveSocialMediaAccount}
-        isSubmitting={isSubmitting}
+        isSubmitting={socialMediaSubmitting}
         error={socialMediaError}
       />
     </div>

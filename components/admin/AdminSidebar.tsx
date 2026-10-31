@@ -3,11 +3,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import type { SidebarView } from "./types";
 
 interface SidebarProps {
+  role?: string;
   sidebarView: SidebarView;
   setSidebarView: (view: SidebarView) => void;
   sidebarCollapsed: boolean;
@@ -20,6 +20,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({
+  role,
   sidebarView,
   setSidebarView,
   sidebarCollapsed,
@@ -30,14 +31,8 @@ const Sidebar = ({
   cohortNotNotified,
   handleLogout,
 }: SidebarProps) => {
-  const [currentUser, setCurrentUser] = React.useState<any>(null);
-
-  React.useEffect(() => {
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
-      setCurrentUser(JSON.parse(userStr));
-    }
-  }, []);
+  // Role is supplied by the server session so the right items render on first paint
+  const isSuperAdmin = role === "superadmin";
 
   const sidebarItems = [
     {
@@ -93,79 +88,150 @@ const Sidebar = ({
       icon: "share",
     },
   ].filter((item) => {
-    if (item.superOnly && currentUser?.role !== "superadmin") return false;
+    if (item.superOnly && !isSuperAdmin) return false;
     return true;
   });
 
   return (
-    <motion.aside
-      initial={false}
-      animate={{
-        width: sidebarCollapsed ? 72 : 260,
-        x: 0,
-      }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      className={`fixed left-0 top-0 h-full bg-background border-r border-foreground/10 z-40 flex flex-col overflow-hidden
+    <>
+      {/* Backdrop: tapping outside the mobile drawer closes it */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.button
+            type="button"
+            aria-label="Close navigation menu"
+            key="sidebar-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm md:hidden"
+          />
+        )}
+      </AnimatePresence>
+      <motion.aside
+        initial={false}
+        animate={{
+          width: sidebarCollapsed ? 72 : 260,
+          x: 0,
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className={`fixed left-0 top-0 h-dvh max-w-[85vw] bg-background border-r border-foreground/10 z-40 flex flex-col overflow-hidden
         ${
           mobileMenuOpen
             ? "translate-x-0"
             : "-translate-x-full md:translate-x-0"
         } transition-transform duration-300 md:transition-none`}
-      style={{ width: sidebarCollapsed ? 72 : 260 }}
-    >
-      {/* Logo area */}
-      <div className="p-5 border-b border-foreground/10 flex items-center gap-3 min-h-18">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 shrink-0 overflow-hidden relative">
-            <Image
-              src="/logo.png"
-              alt="Logo"
-              width={32}
-              height={32}
-              className="object-contain theme-logo"
-            />
-          </div>
-          <AnimatePresence>
-            {!sidebarCollapsed && (
-              <motion.span
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: "auto" }}
-                exit={{ opacity: 0, width: 0 }}
-                className="text-lg font-black tracking-tighter text-foreground whitespace-nowrap overflow-hidden"
-              >
-                Admin<span className="text-primary">Panel</span>
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </Link>
-        {/* Close button — mobile only */}
-        <button
-          type="button"
-          className="ml-auto md:hidden text-foreground/50 hover:text-foreground"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          <span className="material-symbols-outlined text-xl">close</span>
-        </button>
-      </div>
-
-      {/* Nav items */}
-      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-        {sidebarItems.map((item) => (
+        style={{ width: sidebarCollapsed ? 72 : 260 }}
+      >
+        {/* Logo area */}
+        <div className="p-5 border-b border-foreground/10 flex items-center gap-3 min-h-18">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="size-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/30 shrink-0 overflow-hidden relative">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="object-contain theme-logo"
+              />
+            </div>
+            <AnimatePresence>
+              {!sidebarCollapsed && (
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 0 }}
+                  className="text-lg font-black tracking-tighter text-foreground whitespace-nowrap overflow-hidden"
+                >
+                  Admin<span className="text-primary">Panel</span>
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </Link>
+          {/* Close button — mobile only */}
           <button
             type="button"
-            key={item.id}
-            onClick={() => {
-              setSidebarView(item.id);
-              setMobileMenuOpen(false);
-            }}
-            className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all relative group ${
-              sidebarView === item.id
-                ? "bg-primary/10 text-primary"
-                : "text-foreground/50 hover:text-foreground hover:bg-foreground/5"
-            }`}
+            aria-label="Close navigation menu"
+            className="ml-auto md:hidden size-9 flex items-center justify-center text-foreground/50 hover:text-foreground"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <span className="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+
+        {/* Nav items */}
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+          {sidebarItems.map((item) => (
+            <button
+              type="button"
+              key={item.id}
+              onClick={() => {
+                setSidebarView(item.id);
+                setMobileMenuOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all relative group ${
+                sidebarView === item.id
+                  ? "bg-primary/10 text-primary"
+                  : "text-foreground/50 hover:text-foreground hover:bg-foreground/5"
+              }`}
+            >
+              <span className="material-symbols-outlined text-xl shrink-0">
+                {item.icon}
+              </span>
+              <AnimatePresence>
+                {!sidebarCollapsed && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    exit={{ opacity: 0, width: 0 }}
+                    className="text-sm font-bold whitespace-nowrap overflow-hidden"
+                  >
+                    {item.label}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+              {(item.badge ?? 0) > 0 && (
+                <span
+                  className={`${
+                    sidebarCollapsed ? "absolute top-1 right-1" : "ml-auto"
+                  } bg-rose-500 text-white text-[10px] font-black min-w-5 h-5 rounded-full flex items-center justify-center px-1`}
+                >
+                  {item.badge}
+                </span>
+              )}
+              {sidebarView === item.id && (
+                <motion.div
+                  layoutId="sidebar-active"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+            </button>
+          ))}
+        </nav>
+
+        {/* Logout + Collapse */}
+        <div className="p-3 border-t border-foreground/10 space-y-1">
+          <AnimatePresence>
+            {!sidebarCollapsed && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex items-center justify-center pb-2 overflow-hidden"
+              >
+                <ThemeSwitcher />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <Link
+            href="/"
+            className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all group"
           >
             <span className="material-symbols-outlined text-xl shrink-0">
-              {item.icon}
+              home
             </span>
             <AnimatePresence>
               {!sidebarCollapsed && (
@@ -175,116 +241,63 @@ const Sidebar = ({
                   exit={{ opacity: 0, width: 0 }}
                   className="text-sm font-bold whitespace-nowrap overflow-hidden"
                 >
-                  {item.label}
+                  Return to Site
                 </motion.span>
               )}
             </AnimatePresence>
-            {item.badge && item.badge > 0 && (
-              <span
-                className={`${
-                  sidebarCollapsed ? "absolute top-1 right-1" : "ml-auto"
-                } bg-rose-500 text-white text-[10px] font-black min-w-5 h-5 rounded-full flex items-center justify-center px-1`}
-              >
-                {item.badge}
-              </span>
-            )}
-            {sidebarView === item.id && (
-              <motion.div
-                layoutId="sidebar-active"
-                className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full"
-                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              />
-            )}
-          </button>
-        ))}
-      </nav>
+          </Link>
 
-      {/* Logout + Collapse */}
-      <div className="p-3 border-t border-foreground/10 space-y-1">
-        <AnimatePresence>
-          {!sidebarCollapsed && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="flex items-center justify-center pb-2 overflow-hidden"
-            >
-              <ThemeSwitcher />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <Link
-          href="/"
-          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all group"
-        >
-          <span className="material-symbols-outlined text-xl shrink-0">
-            home
-          </span>
-          <AnimatePresence>
-            {!sidebarCollapsed && (
-              <motion.span
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: "auto" }}
-                exit={{ opacity: 0, width: 0 }}
-                className="text-sm font-bold whitespace-nowrap overflow-hidden"
-              >
-                Return to Site
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </Link>
-
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-500/70 hover:text-rose-500 hover:bg-rose-500/5 transition-all"
-        >
-          <span className="material-symbols-outlined text-xl shrink-0">
-            logout
-          </span>
-          <AnimatePresence>
-            {!sidebarCollapsed && (
-              <motion.span
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: "auto" }}
-                exit={{ opacity: 0, width: 0 }}
-                className="text-sm font-bold whitespace-nowrap overflow-hidden"
-              >
-                Log Out
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </button>
-        {/* Collapse toggle — desktop only */}
-        <button
-          type="button"
-          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className="hidden md:flex w-full items-center justify-center gap-3 px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all"
-        >
-          <span
-            className="material-symbols-outlined text-xl transition-transform duration-300"
-            style={{
-              transform: sidebarCollapsed ? "rotate(180deg)" : "rotate(0deg)",
-            }}
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-rose-500/70 hover:text-rose-500 hover:bg-rose-500/5 transition-all"
           >
-            chevron_left
-          </span>
-          <AnimatePresence>
-            {!sidebarCollapsed && (
-              <motion.span
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: "auto" }}
-                exit={{ opacity: 0, width: 0 }}
-                className="text-sm font-bold whitespace-nowrap overflow-hidden"
-              >
-                Collapse
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </button>
-      </div>
-    </motion.aside>
+            <span className="material-symbols-outlined text-xl shrink-0">
+              logout
+            </span>
+            <AnimatePresence>
+              {!sidebarCollapsed && (
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 0 }}
+                  className="text-sm font-bold whitespace-nowrap overflow-hidden"
+                >
+                  Log Out
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </button>
+          {/* Collapse toggle — desktop only */}
+          <button
+            type="button"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="hidden md:flex w-full items-center justify-center gap-3 px-3 py-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all"
+          >
+            <span
+              className="material-symbols-outlined text-xl transition-transform duration-300"
+              style={{
+                transform: sidebarCollapsed ? "rotate(180deg)" : "rotate(0deg)",
+              }}
+            >
+              chevron_left
+            </span>
+            <AnimatePresence>
+              {!sidebarCollapsed && (
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 0 }}
+                  className="text-sm font-bold whitespace-nowrap overflow-hidden"
+                >
+                  Collapse
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </button>
+        </div>
+      </motion.aside>
+    </>
   );
 };
 

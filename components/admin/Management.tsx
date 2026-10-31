@@ -17,7 +17,7 @@ interface ManagementProps {
   setUserSortDir: (d: "asc" | "desc") => void;
   data: any[];
   loading: boolean;
-  setShowAddModal: (show: boolean) => void;
+  onAddStaff: () => void;
   handleToggleUserStatus: (item: any) => void;
   handleToggleStaffStatus: (item: any) => void;
   openEditStaff: (item: any) => void;
@@ -38,7 +38,7 @@ const Management = ({
   setUserSortDir,
   data,
   loading,
-  setShowAddModal,
+  onAddStaff,
   handleToggleUserStatus,
   handleToggleStaffStatus,
   openEditStaff,
@@ -101,11 +101,11 @@ const Management = ({
         </p>
       </div>
 
-      <div className="flex gap-4 mb-8">
+      <div className="flex flex-wrap gap-3 md:gap-4 mb-8">
         <button
           type="button"
           onClick={() => setActiveTab("users")}
-          className={`px-6 py-2 rounded-lg font-bold transition-all ${
+          className={`px-4 md:px-6 py-2 rounded-lg font-bold text-sm md:text-base transition-all ${
             activeTab === "users"
               ? "bg-primary text-primary-content"
               : "bg-foreground/5 text-foreground/60 hover:text-foreground"
@@ -116,7 +116,7 @@ const Management = ({
         <button
           type="button"
           onClick={() => setActiveTab("staff")}
-          className={`px-6 py-2 rounded-lg font-bold transition-all ${
+          className={`px-4 md:px-6 py-2 rounded-lg font-bold text-sm md:text-base transition-all ${
             activeTab === "staff"
               ? "bg-secondary text-white"
               : "bg-foreground/5 text-foreground/60 hover:text-foreground"
@@ -128,8 +128,8 @@ const Management = ({
         {activeTab === "staff" && (
           <button
             type="button"
-            onClick={() => setShowAddModal(true)}
-            className="ml-auto px-6 py-2 bg-primary text-primary-content font-bold rounded-lg hover:brightness-110 flex items-center gap-2"
+            onClick={onAddStaff}
+            className="ml-auto px-4 md:px-6 py-2 bg-primary text-primary-content font-bold rounded-lg hover:brightness-110 flex items-center gap-2"
           >
             <span className="material-symbols-outlined text-sm">add</span>
             Add Staff
@@ -139,7 +139,7 @@ const Management = ({
 
       {activeTab === "users" && (
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-          <div className="relative">
+          <div className="relative w-full lg:w-auto">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 text-lg pointer-events-none">
               search
             </span>
@@ -238,7 +238,7 @@ const Management = ({
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[640px] text-left border-collapse">
               <thead>
                 <tr className="bg-foreground/5 border-b border-foreground/10">
                   <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">

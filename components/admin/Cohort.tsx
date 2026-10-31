@@ -28,8 +28,8 @@ const Cohort = ({
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="mb-10">
-        <h1 className="text-3xl font-black mb-2 text-foreground">
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-black mb-2 text-foreground">
           Cohort Waitlist
         </h1>
         <p className="text-foreground/50">
@@ -42,7 +42,9 @@ const Cohort = ({
           <p className="text-xs font-bold uppercase tracking-widest text-emerald-500/60 mb-1">
             Total Signups
           </p>
-          <p className="text-4xl font-black text-emerald-500">{cohortTotal}</p>
+          <p className="text-3xl md:text-4xl font-black text-emerald-500">
+            {cohortTotal}
+          </p>
         </div>
         <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-6">
           <p className="text-xs font-bold uppercase tracking-widest text-orange-500/60 mb-1">
@@ -59,7 +61,7 @@ const Cohort = ({
           Accessing waitlist records...
         </div>
       ) : cohortInterests.length === 0 ? (
-        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-20 text-center">
+        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl p-10 md:p-20 text-center">
           <span className="material-symbols-outlined text-5xl text-foreground/20 mb-4 block">
             group_add
           </span>
@@ -68,8 +70,8 @@ const Cohort = ({
           </p>
         </div>
       ) : (
-        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl overflow-hidden">
-          <table className="w-full text-left border-collapse">
+        <div className="bg-background/40 backdrop-blur-xl border border-foreground/10 rounded-2xl overflow-x-auto">
+          <table className="w-full min-w-[560px] text-left border-collapse">
             <thead>
               <tr className="bg-foreground/5 border-b border-foreground/10">
                 <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-foreground/50">

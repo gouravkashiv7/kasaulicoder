@@ -9,6 +9,7 @@ interface StatusToggleModalProps {
     currentStatus: boolean;
     name: string;
     isSubmitting: boolean;
+    error?: string;
   } | null;
   setToggleConfirm: (val: any) => void;
   executeStatusToggle: (sendEmail: boolean) => void;
@@ -30,7 +31,7 @@ const StatusToggleModal = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-background border border-foreground/10 w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl p-8 text-center"
+            className="bg-background border border-foreground/10 w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl p-6 sm:p-8 text-center"
           >
             <div
               className={`size-16 rounded-full flex items-center justify-center mx-auto mb-6 ${
@@ -52,6 +53,15 @@ const StatusToggleModal = ({
               {toggleConfirm.currentStatus ? "suspend" : "resume"} access for
               this {toggleConfirm.type === "users" ? "member" : "team member"}?
             </p>
+
+            {toggleConfirm.error && (
+              <div
+                role="alert"
+                className="mb-4 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500 text-xs font-bold"
+              >
+                {toggleConfirm.error}
+              </div>
+            )}
 
             <div className="flex flex-col gap-3">
               <button

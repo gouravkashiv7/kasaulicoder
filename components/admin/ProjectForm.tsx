@@ -151,10 +151,14 @@ export default function ProjectForm({
         <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl backdrop-blur-xl">
           <div className="grid sm:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]">
+              <label
+                htmlFor="project-project-title"
+                className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]"
+              >
                 Project Title *
               </label>
               <input
+                id="project-project-title"
                 type="text"
                 required
                 value={formData.title}
@@ -166,10 +170,14 @@ export default function ProjectForm({
               />
             </div>
             <div className="space-y-2">
-              <label className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]">
+              <label
+                htmlFor="project-outcome"
+                className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]"
+              >
                 Outcome *
               </label>
               <input
+                id="project-outcome"
                 type="text"
                 required
                 value={formData.outcome}
@@ -183,10 +191,14 @@ export default function ProjectForm({
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]">
+            <label
+              htmlFor="project-short-description"
+              className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]"
+            >
               Short Description *
             </label>
             <textarea
+              id="project-short-description"
               required
               rows={3}
               value={formData.desc}
@@ -199,10 +211,14 @@ export default function ProjectForm({
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]">
+            <label
+              htmlFor="project-full-story-case-study"
+              className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]"
+            >
               Full Story / Case Study
             </label>
             <textarea
+              id="project-full-story-case-study"
               rows={6}
               value={formData.content}
               onChange={(e) =>
@@ -406,10 +422,14 @@ export default function ProjectForm({
         <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
           <div className="grid sm:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]">
+              <label
+                htmlFor="project-status"
+                className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]"
+              >
                 Status
               </label>
               <select
+                id="project-status"
                 value={formData.status}
                 onChange={(e) =>
                   setFormData((p) => ({ ...p, status: e.target.value as any }))
@@ -444,11 +464,15 @@ export default function ProjectForm({
 
           <div className="grid sm:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-xs font-black text-foreground/40 uppercase tracking-[0.2em]">
+              <label
+                htmlFor="project-live-url"
+                className="flex items-center gap-2 text-xs font-black text-foreground/40 uppercase tracking-[0.2em]"
+              >
                 <span className="material-symbols-outlined text-sm">link</span>
                 Live URL
               </label>
               <input
+                id="project-live-url"
                 type="url"
                 value={formData.liveUrl}
                 onChange={(e) =>
@@ -459,11 +483,15 @@ export default function ProjectForm({
               />
             </div>
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-xs font-black text-foreground/40 uppercase tracking-[0.2em]">
+              <label
+                htmlFor="project-github-url"
+                className="flex items-center gap-2 text-xs font-black text-foreground/40 uppercase tracking-[0.2em]"
+              >
                 <span className="material-symbols-outlined text-sm">code</span>
                 GitHub URL
               </label>
               <input
+                id="project-github-url"
                 type="url"
                 value={formData.githubUrl}
                 onChange={(e) =>
@@ -476,10 +504,14 @@ export default function ProjectForm({
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]">
+            <label
+              htmlFor="project-tags-comma-separated"
+              className="block text-xs font-black text-foreground/40 uppercase tracking-[0.2em]"
+            >
               Tags (comma separated)
             </label>
             <input
+              id="project-tags-comma-separated"
               type="text"
               value={formData.tags.join(", ")}
               onChange={(e) =>
