@@ -92,3 +92,24 @@ export async function requireDirector(): Promise<
   }
   return { session };
 }
+
+// Gate for superadmin-only routes, such as deleting directors-area records.
+export async function requireSuperAdmin(): Promise<
+  { session: Session } | { error: NextResponse }
+> {
+  const session = await getServerSession();
+  if (!session) {
+    return {
+      error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
+    };
+  }
+  if (session.type !== "admin" || session.role !== "superadmin") {
+    return {
+      error: NextResponse.json(
+        { error: "Access denied. Superadmins only." },
+        { status: 403 },
+      ),
+    };
+  }
+  return { session };
+}

@@ -1,6 +1,7 @@
 import mongoose, { type Document, Schema, type Types } from "mongoose";
+import { type SoftDeletable, softDeleteFields } from "@/backend/lib/softDelete";
 
-export interface IPayment extends Document {
+export interface IPayment extends Document, SoftDeletable {
   client: Types.ObjectId;
   amountPaise: number;
   receivedOn: Date;
@@ -13,6 +14,7 @@ export interface IPayment extends Document {
     policy: Types.ObjectId;
     companyPaise: number;
     shares: Array<{ staff: Types.ObjectId; paise: number }>;
+    outsourced?: { name: string; paise: number };
   };
   status: "recorded" | "void";
   voidReason?: string;
@@ -41,11 +43,16 @@ const PaymentSchema: Schema = new Schema(
           paise: { type: Number, required: true },
         },
       ],
+      outsourced: {
+        name: { type: String },
+        paise: { type: Number },
+      },
     },
     status: { type: String, enum: ["recorded", "void"], default: "recorded" },
     voidReason: { type: String },
     voidedBy: { type: Schema.Types.ObjectId, ref: "Staff" },
     voidedAt: { type: Date },
+    ...softDeleteFields,
   },
   { timestamps: true },
 );

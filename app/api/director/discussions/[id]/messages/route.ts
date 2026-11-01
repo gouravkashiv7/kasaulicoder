@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Thread from "@/backend/models/Thread";
 import ThreadMessage from "@/backend/models/ThreadMessage";
 
@@ -31,9 +32,12 @@ export async function POST(
 
     await connectDB();
     const now = new Date();
-    const thread = await Thread.findByIdAndUpdate(id, {
-      $set: { lastMessageAt: now, [`readBy.${auth.session.id}`]: now },
-    });
+    const thread = await Thread.findOneAndUpdate(
+      { _id: id, ...NOT_DELETED },
+      {
+        $set: { lastMessageAt: now, [`readBy.${auth.session.id}`]: now },
+      },
+    );
     if (!thread) {
       return NextResponse.json({ error: "Thread not found" }, { status: 404 });
     }

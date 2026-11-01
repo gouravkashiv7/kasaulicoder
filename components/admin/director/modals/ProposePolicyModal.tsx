@@ -43,6 +43,9 @@ const ProposePolicyModal = ({
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [company, setCompany] = useState("20");
+  const [hasOutsourced, setHasOutsourced] = useState(false);
+  const [outName, setOutName] = useState("");
+  const [outPercent, setOutPercent] = useState("");
   const [shares, setShares] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -52,6 +55,7 @@ const ProposePolicyModal = ({
 
   const total =
     toHundredths(company) +
+    (hasOutsourced ? toHundredths(outPercent) : 0) +
     directors.reduce((s, d) => s + toHundredths(shareValue(d.id)), 0);
   const totalValid = total === 10000;
 
@@ -60,6 +64,9 @@ const ProposePolicyModal = ({
     setTitle("");
     setBody("");
     setCompany("20");
+    setHasOutsourced(false);
+    setOutName("");
+    setOutPercent("");
     setShares({});
     setError("");
   };
@@ -68,7 +75,7 @@ const ProposePolicyModal = ({
     e.preventDefault();
     setError("");
     if (!totalValid) {
-      setError("Company and director percentages must total 100%");
+      setError("All percentages must total 100%");
       return;
     }
     setSaving(true);
@@ -86,6 +93,9 @@ const ProposePolicyModal = ({
               staff: d.id,
               percent: shareValue(d.id),
             })),
+            outsourced: hasOutsourced
+              ? { name: outName, percent: outPercent }
+              : undefined,
           },
         }),
       });
@@ -212,6 +222,49 @@ const ProposePolicyModal = ({
                       }
                     />
                   ))}
+                  <label
+                    htmlFor="policy-has-outsourced"
+                    className="flex items-start gap-3 rounded-xl border border-foreground/10 bg-foreground/5 px-4 py-3 cursor-pointer"
+                  >
+                    <input
+                      id="policy-has-outsourced"
+                      type="checkbox"
+                      checked={hasOutsourced}
+                      onChange={(e) => setHasOutsourced(e.target.checked)}
+                      className="mt-0.5 size-4 accent-primary"
+                    />
+                    <span className="text-sm">
+                      <span className="font-bold block">
+                        Work outsourced to someone else
+                      </span>
+                      <span className="text-xs text-foreground/50">
+                        For a person who is not a director, such as an employee.
+                        Their share comes out of each payment.
+                      </span>
+                    </span>
+                  </label>
+                  {hasOutsourced && (
+                    <div className="flex items-center gap-3">
+                      <input
+                        aria-label="Outsourced person's name"
+                        placeholder="Name"
+                        required
+                        maxLength={80}
+                        value={outName}
+                        onChange={(e) => setOutName(e.target.value)}
+                        className="flex-1 min-w-0 bg-foreground/5 border border-foreground/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary/40"
+                      />
+                      <input
+                        aria-label="Outsourced person's share in percent"
+                        inputMode="decimal"
+                        placeholder="0"
+                        value={outPercent}
+                        onChange={(e) => setOutPercent(e.target.value)}
+                        className="w-24 bg-foreground/5 border border-foreground/10 rounded-lg px-3 py-2 text-sm text-right focus:outline-none focus:border-primary/40"
+                      />
+                      <span className="text-sm text-foreground/50">%</span>
+                    </div>
+                  )}
                   <p
                     className={`text-xs font-bold text-right ${totalValid ? "text-emerald-500" : "text-rose-500"}`}
                   >

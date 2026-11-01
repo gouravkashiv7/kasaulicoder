@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Thread from "@/backend/models/Thread";
 import ThreadMessage from "@/backend/models/ThreadMessage";
 
@@ -15,14 +16,14 @@ export async function GET() {
 
     await connectDB();
     const me = auth.session.id;
-    const threads = await Thread.find({})
+    const threads = await Thread.find({ ...NOT_DELETED })
       .sort({ lastMessageAt: -1 })
       .populate("createdBy", "name")
       .lean();
 
     const ids = threads.map((t) => t._id);
     const last = await ThreadMessage.aggregate([
-      { $match: { thread: { $in: ids } } },
+      { $match: { thread: { $in: ids }, ...NOT_DELETED } },
       { $sort: { createdAt: -1 } },
       {
         $group: {

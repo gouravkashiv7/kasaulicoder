@@ -119,6 +119,8 @@ const Policies = () => {
                   {d.staff.name} {pct(d.bps)}
                 </span>
               ))}
+              {p.split?.outsourced &&
+                ` · ${p.split.outsourced.name} (outsourced) ${pct(p.split.outsourced.bps)}`}
             </p>
           ))
         ) : (
@@ -206,6 +208,8 @@ const Policies = () => {
                         {d.staff.name} {pct(d.bps)}
                       </span>
                     ))}
+                    {p.split.outsourced &&
+                      ` · ${p.split.outsourced.name} (outsourced) ${pct(p.split.outsourced.bps)}`}
                   </p>
                 )}
 

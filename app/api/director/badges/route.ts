@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Expense from "@/backend/models/Expense";
 import Policy from "@/backend/models/Policy";
 import Thread from "@/backend/models/Thread";
@@ -14,13 +15,20 @@ export async function GET() {
     await connectDB();
     const me = auth.session.id;
     const [policies, finance, threads] = await Promise.all([
-      Policy.countDocuments({ status: "proposed", "votes.staff": { $ne: me } }),
+      Policy.countDocuments({
+        status: "proposed",
+        "votes.staff": { $ne: me },
+        ...NOT_DELETED,
+      }),
       Expense.countDocuments({
         status: "pending",
         requestedBy: { $ne: me },
         "approvals.staff": { $ne: me },
+        ...NOT_DELETED,
       }),
-      Thread.find({}).select("lastMessageAt readBy").lean(),
+      Thread.find({ ...NOT_DELETED })
+        .select("lastMessageAt readBy")
+        .lean(),
     ]);
     const discussions = threads.filter((t) => {
       const readAt = (t.readBy as Record<string, Date> | undefined)?.[me];

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Client from "@/backend/models/Client";
 
 const clip = (v: unknown, max: number) =>
@@ -22,7 +23,7 @@ export async function GET() {
     if ("error" in auth) return auth.error;
 
     await connectDB();
-    const clients = await Client.find({})
+    const clients = await Client.find({ ...NOT_DELETED })
       .sort({ name: 1 })
       .populate("managedBy", "name")
       .lean();
@@ -112,9 +113,11 @@ export async function PUT(req: Request) {
       }
       update.managedBy = managedBy;
     }
-    const client = await Client.findByIdAndUpdate(body.id, update, {
-      new: true,
-    });
+    const client = await Client.findOneAndUpdate(
+      { _id: body.id, ...NOT_DELETED },
+      update,
+      { new: true },
+    );
     if (!client) {
       return NextResponse.json({ error: "Client not found" }, { status: 404 });
     }

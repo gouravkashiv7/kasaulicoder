@@ -28,6 +28,7 @@ import Overview from "@/components/admin/Overview";
 import Pricing from "@/components/admin/Pricing";
 import Programs from "@/components/admin/Programs";
 import Requests from "@/components/admin/Requests";
+import RecordsTab from "@/components/admin/records/RecordsTab";
 import SocialMediaManagement from "@/components/admin/SocialMediaManagement";
 // Types
 import type {
@@ -122,7 +123,9 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
       "projects",
       "social-media",
     ];
-    if (isDirector) allTabs.push("finance", "policies", "discussions");
+    if (isDirector || isSuperAdmin) {
+      allTabs.push("finance", "policies", "discussions");
+    }
     if (isSuperAdmin) return allTabs;
     // Staff (admin role) restricted tabs
     return allTabs.filter(
@@ -1228,9 +1231,33 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
                 handleDeleteProgram={handleDeleteProgram}
               />
             )}
-            {sidebarView === "finance" && isDirector && <Finance />}
-            {sidebarView === "policies" && isDirector && <Policies />}
-            {sidebarView === "discussions" && isDirector && <Discussions />}
+            {sidebarView === "finance" && (
+              <RecordsTab
+                tab="finance"
+                isDirector={isDirector}
+                isSuperAdmin={isSuperAdmin}
+              >
+                <Finance />
+              </RecordsTab>
+            )}
+            {sidebarView === "policies" && (
+              <RecordsTab
+                tab="policies"
+                isDirector={isDirector}
+                isSuperAdmin={isSuperAdmin}
+              >
+                <Policies />
+              </RecordsTab>
+            )}
+            {sidebarView === "discussions" && (
+              <RecordsTab
+                tab="discussions"
+                isDirector={isDirector}
+                isSuperAdmin={isSuperAdmin}
+              >
+                <Discussions />
+              </RecordsTab>
+            )}
             {sidebarView === "blogs" && <AdminBlogManagement />}
             {sidebarView === "projects" && <AdminProjectsManagement />}
             {sidebarView === "social-media" && (

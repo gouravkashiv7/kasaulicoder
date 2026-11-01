@@ -1,6 +1,7 @@
 import mongoose, { type Document, Schema, type Types } from "mongoose";
+import { type SoftDeletable, softDeleteFields } from "@/backend/lib/softDelete";
 
-export interface IThreadMessage extends Document {
+export interface IThreadMessage extends Document, SoftDeletable {
   thread: Types.ObjectId;
   author: Types.ObjectId;
   body: string;
@@ -33,6 +34,7 @@ const ThreadMessageSchema: Schema = new Schema(
         at: { type: Date, default: Date.now },
       },
     ],
+    ...softDeleteFields,
   },
   { timestamps: { createdAt: true, updatedAt: false } },
 );

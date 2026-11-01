@@ -3,6 +3,7 @@ import { ownsAttachment } from "@/backend/lib/attachments";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { toPaise } from "@/backend/lib/money";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Expense from "@/backend/models/Expense";
 
 // GET — all expenses, newest first
@@ -12,7 +13,7 @@ export async function GET() {
     if ("error" in auth) return auth.error;
 
     await connectDB();
-    const expenses = await Expense.find({})
+    const expenses = await Expense.find({ ...NOT_DELETED })
       .sort({ createdAt: -1 })
       .populate("requestedBy", "name")
       .populate("approvals.staff", "name")

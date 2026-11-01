@@ -235,6 +235,7 @@ export interface PolicyRecord {
   split?: {
     companyBps: number;
     directors: Array<{ staff: { _id: string; name: string }; bps: number }>;
+    outsourced?: { name: string; bps: number };
   };
   proposedBy: { _id: string; name: string };
   votes: Array<{
@@ -280,6 +281,7 @@ export interface PaymentRecord {
   allocation: {
     companyPaise: number;
     shares: Array<{ staff: { _id: string; name: string }; paise: number }>;
+    outsourced?: { name: string; paise: number };
   };
   status: "recorded" | "void";
   voidReason?: string;

@@ -5,11 +5,13 @@ import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
 import { evaluatePolicy } from "@/backend/lib/governance";
 import { applyOutcome } from "@/backend/lib/policies";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Client from "@/backend/models/Client";
 import Policy from "@/backend/models/Policy";
 
 const MAX_TITLE = 120;
 const MAX_BODY = 5000;
+const MAX_NAME = 80;
 
 // Converts "26.67" style percentages to basis points; null when malformed.
 function toBps(value: unknown): number | null {
@@ -30,7 +32,7 @@ export async function GET() {
     await connectDB();
 
     const [policies, directors, clients] = await Promise.all([
-      Policy.find({})
+      Policy.find({ ...NOT_DELETED })
         .sort({ createdAt: -1 })
         .populate("client", "name")
         .populate("proposedBy", "name")
@@ -38,7 +40,10 @@ export async function GET() {
         .populate("split.directors.staff", "name")
         .lean(),
       getActiveDirectors(),
-      Client.find({ isActive: true }).sort({ name: 1 }).select("name").lean(),
+      Client.find({ isActive: true, ...NOT_DELETED })
+        .sort({ name: 1 })
+        .select("name")
+        .lean(),
     ]);
 
     return NextResponse.json({
@@ -86,7 +91,7 @@ export async function POST(req: Request) {
 
     await connectDB();
     const [client, directors] = await Promise.all([
-      Client.findById(body.clientId),
+      Client.findOne({ _id: body.clientId, ...NOT_DELETED }),
       getActiveDirectors(),
     ]);
     if (!client || client.isActive === false) {
@@ -118,17 +123,38 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
+
+    // Optional share for someone who isn't a director, such as an employee
+    let outsourced: { name: string; bps: number } | undefined;
+    if (body.split?.outsourced) {
+      const name =
+        typeof body.split.outsourced.name === "string"
+          ? body.split.outsourced.name.trim()
+          : "";
+      const bps = toBps(body.split.outsourced.percent);
+      if (!name || name.length > MAX_NAME || !bps) {
+        return NextResponse.json(
+          { error: "Give the outsourced person a name and a percentage" },
+          { status: 400 },
+        );
+      }
+      outsourced = { name, bps };
+    }
+
     const total =
-      companyBps + parsed.reduce((s, p) => s + (p.bps as number), 0);
+      companyBps +
+      (outsourced?.bps ?? 0) +
+      parsed.reduce((s, p) => s + (p.bps as number), 0);
     if (total !== 10000) {
       return NextResponse.json(
-        { error: "Company and director percentages must total 100%" },
+        { error: "All percentages must total 100%" },
         { status: 400 },
       );
     }
     const split = {
       companyBps,
       directors: parsed.map((p) => ({ staff: p.staff, bps: p.bps as number })),
+      outsourced,
     };
 
     const policy = await Policy.create({

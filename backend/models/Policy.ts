@@ -1,4 +1,5 @@
 import mongoose, { type Document, Schema, type Types } from "mongoose";
+import { type SoftDeletable, softDeleteFields } from "@/backend/lib/softDelete";
 
 export interface IPolicyVote {
   staff: Types.ObjectId;
@@ -7,7 +8,7 @@ export interface IPolicyVote {
   at: Date;
 }
 
-export interface IPolicy extends Document {
+export interface IPolicy extends Document, SoftDeletable {
   title: string;
   body: string;
   // Finance is the only policy type for now.
@@ -17,6 +18,8 @@ export interface IPolicy extends Document {
   split: {
     companyBps: number;
     directors: Array<{ staff: Types.ObjectId; bps: number }>;
+    // Work passed to someone who isn't a director, such as an employee
+    outsourced?: { name: string; bps: number };
   };
   proposedBy: Types.ObjectId;
   votes: IPolicyVote[];
@@ -51,6 +54,10 @@ const PolicySchema: Schema = new Schema(
           bps: { type: Number, required: true },
         },
       ],
+      outsourced: {
+        name: { type: String, trim: true },
+        bps: { type: Number },
+      },
     },
     proposedBy: { type: Schema.Types.ObjectId, ref: "Staff", required: true },
     votes: { type: [VoteSchema], default: [] },
@@ -60,6 +67,7 @@ const PolicySchema: Schema = new Schema(
       default: "proposed",
     },
     decidedAt: { type: Date },
+    ...softDeleteFields,
   },
   { timestamps: true },
 );

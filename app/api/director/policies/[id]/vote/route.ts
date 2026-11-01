@@ -5,6 +5,7 @@ import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
 import { evaluatePolicy } from "@/backend/lib/governance";
 import { applyOutcome } from "@/backend/lib/policies";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Policy from "@/backend/models/Policy";
 
 const MAX_COMMENT = 500;
@@ -42,7 +43,7 @@ export async function POST(
     // Change an existing vote, or add one if this director hasn't voted. Both
     // updates only match while the policy is open, so a decided policy is final.
     const changed = await Policy.updateOne(
-      { _id: id, status: "proposed", "votes.staff": me },
+      { _id: id, status: "proposed", "votes.staff": me, ...NOT_DELETED },
       {
         $set: {
           "votes.$.vote": vote,
@@ -53,12 +54,17 @@ export async function POST(
     );
     if (changed.matchedCount === 0) {
       await Policy.updateOne(
-        { _id: id, status: "proposed", "votes.staff": { $ne: me } },
+        {
+          _id: id,
+          status: "proposed",
+          "votes.staff": { $ne: me },
+          ...NOT_DELETED,
+        },
         { $push: { votes: entry } },
       );
     }
 
-    const policy = await Policy.findById(id);
+    const policy = await Policy.findOne({ _id: id, ...NOT_DELETED });
     if (!policy) {
       return NextResponse.json({ error: "Policy not found" }, { status: 404 });
     }

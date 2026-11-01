@@ -4,6 +4,7 @@ import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
 import { evaluateExpense } from "@/backend/lib/governance";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Expense from "@/backend/models/Expense";
 
 // POST — approve or reject someone else's expense
@@ -35,7 +36,9 @@ export async function POST(
 
     await connectDB();
     const me = auth.session.id;
-    const existing = await Expense.findById(id).select("requestedBy status");
+    const existing = await Expense.findOne({ _id: id, ...NOT_DELETED }).select(
+      "requestedBy status",
+    );
     if (!existing) {
       return NextResponse.json({ error: "Expense not found" }, { status: 404 });
     }
@@ -56,7 +59,12 @@ export async function POST(
       at: new Date(),
     };
     const changed = await Expense.updateOne(
-      { _id: id, status: "pending", "approvals.staff": me },
+      {
+        _id: id,
+        status: "pending",
+        "approvals.staff": me,
+        ...NOT_DELETED,
+      },
       {
         $set: {
           "approvals.$.decision": decision,
@@ -67,7 +75,12 @@ export async function POST(
     );
     if (changed.matchedCount === 0) {
       await Expense.updateOne(
-        { _id: id, status: "pending", "approvals.staff": { $ne: me } },
+        {
+          _id: id,
+          status: "pending",
+          "approvals.staff": { $ne: me },
+          ...NOT_DELETED,
+        },
         { $push: { approvals: entry } },
       );
     }

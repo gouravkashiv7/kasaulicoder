@@ -177,6 +177,8 @@ const PaymentsSection = ({
                     {s.staff.name} {formatINR(s.paise)}
                   </span>
                 ))}
+                {p.allocation.outsourced &&
+                  ` · ${p.allocation.outsourced.name} (outsourced) ${formatINR(p.allocation.outsourced.paise)}`}
               </p>
               {p.note && (
                 <p className="mt-1 text-xs text-foreground/60">{p.note}</p>

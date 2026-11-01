@@ -8,7 +8,7 @@ except attachment download.
 | Method & path | Purpose |
 |---------------|---------|
 | `GET /policies` | `{ policies, directors, me }`, newest first |
-| `POST /policies` | Propose a finance policy for a client: `{ clientId, title, body, split }`, where `split = { companyPercent, directors: [{ staff, percent }] }`; every active director must appear and the total must be 100 |
+| `POST /policies` | Propose a finance policy for a client: `{ clientId, title, body, split }`, where `split = { companyPercent, directors: [{ staff, percent }], outsourced?: { name, percent } }` (`outsourced` is an optional share for a non-director such as an employee); every active director must appear and the total must be 100 |
 | `POST /policies/[id]/vote` | `{ vote: "yes" \| "no", comment? }` → `{ status }` |
 
 ## Finance
@@ -37,6 +37,18 @@ except attachment download.
 
 ## Badges
 `GET /badges` → `{ policies, finance, discussions }`.
+
+## Superadmin records (`/api/admin/records`)
+Superadmin only (401 without a session, 403 otherwise). Not under `/api/director/`.
+
+| Method & path | Purpose |
+|---------------|---------|
+| `GET /records?tab=finance\|policies\|discussions` | Every record of that tab **including deleted ones** (`deletedAt` set). Finance: `{ clients, payments, expenses }`; policies: `{ policies }`; discussions: `{ threads }`, each with its `messages` |
+| `DELETE /records/[type]/[id]` | Soft-delete. `type` is `client`, `payment`, `expense`, `policy`, `thread` or `message`. 404 if missing or already deleted |
+
+Every `/api/director/*` read and write skips deleted records, so a deleted
+record behaves as if it did not exist (404 on actions, absent from lists,
+totals, split lookup and badges).
 
 ## Also changed
 `/api/admin/staff` (GET/POST/PUT) now reads and writes `isDirector`; only a

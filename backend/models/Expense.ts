@@ -1,6 +1,7 @@
 import mongoose, { type Document, Schema, type Types } from "mongoose";
+import { type SoftDeletable, softDeleteFields } from "@/backend/lib/softDelete";
 
-export interface IExpense extends Document {
+export interface IExpense extends Document, SoftDeletable {
   purpose: string;
   amountPaise: number;
   attachment: Types.ObjectId;
@@ -56,6 +57,7 @@ const ExpenseSchema: Schema = new Schema(
       reference: { type: String, trim: true },
       attachment: { type: Schema.Types.ObjectId, ref: "Attachment" },
     },
+    ...softDeleteFields,
   },
   { timestamps: true },
 );

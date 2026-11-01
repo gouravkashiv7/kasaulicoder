@@ -4,6 +4,7 @@
 - `lib/auth.ts`: `isDirector` on the session, `requireDirector()` guard.
 - `lib/money.ts`: `toPaise`, `formatINR`, `splitPaise` (pure).
 - `lib/governance.ts`: `APPROVALS_REQUIRED`, `evaluatePolicy`, `evaluateExpense` (pure).
+- `lib/softDelete.ts`: `softDeleteFields`, `NOT_DELETED` filter, `SoftDeletable`; `lib/auth.ts` also has `requireSuperAdmin()`.
 - `lib/directors.ts`: `getActiveDirectors()`.
 - `lib/policies.ts`: `applyOutcome()` (single final transition, supersede), `getActiveSplit()`.
 - `lib/attachments.ts`: image data-URL validation, ownership check.
@@ -11,7 +12,7 @@
 - `lib/__tests__/`: unit tests for money and governance.
 - `models/`: see [data-model.md](data-model.md).
 
-**API:** `app/api/director/**`, see [api.md](api.md).
+**API:** `app/api/director/**` and the superadmin `app/api/admin/records/**`, see [api.md](api.md).
 
 **UI (`components/admin/`)**
 - `director/Finance.tsx` with `PaymentsSection`, `ExpensesSection`, `ClientsSection`
@@ -20,6 +21,7 @@
 - `director/modals/FinanceFormModal.tsx` (shared modal shell and field styles)
 - `director/ScreenshotInput.tsx`, `director/imageCompress.ts`
 - `director/useDirectorBadges.ts`
+- `records/RecordsManager.tsx` (superadmin delete view), `records/RecordsTab.tsx` (picks director or delete view)
 - `AdminSidebar.tsx`, `types.ts` (tabs, badges, record types)
 - `modals/StaffModal.tsx`: the "Board director" checkbox
 - `components/auth/AdminDashboard.tsx`: tab list and rendering (`isDirector` prop from `app/admin/dashboard/page.tsx`)

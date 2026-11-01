@@ -1,6 +1,7 @@
 import mongoose, { type Document, Schema, type Types } from "mongoose";
+import { type SoftDeletable, softDeleteFields } from "@/backend/lib/softDelete";
 
-export interface IClient extends Document {
+export interface IClient extends Document, SoftDeletable {
   name: string;
   email?: string;
   phone?: string;
@@ -22,6 +23,7 @@ const ClientSchema: Schema = new Schema(
     managedBy: { type: Schema.Types.ObjectId, ref: "Staff" },
     isActive: { type: Boolean, default: true },
     createdBy: { type: Schema.Types.ObjectId, ref: "Staff", required: true },
+    ...softDeleteFields,
   },
   { timestamps: true },
 );

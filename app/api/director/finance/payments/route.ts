@@ -6,6 +6,7 @@ import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
 import { splitPaise, toPaise } from "@/backend/lib/money";
 import { getActiveSplit } from "@/backend/lib/policies";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Client from "@/backend/models/Client";
 import Payment from "@/backend/models/Payment";
 import Policy from "@/backend/models/Policy";
@@ -19,13 +20,17 @@ export async function GET() {
 
     await connectDB();
     const [payments, covered] = await Promise.all([
-      Payment.find({})
+      Payment.find({ ...NOT_DELETED })
         .sort({ receivedOn: -1, createdAt: -1 })
         .populate("client", "name")
         .populate("recordedBy", "name")
         .populate("allocation.shares.staff", "name")
         .lean(),
-      Policy.distinct("client", { type: "finance", status: "approved" }),
+      Policy.distinct("client", {
+        type: "finance",
+        status: "approved",
+        ...NOT_DELETED,
+      }),
     ]);
     return NextResponse.json({
       payments,
@@ -76,7 +81,7 @@ export async function POST(req: Request) {
 
     await connectDB();
     const [client, split, directors] = await Promise.all([
-      Client.findById(body.clientId),
+      Client.findOne({ _id: body.clientId, ...NOT_DELETED }),
       getActiveSplit(body.clientId),
       getActiveDirectors(),
     ]);
@@ -125,6 +130,7 @@ export async function POST(req: Request) {
         id: String(d.staff),
         bps: d.bps,
       })),
+      split.split.outsourced?.bps ?? 0,
     );
 
     const payment = await Payment.create({
@@ -145,6 +151,9 @@ export async function POST(req: Request) {
         policy: split._id,
         companyPaise: result.companyPaise,
         shares: result.shares.map((s) => ({ staff: s.id, paise: s.paise })),
+        outsourced: split.split.outsourced?.bps
+          ? { name: split.split.outsourced.name, paise: result.outsourcedPaise }
+          : undefined,
       },
     });
     return NextResponse.json({ id: payment._id }, { status: 201 });

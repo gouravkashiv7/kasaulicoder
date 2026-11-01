@@ -5,6 +5,7 @@ import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
 import { sendDirectorEmail } from "@/backend/lib/email";
 import { rateLimit } from "@/backend/lib/rateLimit";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Thread from "@/backend/models/Thread";
 import ThreadMessage from "@/backend/models/ThreadMessage";
 
@@ -68,11 +69,12 @@ export async function POST(
     }
 
     const [thread, message] = await Promise.all([
-      Thread.findById(id).select("title"),
-      ThreadMessage.findOne({ _id: body.messageId, thread: id }).populate(
-        "author",
-        "name",
-      ),
+      Thread.findOne({ _id: id, ...NOT_DELETED }).select("title"),
+      ThreadMessage.findOne({
+        _id: body.messageId,
+        thread: id,
+        ...NOT_DELETED,
+      }).populate("author", "name"),
     ]);
     if (!thread || !message) {
       return NextResponse.json({ error: "Message not found" }, { status: 404 });

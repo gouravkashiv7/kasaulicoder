@@ -114,7 +114,7 @@ const Sidebar = ({
     },
   ].filter((item) => {
     if (item.superOnly && !isSuperAdmin) return false;
-    if (item.directorOnly && !isDirector) return false;
+    if (item.directorOnly && !isDirector && !isSuperAdmin) return false;
     return true;
   });
 

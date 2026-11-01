@@ -65,3 +65,30 @@ test("splitPaise 20% company / 80% equal", () => {
 test("splitPaise rejects percentages that do not total 100", () => {
   assert.throws(() => splitPaise(1000, 2000, [{ id: "a", bps: 5000 }]));
 });
+
+test("splitPaise pays an outsourced person and still sums to the total", () => {
+  const directors = [
+    { id: "a", bps: 3000 },
+    { id: "b", bps: 3000 },
+  ];
+  for (const total of [1, 7, 10001, 99999, 123456789]) {
+    const r = splitPaise(total, 2000, directors, 2000);
+    const sum =
+      r.companyPaise +
+      r.outsourcedPaise +
+      r.shares.reduce((s, x) => s + x.paise, 0);
+    assert.equal(sum, total, `total ${total}`);
+  }
+  assert.equal(
+    splitPaise(100000, 2000, directors, 2000).outsourcedPaise,
+    20000,
+  );
+});
+
+test("splitPaise counts the outsourced share toward 100%", () => {
+  assert.throws(() => splitPaise(1000, 2000, [{ id: "a", bps: 8000 }], 500));
+  assert.equal(
+    splitPaise(1000, 2000, [{ id: "a", bps: 8000 }]).outsourcedPaise,
+    0,
+  );
+});

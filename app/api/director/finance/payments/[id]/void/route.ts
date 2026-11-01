@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Payment from "@/backend/models/Payment";
 
 // POST — void a payment (entries are never deleted)
@@ -28,7 +29,7 @@ export async function POST(
 
     await connectDB();
     const res = await Payment.updateOne(
-      { _id: id, status: "recorded" },
+      { _id: id, status: "recorded", ...NOT_DELETED },
       {
         $set: {
           status: "void",

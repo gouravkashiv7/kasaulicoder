@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Expense from "@/backend/models/Expense";
 import Payment from "@/backend/models/Payment";
 
@@ -15,7 +16,7 @@ export async function GET() {
     const [totals, shareRows, expenseRows, directors, awaitingMe] =
       await Promise.all([
         Payment.aggregate([
-          { $match: { status: "recorded" } },
+          { $match: { status: "recorded", ...NOT_DELETED } },
           {
             $group: {
               _id: null,
@@ -25,7 +26,7 @@ export async function GET() {
           },
         ]),
         Payment.aggregate([
-          { $match: { status: "recorded" } },
+          { $match: { status: "recorded", ...NOT_DELETED } },
           { $unwind: "$allocation.shares" },
           {
             $group: {
@@ -35,7 +36,12 @@ export async function GET() {
           },
         ]),
         Expense.aggregate([
-          { $match: { status: { $in: ["approved", "released"] } } },
+          {
+            $match: {
+              status: { $in: ["approved", "released"] },
+              ...NOT_DELETED,
+            },
+          },
           { $group: { _id: "$status", paise: { $sum: "$amountPaise" } } },
         ]),
         getActiveDirectors(),
@@ -43,6 +49,7 @@ export async function GET() {
           status: "pending",
           requestedBy: { $ne: auth.session.id },
           "approvals.staff": { $ne: auth.session.id },
+          ...NOT_DELETED,
         }),
       ]);
 

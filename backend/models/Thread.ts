@@ -1,6 +1,7 @@
 import mongoose, { type Document, Schema, type Types } from "mongoose";
+import { type SoftDeletable, softDeleteFields } from "@/backend/lib/softDelete";
 
-export interface IThread extends Document {
+export interface IThread extends Document, SoftDeletable {
   title: string;
   createdBy: Types.ObjectId;
   lastMessageAt: Date;
@@ -16,6 +17,7 @@ const ThreadSchema: Schema = new Schema(
     createdBy: { type: Schema.Types.ObjectId, ref: "Staff", required: true },
     lastMessageAt: { type: Date, default: Date.now },
     readBy: { type: Map, of: Date, default: {} },
+    ...softDeleteFields,
   },
   { timestamps: true },
 );

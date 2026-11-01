@@ -1,3 +1,4 @@
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Policy from "@/backend/models/Policy";
 
 // Moves a still-open policy to its final status exactly once; an approved
@@ -23,7 +24,12 @@ export async function applyOutcome(
 // The finance policy currently in force for a client, or null if none has been
 // approved.
 export async function getActiveSplit(client: string) {
-  return Policy.findOne({ client, type: "finance", status: "approved" })
+  return Policy.findOne({
+    client,
+    type: "finance",
+    status: "approved",
+    ...NOT_DELETED,
+  })
     .sort({ decidedAt: -1 })
     .lean();
 }

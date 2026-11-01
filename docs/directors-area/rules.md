@@ -18,6 +18,10 @@
 ## Finance policy (revenue split)
 - Every policy has a client and type `finance` (the only type for now). It holds
   the split: company % plus one % per active director, two decimals, total 100.
+  It can also include one outsourced person (a name, not a director, such as an
+  employee) with their own %, which counts toward the 100. Like the directors,
+  they get the floor of their share and the company keeps the rounding
+  remainder.
 - Each client has its own. The most recently approved one for that client is in
   force; approving a new one marks the client's previous one `superseded`.
 - Until the client has one, recording that client's payments is blocked
@@ -85,6 +89,22 @@
 - No Google API or sign-in is involved, so nothing is stored beyond the message.
   Creating and sharing the meeting automatically would need Google Calendar OAuth
   (not built).
+
+## Superadmin deletes
+- A superadmin sees **Finance**, **Policies** and **Discussions** in the sidebar
+  even when not a director. Without being a director they can only view and
+  delete: no voting, recording payments or posting.
+- A superadmin who is also a director keeps the normal view and gets a
+  **Manage records** switch for the delete view.
+- Deleting is a **soft delete**: the record gets `deletedAt` and `deletedBy` and
+  is hidden from directors and admins everywhere (lists, totals, shares, badges,
+  vote counts, email). Only the superadmin's delete view still shows it, greyed
+  out and marked Deleted. There is no restore yet.
+- Deletable: clients, payments, expenses, policies, whole threads and single
+  messages. Nothing cascades: deleting a client leaves its payments and
+  policies, and deleting a policy that is in force leaves that client with no
+  split, so recording its payments is blocked (409) until a new one is approved.
+  A deleted payment or expense drops out of totals and shares, like a void.
 
 ## Sidebar badges
 Counts of what waits on the viewer: policies not yet voted on, expenses awaiting

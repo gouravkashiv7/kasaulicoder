@@ -28,15 +28,22 @@ export interface DirectorBps {
   bps: number;
 }
 
-// Splits a payment between directors and the company. Basis points must total
-// 10000. Each director gets the floor of their share; the company keeps the
-// remainder, so the parts always add up to the payment exactly.
+// Splits a payment between directors, an optional outsourced person and the
+// company. Basis points must total 10000. Each director and the outsourced
+// person get the floor of their share; the company keeps the remainder, so the
+// parts always add up to the payment exactly.
 export function splitPaise(
   totalPaise: number,
   companyBps: number,
   directors: DirectorBps[],
-): { companyPaise: number; shares: Array<{ id: string; paise: number }> } {
-  const bpsTotal = directors.reduce((s, d) => s + d.bps, companyBps);
+  outsourcedBps = 0,
+): {
+  companyPaise: number;
+  shares: Array<{ id: string; paise: number }>;
+  outsourcedPaise: number;
+} {
+  const bpsTotal =
+    directors.reduce((s, d) => s + d.bps, companyBps) + outsourcedBps;
   if (bpsTotal !== 10000) {
     throw new Error("Split percentages must total 100%");
   }
@@ -44,7 +51,10 @@ export function splitPaise(
     id: d.id,
     paise: Math.floor((totalPaise * d.bps) / 10000),
   }));
+  const outsourcedPaise = Math.floor((totalPaise * outsourcedBps) / 10000);
   const companyPaise =
-    totalPaise - shares.reduce((s, share) => s + share.paise, 0);
-  return { companyPaise, shares };
+    totalPaise -
+    shares.reduce((s, share) => s + share.paise, 0) -
+    outsourcedPaise;
+  return { companyPaise, shares, outsourcedPaise };
 }

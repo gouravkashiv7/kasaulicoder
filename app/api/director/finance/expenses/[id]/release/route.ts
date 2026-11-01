@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { ownsAttachment } from "@/backend/lib/attachments";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
+import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Expense from "@/backend/models/Expense";
 
 // POST — record that an approved expense was paid out to the requester.
@@ -42,6 +43,7 @@ export async function POST(
         _id: id,
         status: "approved",
         requestedBy: { $ne: auth.session.id },
+        ...NOT_DELETED,
       },
       {
         $set: {
