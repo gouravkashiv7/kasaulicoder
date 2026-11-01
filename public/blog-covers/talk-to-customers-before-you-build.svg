@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="85%" r="70%">
+      <stop offset="0" stop-color="#06d6e0" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#06d6e0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="90%" cy="10%" r="50%">
+      <stop offset="0" stop-color="#6366f1" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.6" fill="#e8f4f5" fill-opacity="0.07"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="#0a1214"/>
+  <rect width="1600" height="900" fill="url(#dots)"/>
+  <rect width="1600" height="900" fill="url(#glow)"/>
+  <rect width="1600" height="900" fill="url(#glow2)"/>
+
+  <text x="800" y="205" text-anchor="middle" font-size="30" letter-spacing="9" fill="#06d6e0" font-weight="700">BEFORE YOU BUILD</text>
+  <text x="800" y="320" text-anchor="middle" font-size="108" font-weight="800" fill="#e8f4f5">Talk First, Build Second</text>
+  <text x="800" y="392" text-anchor="middle" font-size="36" fill="#e8f4f5" fill-opacity="0.72">Ten honest conversations. Five questions. Fewer guesses.</text>
+
+  <!-- question bubble (you) -->
+  <g stroke-width="5" stroke-linejoin="round">
+    <rect x="330" y="540" width="420" height="150" rx="42" fill="#0a1214"/>
+    <rect x="330" y="540" width="420" height="150" rx="42" fill="#06d6e0" fill-opacity="0.16" stroke="#06d6e0"/>
+    <path d="M385 690 L385 745 L450 690" fill="#0a1214" stroke="none"/>
+    <path d="M385 690 L385 745 L450 690" fill="#06d6e0" fill-opacity="0.16" stroke="#06d6e0"/>
+    <text x="540" y="605" text-anchor="middle" font-size="30" font-weight="700" fill="#e8f4f5" stroke="none">Tell me about the</text>
+    <text x="540" y="648" text-anchor="middle" font-size="30" font-weight="700" fill="#e8f4f5" stroke="none">last time…</text>
+  </g>
+
+  <!-- answer bubble (customer) -->
+  <g stroke-width="5" stroke-linejoin="round">
+    <rect x="850" y="540" width="420" height="150" rx="42" fill="#0a1214"/>
+    <rect x="850" y="540" width="420" height="150" rx="42" fill="#6366f1" fill-opacity="0.2" stroke="#6366f1"/>
+    <path d="M1215 690 L1215 745 L1150 690" fill="#0a1214" stroke="none"/>
+    <path d="M1215 690 L1215 745 L1150 690" fill="#6366f1" fill-opacity="0.2" stroke="#6366f1"/>
+    <rect x="895" y="578" width="330" height="14" rx="7" fill="#e8f4f5" fill-opacity="0.8" stroke="none"/>
+    <rect x="895" y="612" width="260" height="14" rx="7" fill="#e8f4f5" fill-opacity="0.55" stroke="none"/>
+    <rect x="895" y="646" width="295" height="14" rx="7" fill="#e8f4f5" fill-opacity="0.35" stroke="none"/>
+  </g>
+
+  <text x="800" y="850" text-anchor="middle" font-size="22" letter-spacing="4" fill="#e8f4f5" fill-opacity="0.45">KASAULICODER</text>
+</svg>
