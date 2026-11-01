@@ -8,26 +8,28 @@ import { splitPaise, toPaise } from "@/backend/lib/money";
 import { getActiveSplit } from "@/backend/lib/policies";
 import Client from "@/backend/models/Client";
 import Payment from "@/backend/models/Payment";
+import Policy from "@/backend/models/Policy";
 
-// GET — payments, newest first, with the split that applied to each
+// GET — payments, newest first, with the split that applied to each, plus the
+// clients that have an approved finance policy
 export async function GET() {
   try {
     const auth = await requireDirector();
     if ("error" in auth) return auth.error;
 
     await connectDB();
-    const [payments, activeSplit] = await Promise.all([
+    const [payments, covered] = await Promise.all([
       Payment.find({})
         .sort({ receivedOn: -1, createdAt: -1 })
         .populate("client", "name")
         .populate("recordedBy", "name")
         .populate("allocation.shares.staff", "name")
         .lean(),
-      getActiveSplit(),
+      Policy.distinct("client", { type: "finance", status: "approved" }),
     ]);
     return NextResponse.json({
       payments,
-      hasActiveSplit: Boolean(activeSplit),
+      clientsWithPolicy: covered.map(String),
     });
   } catch (error) {
     console.error(error);
@@ -75,7 +77,7 @@ export async function POST(req: Request) {
     await connectDB();
     const [client, split, directors] = await Promise.all([
       Client.findById(body.clientId),
-      getActiveSplit(),
+      getActiveSplit(body.clientId),
       getActiveDirectors(),
     ]);
     if (!client || client.isActive === false) {
@@ -86,7 +88,7 @@ export async function POST(req: Request) {
     }
     if (!split?.split) {
       return NextResponse.json(
-        { error: "No revenue split policy is approved yet" },
+        { error: "This client has no approved finance policy yet" },
         { status: 409 },
       );
     }
@@ -100,7 +102,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           error:
-            "The approved split no longer matches the active directors. Propose a new revenue split policy.",
+            "The approved split no longer matches the active directors. Propose a new finance policy for this client.",
         },
         { status: 409 },
       );

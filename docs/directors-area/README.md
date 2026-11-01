@@ -25,8 +25,9 @@ Only staff with the **Board director** flag can see or call any of it.
    **Board director**.
 2. Directors sign in at `/login` (Admin) and open **Finance**, **Policies** or
    **Discussions** from the sidebar.
-3. First, propose a **Revenue split** policy under Policies and have a second
-   director approve it. Until one exists, payments can't be recorded.
+3. Add a client, then propose a finance policy for that client under Policies
+   (pick the client first, then set the split) and have a second director
+   approve it. Until the client has one, their payments can't be recorded.
 
 ## Known limits
 

@@ -70,15 +70,15 @@ let r = await A("finance/payments", "POST", {
   receivedOn: "2026-10-01",
 });
 assert.equal(r.status, 409);
-ok("payment blocked until a revenue split is approved");
+ok("payment blocked until the client has an approved finance policy");
 
 // Policy: split must total 100
 const dirs = (await A("policies")).body.directors;
 assert.equal(dirs.length, 3);
 const mk = (company, pcts) => ({
+  clientId: client._id,
   title: "E2E split",
   body: "e2e",
-  kind: "revenue-split",
   split: {
     companyPercent: company,
     directors: dirs.map((d, i) => ({ staff: d.id, percent: pcts[i] })),

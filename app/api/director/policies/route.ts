@@ -1,9 +1,11 @@
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
 import { evaluatePolicy } from "@/backend/lib/governance";
 import { applyOutcome } from "@/backend/lib/policies";
+import Client from "@/backend/models/Client";
 import Policy from "@/backend/models/Policy";
 
 const MAX_TITLE = 120;
@@ -18,7 +20,8 @@ function toBps(value: unknown): number | null {
   return Math.round(num * 100);
 }
 
-// GET — every policy plus the directors, so the UI can label votes
+// GET — every policy plus the directors and active clients, so the UI can
+// label votes and offer a client when proposing
 export async function GET() {
   try {
     const auth = await requireDirector();
@@ -26,19 +29,22 @@ export async function GET() {
 
     await connectDB();
 
-    const [policies, directors] = await Promise.all([
+    const [policies, directors, clients] = await Promise.all([
       Policy.find({})
         .sort({ createdAt: -1 })
+        .populate("client", "name")
         .populate("proposedBy", "name")
         .populate("votes.staff", "name")
         .populate("split.directors.staff", "name")
         .lean(),
       getActiveDirectors(),
+      Client.find({ isActive: true }).sort({ name: 1 }).select("name").lean(),
     ]);
 
     return NextResponse.json({
       policies,
       directors,
+      clients,
       me: auth.session.id,
     });
   } catch (error) {
@@ -50,7 +56,8 @@ export async function GET() {
   }
 }
 
-// POST — propose a policy; the proposer's yes vote is recorded automatically
+// POST — propose a finance policy for a client; the proposer's yes vote is
+// recorded automatically
 export async function POST(req: Request) {
   try {
     const auth = await requireDirector();
@@ -59,7 +66,6 @@ export async function POST(req: Request) {
     const body = await req.json();
     const title = typeof body.title === "string" ? body.title.trim() : "";
     const text = typeof body.body === "string" ? body.body.trim() : "";
-    const kind = body.kind === "revenue-split" ? "revenue-split" : "general";
 
     if (!title || title.length > MAX_TITLE) {
       return NextResponse.json(
@@ -74,58 +80,62 @@ export async function POST(req: Request) {
       );
     }
 
-    await connectDB();
-    const directors = await getActiveDirectors();
-
-    let split:
-      | { companyBps: number; directors: Array<{ staff: string; bps: number }> }
-      | undefined;
-    if (kind === "revenue-split") {
-      const companyBps = toBps(body.split?.companyPercent);
-      const entries: unknown = body.split?.directors;
-      if (companyBps === null || !Array.isArray(entries)) {
-        return NextResponse.json(
-          { error: "Split percentages are invalid" },
-          { status: 400 },
-        );
-      }
-      const parsed = entries.map(
-        (e: { staff?: unknown; percent?: unknown }) => ({
-          staff: String(e?.staff),
-          bps: toBps(e?.percent),
-        }),
-      );
-      const ids = directors.map((d) => d.id).sort();
-      const sameDirectors =
-        parsed.length === ids.length &&
-        [...parsed.map((p) => p.staff)].sort().join() === ids.join();
-      if (!sameDirectors || parsed.some((p) => p.bps === null)) {
-        return NextResponse.json(
-          { error: "Give every active director a valid percentage" },
-          { status: 400 },
-        );
-      }
-      const total =
-        companyBps + parsed.reduce((s, p) => s + (p.bps as number), 0);
-      if (total !== 10000) {
-        return NextResponse.json(
-          { error: "Company and director percentages must total 100%" },
-          { status: 400 },
-        );
-      }
-      split = {
-        companyBps,
-        directors: parsed.map((p) => ({
-          staff: p.staff,
-          bps: p.bps as number,
-        })),
-      };
+    if (!mongoose.isValidObjectId(body.clientId)) {
+      return NextResponse.json({ error: "Choose a client" }, { status: 400 });
     }
+
+    await connectDB();
+    const [client, directors] = await Promise.all([
+      Client.findById(body.clientId),
+      getActiveDirectors(),
+    ]);
+    if (!client || client.isActive === false) {
+      return NextResponse.json(
+        { error: "Client not found or archived" },
+        { status: 400 },
+      );
+    }
+
+    const companyBps = toBps(body.split?.companyPercent);
+    const entries: unknown = body.split?.directors;
+    if (companyBps === null || !Array.isArray(entries)) {
+      return NextResponse.json(
+        { error: "Split percentages are invalid" },
+        { status: 400 },
+      );
+    }
+    const parsed = entries.map((e: { staff?: unknown; percent?: unknown }) => ({
+      staff: String(e?.staff),
+      bps: toBps(e?.percent),
+    }));
+    const ids = directors.map((d) => d.id).sort();
+    const sameDirectors =
+      parsed.length === ids.length &&
+      [...parsed.map((p) => p.staff)].sort().join() === ids.join();
+    if (!sameDirectors || parsed.some((p) => p.bps === null)) {
+      return NextResponse.json(
+        { error: "Give every active director a valid percentage" },
+        { status: 400 },
+      );
+    }
+    const total =
+      companyBps + parsed.reduce((s, p) => s + (p.bps as number), 0);
+    if (total !== 10000) {
+      return NextResponse.json(
+        { error: "Company and director percentages must total 100%" },
+        { status: 400 },
+      );
+    }
+    const split = {
+      companyBps,
+      directors: parsed.map((p) => ({ staff: p.staff, bps: p.bps as number })),
+    };
 
     const policy = await Policy.create({
       title,
       body: text,
-      kind,
+      type: "finance",
+      client: client._id,
       split,
       proposedBy: auth.session.id,
       votes: [{ staff: auth.session.id, vote: "yes", at: new Date() }],
@@ -134,7 +144,7 @@ export async function POST(req: Request) {
     // With a single director the proposer's vote alone can decide it
     const outcome = evaluatePolicy([{ vote: "yes" }], directors.length);
     if (outcome === "approved") {
-      await applyOutcome(String(policy._id), kind, "approved");
+      await applyOutcome(String(policy._id), String(client._id), "approved");
     }
 
     return NextResponse.json({ id: policy._id }, { status: 201 });

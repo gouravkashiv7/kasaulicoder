@@ -5,7 +5,7 @@ All collections are Mongoose models in `backend/models/`. Amounts are in paise.
 | Model | File | Fields |
 |-------|------|--------|
 | Staff (changed) | `Staff.ts` | `isDirector: boolean` (default false) |
-| Policy | `Policy.ts` | `title`, `body` (Markdown), `kind` (`general` \| `revenue-split`), `split { companyBps, directors[{staff, bps}] }`, `proposedBy`, `votes[{staff, vote yes/no, comment, at}]`, `status` (`proposed` \| `approved` \| `rejected` \| `superseded`), `decidedAt` |
+| Policy | `Policy.ts` | `title`, `body` (Markdown), `type` (`finance`, the only type for now), `client`, `split { companyBps, directors[{staff, bps}] }`, `proposedBy`, `votes[{staff, vote yes/no, comment, at}]`, `status` (`proposed` \| `approved` \| `rejected` \| `superseded`), `decidedAt` |
 | Client | `Client.ts` | `name`, `email`, `phone`, `notes`, `isActive`, `createdBy` |
 | Payment | `Payment.ts` | `client`, `amountPaise`, `receivedOn`, `reference`, `note`, `attachment`, `recordedBy`, `allocation { policy, companyPaise, shares[{staff, paise}] }`, `status` (`recorded` \| `void`), `voidReason`, `voidedBy`, `voidedAt` |
 | Expense | `Expense.ts` | `purpose`, `amountPaise`, `attachment`, `requestedBy`, `approvals[{staff, decision approve/reject, comment, at}]`, `status` (`pending` \| `approved` \| `rejected` \| `released`), `release { by, at, reference, attachment }` |

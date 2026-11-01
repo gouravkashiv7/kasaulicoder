@@ -75,7 +75,7 @@ export async function POST(
     );
     const outcome = evaluatePolicy(countable, directors.length);
     if (outcome !== "proposed") {
-      await applyOutcome(id, policy.kind, outcome);
+      await applyOutcome(id, String(policy.client ?? ""), outcome);
     }
 
     const final = await Policy.findById(id).select("status");

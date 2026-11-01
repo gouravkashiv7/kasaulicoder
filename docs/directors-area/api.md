@@ -8,7 +8,7 @@ except attachment download.
 | Method & path | Purpose |
 |---------------|---------|
 | `GET /policies` | `{ policies, directors, me }`, newest first |
-| `POST /policies` | Propose: `{ title, body, kind, split? }`. For `revenue-split`, `split = { companyPercent, directors: [{ staff, percent }] }`; every active director must appear and the total must be 100 |
+| `POST /policies` | Propose a finance policy for a client: `{ clientId, title, body, split }`, where `split = { companyPercent, directors: [{ staff, percent }] }`; every active director must appear and the total must be 100 |
 | `POST /policies/[id]/vote` | `{ vote: "yes" \| "no", comment? }` → `{ status }` |
 
 ## Finance
@@ -16,7 +16,7 @@ except attachment download.
 |---------------|---------|
 | `GET /finance/summary` | Totals, company balance, each director's share, `awaitingMyApproval` |
 | `GET /finance/clients` · `POST` · `PUT` | List; add `{ name, email?, phone?, notes? }`; edit or archive `{ id, …, isActive? }` |
-| `GET /finance/payments` | `{ payments, hasActiveSplit }` |
+| `GET /finance/payments` | `{ payments, clientsWithPolicy }` (ids of clients with an approved finance policy) |
 | `POST /finance/payments` | `{ clientId, amount, receivedOn (YYYY-MM-DD), reference?, note?, attachmentId? }`. 409 if no split or split no longer matches directors |
 | `POST /finance/payments/[id]/void` | `{ reason }` |
 | `GET /finance/expenses` | `{ expenses, me }` |

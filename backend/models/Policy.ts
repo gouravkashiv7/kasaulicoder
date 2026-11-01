@@ -10,9 +10,11 @@ export interface IPolicyVote {
 export interface IPolicy extends Document {
   title: string;
   body: string;
-  kind: "general" | "revenue-split";
+  // Finance is the only policy type for now.
+  type: "finance";
+  client: Types.ObjectId;
   // Basis points (1% = 100); company plus directors always total 10000.
-  split?: {
+  split: {
     companyBps: number;
     directors: Array<{ staff: Types.ObjectId; bps: number }>;
   };
@@ -38,18 +40,15 @@ const PolicySchema: Schema = new Schema(
   {
     title: { type: String, required: true, trim: true },
     body: { type: String, required: true },
-    kind: {
-      type: String,
-      enum: ["general", "revenue-split"],
-      default: "general",
-    },
+    type: { type: String, enum: ["finance"], default: "finance" },
+    client: { type: Schema.Types.ObjectId, ref: "Client", required: true },
     split: {
-      companyBps: { type: Number },
+      companyBps: { type: Number, required: true },
       directors: [
         {
           _id: false,
-          staff: { type: Schema.Types.ObjectId, ref: "Staff" },
-          bps: { type: Number },
+          staff: { type: Schema.Types.ObjectId, ref: "Staff", required: true },
+          bps: { type: Number, required: true },
         },
       ],
     },

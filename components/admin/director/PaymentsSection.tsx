@@ -12,7 +12,7 @@ import ScreenshotInput from "./ScreenshotInput";
 interface PaymentsSectionProps {
   payments: PaymentRecord[];
   clients: ClientRecord[];
-  hasActiveSplit: boolean;
+  clientsWithPolicy: string[];
   onChanged: () => void;
 }
 
@@ -28,7 +28,7 @@ const EMPTY = {
 const PaymentsSection = ({
   payments,
   clients,
-  hasActiveSplit,
+  clientsWithPolicy,
   onChanged,
 }: PaymentsSectionProps) => {
   const [adding, setAdding] = useState(false);
@@ -39,7 +39,11 @@ const PaymentsSection = ({
   const [voiding, setVoiding] = useState<PaymentRecord | null>(null);
   const [reason, setReason] = useState("");
 
-  const activeClients = clients.filter((c) => c.isActive);
+  // Payments are divided by the client's finance policy, so only clients with
+  // an approved one can be chosen.
+  const activeClients = clients.filter(
+    (c) => c.isActive && clientsWithPolicy.includes(c._id),
+  );
 
   const save = async () => {
     setSaving(true);
@@ -91,14 +95,15 @@ const PaymentsSection = ({
   return (
     <section>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        {!hasActiveSplit && (
+        {activeClients.length === 0 && (
           <p className="text-sm font-bold text-amber-500">
-            No revenue split is approved yet. Propose one under Policies first.
+            No client has an approved finance policy yet. Propose one under
+            Policies first.
           </p>
         )}
         <button
           type="button"
-          disabled={!hasActiveSplit}
+          disabled={activeClients.length === 0}
           onClick={() => {
             setError("");
             setAdding(true);

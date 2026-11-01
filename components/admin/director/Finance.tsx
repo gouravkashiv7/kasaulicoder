@@ -26,7 +26,7 @@ const Finance = () => {
   const [summary, setSummary] = useState<FinanceSummary | null>(null);
   const [clients, setClients] = useState<ClientRecord[]>([]);
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
-  const [hasActiveSplit, setHasActiveSplit] = useState(false);
+  const [clientsWithPolicy, setClientsWithPolicy] = useState<string[]>([]);
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [me, setMe] = useState("");
   const [loading, setLoading] = useState(true);
@@ -46,7 +46,7 @@ const Finance = () => {
       setSummary(s);
       setClients(c);
       setPayments(p.payments);
-      setHasActiveSplit(p.hasActiveSplit);
+      setClientsWithPolicy(p.clientsWithPolicy);
       setExpenses(x.expenses);
       setMe(x.me);
       setError("");
@@ -161,7 +161,7 @@ const Finance = () => {
             <PaymentsSection
               payments={payments}
               clients={clients}
-              hasActiveSplit={hasActiveSplit}
+              clientsWithPolicy={clientsWithPolicy}
               onChanged={load}
             />
           )}

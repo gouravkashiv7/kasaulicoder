@@ -2,11 +2,12 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import type { DirectorRef } from "../../types";
+import type { ClientRecord, DirectorRef } from "../../types";
 
 interface ProposePolicyModalProps {
   open: boolean;
   directors: DirectorRef[];
+  clients: Pick<ClientRecord, "_id" | "name">[];
   onClose: () => void;
   onProposed: () => void;
 }
@@ -34,12 +35,13 @@ const defaultSplit = (directors: DirectorRef[]) => {
 const ProposePolicyModal = ({
   open,
   directors,
+  clients,
   onClose,
   onProposed,
 }: ProposePolicyModalProps) => {
+  const [clientId, setClientId] = useState("");
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [isSplit, setIsSplit] = useState(false);
   const [company, setCompany] = useState("20");
   const [shares, setShares] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
@@ -54,9 +56,9 @@ const ProposePolicyModal = ({
   const totalValid = total === 10000;
 
   const reset = () => {
+    setClientId("");
     setTitle("");
     setBody("");
-    setIsSplit(false);
     setCompany("20");
     setShares({});
     setError("");
@@ -65,7 +67,7 @@ const ProposePolicyModal = ({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (isSplit && !totalValid) {
+    if (!totalValid) {
       setError("Company and director percentages must total 100%");
       return;
     }
@@ -75,18 +77,16 @@ const ProposePolicyModal = ({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          clientId,
           title,
           body,
-          kind: isSplit ? "revenue-split" : "general",
-          split: isSplit
-            ? {
-                companyPercent: company,
-                directors: directors.map((d) => ({
-                  staff: d.id,
-                  percent: shareValue(d.id),
-                })),
-              }
-            : undefined,
+          split: {
+            companyPercent: company,
+            directors: directors.map((d) => ({
+              staff: d.id,
+              percent: shareValue(d.id),
+            })),
+          },
         }),
       });
       const data = await res.json();
@@ -126,88 +126,100 @@ const ProposePolicyModal = ({
 
             <div className="space-y-1.5">
               <label
-                htmlFor="policy-title"
+                htmlFor="policy-client"
                 className="text-[10px] font-black uppercase text-foreground/40 ml-1"
               >
-                Title
+                Client
               </label>
-              <input
-                id="policy-title"
+              <select
+                id="policy-client"
                 required
-                maxLength={MAX_TITLE}
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={clientId}
+                onChange={(e) => setClientId(e.target.value)}
                 className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label
-                htmlFor="policy-body"
-                className="text-[10px] font-black uppercase text-foreground/40 ml-1"
               >
-                Policy text (Markdown supported)
-              </label>
-              <textarea
-                id="policy-body"
-                required
-                rows={6}
-                maxLength={MAX_BODY}
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 resize-y"
-              />
+                <option value="">Select a client</option>
+                {clients.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <label
-              htmlFor="policy-is-split"
-              className="flex items-start gap-3 rounded-xl border border-foreground/10 bg-foreground/5 px-4 py-3 cursor-pointer"
-            >
-              <input
-                id="policy-is-split"
-                type="checkbox"
-                checked={isSplit}
-                onChange={(e) => setIsSplit(e.target.checked)}
-                className="mt-0.5 size-4 accent-primary"
-              />
-              <span className="text-sm">
-                <span className="font-bold block">Revenue split</span>
-                <span className="text-xs text-foreground/50">
-                  Sets how every client payment is divided between the company
-                  and each director once approved.
-                </span>
-              </span>
-            </label>
-
-            {isSplit && (
-              <div className="rounded-xl border border-foreground/10 p-4 space-y-3">
-                <SplitRow
-                  id="split-company"
-                  label="Company"
-                  value={company}
-                  onChange={setCompany}
-                />
-                {directors.map((d) => (
-                  <SplitRow
-                    key={d.id}
-                    id={`split-${d.id}`}
-                    label={d.name}
-                    value={shareValue(d.id)}
-                    onChange={(v) =>
-                      setShares((prev) => ({
-                        ...defaultSplit(directors),
-                        ...prev,
-                        [d.id]: v,
-                      }))
-                    }
-                  />
-                ))}
-                <p
-                  className={`text-xs font-bold text-right ${totalValid ? "text-emerald-500" : "text-rose-500"}`}
-                >
-                  Total: {Number.isNaN(total) ? "—" : (total / 100).toFixed(2)}%
+            {clientId && (
+              <>
+                <p className="text-xs font-bold text-foreground/50">
+                  Policy type: Finance. Sets how every payment from this client
+                  is divided between the company and each director once
+                  approved.
                 </p>
-              </div>
+
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="policy-title"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
+                    Title
+                  </label>
+                  <input
+                    id="policy-title"
+                    required
+                    maxLength={MAX_TITLE}
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="policy-body"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
+                    Policy text (Markdown supported)
+                  </label>
+                  <textarea
+                    id="policy-body"
+                    required
+                    rows={6}
+                    maxLength={MAX_BODY}
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 resize-y"
+                  />
+                </div>
+
+                <div className="rounded-xl border border-foreground/10 p-4 space-y-3">
+                  <SplitRow
+                    id="split-company"
+                    label="Company"
+                    value={company}
+                    onChange={setCompany}
+                  />
+                  {directors.map((d) => (
+                    <SplitRow
+                      key={d.id}
+                      id={`split-${d.id}`}
+                      label={d.name}
+                      value={shareValue(d.id)}
+                      onChange={(v) =>
+                        setShares((prev) => ({
+                          ...defaultSplit(directors),
+                          ...prev,
+                          [d.id]: v,
+                        }))
+                      }
+                    />
+                  ))}
+                  <p
+                    className={`text-xs font-bold text-right ${totalValid ? "text-emerald-500" : "text-rose-500"}`}
+                  >
+                    Total:{" "}
+                    {Number.isNaN(total) ? "—" : (total / 100).toFixed(2)}%
+                  </p>
+                </div>
+              </>
             )}
 
             <p className="text-xs text-foreground/50">
@@ -234,7 +246,7 @@ const ProposePolicyModal = ({
               </button>
               <button
                 type="submit"
-                disabled={saving || (isSplit && !totalValid)}
+                disabled={saving || !clientId || !totalValid}
                 className="px-6 py-3 bg-primary text-primary-content font-black rounded-xl hover:brightness-110 disabled:opacity-50"
               >
                 {saving ? "Proposing…" : "Propose"}

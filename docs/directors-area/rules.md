@@ -15,12 +15,15 @@
   total 10000). Each director gets the floor of their share and the **company
   keeps the rounding remainder**, so parts always add up exactly to the payment.
 
-## Revenue split
-- Lives in a policy of kind `revenue-split` (company % plus one % per active
-  director, two decimals, total 100).
-- The most recently approved one is in force; approving a new one marks the
-  previous one `superseded`.
-- Until one is approved, recording payments is blocked (HTTP 409).
+## Finance policy (revenue split)
+- Every policy has a client and type `finance` (the only type for now). It holds
+  the split: company % plus one % per active director, two decimals, total 100.
+- Each client has its own. The most recently approved one for that client is in
+  force; approving a new one marks the client's previous one `superseded`.
+- Until the client has one, recording that client's payments is blocked
+  (HTTP 409).
+- Policies created before clients were required have no client, so no payment
+  uses them. Propose a new policy per client.
 - If the set of active directors changes so the split no longer covers exactly
   them, recording is blocked until a new split is approved.
 - Each payment **snapshots** its split, so later policy changes never rewrite

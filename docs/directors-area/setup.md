@@ -4,11 +4,11 @@
 The three active admins are flagged as directors in the live database:
 Avinash Thakur, Gourav Kashiv and Mohit Thakur. Manish Gupta is an admin but
 inactive, so is not a director. If he is reactivated and should be a director,
-tick the box for him in Management and approve a new revenue split (the active
+tick the box for him in Management and approve a new finance policy for each client (an active
 split must cover exactly the active directors).
 
-No revenue split policy exists yet, so payments can't be recorded until one is
-proposed and approved.
+No client has a finance policy yet, so payments can't be recorded until one is
+proposed and approved for that client.
 
 ## Where directors find it
 Admins who are not superadmins land in **MemberHub** (`/member/dashboard`) after
@@ -20,13 +20,14 @@ admin panel (`/admin/dashboard?tab=...`). The admin panel's sidebar has a
 ## Turn it on
 1. Sign in as a superadmin → **Management → Staff** → edit each director →
    tick **Board director** → save. The tabs appear for them at next load.
-2. A director proposes a **Revenue split** policy (company % plus one % per
-   director, totalling 100) and another director approves it.
-3. Add clients, then record payments.
+2. Add clients.
+3. A director proposes a finance policy for a client (company % plus one % per
+   director, totalling 100) and another director approves it, then payments
+   for that client can be recorded.
 
 If a director is deactivated or a new one is added, the active split no longer
-matches the directors: propose and approve a new revenue split before recording
-more payments.
+matches the directors: propose and approve a new finance policy for the client
+before recording more of their payments.
 
 ## Environment variables
 | Variable | Used for |

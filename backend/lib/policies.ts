@@ -1,31 +1,29 @@
 import Policy from "@/backend/models/Policy";
 
 // Moves a still-open policy to its final status exactly once; an approved
-// revenue split replaces the previously active one.
+// policy replaces the client's previously active one.
 export async function applyOutcome(
   id: string,
-  kind: string,
+  client: string,
   status: "approved" | "rejected",
 ) {
   const res = await Policy.updateOne(
     { _id: id, status: "proposed" },
     { $set: { status, decidedAt: new Date() } },
   );
-  if (
-    res.modifiedCount === 1 &&
-    status === "approved" &&
-    kind === "revenue-split"
-  ) {
+  // Policies from before clients were required have none, so replace nothing.
+  if (res.modifiedCount === 1 && status === "approved" && client) {
     await Policy.updateMany(
-      { _id: { $ne: id }, kind: "revenue-split", status: "approved" },
+      { _id: { $ne: id }, client, type: "finance", status: "approved" },
       { $set: { status: "superseded" } },
     );
   }
 }
 
-// The revenue split currently in force, or null if none has been approved.
-export async function getActiveSplit() {
-  return Policy.findOne({ kind: "revenue-split", status: "approved" })
+// The finance policy currently in force for a client, or null if none has been
+// approved.
+export async function getActiveSplit(client: string) {
+  return Policy.findOne({ client, type: "finance", status: "approved" })
     .sort({ decidedAt: -1 })
     .lean();
 }

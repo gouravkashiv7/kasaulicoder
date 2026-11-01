@@ -229,7 +229,9 @@ export interface PolicyRecord {
   _id: string;
   title: string;
   body: string;
-  kind: "general" | "revenue-split";
+  type: "finance";
+  // Missing on policies created before a client was required
+  client?: { _id: string; name: string };
   split?: {
     companyBps: number;
     directors: Array<{ staff: { _id: string; name: string }; bps: number }>;

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import type { DirectorRef, PolicyRecord } from "../types";
+import type { ClientRecord, DirectorRef, PolicyRecord } from "../types";
 import ProposePolicyModal from "./modals/ProposePolicyModal";
 
 const STATUS_STYLE: Record<PolicyRecord["status"], string> = {
@@ -18,6 +18,9 @@ const pct = (bps: number) => `${(bps / 100).toFixed(2).replace(/\.00$/, "")}%`;
 const Policies = () => {
   const [policies, setPolicies] = useState<PolicyRecord[]>([]);
   const [directors, setDirectors] = useState<DirectorRef[]>([]);
+  const [clients, setClients] = useState<Pick<ClientRecord, "_id" | "name">[]>(
+    [],
+  );
   const [me, setMe] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -36,6 +39,7 @@ const Policies = () => {
       }
       setPolicies(data.policies);
       setDirectors(data.directors);
+      setClients(data.clients);
       setMe(data.me);
       setError("");
     } catch {
@@ -72,9 +76,7 @@ const Policies = () => {
   const visible = policies.filter((p) =>
     filter === "open" ? p.status === "proposed" : p.status !== "proposed",
   );
-  const activeSplit = policies.find(
-    (p) => p.kind === "revenue-split" && p.status === "approved",
-  );
+  const inForce = policies.filter((p) => p.client && p.status === "approved");
 
   return (
     <motion.div
@@ -103,24 +105,26 @@ const Policies = () => {
         </button>
       </div>
 
-      <div className="mb-6 rounded-2xl border border-foreground/10 bg-background/40 p-4 text-sm">
+      <div className="mb-6 rounded-2xl border border-foreground/10 bg-background/40 p-4 text-sm space-y-1">
         <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-1">
-          Active revenue split
+          Active finance policies
         </p>
-        {activeSplit?.split ? (
-          <p className="font-bold">
-            Company {pct(activeSplit.split.companyBps)}
-            {activeSplit.split.directors.map((d) => (
-              <span key={d.staff._id}>
-                {" · "}
-                {d.staff.name} {pct(d.bps)}
-              </span>
-            ))}
-          </p>
+        {inForce.length > 0 ? (
+          inForce.map((p) => (
+            <p key={p._id} className="font-bold">
+              {p.client?.name}: Company {pct(p.split?.companyBps ?? 0)}
+              {p.split?.directors.map((d) => (
+                <span key={d.staff._id}>
+                  {" · "}
+                  {d.staff.name} {pct(d.bps)}
+                </span>
+              ))}
+            </p>
+          ))
         ) : (
           <p className="text-foreground/50">
-            None yet. Propose a revenue split policy so client payments can be
-            recorded.
+            None yet. Propose a finance policy for a client so their payments
+            can be recorded.
           </p>
         )}
       </div>
@@ -179,7 +183,7 @@ const Policies = () => {
                     <p className="text-xs text-foreground/50">
                       Proposed by {p.proposedBy.name} ·{" "}
                       {new Date(p.createdAt).toLocaleDateString("en-IN")}
-                      {p.kind === "revenue-split" && " · Revenue split"}
+                      {p.client && ` · ${p.client.name}`} · Finance
                     </p>
                   </div>
                   <span
@@ -275,6 +279,7 @@ const Policies = () => {
       <ProposePolicyModal
         open={showPropose}
         directors={directors}
+        clients={clients}
         onClose={() => setShowPropose(false)}
         onProposed={() => {
           setShowPropose(false);
