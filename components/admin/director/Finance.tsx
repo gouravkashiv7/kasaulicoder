@@ -169,7 +169,11 @@ const Finance = () => {
             <ExpensesSection expenses={expenses} me={me} onChanged={load} />
           )}
           {section === "clients" && (
-            <ClientsSection clients={clients} onChanged={load} />
+            <ClientsSection
+              clients={clients}
+              directors={summary?.directorShares ?? []}
+              onChanged={load}
+            />
           )}
         </>
       )}

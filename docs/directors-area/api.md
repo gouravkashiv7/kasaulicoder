@@ -15,7 +15,7 @@ except attachment download.
 | Method & path | Purpose |
 |---------------|---------|
 | `GET /finance/summary` | Totals, company balance, each director's share, `awaitingMyApproval` |
-| `GET /finance/clients` · `POST` · `PUT` | List; add `{ name, email?, phone?, notes? }`; edit or archive `{ id, …, isActive? }` |
+| `GET /finance/clients` · `POST` · `PUT` | List; add `{ name, email?, phone?, notes?, managedBy? }` (`managedBy` is an active director id, or blank for none); edit or archive `{ id, …, isActive? }` |
 | `GET /finance/payments` | `{ payments, clientsWithPolicy }` (ids of clients with an approved finance policy) |
 | `POST /finance/payments` | `{ clientId, amount, receivedOn (YYYY-MM-DD), reference?, note?, attachmentId? }`. 409 if no split or split no longer matches directors |
 | `POST /finance/payments/[id]/void` | `{ reason }` |

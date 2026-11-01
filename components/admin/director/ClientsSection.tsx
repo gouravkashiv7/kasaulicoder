@@ -9,12 +9,17 @@ import FinanceFormModal, {
 
 interface ClientsSectionProps {
   clients: ClientRecord[];
+  directors: Array<{ id: string; name: string }>;
   onChanged: () => void;
 }
 
-const EMPTY = { name: "", email: "", phone: "", notes: "" };
+const EMPTY = { name: "", email: "", phone: "", notes: "", managedBy: "" };
 
-const ClientsSection = ({ clients, onChanged }: ClientsSectionProps) => {
+const ClientsSection = ({
+  clients,
+  directors,
+  onChanged,
+}: ClientsSectionProps) => {
   const [editing, setEditing] = useState<ClientRecord | "new" | null>(null);
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
@@ -31,6 +36,7 @@ const ClientsSection = ({ clients, onChanged }: ClientsSectionProps) => {
             email: client.email ?? "",
             phone: client.phone ?? "",
             notes: client.notes ?? "",
+            managedBy: client.managedBy?._id ?? "",
           },
     );
   };
@@ -48,9 +54,15 @@ const ClientsSection = ({ clients, onChanged }: ClientsSectionProps) => {
     setSaving(true);
     setError("");
     try {
+      // An unchanged manager is left out so a deactivated one doesn't block
+      // editing the rest of the client.
+      const { managedBy, ...rest } = form;
+      const managerChanged =
+        editing === "new" || managedBy !== (editing?.managedBy?._id ?? "");
+      const fields = managerChanged ? form : rest;
       await call(
         editing === "new" ? "POST" : "PUT",
-        editing === "new" || !editing ? form : { id: editing._id, ...form },
+        editing === "new" || !editing ? fields : { id: editing._id, ...fields },
       );
       setEditing(null);
       onChanged();
@@ -118,6 +130,9 @@ const ClientsSection = ({ clients, onChanged }: ClientsSectionProps) => {
                   </button>
                 </div>
               </div>
+              <p className="mt-2 text-xs text-foreground/60">
+                Payments managed by: {c.managedBy?.name ?? "Not assigned"}
+              </p>
               {c.notes && (
                 <p className="mt-2 text-xs text-foreground/60">{c.notes}</p>
               )}
@@ -149,6 +164,24 @@ const ClientsSection = ({ clients, onChanged }: ClientsSectionProps) => {
             />
           </div>
         ))}
+        <div className="space-y-1.5">
+          <label htmlFor="client-managed-by" className={labelClass}>
+            Payments managed by
+          </label>
+          <select
+            id="client-managed-by"
+            value={form.managedBy}
+            onChange={(e) => setForm({ ...form, managedBy: e.target.value })}
+            className={fieldClass}
+          >
+            <option value="">Not assigned</option>
+            {directors.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="space-y-1.5">
           <label htmlFor="client-notes" className={labelClass}>
             Notes

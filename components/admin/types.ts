@@ -264,6 +264,7 @@ export interface ClientRecord {
   email?: string;
   phone?: string;
   notes?: string;
+  managedBy?: { _id: string; name: string } | null;
   isActive: boolean;
 }
 

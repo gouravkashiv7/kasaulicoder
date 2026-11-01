@@ -2,10 +2,18 @@ import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
+import { getActiveDirectors } from "@/backend/lib/directors";
 import Client from "@/backend/models/Client";
 
 const clip = (v: unknown, max: number) =>
   typeof v === "string" ? v.trim().slice(0, max) : "";
+
+// A blank value clears the manager; otherwise it must be an active director.
+async function parseManager(value: unknown): Promise<string | null | false> {
+  if (value === "" || value === null) return null;
+  const directors = await getActiveDirectors();
+  return directors.some((d) => d.id === value) ? String(value) : false;
+}
 
 // GET — all clients
 export async function GET() {
@@ -14,7 +22,10 @@ export async function GET() {
     if ("error" in auth) return auth.error;
 
     await connectDB();
-    const clients = await Client.find({}).sort({ name: 1 }).lean();
+    const clients = await Client.find({})
+      .sort({ name: 1 })
+      .populate("managedBy", "name")
+      .lean();
     return NextResponse.json(clients);
   } catch (error) {
     console.error(error);
@@ -38,11 +49,19 @@ export async function POST(req: Request) {
     }
 
     await connectDB();
+    const managedBy = await parseManager(body.managedBy ?? "");
+    if (managedBy === false) {
+      return NextResponse.json(
+        { error: "Choose an active director" },
+        { status: 400 },
+      );
+    }
     const client = await Client.create({
       name,
       email: clip(body.email, 200) || undefined,
       phone: clip(body.phone, 40) || undefined,
       notes: clip(body.notes, 1000) || undefined,
+      managedBy: managedBy ?? undefined,
       createdBy: auth.session.id,
     });
     return NextResponse.json(client, { status: 201 });
@@ -83,6 +102,16 @@ export async function PUT(req: Request) {
     if (typeof body.isActive === "boolean") update.isActive = body.isActive;
 
     await connectDB();
+    if (body.managedBy !== undefined) {
+      const managedBy = await parseManager(body.managedBy);
+      if (managedBy === false) {
+        return NextResponse.json(
+          { error: "Choose an active director" },
+          { status: 400 },
+        );
+      }
+      update.managedBy = managedBy;
+    }
     const client = await Client.findByIdAndUpdate(body.id, update, {
       new: true,
     });
