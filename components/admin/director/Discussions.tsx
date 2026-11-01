@@ -22,6 +22,34 @@ const when = (iso: string) =>
     minute: "2-digit",
   });
 
+// Google Meet codes look like abc-defg-hij
+const MEET_LINK =
+  /^https:\/\/meet\.google\.com\/[a-z]{3}-[a-z]{4}-[a-z]{3}(?:\?\S*)?$/;
+const MEET_IN_TEXT =
+  /(https:\/\/meet\.google\.com\/[a-z]{3}-[a-z]{4}-[a-z]{3}(?:\?\S*)?)/;
+
+// Message text with Google Meet links made clickable; everything else stays plain
+const MessageText = ({ text }: { text: string }) => {
+  let offset = 0;
+  return text.split(MEET_IN_TEXT).map((part, i) => {
+    const key = offset;
+    offset += part.length;
+    return i % 2 ? (
+      <a
+        key={key}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-bold text-primary underline"
+      >
+        {part}
+      </a>
+    ) : (
+      <span key={key}>{part}</span>
+    );
+  });
+};
+
 const Discussions = () => {
   const [threads, setThreads] = useState<DiscussionThread[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -33,6 +61,8 @@ const Discussions = () => {
   const [error, setError] = useState("");
   const [reply, setReply] = useState("");
   const [sending, setSending] = useState(false);
+  const [meetOpen, setMeetOpen] = useState(false);
+  const [meetLink, setMeetLink] = useState("");
 
   const [newOpen, setNewOpen] = useState(false);
   const [newForm, setNewForm] = useState({ title: "", body: "" });
@@ -101,14 +131,16 @@ const Discussions = () => {
   const open = (id: string) => {
     setSelectedId(id);
     setMessages([]);
+    setMeetOpen(false);
+    setMeetLink("");
     setThreads((prev) =>
       prev.map((t) => (t._id === id ? { ...t, unread: false } : t)),
     );
   };
 
-  const sendReply = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedId || !reply.trim()) return;
+  // Posts a message to the open thread; returns whether it was sent
+  const postMessage = async (body: string) => {
+    if (!selectedId) return false;
     setSending(true);
     try {
       const res = await fetch(
@@ -116,19 +148,45 @@ const Discussions = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ body: reply }),
+          body: JSON.stringify({ body }),
         },
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to send");
-      setReply("");
       await Promise.all([loadThread(selectedId), loadThreads()]);
+      return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send");
+      return false;
     } finally {
       setSending(false);
     }
   };
+
+  const sendReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reply.trim()) return;
+    if (await postMessage(reply)) setReply("");
+  };
+
+  // meet.google.com/new creates an instant meeting for whoever is signed in to Google
+  const startMeet = () => {
+    window.open("https://meet.google.com/new", "_blank", "noopener,noreferrer");
+    setMeetOpen(true);
+  };
+
+  const shareMeet = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const link = meetLink.trim();
+    if (!MEET_LINK.test(link)) return;
+    if (await postMessage(`Join the Google Meet: ${link}`)) {
+      setMeetOpen(false);
+      setMeetLink("");
+    }
+  };
+
+  const meetLinkInvalid =
+    meetLink.trim() !== "" && !MEET_LINK.test(meetLink.trim());
 
   const createThread = async () => {
     setModalBusy(true);
@@ -291,8 +349,65 @@ const Discussions = () => {
                   >
                     arrow_back
                   </button>
-                  <h2 className="font-black truncate">{title}</h2>
+                  <h2 className="font-black truncate flex-1">{title}</h2>
+                  <button
+                    type="button"
+                    onClick={startMeet}
+                    className="shrink-0 flex items-center gap-2 rounded-xl bg-foreground/5 px-3 py-2 text-sm font-bold hover:bg-foreground/10"
+                  >
+                    <span className="material-symbols-outlined text-lg">
+                      videocam
+                    </span>
+                    Start Google Meet
+                  </button>
                 </header>
+                {meetOpen && (
+                  <form
+                    onSubmit={shareMeet}
+                    className="space-y-2 border-b border-foreground/10 bg-primary/5 p-4"
+                  >
+                    <label htmlFor="meet-link" className={labelClass}>
+                      Meeting link
+                    </label>
+                    <p className="text-xs text-foreground/50">
+                      Google Meet opened in a new tab. Copy its meeting link,
+                      paste it here and share it with the other directors.
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        id="meet-link"
+                        value={meetLink}
+                        onChange={(e) => setMeetLink(e.target.value)}
+                        placeholder="https://meet.google.com/abc-defg-hij"
+                        aria-invalid={meetLinkInvalid}
+                        className={fieldClass}
+                      />
+                      <button
+                        type="submit"
+                        disabled={sending || !MEET_LINK.test(meetLink.trim())}
+                        className="px-5 rounded-xl bg-primary text-primary-content font-black disabled:opacity-50"
+                      >
+                        Share
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMeetOpen(false)}
+                        className="px-3 rounded-xl text-sm font-bold text-foreground/60 hover:bg-foreground/5"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                    {meetLinkInvalid && (
+                      <p
+                        role="alert"
+                        className="text-xs font-bold text-rose-500"
+                      >
+                        Enter a Google Meet link like
+                        https://meet.google.com/abc-defg-hij
+                      </p>
+                    )}
+                  </form>
+                )}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-[60dvh]">
                   {messages.map((m) => {
                     const mine = m.author._id === me;
@@ -308,7 +423,7 @@ const Discussions = () => {
                             {m.author.name} · {when(m.createdAt)}
                           </p>
                           <p className="whitespace-pre-wrap wrap-break-word">
-                            {m.body}
+                            <MessageText text={m.body} />
                           </p>
                         </div>
                         <div className="mt-1 flex flex-wrap gap-x-3 text-[11px] text-foreground/40">

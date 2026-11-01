@@ -73,6 +73,16 @@
   is added above it. All text is HTML-escaped.
 - 10 emails per 10 minutes per IP. Each email is recorded on the message.
 
+## Google Meet
+- **Start Google Meet** in a thread opens `meet.google.com/new` in a new tab, which
+  creates an instant meeting for whoever is signed in to Google.
+- The director pastes the meeting link back and **Share** posts it as a normal
+  message. Only `https://meet.google.com/abc-defg-hij` style links are accepted,
+  and only those are made clickable in messages.
+- No Google API or sign-in is involved, so nothing is stored beyond the message.
+  Creating and sharing the meeting automatically would need Google Calendar OAuth
+  (not built).
+
 ## Sidebar badges
 Counts of what waits on the viewer: policies not yet voted on, expenses awaiting
 their decision, unread threads. Refreshed on tab change and every 30 seconds.
