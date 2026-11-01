@@ -70,7 +70,8 @@ function parseFields(
       return { error: "Enter a valid cost in rupees (up to 2 decimals)" };
     }
   }
-  const costPeriod = String(body.costPeriod ?? "yearly");
+  const costPeriod =
+    kind === "domain" ? "yearly" : String(body.costPeriod ?? "yearly");
   if (!(COST_PERIODS as readonly string[]).includes(costPeriod)) {
     return { error: "Choose how often the cost is paid" };
   }

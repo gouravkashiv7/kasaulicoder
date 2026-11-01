@@ -257,12 +257,14 @@ const Assets = () => {
           <select
             id="asset-kind"
             value={form.kind}
-            onChange={(e) =>
+            onChange={(e) => {
+              const nextKind = e.target.value as CompanyAssetRecord["kind"];
               setForm({
                 ...form,
-                kind: e.target.value as CompanyAssetRecord["kind"],
-              })
-            }
+                kind: nextKind,
+                costPeriod: nextKind === "domain" ? "yearly" : form.costPeriod,
+              });
+            }}
             className={fieldClass}
           >
             {KINDS.map((k) => (
@@ -329,13 +331,14 @@ const Assets = () => {
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <label htmlFor="asset-cost" className={labelClass}>
-              Cost (₹)
+              {isDomain ? "Latest renewal cost (₹)" : "Cost (₹)"}
             </label>
             <input
               id="asset-cost"
               inputMode="decimal"
               value={form.cost}
               onChange={(e) => setForm({ ...form, cost: e.target.value })}
+              placeholder={isDomain ? "e.g. 1200" : ""}
               className={fieldClass}
             />
           </div>
@@ -343,26 +346,41 @@ const Assets = () => {
             <label htmlFor="asset-period" className={labelClass}>
               Paid
             </label>
-            <select
-              id="asset-period"
-              value={form.costPeriod}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  costPeriod: e.target
-                    .value as CompanyAssetRecord["costPeriod"],
-                })
-              }
-              className={fieldClass}
-            >
-              {PERIODS.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.label}
-                </option>
-              ))}
-            </select>
+            {isDomain ? (
+              <div
+                className={`${fieldClass} flex items-center bg-foreground/5 text-foreground/70 select-none`}
+              >
+                per year
+              </div>
+            ) : (
+              <select
+                id="asset-period"
+                value={form.costPeriod}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    costPeriod: e.target
+                      .value as CompanyAssetRecord["costPeriod"],
+                  })
+                }
+                className={fieldClass}
+              >
+                {PERIODS.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         </div>
+        {isDomain && (
+          <p className="-mt-1 text-xs text-foreground/50">
+            Domain renewal costs can fluctuate yearly. Update this rate upon
+            renewal, and log the actual payment receipt under Finance →
+            Expenses.
+          </p>
+        )}
         <label className="flex items-center gap-2 text-sm font-bold">
           <input
             type="checkbox"
