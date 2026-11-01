@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import { parseImageDataUrl } from "@/backend/lib/attachments";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import {
@@ -212,12 +213,23 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.role !== "superadmin") {
+    // Admins may edit the profile details of editors and support staff. Roles,
+    // the director flag and everyone above them stay with a superadmin.
+    const isSuper = session.role === "superadmin";
+    if (!isSuper && session.role !== "admin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    const { id, name, role, designation, roleDescription, image, isDirector } =
-      await req.json();
+    const {
+      id,
+      name,
+      email,
+      role,
+      designation,
+      roleDescription,
+      image,
+      isDirector,
+    } = await req.json();
 
     if (!id) {
       return NextResponse.json({ error: "Staff id required" }, { status: 400 });
@@ -230,24 +242,58 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Staff not found" }, { status: 404 });
     }
 
-    if (name) staff.name = name;
-    if (role) staff.role = role;
-    if (designation !== undefined) staff.designation = designation;
-    if (roleDescription !== undefined) staff.roleDescription = roleDescription;
-    if (typeof isDirector === "boolean") staff.isDirector = isDirector;
+    if (!isSuper && !["editor", "support"].includes(staff.role)) {
+      return NextResponse.json(
+        { error: "Admins can only edit editors and support staff" },
+        { status: 403 },
+      );
+    }
 
-    if (image) {
-      const base64Data = image.split(",")[1];
-      if (base64Data) {
-        const buffer = Buffer.from(base64Data, "base64");
-        if (buffer.length > 200 * 1024) {
+    // Validate a changed photo before saving anything. "" removes it, and a
+    // photo sent back unchanged is left alone.
+    if (typeof image === "string" && image !== "" && image !== staff.image) {
+      const parsed = parseImageDataUrl(image);
+      if ("error" in parsed) {
+        return NextResponse.json({ error: parsed.error }, { status: 400 });
+      }
+      if (parsed.data.length > 200 * 1024) {
+        return NextResponse.json(
+          { error: "Image size exceeds 200KB limit." },
+          { status: 400 },
+        );
+      }
+    }
+
+    if (typeof email === "string" && email.trim()) {
+      const nextEmail = email.trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextEmail)) {
+        return NextResponse.json(
+          { error: "Enter a valid email address" },
+          { status: 400 },
+        );
+      }
+      if (nextEmail !== staff.email) {
+        const emailUsed = await Staff.findOne({
+          email: nextEmail,
+          _id: { $ne: staff._id },
+        }).collation(EMAIL_COLLATION);
+        if (emailUsed) {
           return NextResponse.json(
-            { error: "Image size exceeds 200KB limit." },
+            { error: "Email already in use" },
             { status: 400 },
           );
         }
-        staff.image = image;
+        staff.email = nextEmail;
       }
+    }
+
+    if (name) staff.name = name;
+    if (designation !== undefined) staff.designation = designation;
+    if (roleDescription !== undefined) staff.roleDescription = roleDescription;
+    if (typeof image === "string") staff.image = image;
+    if (isSuper) {
+      if (role) staff.role = role;
+      if (typeof isDirector === "boolean") staff.isDirector = isDirector;
     }
 
     await staff.save();

@@ -37,6 +37,16 @@
 - "Update Profile" reads the field values from the form at submit time, so
   autofill, password managers and scripted fills are saved even when no change
   event fired.
+- The dashboard view has an **Edit profile** button (photo, name, email,
+  designation, role description) via `components/member/ProfileEditModal.tsx`.
+  Admins and superadmins also get a **Team members** list
+  (`components/member/TeamSection.tsx`) to edit other members the same way
+  through `PUT /api/admin/staff`.
+- `PUT /api/admin/staff`: a superadmin edits anyone (role, director flag, email,
+  photo and the rest); an **admin** may edit only **editors and support**
+  members' name, email, photo, designation and role description. Roles, the
+  director flag, other admins and superadmins stay superadmin-only. Email is
+  validated and must be unused; `image: ""` removes the photo.
 - `app/api/member/profile/route.ts` (PATCH) accepts `designation`,
   `roleDescription` and `image` for `admin` and `superadmin` roles only; other
   roles stay read-only. The photo must be a JPEG/PNG/WebP data URL whose bytes

@@ -15,6 +15,10 @@ import type {
   SocialMediaAccount,
   SocialMediaFormData,
 } from "@/components/admin/types";
+import ProfileEditModal, {
+  type ProfileValues,
+} from "@/components/member/ProfileEditModal";
+import TeamSection from "@/components/member/TeamSection";
 import UniqueLoading from "@/components/ui/morph-loading";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 import { squareAvatar } from "@/lib/imageResize";
@@ -1169,6 +1173,40 @@ const MemberDashboard = () => {
     }
   };
 
+  // "Edit profile" on the dashboard card saves through the same endpoint as
+  // Settings
+  const [editingSelf, setEditingSelf] = useState(false);
+
+  const saveSelf = async (values: ProfileValues, imageChanged: boolean) => {
+    const { image, ...text } = values;
+    const res = await fetch("/api/member/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(imageChanged ? { ...text, image } : text),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) return data.error || "Update failed";
+
+    await fetchProfile();
+    try {
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            ...JSON.parse(stored),
+            name: data.user.name,
+            email: data.user.email,
+            image: data.user.image,
+          }),
+        );
+      }
+    } catch {
+      // the cached copy is only a convenience
+    }
+    return null;
+  };
+
   const fetchBlogs = useCallback(async () => {
     setFetchingBlogs(true);
     try {
@@ -1339,6 +1377,11 @@ const MemberDashboard = () => {
     }
     return true;
   });
+
+  // Admins and superadmins keep their own photo, title and bio, and look after
+  // their team's details too
+  const canEditProfileText =
+    user?.role === "admin" || user?.role === "superadmin";
 
   if (loading) return null;
 
@@ -1571,6 +1614,36 @@ const MemberDashboard = () => {
                   </p>
                 </div>
 
+                <div className="mb-6 flex items-center gap-4 rounded-2xl border border-foreground/10 bg-foreground/3 p-6">
+                  <div className="size-16 rounded-2xl border border-foreground/10 bg-foreground/5 overflow-hidden flex items-center justify-center shrink-0">
+                    {user?.image ? (
+                      // biome-ignore lint/performance/noImgElement: data URL photo
+                      <img
+                        src={user.image}
+                        alt={user.name}
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <span className="material-symbols-outlined text-2xl text-foreground/30">
+                        person
+                      </span>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-lg font-black truncate">{user?.name}</p>
+                    <p className="text-sm text-foreground/50 truncate">
+                      {user?.email}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setEditingSelf(true)}
+                    className="shrink-0 px-4 py-2 rounded-xl bg-primary/10 text-primary text-xs font-black hover:bg-primary/20"
+                  >
+                    Edit profile
+                  </button>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-foreground/3 border border-foreground/10 p-6 rounded-2xl">
                     <div className="size-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 text-primary">
@@ -1601,6 +1674,26 @@ const MemberDashboard = () => {
                     </p>
                   </div>
                 </div>
+
+                {canEditProfileText && (
+                  <TeamSection viewerRole={user?.role ?? ""} />
+                )}
+
+                {editingSelf && user && (
+                  <ProfileEditModal
+                    title="Edit profile"
+                    initial={{
+                      name: user.name,
+                      email: user.email ?? "",
+                      designation: user.designation ?? "",
+                      roleDescription: user.roleDescription ?? "",
+                      image: user.image ?? "",
+                    }}
+                    showProfileText={canEditProfileText}
+                    onClose={() => setEditingSelf(false)}
+                    onSave={saveSelf}
+                  />
+                )}
               </motion.div>
             )}
 
@@ -1877,7 +1970,7 @@ const MemberDashboard = () => {
                       </div>
                     )}
 
-                    {user?.role === "admin" && (
+                    {canEditProfileText && (
                       <div className="flex items-center gap-5">
                         <div className="size-20 rounded-2xl border border-foreground/10 bg-foreground/5 overflow-hidden flex items-center justify-center shrink-0">
                           {profileData.image ? (
@@ -2003,7 +2096,7 @@ const MemberDashboard = () => {
                       />
                     </div>
 
-                    {user?.role === "admin" && (
+                    {canEditProfileText && (
                       <>
                         <div className="space-y-2">
                           <label
