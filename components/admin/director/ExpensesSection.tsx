@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { formatINR } from "@/backend/lib/money";
 import type { ExpenseRecord } from "../types";
+import MonthFilter, { useMonthFilter } from "./MonthFilter";
 import FinanceFormModal, {
   fieldClass,
   labelClass,
@@ -27,6 +28,7 @@ type Action =
   | { kind: "release"; expense: ExpenseRecord };
 
 const ExpensesSection = ({ expenses, me, onChanged }: ExpensesSectionProps) => {
+  const monthly = useMonthFilter(expenses, (x) => x.createdAt);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ purpose: "", amount: "" });
   const [attachmentId, setAttachmentId] = useState<string | null>(null);
@@ -131,13 +133,24 @@ const ExpensesSection = ({ expenses, me, onChanged }: ExpensesSectionProps) => {
         </p>
       )}
 
+      <MonthFilter
+        months={monthly.months}
+        value={monthly.month}
+        onChange={monthly.setMonth}
+        summary={`${monthly.filtered.length} expenses · ${formatINR(
+          monthly.filtered
+            .filter((x) => x.status !== "rejected")
+            .reduce((s, x) => s + x.amountPaise, 0),
+        )} requested`}
+      />
+
       {expenses.length === 0 ? (
         <p className="rounded-2xl border border-foreground/10 p-10 text-center font-bold text-foreground/40">
           No expenses yet.
         </p>
       ) : (
         <ul className="space-y-3">
-          {expenses.map((x) => {
+          {monthly.filtered.map((x) => {
             const mine = x.requestedBy._id === me;
             const myDecision = x.approvals.find((a) => a.staff._id === me);
             return (

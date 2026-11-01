@@ -6,30 +6,31 @@ import {
   evaluatePolicy,
 } from "../governance.ts";
 
-test("two approvals are required", () => {
-  assert.equal(APPROVALS_REQUIRED, 2);
+test("three approvals are required", () => {
+  assert.equal(APPROVALS_REQUIRED, 3);
 });
 
-test("policy stays proposed with a single yes", () => {
+test("policy stays proposed until every director has approved", () => {
   assert.equal(evaluatePolicy([{ vote: "yes" }], 3), "proposed");
-});
-
-test("policy passes at two yes votes", () => {
   assert.equal(
     evaluatePolicy([{ vote: "yes" }, { vote: "yes" }], 3),
+    "proposed",
+  );
+});
+
+test("policy passes at three yes votes", () => {
+  assert.equal(
+    evaluatePolicy([{ vote: "yes" }, { vote: "yes" }, { vote: "yes" }], 3),
     "approved",
   );
 });
 
-test("policy is rejected once approval is impossible", () => {
-  assert.equal(
-    evaluatePolicy([{ vote: "yes" }, { vote: "no" }, { vote: "no" }], 3),
-    "rejected",
-  );
+test("a single no rejects a policy that needs every director", () => {
   assert.equal(
     evaluatePolicy([{ vote: "yes" }, { vote: "no" }], 3),
-    "proposed",
+    "rejected",
   );
+  assert.equal(evaluatePolicy([{ vote: "no" }], 3), "rejected");
 });
 
 test("approval threshold never exceeds the number of directors", () => {
@@ -101,4 +102,12 @@ test("votes from non-directors are ignored", () => {
 
 test("an expense with no other directors can never self-approve", () => {
   assert.equal(evaluateExpense([], "a", ["a"]), "pending");
+});
+
+test("with four directors three yes votes pass and two no votes reject", () => {
+  const y = { vote: "yes" } as const;
+  const n = { vote: "no" } as const;
+  assert.equal(evaluatePolicy([y, y, y], 4), "approved");
+  assert.equal(evaluatePolicy([y, n], 4), "proposed");
+  assert.equal(evaluatePolicy([y, n, n], 4), "rejected");
 });

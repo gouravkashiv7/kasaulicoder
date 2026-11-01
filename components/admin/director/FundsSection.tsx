@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { equalShares, formatINR } from "@/backend/lib/money";
 import type { ContributionRecord } from "../types";
+import MonthFilter, { useMonthFilter } from "./MonthFilter";
 import FinanceFormModal, {
   fieldClass,
   labelClass,
@@ -28,6 +29,7 @@ const FundsSection = ({
   directorCount,
   onChanged,
 }: FundsSectionProps) => {
+  const monthly = useMonthFilter(contributions, (c) => c.createdAt);
   const [dialog, setDialog] = useState<
     | { kind: "start" }
     | { kind: "confirm"; contribution: ContributionRecord }
@@ -89,13 +91,24 @@ const FundsSection = ({
         </button>
       </div>
 
+      <MonthFilter
+        months={monthly.months}
+        value={monthly.month}
+        onChange={monthly.setMonth}
+        summary={`${monthly.filtered.length} contributions · ${formatINR(
+          monthly.filtered
+            .filter((c) => c.status === "completed")
+            .reduce((s, c) => s + c.totalPaise, 0),
+        )} added`}
+      />
+
       {contributions.length === 0 ? (
         <p className="rounded-2xl border border-foreground/10 p-10 text-center font-bold text-foreground/40">
           No contributions yet.
         </p>
       ) : (
         <ul className="space-y-3">
-          {contributions.map((c) => {
+          {monthly.filtered.map((c) => {
             const mine = c.shares.find((s) => s.staff._id === me);
             return (
               <li

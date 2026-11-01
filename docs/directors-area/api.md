@@ -8,7 +8,7 @@ except attachment download.
 | Method & path | Purpose |
 |---------------|---------|
 | `GET /policies` | `{ policies, directors, me }`, newest first |
-| `POST /policies` | Propose a finance policy for a client: `{ clientId, title, body, split }`, where `split = { companyPercent, directors: [{ staff, percent }], outsourced?: { name, percent } }` (`outsourced` is an optional share for a non-director such as an employee); every active director must appear and the total must be 100 |
+| `POST /policies` | 409 if the client already has a proposal waiting for votes. Propose a finance policy for a client: `{ clientId, title, body, split }`, where `split = { companyPercent, directors: [{ staff, percent }], outsourced?: { name, percent } }` (`outsourced` is an optional share for a non-director such as an employee); every active director must appear and the total must be 100 |
 | `POST /policies/[id]/vote` | `{ vote: "yes" \| "no", comment? }` → `{ status }` |
 
 ## Finance

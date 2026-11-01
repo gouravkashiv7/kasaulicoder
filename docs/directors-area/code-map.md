@@ -5,6 +5,7 @@
 - `lib/money.ts`: `toPaise`, `formatINR`, `splitPaise` (pure).
 - `lib/governance.ts`: `APPROVALS_REQUIRED`, `evaluatePolicy`, `evaluateExpense` (pure).
 - `lib/softDelete.ts`: `softDeleteFields`, `NOT_DELETED` filter, `SoftDeletable`; `lib/auth.ts` also has `requireSuperAdmin()`.
+- `lib/months.ts`: `monthKey`, `monthLabel`, `monthOptions` (pure, tested); UI in `director/MonthFilter.tsx`.
 - `lib/directors.ts`: `getActiveDirectors()`.
 - `lib/policies.ts`: `applyOutcome()` (single final transition, supersede), `getActiveSplit()`.
 - `lib/proofFormat.ts`: `parseProofDataUrl` (PNG/JPG/PDF), `domainName` (pure, tested).

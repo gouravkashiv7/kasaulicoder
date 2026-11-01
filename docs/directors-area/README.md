@@ -4,7 +4,7 @@ A private part of the admin dashboard for the company's board of directors
 (currently three admins holding 33.33% each). It adds four tabs:
 
 - **Finance**: client payments, share calculation, company expenses.
-- **Policies**: proposals that pass with two director approvals.
+- **Policies**: proposals that pass with three director approvals.
 - **Assets**: domains and other company assets, with expiry reminders.
 - **Discussions**: threaded chat with an "email this message" action.
 
@@ -31,8 +31,8 @@ Only staff with the **Board director** flag can see or call any of it.
 2. Directors sign in at `/login` (Admin) and open **Finance**, **Policies** or
    **Discussions** from the sidebar.
 3. Add a client, then propose a finance policy for that client under Policies
-   (pick the client first, then set the split) and have a second director
-   approve it. Until the client has one, their payments can't be recorded.
+   (pick the client first, then set the split) and have the other directors
+   approve it (all three must). Until the client has one, their payments can't be recorded.
 
 ## Known limits
 

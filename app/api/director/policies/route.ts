@@ -101,6 +101,24 @@ export async function POST(req: Request) {
       );
     }
 
+    // A client has one policy in force and at most one proposal waiting for
+    // votes; a new one replaces the old only once it is approved.
+    if (
+      await Policy.exists({
+        client: client._id,
+        status: "proposed",
+        ...NOT_DELETED,
+      })
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "This client already has a proposal waiting for votes. Decide it before proposing another.",
+        },
+        { status: 409 },
+      );
+    }
+
     const companyBps = toBps(body.split?.companyPercent);
     const entries: unknown = body.split?.directors;
     if (companyBps === null || !Array.isArray(entries)) {

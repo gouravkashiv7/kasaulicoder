@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { formatINR } from "@/backend/lib/money";
 import type { ClientRecord, PaymentRecord } from "../types";
+import MonthFilter, { useMonthFilter } from "./MonthFilter";
 import FinanceFormModal, {
   fieldClass,
   labelClass,
@@ -31,6 +32,8 @@ const PaymentsSection = ({
   clientsWithPolicy,
   onChanged,
 }: PaymentsSectionProps) => {
+  // Received dates are saved as a plain day, so they are grouped in UTC
+  const monthly = useMonthFilter(payments, (p) => p.receivedOn, true);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState(EMPTY);
   const [attachmentId, setAttachmentId] = useState<string | null>(null);
@@ -114,13 +117,24 @@ const PaymentsSection = ({
         </button>
       </div>
 
+      <MonthFilter
+        months={monthly.months}
+        value={monthly.month}
+        onChange={monthly.setMonth}
+        summary={`${monthly.filtered.length} payments · ${formatINR(
+          monthly.filtered
+            .filter((p) => p.status === "recorded")
+            .reduce((s, p) => s + p.amountPaise, 0),
+        )} received`}
+      />
+
       {payments.length === 0 ? (
         <p className="rounded-2xl border border-foreground/10 p-10 text-center font-bold text-foreground/40">
           No payments recorded yet.
         </p>
       ) : (
         <ul className="space-y-3">
-          {payments.map((p) => (
+          {monthly.filtered.map((p) => (
             <li
               key={p._id}
               className={`rounded-2xl border border-foreground/10 bg-background/40 p-4 ${p.status === "void" ? "opacity-60" : ""}`}

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import type { ClientRecord, DirectorRef, PolicyRecord } from "../types";
+import MonthFilter, { useMonthFilter } from "./MonthFilter";
 import ProposePolicyModal from "./modals/ProposePolicyModal";
 
 const STATUS_STYLE: Record<PolicyRecord["status"], string> = {
@@ -73,9 +74,11 @@ const Policies = () => {
     }
   };
 
-  const visible = policies.filter((p) =>
+  const inTab = policies.filter((p) =>
     filter === "open" ? p.status === "proposed" : p.status !== "proposed",
   );
+  const monthly = useMonthFilter(inTab, (p) => p.createdAt);
+  const visible = monthly.filtered;
   const inForce = policies.filter((p) => p.client && p.status === "approved");
 
   return (
@@ -92,7 +95,7 @@ const Policies = () => {
             Policies
           </h1>
           <p className="text-foreground/50">
-            Proposals need two director approvals to pass.
+            Proposals need 3 director approvals to pass.
           </p>
         </div>
         <button
@@ -155,6 +158,13 @@ const Policies = () => {
           {error}
         </p>
       )}
+
+      <MonthFilter
+        months={monthly.months}
+        value={monthly.month}
+        onChange={monthly.setMonth}
+        summary={`${visible.length} ${visible.length === 1 ? "policy" : "policies"}`}
+      />
 
       {loading ? (
         <div className="p-20 text-center animate-pulse text-primary font-bold">

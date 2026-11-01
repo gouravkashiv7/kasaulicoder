@@ -35,9 +35,13 @@
 
 ## Policies
 - Any director proposes. The proposer's vote counts as the first approval.
-- **Passes** at 2 approvals (`APPROVALS_REQUIRED` in `backend/lib/governance.ts`,
-  capped at the number of directors). **Rejected** once approval is impossible
-  (with 3 directors: 2 "no" votes).
+- **Passes** at 3 approvals (`APPROVALS_REQUIRED` in `backend/lib/governance.ts`,
+  capped at the number of directors), so with three directors all must approve.
+  **Rejected** once approval is impossible (with 3 directors: a single "no").
+- One policy is in force per client and it is only ever **replaced**: approving
+  a new one supersedes the old. A client can also have **only one open
+  proposal** at a time; proposing another while one waits for votes is refused
+  (409). Decide it first.
 - A director can change their vote while the policy is open. Once decided it is
   final; changes need a new proposal.
 - Votes are written atomically and the final transition happens once, so
@@ -51,7 +55,7 @@
 
 ## Expenses
 - A director submits purpose, amount and a payment screenshot (required).
-- **Every other director** must approve (2 of 2 today). One rejection (with a
+- **Every other director** must approve (the other 2 of 3 today). One rejection (with a
   reason) ends it as rejected; the requester can **resubmit**, which creates a
   new request.
 - A requester can't decide on their own expense.
@@ -141,6 +145,15 @@
   policies, and deleting a policy that is in force leaves that client with no
   split, so recording its payments is blocked (409) until a new one is approved.
   A deleted payment or expense drops out of totals and shares, like a void.
+
+## Past records and the month filter
+- Every list keeps all history: nothing is hidden by age. Finance (payments,
+  expenses, funds) and Policies have a **month picker** (All time, or any month
+  that has records, newest first) with a count and total for what is shown.
+  Payments group by the date received (read in UTC, since it is a plain day);
+  expenses, contributions and policies by when they were created (viewer's time
+  zone). The filter works in the browser on the already loaded list.
+- Who can see them is unchanged: directors, and superadmins in their view.
 
 ## Sidebar badges
 Counts of what waits on the viewer: policies not yet voted on, expenses awaiting

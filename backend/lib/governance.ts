@@ -1,6 +1,7 @@
 // Voting rules for policies and expenses. Pure module: no imports.
 
-export const APPROVALS_REQUIRED = 2;
+// Every director must approve a policy (capped at the number of directors)
+export const APPROVALS_REQUIRED = 3;
 
 export type PolicyOutcome = "proposed" | "approved" | "rejected";
 
