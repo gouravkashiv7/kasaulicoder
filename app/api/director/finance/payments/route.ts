@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import { ownsAttachment } from "@/backend/lib/attachments";
+import { linkAttachment, ownsAttachment } from "@/backend/lib/attachments";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
@@ -133,7 +133,25 @@ export async function POST(req: Request) {
       split.split.outsourced?.bps ?? 0,
     );
 
+    // Publish the proof to storage before saving the payment that uses it
+    const paymentId = new mongoose.Types.ObjectId();
+    if (body.attachmentId) {
+      const linked = await linkAttachment(
+        body.attachmentId,
+        auth.session.id,
+        "payment",
+        String(paymentId),
+      );
+      if ("error" in linked) {
+        return NextResponse.json(
+          { error: linked.error },
+          { status: linked.status },
+        );
+      }
+    }
+
     const payment = await Payment.create({
+      _id: paymentId,
       client: client._id,
       amountPaise,
       receivedOn,

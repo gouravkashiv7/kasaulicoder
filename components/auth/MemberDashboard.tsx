@@ -1364,6 +1364,12 @@ const MemberDashboard = () => {
       badge: directorBadges.policies,
     },
     {
+      tab: "assets",
+      label: "Assets",
+      icon: "domain",
+      badge: directorBadges.assets,
+    },
+    {
       tab: "discussions",
       label: "Discussions",
       icon: "forum",

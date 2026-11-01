@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import { ownsAttachment } from "@/backend/lib/attachments";
+import { linkAttachment, ownsAttachment } from "@/backend/lib/attachments";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
@@ -36,6 +36,21 @@ export async function POST(
         { error: "Screenshot not found" },
         { status: 400 },
       );
+    }
+
+    if (body.attachmentId) {
+      const linked = await linkAttachment(
+        body.attachmentId,
+        auth.session.id,
+        "expense-release",
+        id,
+      );
+      if ("error" in linked) {
+        return NextResponse.json(
+          { error: linked.error },
+          { status: linked.status },
+        );
+      }
     }
 
     const res = await Expense.updateOne(

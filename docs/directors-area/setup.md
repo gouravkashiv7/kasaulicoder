@@ -34,6 +34,7 @@ before recording more of their payments.
 |----------|----------|
 | `MONGODB_URI`, `JWT_SECRET` | Existing; required |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE` | Existing mail transport |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Required to record anything with a proof (payments, expenses, releases, contributions). Server-only; set them on the production host too. Without them recording with a proof fails with a 502 |
 | `ADMIN_FROM` | New, optional. Sender for director emails. Default `admin@kasaulicoder.com` |
 
 **Email caveat:** the Hostinger SMTP login must be allowed to send as
@@ -46,3 +47,11 @@ rejects or rewrites the sender and "Email this" returns an error.
   grows, move them to object storage behind the same attachment routes.
 - Backups: finance records are append-only (void, never delete). Keep normal
   database backups.
+
+## Backups
+There is **no database backup today** (MongoDB Atlas free plan, and the
+`esim-server` host holds none). Proof files live in Cloudinary, but the records
+that point to them are in MongoDB, so back up at least `payments`, `expenses`,
+`contributions`, `attachments`, `clients`, `policies` and `companyassets`
+(for example a weekly `mongodump` pulled to a server you control). This is not
+set up yet.

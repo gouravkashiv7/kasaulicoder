@@ -5,19 +5,22 @@ import { useCallback, useEffect, useState } from "react";
 import { formatINR } from "@/backend/lib/money";
 import type {
   ClientRecord,
+  ContributionRecord,
   ExpenseRecord,
   FinanceSummary,
   PaymentRecord,
 } from "../types";
 import ClientsSection from "./ClientsSection";
 import ExpensesSection from "./ExpensesSection";
+import FundsSection from "./FundsSection";
 import PaymentsSection from "./PaymentsSection";
 
-type Section = "payments" | "expenses" | "clients";
+type Section = "payments" | "expenses" | "funds" | "clients";
 
 const SECTIONS: Array<{ id: Section; label: string }> = [
   { id: "payments", label: "Payments" },
   { id: "expenses", label: "Expenses" },
+  { id: "funds", label: "Funds" },
   { id: "clients", label: "Clients" },
 ];
 
@@ -28,19 +31,22 @@ const Finance = () => {
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
   const [clientsWithPolicy, setClientsWithPolicy] = useState<string[]>([]);
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
+  const [contributions, setContributions] = useState<ContributionRecord[]>([]);
   const [me, setMe] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
     try {
-      const [s, c, p, x] = await Promise.all(
-        ["summary", "clients", "payments", "expenses"].map((name) =>
-          fetch(`/api/director/finance/${name}`).then(async (r) => {
-            const data = await r.json();
-            if (!r.ok) throw new Error(data.error || "Failed to load finance");
-            return data;
-          }),
+      const [s, c, p, x, f] = await Promise.all(
+        ["summary", "clients", "payments", "expenses", "contributions"].map(
+          (name) =>
+            fetch(`/api/director/finance/${name}`).then(async (r) => {
+              const data = await r.json();
+              if (!r.ok)
+                throw new Error(data.error || "Failed to load finance");
+              return data;
+            }),
         ),
       );
       setSummary(s);
@@ -48,6 +54,7 @@ const Finance = () => {
       setPayments(p.payments);
       setClientsWithPolicy(p.clientsWithPolicy);
       setExpenses(x.expenses);
+      setContributions(f.contributions);
       setMe(x.me);
       setError("");
     } catch (e) {
@@ -67,8 +74,17 @@ const Finance = () => {
         {
           label: "Company balance",
           value: formatINR(summary.companyBalancePaise),
-          hint: `${formatINR(summary.companyEarnedPaise)} earned − ${formatINR(summary.releasedPaise)} reimbursed`,
+          hint: `${formatINR(summary.companyEarnedPaise)} earned + ${formatINR(summary.contributedPaise)} added − ${formatINR(summary.releasedPaise)} reimbursed`,
         },
+        ...(summary.awaitingContributionPaise > 0
+          ? [
+              {
+                label: "Funds awaiting proof",
+                value: formatINR(summary.awaitingContributionPaise),
+                hint: "Counts once every director confirms",
+              },
+            ]
+          : []),
         ...(summary.awaitingReleasePaise > 0
           ? [
               {
@@ -167,6 +183,14 @@ const Finance = () => {
           )}
           {section === "expenses" && (
             <ExpensesSection expenses={expenses} me={me} onChanged={load} />
+          )}
+          {section === "funds" && (
+            <FundsSection
+              contributions={contributions}
+              me={me}
+              directorCount={summary?.directorShares.length ?? 0}
+              onChanged={load}
+            />
           )}
           {section === "clients" && (
             <ClientsSection

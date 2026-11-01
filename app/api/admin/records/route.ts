@@ -2,13 +2,15 @@ import { NextResponse } from "next/server";
 import { requireSuperAdmin } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import Client from "@/backend/models/Client";
+import CompanyAsset from "@/backend/models/CompanyAsset";
+import Contribution from "@/backend/models/Contribution";
 import Expense from "@/backend/models/Expense";
 import Payment from "@/backend/models/Payment";
 import Policy from "@/backend/models/Policy";
 import Thread from "@/backend/models/Thread";
 import ThreadMessage from "@/backend/models/ThreadMessage";
 
-// GET ?tab=finance|policies|discussions — every record of that tab, deleted
+// GET ?tab=finance|policies|assets|discussions — every record of that tab, deleted
 // ones included, for the superadmin's delete view
 export async function GET(req: Request) {
   try {
@@ -19,7 +21,7 @@ export async function GET(req: Request) {
     await connectDB();
 
     if (tab === "finance") {
-      const [clients, payments, expenses] = await Promise.all([
+      const [clients, payments, expenses, contributions] = await Promise.all([
         Client.find({}).sort({ name: 1 }).select("name email deletedAt").lean(),
         Payment.find({})
           .sort({ receivedOn: -1, createdAt: -1 })
@@ -31,8 +33,12 @@ export async function GET(req: Request) {
           .select("purpose amountPaise status requestedBy deletedAt")
           .populate("requestedBy", "name")
           .lean(),
+        Contribution.find({})
+          .sort({ createdAt: -1 })
+          .select("totalPaise status createdAt deletedAt")
+          .lean(),
       ]);
-      return NextResponse.json({ clients, payments, expenses });
+      return NextResponse.json({ clients, payments, expenses, contributions });
     }
 
     if (tab === "policies") {
@@ -43,6 +49,14 @@ export async function GET(req: Request) {
         .populate("proposedBy", "name")
         .lean();
       return NextResponse.json({ policies });
+    }
+
+    if (tab === "assets") {
+      const assets = await CompanyAsset.find({})
+        .sort({ name: 1 })
+        .select("kind name expiresOn deletedAt")
+        .lean();
+      return NextResponse.json({ assets });
     }
 
     if (tab === "discussions") {

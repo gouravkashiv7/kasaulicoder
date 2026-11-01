@@ -10,6 +10,7 @@ export type SidebarView =
   | "social-media"
   | "policies"
   | "finance"
+  | "assets"
   | "discussions";
 
 export interface Program {
@@ -255,8 +256,28 @@ export interface FinanceSummary {
   companyBalancePaise: number;
   awaitingReleasePaise: number;
   releasedPaise: number;
+  contributedPaise: number;
+  awaitingContributionPaise: number;
   directorShares: Array<{ id: string; name: string; paise: number }>;
   awaitingMyApproval: number;
+}
+
+export interface ContributionRecord {
+  _id: string;
+  totalPaise: number;
+  note?: string;
+  status: "pending" | "completed" | "cancelled";
+  createdBy?: { _id: string; name: string } | null;
+  createdAt: string;
+  shares: Array<{
+    staff: { _id: string; name: string };
+    paise: number;
+    status: "pending" | "confirmed";
+    proof?: string;
+    confirmedAt?: string;
+  }>;
+  cancelReason?: string;
+  cancelledBy?: { _id: string; name: string } | null;
 }
 
 export interface ClientRecord {
@@ -335,4 +356,18 @@ export interface DirectorBadges {
   policies: number;
   finance: number;
   discussions: number;
+  assets: number;
+}
+
+export interface CompanyAssetRecord {
+  _id: string;
+  kind: "domain" | "software" | "hardware" | "account" | "other";
+  name: string;
+  registrar?: string;
+  expiresOn?: string;
+  autoRenew: boolean;
+  costPaise?: number;
+  costPeriod: "one-time" | "monthly" | "yearly";
+  purchasedOn?: string;
+  notes?: string;
 }

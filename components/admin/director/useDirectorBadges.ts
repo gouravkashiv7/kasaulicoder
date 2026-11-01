@@ -15,6 +15,7 @@ export function useDirectorBadges(
     policies: 0,
     finance: 0,
     discussions: 0,
+    assets: 0,
   });
 
   // activeTab is a dependency on purpose: it triggers the refetch

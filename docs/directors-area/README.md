@@ -1,11 +1,16 @@
 # Directors' area
 
 A private part of the admin dashboard for the company's board of directors
-(currently three admins holding 33.33% each). It adds three tabs:
+(currently three admins holding 33.33% each). It adds four tabs:
 
 - **Finance**: client payments, share calculation, company expenses.
 - **Policies**: proposals that pass with two director approvals.
+- **Assets**: domains and other company assets, with expiry reminders.
 - **Discussions**: threaded chat with an "email this message" action.
+
+Finance also has a **Funds** section: directors add money to the company in
+equal shares, each confirmed with a proof. Proofs are stored privately in
+Cloudinary.
 
 Only staff with the **Board director** flag can see or call any of it.
 

@@ -4,6 +4,8 @@ import { requireSuperAdmin } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Client from "@/backend/models/Client";
+import CompanyAsset from "@/backend/models/CompanyAsset";
+import Contribution from "@/backend/models/Contribution";
 import Expense from "@/backend/models/Expense";
 import Payment from "@/backend/models/Payment";
 import Policy from "@/backend/models/Policy";
@@ -12,6 +14,8 @@ import ThreadMessage from "@/backend/models/ThreadMessage";
 
 const MODELS = {
   client: Client,
+  asset: CompanyAsset,
+  contribution: Contribution,
   payment: Payment,
   expense: Expense,
   policy: Policy,

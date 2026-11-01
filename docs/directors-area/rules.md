@@ -61,14 +61,50 @@
 - Company balance = company share earned from non-void payments − released
   expenses. Approved-but-unreleased amounts are shown separately.
 
-## Screenshots
-- Resized in the browser (max 1600px, JPEG, under ~900 KB) and uploaded first;
-  records then reference the attachment id.
-- Server accepts JPEG/PNG/WebP data URLs only, max 1 MB, and checks the file's
-  leading bytes match the declared type.
-- Stored in their own `attachments` collection, never inside list responses.
-  Served only to directors, with `nosniff`.
-- An attachment id is accepted on a record only if the same director uploaded it.
+## Proofs (screenshots and PDFs)
+- PNG, JPG or PDF. Images are resized in the browser (max 1600px, JPEG, under
+  ~900 KB); PDFs go up untouched, max 3 MB. Server caps: 1 MB image, 3 MB PDF,
+  and the file's leading bytes must match its type (WebP is no longer accepted;
+  old WebP proofs still display).
+- An upload is **staged** in the `attachments` collection. When a record uses
+  it (payment, expense, release, contribution share) it is published to
+  **Cloudinary** as a private (`authenticated`) file and removed from MongoDB.
+  Unused uploads are deleted after 24 hours. If Cloudinary fails the record is
+  not saved (HTTP 502) and the proof stays staged to retry.
+- The same file can't be used twice (unique SHA-256): 409 "This proof was
+  already used".
+- An attachment id is accepted on a record only if the same director uploaded
+  it and it isn't already used.
+- Served only to directors and superadmins through
+  `/api/director/finance/attachments/[id]`, with `nosniff`, and
+  `Content-Security-Policy: sandbox` so a PDF can't run anything. Browsers
+  never get a Cloudinary URL.
+- The app never deletes a proof, and soft-deleting a record keeps its proof.
+- Proofs that predate Cloudinary stay in MongoDB and keep working.
+
+## Assets
+- A directors-only (and superadmin) list of what the company owns: domains,
+  software, hardware, accounts, other. Never store passwords or keys; notes may
+  say where they are kept.
+- A domain's name is normalised (`HTTPS://WWW.X.com/a` becomes `www.x.com`) and
+  can be listed once. Expiry dates drive the sidebar badge: domains expiring
+  within 30 days or already expired.
+- Any director adds and edits. Only a superadmin deletes (soft).
+
+## Fund the company
+- A director enters a total; it is split **equally** between all active
+  directors at that moment, each paying the floor of an even share. The
+  credited total is what they pay together (odd paise are dropped, shown
+  before starting).
+- Each director confirms **only their own share**, with a proof (PNG, JPG or
+  PDF). The contribution counts toward the company balance **only when every
+  director has confirmed** (it completes exactly once, even with simultaneous
+  last confirmations). Until then it is shown as "awaiting confirmation".
+- The split is a snapshot. If a director in it is deactivated the contribution
+  can't complete: cancel it (any director, with a reason; one-way, stays
+  visible) and start a new one.
+- Company balance = company share earned + completed contributions - released
+  expenses.
 
 ## Discussions and email
 - Threads with messages; unread tracking per director; sidebar badge.
@@ -91,7 +127,7 @@
   (not built).
 
 ## Superadmin deletes
-- A superadmin sees **Finance**, **Policies** and **Discussions** in the sidebar
+- A superadmin sees **Finance**, **Policies**, **Assets** and **Discussions** in the sidebar
   even when not a director. Without being a director they can only view and
   delete: no voting, recording payments or posting.
 - A superadmin who is also a director keeps the normal view and gets a
@@ -100,8 +136,8 @@
   is hidden from directors and admins everywhere (lists, totals, shares, badges,
   vote counts, email). Only the superadmin's delete view still shows it, greyed
   out and marked Deleted. There is no restore yet.
-- Deletable: clients, payments, expenses, policies, whole threads and single
-  messages. Nothing cascades: deleting a client leaves its payments and
+- Deletable: clients, payments, expenses, fund contributions, policies, assets,
+  whole threads and single messages. Nothing cascades: deleting a client leaves its payments and
   policies, and deleting a policy that is in force leaves that client with no
   split, so recording its payments is blocked (409) until a new one is approved.
   A deleted payment or expense drops out of totals and shares, like a void.

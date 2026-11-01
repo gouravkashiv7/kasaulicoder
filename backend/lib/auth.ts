@@ -93,6 +93,31 @@ export async function requireDirector(): Promise<
   return { session };
 }
 
+// Gate for reading directors-area files: a director, or a superadmin who
+// manages the records.
+export async function requireDirectorOrSuperAdmin(): Promise<
+  { session: Session } | { error: NextResponse }
+> {
+  const session = await getServerSession();
+  if (!session) {
+    return {
+      error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
+    };
+  }
+  if (
+    session.type !== "admin" ||
+    !(session.isDirector || session.role === "superadmin")
+  ) {
+    return {
+      error: NextResponse.json(
+        { error: "Access denied. Directors and superadmins only." },
+        { status: 403 },
+      ),
+    };
+  }
+  return { session };
+}
+
 // Gate for superadmin-only routes, such as deleting directors-area records.
 export async function requireSuperAdmin(): Promise<
   { session: Session } | { error: NextResponse }

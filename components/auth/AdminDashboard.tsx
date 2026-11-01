@@ -11,6 +11,7 @@ import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement"
 // Components
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import Cohort from "@/components/admin/Cohort";
+import Assets from "@/components/admin/director/Assets";
 import Discussions from "@/components/admin/director/Discussions";
 import Finance from "@/components/admin/director/Finance";
 import Policies from "@/components/admin/director/Policies";
@@ -124,7 +125,7 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
       "social-media",
     ];
     if (isDirector || isSuperAdmin) {
-      allTabs.push("finance", "policies", "discussions");
+      allTabs.push("finance", "policies", "assets", "discussions");
     }
     if (isSuperAdmin) return allTabs;
     // Staff (admin role) restricted tabs
@@ -1247,6 +1248,15 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
                 isSuperAdmin={isSuperAdmin}
               >
                 <Policies />
+              </RecordsTab>
+            )}
+            {sidebarView === "assets" && (
+              <RecordsTab
+                tab="assets"
+                isDirector={isDirector}
+                isSuperAdmin={isSuperAdmin}
+              >
+                <Assets />
               </RecordsTab>
             )}
             {sidebarView === "discussions" && (

@@ -92,3 +92,17 @@ test("splitPaise counts the outsourced share toward 100%", () => {
     0,
   );
 });
+
+test("equalShares splits evenly and drops the odd paise", async () => {
+  const { equalShares } = await import("../money.ts");
+  assert.deepEqual(equalShares(10000000, 3), {
+    sharePaise: 3333333,
+    creditedPaise: 9999999,
+  });
+  assert.deepEqual(equalShares(9, 3), { sharePaise: 3, creditedPaise: 9 });
+  assert.deepEqual(equalShares(2, 3), { sharePaise: 0, creditedPaise: 0 });
+  assert.deepEqual(equalShares(100, 1), {
+    sharePaise: 100,
+    creditedPaise: 100,
+  });
+});

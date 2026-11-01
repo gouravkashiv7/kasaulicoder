@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { getProof, putProof } from "@/backend/lib/cloudinary";
 import Attachment from "@/backend/models/Attachment";
 
 const MAX_BYTES = 1024 * 1024;
@@ -39,4 +40,68 @@ export async function ownsAttachment(
 ): Promise<boolean> {
   if (typeof id !== "string" || !mongoose.isValidObjectId(id)) return false;
   return Boolean(await Attachment.exists({ _id: id, uploadedBy: staffId }));
+}
+
+export type LinkResult = { ok: true } | { error: string; status: number };
+
+// Publishes a staged proof to Cloudinary for the record that uses it. Call it
+// before saving the record, with the id the record will have; the record is
+// only saved when this succeeds. A proof can be used once.
+export async function linkAttachment(
+  id: unknown,
+  staffId: string,
+  kind: string,
+  recordId: string,
+): Promise<LinkResult> {
+  if (typeof id !== "string" || !mongoose.isValidObjectId(id)) {
+    return { error: "Proof not found", status: 400 };
+  }
+  const doc = await Attachment.findOne({
+    _id: id,
+    uploadedBy: staffId,
+    linked: false,
+  });
+  if (!doc?.data) {
+    return { error: "Proof not found or already used", status: 400 };
+  }
+
+  let stored: { publicId: string; version: number; format: string };
+  try {
+    stored = await putProof(doc.data, String(doc._id));
+  } catch (error) {
+    console.error("Could not store proof in Cloudinary:", error);
+    return { error: "Could not store the proof, try again", status: 502 };
+  }
+
+  const res = await Attachment.updateOne(
+    { _id: doc._id, linked: false },
+    {
+      $set: {
+        storage: "cloudinary",
+        publicId: stored.publicId,
+        version: stored.version,
+        format: stored.format,
+        linked: true,
+        linkedTo: { kind, id: recordId },
+      },
+      $unset: { data: 1 },
+    },
+  );
+  if (res.modifiedCount === 0) {
+    return { error: "Proof already used", status: 409 };
+  }
+  return { ok: true };
+}
+
+// The bytes of a proof, wherever they are stored.
+export async function readAttachment(doc: {
+  storage?: string;
+  publicId?: string;
+  format?: string;
+  data?: Buffer;
+}): Promise<Buffer | null> {
+  if (doc.storage === "cloudinary" && doc.publicId && doc.format) {
+    return getProof(doc.publicId, doc.format);
+  }
+  return doc.data ? Buffer.from(doc.data) : null;
 }

@@ -7,7 +7,9 @@
 - `lib/softDelete.ts`: `softDeleteFields`, `NOT_DELETED` filter, `SoftDeletable`; `lib/auth.ts` also has `requireSuperAdmin()`.
 - `lib/directors.ts`: `getActiveDirectors()`.
 - `lib/policies.ts`: `applyOutcome()` (single final transition, supersede), `getActiveSplit()`.
-- `lib/attachments.ts`: image data-URL validation, ownership check.
+- `lib/proofFormat.ts`: `parseProofDataUrl` (PNG/JPG/PDF), `domainName` (pure, tested).
+- `lib/attachments.ts`: ownership check, `linkAttachment` (publish a proof to Cloudinary for a record), `readAttachment`.
+- `lib/cloudinary.ts`: `putProof`, `getProof`, `cloudinaryConfigured` (private `authenticated` files).
 - `lib/email.ts`: `sendDirectorEmail()` (uses `ADMIN_FROM`).
 - `lib/__tests__/`: unit tests for money and governance.
 - `models/`: see [data-model.md](data-model.md).
@@ -20,6 +22,7 @@
 - `director/Discussions.tsx`
 - `director/modals/FinanceFormModal.tsx` (shared modal shell and field styles)
 - `director/ScreenshotInput.tsx`, `director/imageCompress.ts`
+- `director/Assets.tsx`, `director/FundsSection.tsx`
 - `director/useDirectorBadges.ts`
 - `records/RecordsManager.tsx` (superadmin delete view), `records/RecordsTab.tsx` (picks director or delete view)
 - `AdminSidebar.tsx`, `types.ts` (tabs, badges, record types)

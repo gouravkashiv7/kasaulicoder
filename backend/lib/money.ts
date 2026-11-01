@@ -58,3 +58,14 @@ export function splitPaise(
     outsourcedPaise;
   return { companyPaise, shares, outsourcedPaise };
 }
+
+// Splits an amount equally between `count` directors. Each pays the floor of an
+// even share, and the credited total is what they pay together, so the odd
+// paise are dropped rather than assigned to anyone.
+export function equalShares(
+  totalPaise: number,
+  count: number,
+): { sharePaise: number; creditedPaise: number } {
+  const sharePaise = count > 0 ? Math.floor(totalPaise / count) : 0;
+  return { sharePaise, creditedPaise: sharePaise * count };
+}

@@ -1,5 +1,6 @@
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import { ownsAttachment } from "@/backend/lib/attachments";
+import { linkAttachment, ownsAttachment } from "@/backend/lib/attachments";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { toPaise } from "@/backend/lib/money";
@@ -64,7 +65,23 @@ export async function POST(req: Request) {
       );
     }
 
+    // Publish the proof to storage before saving the expense that uses it
+    const expenseId = new mongoose.Types.ObjectId();
+    const linked = await linkAttachment(
+      body.attachmentId,
+      auth.session.id,
+      "expense",
+      String(expenseId),
+    );
+    if ("error" in linked) {
+      return NextResponse.json(
+        { error: linked.error },
+        { status: linked.status },
+      );
+    }
+
     const expense = await Expense.create({
+      _id: expenseId,
       purpose,
       amountPaise,
       attachment: body.attachmentId,

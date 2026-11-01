@@ -35,16 +35,40 @@ except attachment download.
 | `POST /discussions/[id]/messages` | `{ body }` |
 | `POST /discussions/[id]/email` | `{ messageId, recipientIds[], subject, note? }` → `{ sentTo }`. 400 without a subject or valid recipients |
 
+## Assets
+`GET /assets` → all assets. `POST /assets` and `PUT /assets` (`{ id, ... }`) take
+`{ kind (domain|software|hardware|account|other), name, registrar?, expiresOn?
+(YYYY-MM-DD), autoRenew?, cost?, costPeriod (one-time|monthly|yearly),
+purchasedOn?, notes? }`. A domain `name` is normalised and must be unique (409).
+Blank dates or cost clear them.
+
+## Fund the company (under `/finance`)
+| Method & path | Purpose |
+|---------------|---------|
+| `GET /contributions` | `{ contributions, me }`, newest first |
+| `POST /contributions` | `{ amount, note? }`; split equally between active directors; 400 if the share would be zero |
+| `POST /contributions/[id]/confirm` | `{ attachmentId }`; only the director named on a share; 409 if already confirmed, not open, a director in the split is inactive, or the proof was already used; 502 if the proof can't be stored |
+| `POST /contributions/[id]/cancel` | `{ reason }`; only while pending |
+
+`GET /finance/summary` also returns `contributedPaise` and
+`awaitingContributionPaise`; `companyBalancePaise` includes completed
+contributions.
+
+## Proof uploads
+`POST /finance/attachments` takes `{ dataUrl }` (PNG, JPG or PDF) and returns
+`{ id }`; 409 if the same file was already used. `GET /finance/attachments/[id]`
+streams a proof (directors and superadmins).
+
 ## Badges
-`GET /badges` → `{ policies, finance, discussions }`.
+`GET /badges` → `{ policies, finance, discussions, assets }`. `finance` also counts contributions waiting for the viewer's proof; `assets` counts domains expiring within 30 days or expired.
 
 ## Superadmin records (`/api/admin/records`)
 Superadmin only (401 without a session, 403 otherwise). Not under `/api/director/`.
 
 | Method & path | Purpose |
 |---------------|---------|
-| `GET /records?tab=finance\|policies\|discussions` | Every record of that tab **including deleted ones** (`deletedAt` set). Finance: `{ clients, payments, expenses }`; policies: `{ policies }`; discussions: `{ threads }`, each with its `messages` |
-| `DELETE /records/[type]/[id]` | Soft-delete. `type` is `client`, `payment`, `expense`, `policy`, `thread` or `message`. 404 if missing or already deleted |
+| `GET /records?tab=finance\|policies\|assets\|discussions` | Every record of that tab **including deleted ones** (`deletedAt` set). Finance: `{ clients, payments, expenses, contributions }`; assets: `{ assets }`; policies: `{ policies }`; discussions: `{ threads }`, each with its `messages` |
+| `DELETE /records/[type]/[id]` | Soft-delete. `type` is `client`, `payment`, `expense`, `contribution`, `asset`, `policy`, `thread` or `message`. 404 if missing or already deleted |
 
 Every `/api/director/*` read and write skips deleted records, so a deleted
 record behaves as if it did not exist (404 on actions, absent from lists,

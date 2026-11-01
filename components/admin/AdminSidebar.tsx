@@ -106,6 +106,13 @@ const Sidebar = ({
       directorOnly: true,
     },
     {
+      id: "assets" as SidebarView,
+      label: "Assets",
+      icon: "domain",
+      badge: directorBadges?.assets,
+      directorOnly: true,
+    },
+    {
       id: "discussions" as SidebarView,
       label: "Discussions",
       icon: "forum",

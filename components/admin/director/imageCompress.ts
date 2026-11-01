@@ -1,13 +1,16 @@
 const MAX_EDGE = 1600;
 const MAX_BYTES = 900 * 1024;
 
-const readAsDataUrl = (file: Blob) =>
+export const readAsDataUrl = (file: Blob) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result));
     reader.onerror = () => reject(new Error("Could not read the file"));
     reader.readAsDataURL(file);
   });
+
+// Largest PDF the server accepts; a PDF can't be shrunk in the browser.
+export const MAX_PDF_BYTES = 3 * 1024 * 1024;
 
 // Shrinks a screenshot to a JPEG under ~900 KB so it fits the 1 MB upload cap.
 export async function compressImage(file: File): Promise<string> {

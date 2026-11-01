@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { formatINR } from "@/backend/lib/money";
 
-export type RecordsTabId = "finance" | "policies" | "discussions";
+export type RecordsTabId = "finance" | "policies" | "assets" | "discussions";
 
 type RecordType =
   | "client"
+  | "asset"
+  | "contribution"
   | "payment"
   | "expense"
   | "policy"
@@ -35,9 +37,10 @@ interface Named {
 const COPY: Record<RecordsTabId, { title: string; blurb: string }> = {
   finance: {
     title: "Finance",
-    blurb: "Delete clients, payments and expenses.",
+    blurb: "Delete clients, payments, expenses and fund contributions.",
   },
   policies: { title: "Policies", blurb: "Delete policies." },
+  assets: { title: "Assets", blurb: "Delete domains and other assets." },
   discussions: {
     title: "Discussions",
     blurb: "Delete whole threads or single messages.",
@@ -90,6 +93,24 @@ function toGroups(tab: RecordsTabId, data: any): Group[] {
         ),
       },
       {
+        heading: "Funds",
+        rows: data.contributions.map(
+          (c: {
+            _id: string;
+            totalPaise: number;
+            status: string;
+            createdAt: string;
+            deletedAt?: string;
+          }): Row => ({
+            type: "contribution",
+            id: c._id,
+            title: `${formatINR(c.totalPaise)} contribution`,
+            detail: `${c.status} · started ${day(c.createdAt)}`,
+            deletedAt: c.deletedAt,
+          }),
+        ),
+      },
+      {
         heading: "Clients",
         rows: data.clients.map(
           (c: {
@@ -128,6 +149,29 @@ function toGroups(tab: RecordsTabId, data: any): Group[] {
             title: p.title,
             detail: `${p.client?.name ?? "No client"} · ${p.status} · proposed by ${p.proposedBy?.name ?? "Unknown"} on ${day(p.createdAt)}`,
             deletedAt: p.deletedAt,
+          }),
+        ),
+      },
+    ];
+  }
+
+  if (tab === "assets") {
+    return [
+      {
+        heading: "Assets",
+        rows: data.assets.map(
+          (a: {
+            _id: string;
+            kind: string;
+            name: string;
+            expiresOn?: string;
+            deletedAt?: string;
+          }): Row => ({
+            type: "asset",
+            id: a._id,
+            title: a.name,
+            detail: `${a.kind}${a.expiresOn ? ` · expires ${day(a.expiresOn)}` : ""}`,
+            deletedAt: a.deletedAt,
           }),
         ),
       },
