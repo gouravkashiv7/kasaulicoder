@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import { requireDirector } from "@/backend/lib/auth";
+import { requireDirectorOrSuperAdmin } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
 import { evaluateExpense } from "@/backend/lib/governance";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Expense from "@/backend/models/Expense";
 
-// POST — approve or reject someone else's expense
+// POST — approve or reject someone else's expense (superadmins can directly approve any expense)
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const auth = await requireDirector();
+    const auth = await requireDirectorOrSuperAdmin();
     if ("error" in auth) return auth.error;
 
     const { id } = await params;
@@ -36,13 +36,15 @@ export async function POST(
 
     await connectDB();
     const me = auth.session.id;
+    const isSuperAdmin = auth.session.role === "superadmin";
+
     const existing = await Expense.findOne({ _id: id, ...NOT_DELETED }).select(
       "requestedBy status",
     );
     if (!existing) {
       return NextResponse.json({ error: "Expense not found" }, { status: 404 });
     }
-    if (String(existing.requestedBy) === me) {
+    if (String(existing.requestedBy) === me && !isSuperAdmin) {
       return NextResponse.json(
         { error: "You can't decide on your own expense" },
         { status: 403 },
@@ -87,25 +89,40 @@ export async function POST(
 
     const expense = await Expense.findById(id);
     if (expense && expense.status === "pending") {
-      const directors = await getActiveDirectors();
-      const outcome = evaluateExpense(
-        expense.approvals.map(
-          (a: {
-            staff: { toString(): string };
-            decision: "approve" | "reject";
-          }) => ({
-            staff: a.staff.toString(),
-            decision: a.decision,
-          }),
-        ),
-        String(expense.requestedBy),
-        directors.map((d) => d.id),
-      );
-      if (outcome !== "pending") {
-        await Expense.updateOne(
-          { _id: id, status: "pending" },
-          { $set: { status: outcome } },
+      if (isSuperAdmin) {
+        // Superadmin has direct authority to approve or reject expenses
+        if (decision === "approve") {
+          await Expense.updateOne(
+            { _id: id, status: "pending" },
+            { $set: { status: "approved" } },
+          );
+        } else if (decision === "reject") {
+          await Expense.updateOne(
+            { _id: id, status: "pending" },
+            { $set: { status: "rejected" } },
+          );
+        }
+      } else {
+        const directors = await getActiveDirectors();
+        const outcome = evaluateExpense(
+          expense.approvals.map(
+            (a: {
+              staff: { toString(): string };
+              decision: "approve" | "reject";
+            }) => ({
+              staff: a.staff.toString(),
+              decision: a.decision,
+            }),
+          ),
+          String(expense.requestedBy),
+          directors.map((d) => d.id),
         );
+        if (outcome !== "pending") {
+          await Expense.updateOne(
+            { _id: id, status: "pending" },
+            { $set: { status: outcome } },
+          );
+        }
       }
     }
 

@@ -13,6 +13,7 @@ import ScreenshotInput from "./ScreenshotInput";
 interface ExpensesSectionProps {
   expenses: ExpenseRecord[];
   me: string;
+  isSuperAdmin?: boolean;
   onChanged: () => void;
 }
 
@@ -27,7 +28,12 @@ type Action =
   | { kind: "reject"; expense: ExpenseRecord }
   | { kind: "release"; expense: ExpenseRecord };
 
-const ExpensesSection = ({ expenses, me, onChanged }: ExpensesSectionProps) => {
+const ExpensesSection = ({
+  expenses,
+  me,
+  isSuperAdmin = false,
+  onChanged,
+}: ExpensesSectionProps) => {
   const monthly = useMonthFilter(expenses, (x) => x.createdAt);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ purpose: "", amount: "" });
@@ -112,7 +118,14 @@ const ExpensesSection = ({ expenses, me, onChanged }: ExpensesSectionProps) => {
 
   return (
     <section>
-      <div className="flex justify-end mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+        <div>
+          {isSuperAdmin && (
+            <span className="text-xs font-bold text-purple-600 dark:text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">
+              Super Admin Executive Approval Enabled
+            </span>
+          )}
+        </div>
         <button
           type="button"
           onClick={() => {
@@ -221,17 +234,23 @@ const ExpensesSection = ({ expenses, me, onChanged }: ExpensesSectionProps) => {
                   >
                     View screenshot
                   </a>
-                  {x.status === "pending" && !mine && (
+                  {x.status === "pending" && (!mine || isSuperAdmin) && (
                     <>
                       <button
                         type="button"
                         disabled={saving}
                         onClick={() => approve(x)}
-                        className={`px-4 py-1.5 rounded-lg ${myDecision?.decision === "approve" ? "bg-emerald-500 text-white" : "bg-emerald-500/10 text-emerald-500"}`}
+                        className={`px-4 py-1.5 rounded-lg transition-colors ${
+                          myDecision?.decision === "approve"
+                            ? "bg-emerald-500 text-white"
+                            : "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                        }`}
                       >
                         {myDecision?.decision === "approve"
                           ? "Approved"
-                          : "Approve"}
+                          : isSuperAdmin
+                            ? "Approve (Super Admin)"
+                            : "Approve"}
                       </button>
                       <button
                         type="button"
@@ -240,13 +259,13 @@ const ExpensesSection = ({ expenses, me, onChanged }: ExpensesSectionProps) => {
                           setText("");
                           setError("");
                         }}
-                        className="px-4 py-1.5 rounded-lg bg-rose-500/10 text-rose-500"
+                        className="px-4 py-1.5 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 transition-colors"
                       >
                         Reject
                       </button>
                     </>
                   )}
-                  {x.status === "approved" && !mine && (
+                  {x.status === "approved" && (!mine || isSuperAdmin) && (
                     <button
                       type="button"
                       onClick={() => {
@@ -254,7 +273,7 @@ const ExpensesSection = ({ expenses, me, onChanged }: ExpensesSectionProps) => {
                         setText("");
                         setError("");
                       }}
-                      className="px-4 py-1.5 rounded-lg bg-sky-500/10 text-sky-500"
+                      className="px-4 py-1.5 rounded-lg bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 transition-colors"
                     >
                       Mark released
                     </button>

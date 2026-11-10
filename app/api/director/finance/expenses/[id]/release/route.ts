@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { linkAttachment, ownsAttachment } from "@/backend/lib/attachments";
-import { requireDirector } from "@/backend/lib/auth";
+import { requireDirectorOrSuperAdmin } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Expense from "@/backend/models/Expense";
 
 // POST — record that an approved expense was paid out to the requester.
-// The requester can't release their own reimbursement.
+// The requester can't release their own reimbursement unless they are a superadmin.
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const auth = await requireDirector();
+    const auth = await requireDirectorOrSuperAdmin();
     if ("error" in auth) return auth.error;
 
     const { id } = await params;
@@ -28,6 +28,8 @@ export async function POST(
         : "";
 
     await connectDB();
+    const isSuperAdmin = auth.session.role === "superadmin";
+
     if (
       body.attachmentId &&
       !(await ownsAttachment(body.attachmentId, auth.session.id))
@@ -53,25 +55,26 @@ export async function POST(
       }
     }
 
-    const res = await Expense.updateOne(
-      {
-        _id: id,
-        status: "approved",
-        requestedBy: { $ne: auth.session.id },
-        ...NOT_DELETED,
-      },
-      {
-        $set: {
-          status: "released",
-          release: {
-            by: auth.session.id,
-            at: new Date(),
-            reference: reference || undefined,
-            attachment: body.attachmentId || undefined,
-          },
+    const matchQuery: Record<string, unknown> = {
+      _id: id,
+      status: "approved",
+      ...NOT_DELETED,
+    };
+    if (!isSuperAdmin) {
+      matchQuery.requestedBy = { $ne: auth.session.id };
+    }
+
+    const res = await Expense.updateOne(matchQuery, {
+      $set: {
+        status: "released",
+        release: {
+          by: auth.session.id,
+          at: new Date(),
+          reference: reference || undefined,
+          attachment: body.attachmentId || undefined,
         },
       },
-    );
+    });
     if (res.modifiedCount === 0) {
       return NextResponse.json(
         { error: "Expense isn't approved, is already released, or is yours" },

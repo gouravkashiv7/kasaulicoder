@@ -33,6 +33,7 @@ const Finance = () => {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [contributions, setContributions] = useState<ContributionRecord[]>([]);
   const [me, setMe] = useState("");
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isMohit, setIsMohit] = useState(false);
   const [directorsList, setDirectorsList] = useState<
     Array<{ id: string; name: string; email: string }>
@@ -59,6 +60,7 @@ const Finance = () => {
       setClientsWithPolicy(p.clientsWithPolicy);
       setExpenses(x.expenses);
       setContributions(f.contributions);
+      setIsSuperAdmin(Boolean(x.isSuperAdmin));
       setIsMohit(Boolean(f.isMohit));
       setDirectorsList(f.directors || []);
       setMe(x.me);
@@ -188,7 +190,12 @@ const Finance = () => {
             />
           )}
           {section === "expenses" && (
-            <ExpensesSection expenses={expenses} me={me} onChanged={load} />
+            <ExpensesSection
+              expenses={expenses}
+              me={me}
+              isSuperAdmin={isSuperAdmin}
+              onChanged={load}
+            />
           )}
           {section === "funds" && (
             <FundsSection

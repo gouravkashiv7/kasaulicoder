@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { linkAttachment, ownsAttachment } from "@/backend/lib/attachments";
-import { requireDirector } from "@/backend/lib/auth";
+import {
+  requireDirector,
+  requireDirectorOrSuperAdmin,
+} from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { toPaise } from "@/backend/lib/money";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
@@ -10,7 +13,7 @@ import Expense from "@/backend/models/Expense";
 // GET — all expenses, newest first
 export async function GET() {
   try {
-    const auth = await requireDirector();
+    const auth = await requireDirectorOrSuperAdmin();
     if ("error" in auth) return auth.error;
 
     await connectDB();
@@ -20,7 +23,11 @@ export async function GET() {
       .populate("approvals.staff", "name")
       .populate("release.by", "name")
       .lean();
-    return NextResponse.json({ expenses, me: auth.session.id });
+    return NextResponse.json({
+      expenses,
+      me: auth.session.id,
+      isSuperAdmin: auth.session.role === "superadmin",
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
