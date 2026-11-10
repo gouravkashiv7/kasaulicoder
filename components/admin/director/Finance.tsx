@@ -33,6 +33,10 @@ const Finance = () => {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [contributions, setContributions] = useState<ContributionRecord[]>([]);
   const [me, setMe] = useState("");
+  const [isMohit, setIsMohit] = useState(false);
+  const [directorsList, setDirectorsList] = useState<
+    Array<{ id: string; name: string; email: string }>
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -55,6 +59,8 @@ const Finance = () => {
       setClientsWithPolicy(p.clientsWithPolicy);
       setExpenses(x.expenses);
       setContributions(f.contributions);
+      setIsMohit(Boolean(f.isMohit));
+      setDirectorsList(f.directors || []);
       setMe(x.me);
       setError("");
     } catch (e) {
@@ -188,6 +194,8 @@ const Finance = () => {
             <FundsSection
               contributions={contributions}
               me={me}
+              isMohit={isMohit}
+              directors={directorsList}
               directorCount={summary?.directorShares.length ?? 0}
               onChanged={load}
             />

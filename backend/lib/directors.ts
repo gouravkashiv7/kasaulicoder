@@ -20,3 +20,13 @@ export async function getActiveDirectors(): Promise<DirectorSummary[]> {
     email: d.email,
   }));
 }
+
+// Check if a staff/user/session represents Director Mohit (Mohit Thakur)
+export function isDirectorMohit(
+  user: { email?: string; name?: string } | null | undefined,
+): boolean {
+  if (!user) return false;
+  const email = (user.email || "").toLowerCase().trim();
+  const name = (user.name || "").toLowerCase().trim();
+  return email === "mt4488857@gmail.com" || name.includes("mohit");
+}

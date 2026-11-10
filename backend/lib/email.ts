@@ -805,3 +805,89 @@ export const sendDirectorEmail = async (
     html,
   });
 };
+
+export interface FundRequestEmailOptions {
+  toEmails: string[];
+  requestedByName: string;
+  fundedByName: string;
+  amountFormatted: string;
+  note: string;
+  dashboardUrl?: string;
+}
+
+export const sendFundRequestEmail = async (
+  options: FundRequestEmailOptions,
+): Promise<void> => {
+  const noteText = options.note.trim();
+  const dashboardLink =
+    options.dashboardUrl ||
+    "https://www.kasaulicoder.com/admin/dashboard?tab=finance";
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>New Fund Request - Awaiting Approval</title></head>
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <tr><td style="background:#1a1a2e;padding:28px 40px;text-align:center;">
+          <img src="https://kasaulicoder.com/mail.png" alt="Kasaulicoder" width="140" style="display:block;margin:0 auto 16px;max-width:140px;" />
+          <p style="margin:0;color:#9ca3af;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:600;">Director Board Notification</p>
+          <h1 style="margin:6px 0 0;color:#ffffff;font-size:22px;font-weight:800;">New Fund Request Generated</h1>
+        </td></tr>
+        <tr><td style="padding:36px 40px;">
+          <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.7;">
+            A new company fund request has been created by <strong>${esc(options.requestedByName)}</strong> and requires <strong>Director Mohit's approval</strong> before it is credited to the company finances.
+          </p>
+
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:24px;">
+            <tr>
+              <td style="padding:8px 0;font-size:13px;color:#6b7280;width:140px;font-weight:600;">Amount:</td>
+              <td style="padding:8px 0;font-size:18px;color:#111827;font-weight:800;">${esc(options.amountFormatted)}</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 0;font-size:13px;color:#6b7280;font-weight:600;">Funded By:</td>
+              <td style="padding:8px 0;font-size:14px;color:#111827;font-weight:600;">${esc(options.fundedByName)}</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 0;font-size:13px;color:#6b7280;font-weight:600;">Requested By:</td>
+              <td style="padding:8px 0;font-size:14px;color:#111827;">${esc(options.requestedByName)}</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 0;font-size:13px;color:#6b7280;font-weight:600;vertical-align:top;">Reason / Note:</td>
+              <td style="padding:8px 0;font-size:14px;color:#1f2937;line-height:1.6;white-space:pre-wrap;">${esc(noteText)}</td>
+            </tr>
+          </table>
+
+          <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:14px 18px;border-radius:6px;margin-bottom:28px;">
+            <p style="margin:0;font-size:13px;color:#92400e;line-height:1.5;">
+              <strong>Action required:</strong> Only Director Mohit can approve this fund request. Once approved, the company balance will be automatically updated.
+            </p>
+          </div>
+
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td align="center">
+                <a href="${esc(dashboardLink)}" style="display:inline-block;background-color:#2563eb;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;letter-spacing:0.3px;">
+                  View Fund Dashboard &rarr;
+                </a>
+              </td>
+            </tr>
+          </table>
+        </td></tr>
+        <tr><td style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 40px;text-align:center;">
+          <p style="margin:0;font-size:11px;color:#9ca3af;">Kasaulicoder Private Directors' Area</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  await transporter.sendMail({
+    from: `"Kasaulicoder Directors" <${process.env.ADMIN_FROM || "admin@kasaulicoder.com"}>`,
+    to: options.toEmails,
+    subject: `New Fund Request: ${options.amountFormatted} - Awaiting Director Mohit's Approval`,
+    html,
+  });
+};

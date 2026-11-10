@@ -14,13 +14,18 @@ export interface IContributionShare {
 // snapshotted when it starts. It only counts toward the company balance once
 // every director has confirmed their part with a proof.
 export interface IContribution extends Document, SoftDeletable {
-  // What the directors pay together: an equal share each, so it always divides
+  // Total paise funded
   totalPaise: number;
   note?: string;
   createdBy: Types.ObjectId;
-  shares: IContributionShare[];
-  status: "pending" | "completed" | "cancelled";
+  fundedBy?: Types.ObjectId;
+  fundedByName?: string;
+  proof?: Types.ObjectId;
+  shares?: IContributionShare[];
+  status: "pending" | "completed" | "cancelled" | "approved" | "rejected";
   completedAt?: Date;
+  approvedBy?: Types.ObjectId;
+  approvedAt?: Date;
   cancelReason?: string;
   cancelledBy?: Types.ObjectId;
   createdAt: Date;
@@ -32,6 +37,9 @@ const ContributionSchema: Schema = new Schema(
     totalPaise: { type: Number, required: true },
     note: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: "Staff", required: true },
+    fundedBy: { type: Schema.Types.ObjectId, ref: "Staff" },
+    fundedByName: { type: String, trim: true },
+    proof: { type: Schema.Types.ObjectId, ref: "Attachment" },
     shares: [
       {
         _id: false,
@@ -48,10 +56,12 @@ const ContributionSchema: Schema = new Schema(
     ],
     status: {
       type: String,
-      enum: ["pending", "completed", "cancelled"],
+      enum: ["pending", "completed", "cancelled", "approved", "rejected"],
       default: "pending",
     },
     completedAt: { type: Date },
+    approvedBy: { type: Schema.Types.ObjectId, ref: "Staff" },
+    approvedAt: { type: Date },
     cancelReason: { type: String },
     cancelledBy: { type: Schema.Types.ObjectId, ref: "Staff" },
     ...softDeleteFields,

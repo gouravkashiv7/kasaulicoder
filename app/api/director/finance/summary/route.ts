@@ -58,11 +58,11 @@ export async function GET() {
         "approvals.staff": { $ne: auth.session.id },
         ...NOT_DELETED,
       }),
-      // Only fully confirmed contributions count; pending ones are shown apart
+      // Only approved/completed contributions count; pending ones are shown apart
       Contribution.aggregate([
         {
           $match: {
-            status: { $in: ["pending", "completed"] },
+            status: { $in: ["pending", "completed", "approved"] },
             ...NOT_DELETED,
           },
         },
@@ -76,7 +76,9 @@ export async function GET() {
         r.paise,
       ]),
     );
-    const contributed = contributionByStatus.completed ?? 0;
+    const contributed =
+      (contributionByStatus.completed ?? 0) +
+      (contributionByStatus.approved ?? 0);
 
     const byStatus = Object.fromEntries(
       expenseRows.map((r: { _id: string; paise: number }) => [r._id, r.paise]),

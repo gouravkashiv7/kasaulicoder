@@ -266,10 +266,15 @@ export interface ContributionRecord {
   _id: string;
   totalPaise: number;
   note?: string;
-  status: "pending" | "completed" | "cancelled";
+  status: "pending" | "completed" | "cancelled" | "approved" | "rejected";
   createdBy?: { _id: string; name: string } | null;
+  fundedBy?: { _id: string; name: string } | null;
+  fundedByName?: string;
+  proof?: string;
+  approvedBy?: { _id: string; name: string } | null;
+  approvedAt?: string;
   createdAt: string;
-  shares: Array<{
+  shares?: Array<{
     staff: { _id: string; name: string };
     paise: number;
     status: "pending" | "confirmed";
