@@ -15,6 +15,7 @@ import {
 import { SparklesCore } from "@/components/ui/sparkles";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
+import { useAfterLoad } from "@/components/ui/use-after-load";
 import type { ShowcaseProject } from "@/lib/projects";
 import TechStack from "./TechStack";
 
@@ -23,6 +24,8 @@ const GeneratedScreen = ({ projects }: { projects: ShowcaseProject[] }) => {
   const [leadProject, ...otherProjects] = projects;
 
   const [particleColor, setParticleColor] = useState("#ffffff");
+  // The Spline 3D scene (~1.3 MB of JS + WASM) loads only after the page has.
+  const afterLoad = useAfterLoad();
 
   useEffect(() => {
     const updateColor = () => {
@@ -64,12 +67,6 @@ const GeneratedScreen = ({ projects }: { projects: ShowcaseProject[] }) => {
 
       {/* Other Background Elements */}
       <div className="absolute inset-0 z-1 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 opacity-20 dark:opacity-40">
-          <SplineScene
-            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-            className="w-full h-full"
-          />
-        </div>
         <Spotlight
           className="from-primary/30 via-primary/10 to-transparent"
           size={1000}
@@ -119,10 +116,12 @@ const GeneratedScreen = ({ projects }: { projects: ShowcaseProject[] }) => {
             >
               <div className="absolute -inset-1 bg-linear-to-r from-primary to-secondary rounded-lg blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
               <div className="relative h-full rounded-lg overflow-hidden glass-card flex items-center justify-center pointer-events-auto">
-                <SplineScene
-                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                  className="w-full h-full"
-                />
+                {afterLoad && (
+                  <SplineScene
+                    scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                    className="w-full h-full"
+                  />
+                )}
                 <div className="absolute inset-0 bg-linear-to-t from-background/40 via-transparent to-transparent pointer-events-none"></div>
               </div>
             </motion.div>
