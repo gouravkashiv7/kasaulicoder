@@ -49,38 +49,25 @@ export async function POST(req: Request) {
     await connectDB();
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    if (payload.type === "staff") {
-      const staff = await Staff.findOne({
+    // One atomic update both checks and clears the token, so two concurrent
+    // requests with the same link cannot both succeed.
+    const Model = payload.type === "staff" ? Staff : User;
+    const account = await Model.findOneAndUpdate(
+      {
         _id: payload.id,
         resetPasswordToken: token,
         resetPasswordExpires: { $gt: Date.now() },
-      });
-      if (!staff) {
-        return NextResponse.json(
-          { error: "Invalid or expired reset link. Please try again." },
-          { status: 400 },
-        );
-      }
-      staff.password = hashedPassword;
-      staff.resetPasswordToken = undefined;
-      staff.resetPasswordExpires = undefined;
-      await staff.save();
-    } else {
-      const user = await User.findOne({
-        _id: payload.id,
-        resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() },
-      });
-      if (!user) {
-        return NextResponse.json(
-          { error: "Invalid or expired reset link. Please try again." },
-          { status: 400 },
-        );
-      }
-      user.password = hashedPassword;
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-      await user.save();
+      },
+      {
+        $set: { password: hashedPassword, passwordChangedAt: new Date() },
+        $unset: { resetPasswordToken: 1, resetPasswordExpires: 1 },
+      },
+    );
+    if (!account) {
+      return NextResponse.json(
+        { error: "Invalid or expired reset link. Please try again." },
+        { status: 400 },
+      );
     }
 
     return NextResponse.json({

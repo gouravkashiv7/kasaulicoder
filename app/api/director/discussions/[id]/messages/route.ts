@@ -31,14 +31,7 @@ export async function POST(
     }
 
     await connectDB();
-    const now = new Date();
-    const thread = await Thread.findOneAndUpdate(
-      { _id: id, ...NOT_DELETED },
-      {
-        $set: { lastMessageAt: now, [`readBy.${auth.session.id}`]: now },
-      },
-    );
-    if (!thread) {
+    if (!(await Thread.exists({ _id: id, ...NOT_DELETED }))) {
       return NextResponse.json({ error: "Thread not found" }, { status: 404 });
     }
 
@@ -47,6 +40,17 @@ export async function POST(
       author: auth.session.id,
       body: text,
     });
+    // Stamped with the saved message's time; $max so a slower, earlier post
+    // can't move either time backwards.
+    await Thread.updateOne(
+      { _id: id },
+      {
+        $max: {
+          lastMessageAt: message.createdAt,
+          [`readBy.${auth.session.id}`]: message.createdAt,
+        },
+      },
+    );
     return NextResponse.json({ id: message._id }, { status: 201 });
   } catch (error) {
     console.error(error);

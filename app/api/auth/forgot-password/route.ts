@@ -45,11 +45,12 @@ export async function POST(req: Request) {
       });
     }
 
+    // Deactivated accounts get the same answer as unknown emails
     if (!account.isActive) {
-      return NextResponse.json(
-        { error: "Your account is deactivated. Please contact support." },
-        { status: 403 },
-      );
+      return NextResponse.json({
+        message:
+          "If an account exists with this email, you will receive a reset link shortly.",
+      });
     }
 
     const resetUrl = await issuePasswordResetLink(account, accountType);

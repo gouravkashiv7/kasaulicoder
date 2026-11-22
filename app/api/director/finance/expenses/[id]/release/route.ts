@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import { linkAttachment, ownsAttachment } from "@/backend/lib/attachments";
+import {
+  linkAttachment,
+  ownsAttachment,
+  unlinkAttachment,
+} from "@/backend/lib/attachments";
 import { requireDirectorOrSuperAdmin } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
@@ -38,6 +42,21 @@ export async function POST(
       );
     }
 
+    const matchQuery: Record<string, unknown> = {
+      _id: id,
+      status: "approved",
+      requestedBy: { $ne: auth.session.id },
+      ...NOT_DELETED,
+    };
+
+    // Check before publishing the proof, so a refused release doesn't use it up
+    if (!(await Expense.exists(matchQuery))) {
+      return NextResponse.json(
+        { error: "Expense isn't approved, is already released, or is yours" },
+        { status: 409 },
+      );
+    }
+
     if (body.attachmentId) {
       const linked = await linkAttachment(
         body.attachmentId,
@@ -53,13 +72,6 @@ export async function POST(
       }
     }
 
-    const matchQuery: Record<string, unknown> = {
-      _id: id,
-      status: "approved",
-      requestedBy: { $ne: auth.session.id },
-      ...NOT_DELETED,
-    };
-
     const res = await Expense.updateOne(matchQuery, {
       $set: {
         status: "released",
@@ -72,6 +84,8 @@ export async function POST(
       },
     });
     if (res.modifiedCount === 0) {
+      // Lost a race with another release: put the proof back
+      if (body.attachmentId) await unlinkAttachment(body.attachmentId, id);
       return NextResponse.json(
         { error: "Expense isn't approved, is already released, or is yours" },
         { status: 409 },

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
+import { isDirectorMohit } from "@/backend/lib/directors";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
 import CompanyAsset from "@/backend/models/CompanyAsset";
 import Contribution from "@/backend/models/Contribution";
@@ -17,7 +18,8 @@ export async function GET() {
     await connectDB();
     const me = auth.session.id;
     const soon = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-    const [policies, expensesAwaiting, threads, assets, proofsAwaiting] =
+    const isMohit = isDirectorMohit(auth.session);
+    const [policies, expensesAwaiting, threads, assets, fundRequests] =
       await Promise.all([
         Policy.countDocuments({
           status: "proposed",
@@ -39,12 +41,10 @@ export async function GET() {
           expiresOn: { $lte: soon },
           ...NOT_DELETED,
         }),
-        // Contributions where this director still has to confirm their share
-        Contribution.countDocuments({
-          status: "pending",
-          shares: { $elemMatch: { staff: me, status: "pending" } },
-          ...NOT_DELETED,
-        }),
+        // Fund requests waiting on a decision, which only Director Mohit makes
+        isMohit
+          ? Contribution.countDocuments({ status: "pending", ...NOT_DELETED })
+          : 0,
       ]);
     const discussions = threads.filter((t) => {
       const readAt = (t.readBy as Record<string, Date> | undefined)?.[me];
@@ -53,7 +53,7 @@ export async function GET() {
 
     return NextResponse.json({
       policies,
-      finance: expensesAwaiting + proofsAwaiting,
+      finance: expensesAwaiting + fundRequests,
       discussions,
       assets,
     });

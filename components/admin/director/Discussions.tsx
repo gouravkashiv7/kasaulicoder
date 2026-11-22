@@ -72,7 +72,16 @@ const Discussions = () => {
   const [modalBusy, setModalBusy] = useState(false);
   const [modalError, setModalError] = useState("");
   const [notice, setNotice] = useState("");
+  const [gone, setGone] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  // The open thread, readable from async callbacks without waiting for a render
+  const selectedRef = useRef<string | null>(null);
+
+  const select = (id: string | null) => {
+    selectedRef.current = id;
+    setSelectedId(id);
+    setGone(false);
+  };
 
   const loadThreads = useCallback(async () => {
     try {
@@ -92,11 +101,23 @@ const Discussions = () => {
     try {
       const res = await fetch(`/api/director/discussions/${id}`);
       const data = await res.json();
+      // Drop replies for a thread that is no longer open
+      if (selectedRef.current !== id) return;
+      if (res.status === 404) {
+        // Deleted while open: close it so nothing can be posted to it
+        selectedRef.current = null;
+        setSelectedId(null);
+        setMessages([]);
+        setTitle("");
+        setGone(true);
+        return;
+      }
       if (!res.ok) throw new Error(data.error || "Failed to load thread");
       setMessages(data.messages);
       setTitle(data.thread.title);
       setMe(data.me);
     } catch (e) {
+      if (selectedRef.current !== id) return;
       setError(e instanceof Error ? e.message : "Failed to load thread");
     }
   }, []);
@@ -129,7 +150,7 @@ const Discussions = () => {
   }, [messageCount, selectedId]);
 
   const open = (id: string) => {
-    setSelectedId(id);
+    select(id);
     setMessages([]);
     setMeetOpen(false);
     setMeetLink("");
@@ -282,6 +303,11 @@ const Discussions = () => {
           {error}
         </p>
       )}
+      {gone && (
+        <p role="alert" className="mb-4 text-sm font-bold text-rose-500">
+          That discussion was deleted.
+        </p>
+      )}
       {notice && (
         <output className="mb-4 block text-sm font-bold text-emerald-500">
           {notice}
@@ -343,7 +369,7 @@ const Discussions = () => {
                 <header className="flex items-center gap-3 border-b border-foreground/10 p-4">
                   <button
                     type="button"
-                    onClick={() => setSelectedId(null)}
+                    onClick={() => select(null)}
                     aria-label="Back to threads"
                     className="lg:hidden material-symbols-outlined text-foreground/60"
                   >

@@ -33,3 +33,12 @@ export async function getActiveSplit(client: string) {
     .sort({ decidedAt: -1 })
     .lean();
 }
+
+// True when a split names exactly these directors, no more and no fewer.
+export function splitCoversDirectors(
+  splitDirectors: Array<{ staff: unknown }>,
+  directorIds: string[],
+): boolean {
+  const splitIds = splitDirectors.map((d) => String(d.staff)).sort();
+  return splitIds.join() === [...directorIds].sort().join();
+}

@@ -62,11 +62,14 @@ const Policies = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vote: choice, comment: comments[id] }),
       });
+      let message = "";
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || "Failed to vote");
+        message = data.error || "Failed to vote";
       }
       await load();
+      // After load, which clears the error on success
+      if (message) setError(message);
     } catch {
       setError("Failed to vote");
     } finally {

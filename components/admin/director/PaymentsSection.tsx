@@ -17,11 +17,16 @@ interface PaymentsSectionProps {
   onChanged: () => void;
 }
 
-const today = () => new Date().toISOString().slice(0, 10);
+// The viewer's local date as YYYY-MM-DD (toISOString would give the UTC day)
+const today = () => {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
 const EMPTY = {
   clientId: "",
   amount: "",
-  receivedOn: today(),
+  receivedOn: "",
   reference: "",
   note: "",
 };
@@ -35,7 +40,7 @@ const PaymentsSection = ({
   // Received dates are saved as a plain day, so they are grouped in UTC
   const monthly = useMonthFilter(payments, (p) => p.receivedOn, true);
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState(EMPTY);
+  const [form, setForm] = useState(() => ({ ...EMPTY, receivedOn: today() }));
   const [attachmentId, setAttachmentId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -109,6 +114,7 @@ const PaymentsSection = ({
           disabled={activeClients.length === 0}
           onClick={() => {
             setError("");
+            setForm((f) => ({ ...f, receivedOn: today() }));
             setAdding(true);
           }}
           className="ml-auto px-5 py-2.5 bg-primary text-primary-content font-black rounded-xl hover:brightness-110 disabled:opacity-40"

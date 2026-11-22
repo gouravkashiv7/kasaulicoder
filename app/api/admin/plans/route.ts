@@ -96,6 +96,21 @@ export async function POST(req: Request) {
   }
 }
 
+// Fields an admin may change on an existing plan
+const UPDATABLE_PLAN_FIELDS = [
+  "name",
+  "description",
+  "price",
+  "currency",
+  "billingType",
+  "billingCycle",
+  "features",
+  "targetAudience",
+  "isFeatured",
+  "isActive",
+  "sortOrder",
+] as const;
+
 // PUT: Update an existing plan
 export async function PUT(req: Request) {
   const admin = await verifySuperAdmin();
@@ -106,7 +121,7 @@ export async function PUT(req: Request) {
   try {
     await connectDB();
     const body = await req.json();
-    const { id, ...updates } = body;
+    const { id } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -115,12 +130,34 @@ export async function PUT(req: Request) {
       );
     }
 
-    // If switching to one_time, clear billingCycle
-    if (updates.billingType === "one_time") {
-      updates.billingCycle = null;
+    const updates: Record<string, unknown> = {};
+    for (const key of UPDATABLE_PLAN_FIELDS) {
+      if (body[key] !== undefined) updates[key] = body[key];
     }
 
-    const plan = await Plan.findByIdAndUpdate(id, updates, { new: true });
+    const existing = await Plan.findById(id).select("billingType billingCycle");
+    if (!existing) {
+      return NextResponse.json({ error: "Plan not found" }, { status: 404 });
+    }
+
+    const billingType = updates.billingType ?? existing.billingType;
+    if (billingType === "one_time") {
+      // One-time plans have no billing cycle
+      updates.billingCycle = null;
+    } else if (
+      billingType === "recurring" &&
+      !(updates.billingCycle ?? existing.billingCycle)
+    ) {
+      return NextResponse.json(
+        { error: "billingCycle is required for recurring plans" },
+        { status: 400 },
+      );
+    }
+
+    const plan = await Plan.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!plan) {
       return NextResponse.json({ error: "Plan not found" }, { status: 404 });
@@ -131,6 +168,9 @@ export async function PUT(req: Request) {
       { status: 200 },
     );
   } catch (error) {
+    if (error instanceof Error && error.name === "ValidationError") {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

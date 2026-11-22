@@ -110,6 +110,8 @@ export async function POST(req: Request) {
 
     // Auto-generate slug if not provided
     let slug = userSlug?.trim() ? createSlug(userSlug) : createSlug(title);
+    // Titles with no latin letters or digits slugify to ""
+    if (!slug) slug = `blog-${Date.now().toString(36)}`;
 
     // Check if slug already exists to prevent duplicate key errors
     let existingBlog = await Blog.findOne({ slug });

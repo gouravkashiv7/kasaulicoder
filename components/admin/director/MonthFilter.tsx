@@ -13,11 +13,15 @@ export function useMonthFilter<T>(
 ) {
   const [month, setMonth] = useState("all");
   const months = monthOptions(items, getDate, utc);
+  // The chosen month can drop out of the list (after a delete or a vote moves
+  // records), so fall back to All time instead of an empty, unlisted month.
+  const current = month === "all" || months.includes(month) ? month : "all";
+  if (current !== month) setMonth(current);
   const filtered =
-    month === "all"
+    current === "all"
       ? items
-      : items.filter((item) => monthKey(getDate(item), utc) === month);
-  return { month, setMonth, months, filtered };
+      : items.filter((item) => monthKey(getDate(item), utc) === current);
+  return { month: current, setMonth, months, filtered };
 }
 
 interface MonthFilterProps {

@@ -149,6 +149,14 @@ const AdminBlogManagement = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
+                      <a
+                        href={`/blogs/${blog.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mr-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-foreground/5 text-foreground/70 hover:bg-foreground/10"
+                      >
+                        Preview
+                      </a>
                       <button
                         type="button"
                         onClick={() => toggleStatus(blog._id, blog.status)}

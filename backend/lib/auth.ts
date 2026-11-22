@@ -49,13 +49,23 @@ export async function getServerSession(): Promise<Session | null> {
     const account =
       type === "admin"
         ? await Staff.findById(payload.id).select(
-            "name email role isActive isDirector",
+            "name email role isActive isDirector passwordChangedAt",
           )
         : await User.findById(payload.id).select(
-            "name email role userType isActive",
+            "name email role userType isActive passwordChangedAt",
           );
 
     if (!account || account.isActive === false) return null;
+
+    // A password change ends every session issued before it (1s slack, as
+    // iat is in whole seconds)
+    if (
+      account.passwordChangedAt &&
+      (typeof payload.iat !== "number" ||
+        payload.iat * 1000 < account.passwordChangedAt.getTime() - 1000)
+    ) {
+      return null;
+    }
 
     return {
       id: account._id.toString(),

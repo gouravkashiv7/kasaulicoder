@@ -62,6 +62,16 @@ export async function POST(req: Request) {
       );
     }
 
+    const isMatch = await bcrypt.compare(password, account.password);
+
+    if (!isMatch) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 },
+      );
+    }
+
+    // Only reveal deactivation once the password is proven
     if (account.isActive === false) {
       return NextResponse.json(
         {
@@ -71,15 +81,6 @@ export async function POST(req: Request) {
               : "Your account has been deactivated. Please contact support.",
         },
         { status: 403 },
-      );
-    }
-
-    const isMatch = await bcrypt.compare(password, account.password);
-
-    if (!isMatch) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 },
       );
     }
 

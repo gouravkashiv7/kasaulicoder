@@ -11,8 +11,13 @@ export async function POST(req: Request) {
         { status: 429 },
       );
     }
-    const body = await req.json();
-    const { name, email, query } = body;
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const email = typeof body.email === "string" ? body.email.trim() : "";
+    const query = typeof body.query === "string" ? body.query.trim() : "";
     // All public enquiries are business enquiries; userType is kept for
     // existing records and the admin view.
     const userType = body.userType ?? "professional";
@@ -20,6 +25,23 @@ export async function POST(req: Request) {
     if (!name || !email || !query) {
       return NextResponse.json(
         { error: "All fields are required" },
+        { status: 400 },
+      );
+    }
+
+    if (name.length > 100 || email.length > 200 || query.length > 5000) {
+      return NextResponse.json(
+        {
+          error:
+            "Name must be at most 100, email 200 and message 5000 characters",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json(
+        { error: "Invalid email address" },
         { status: 400 },
       );
     }

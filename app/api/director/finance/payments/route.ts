@@ -1,11 +1,15 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import { linkAttachment, ownsAttachment } from "@/backend/lib/attachments";
+import {
+  linkAttachment,
+  ownsAttachment,
+  unlinkAttachment,
+} from "@/backend/lib/attachments";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
 import { splitPaise, toPaise } from "@/backend/lib/money";
-import { getActiveSplit } from "@/backend/lib/policies";
+import { getActiveSplit, splitCoversDirectors } from "@/backend/lib/policies";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Client from "@/backend/models/Client";
 import Payment from "@/backend/models/Payment";
@@ -68,10 +72,14 @@ export async function POST(req: Request) {
     }
 
     const receivedOn = new Date(`${body.receivedOn}T00:00:00.000Z`);
+    // Today's date in India (UTC+5:30), as YYYY-MM-DD
+    const todayIST = new Date(Date.now() + 330 * 60 * 1000)
+      .toISOString()
+      .slice(0, 10);
     if (
       !/^\d{4}-\d{2}-\d{2}$/.test(String(body.receivedOn)) ||
       Number.isNaN(receivedOn.getTime()) ||
-      receivedOn.getTime() > Date.now() + 24 * 60 * 60 * 1000
+      String(body.receivedOn) > todayIST
     ) {
       return NextResponse.json(
         { error: "Enter a valid received date (not in the future)" },
@@ -99,11 +107,12 @@ export async function POST(req: Request) {
     }
 
     // The split must still cover exactly the current directors
-    const splitIds = split.split.directors
-      .map((d: { staff: unknown }) => String(d.staff))
-      .sort();
-    const directorIds = directors.map((d) => d.id).sort();
-    if (splitIds.join() !== directorIds.join()) {
+    if (
+      !splitCoversDirectors(
+        split.split.directors,
+        directors.map((d) => d.id),
+      )
+    ) {
       return NextResponse.json(
         {
           error:
@@ -150,31 +159,42 @@ export async function POST(req: Request) {
       }
     }
 
-    const payment = await Payment.create({
-      _id: paymentId,
-      client: client._id,
-      amountPaise,
-      receivedOn,
-      reference:
-        typeof body.reference === "string"
-          ? body.reference.trim().slice(0, 120)
-          : undefined,
-      note:
-        typeof body.note === "string"
-          ? body.note.trim().slice(0, 1000)
-          : undefined,
-      attachment: body.attachmentId || undefined,
-      recordedBy: auth.session.id,
-      allocation: {
-        policy: split._id,
-        companyPaise: result.companyPaise,
-        shares: result.shares.map((s) => ({ staff: s.id, paise: s.paise })),
-        outsourced: split.split.outsourced?.bps
-          ? { name: split.split.outsourced.name, paise: result.outsourcedPaise }
-          : undefined,
-      },
-    });
-    return NextResponse.json({ id: payment._id }, { status: 201 });
+    try {
+      await Payment.create({
+        _id: paymentId,
+        client: client._id,
+        amountPaise,
+        receivedOn,
+        reference:
+          typeof body.reference === "string"
+            ? body.reference.trim().slice(0, 120)
+            : undefined,
+        note:
+          typeof body.note === "string"
+            ? body.note.trim().slice(0, 1000)
+            : undefined,
+        attachment: body.attachmentId || undefined,
+        recordedBy: auth.session.id,
+        allocation: {
+          policy: split._id,
+          companyPaise: result.companyPaise,
+          shares: result.shares.map((s) => ({ staff: s.id, paise: s.paise })),
+          outsourced: split.split.outsourced?.bps
+            ? {
+                name: split.split.outsourced.name,
+                paise: result.outsourcedPaise,
+              }
+            : undefined,
+        },
+      });
+    } catch (error) {
+      // The payment wasn't saved: put the proof back so it can be used again
+      if (body.attachmentId) {
+        await unlinkAttachment(body.attachmentId, String(paymentId));
+      }
+      throw error;
+    }
+    return NextResponse.json({ id: paymentId }, { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

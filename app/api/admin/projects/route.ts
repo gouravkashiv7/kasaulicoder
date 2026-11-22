@@ -3,7 +3,7 @@ import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
 import "@/backend/models/Staff";
 import { getServerSession } from "@/backend/lib/auth";
-import { pickProjectFields } from "@/backend/lib/projectFields";
+import { pickProjectFields, slugifyProject } from "@/backend/lib/projectFields";
 
 // Update (PUT)
 export async function PUT(req: Request) {
@@ -37,6 +37,21 @@ export async function PUT(req: Request) {
     const body = pickProjectFields(await req.json());
     // Only superadmins may change membership
     if (session.role !== "superadmin") delete body.members;
+
+    if ("slug" in body) {
+      const slug =
+        typeof body.slug === "string" ? slugifyProject(body.slug) : "";
+      if (!slug) {
+        return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
+      }
+      if (await Project.exists({ slug, _id: { $ne: id } })) {
+        return NextResponse.json(
+          { error: "Another project already uses this slug" },
+          { status: 409 },
+        );
+      }
+      body.slug = slug;
+    }
     const updatedProject = await Project.findByIdAndUpdate(
       id,
       { $set: body },

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { parseImageDataUrl } from "@/backend/lib/attachments";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
@@ -41,34 +42,53 @@ export async function PATCH(req: Request) {
   if (!auth)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id, type } = auth;
+  // Staff edit their profile through /api/member/profile, which applies the
+  // role rules for photos and profile text
+  if (auth.type === "admin")
+    return NextResponse.json(
+      { error: "Staff profiles are updated via /api/member/profile" },
+      { status: 403 },
+    );
+
+  const { id } = auth;
   await connectDB();
 
   const body = await req.json();
   const { name, email, pic } = body;
 
   const update: Record<string, string> = {};
-  if (name?.trim()) update.name = name.trim();
-  if (email?.trim()) update.email = email.trim().toLowerCase();
+  if (typeof name === "string" && name.trim()) update.name = name.trim();
+  if (typeof email === "string" && email.trim()) {
+    update.email = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(update.email))
+      return NextResponse.json(
+        { error: "Enter a valid email address" },
+        { status: 400 },
+      );
+  }
 
   if (pic) {
-    if (type === "admin") {
-      update.image = pic;
-    } else {
-      update.pic = pic;
-    }
+    const parsed = parseImageDataUrl(pic);
+    if ("error" in parsed)
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
+    if (parsed.data.length > 200 * 1024)
+      return NextResponse.json(
+        { error: "Photo exceeds the 200KB limit. Try a smaller image." },
+        { status: 400 },
+      );
+    update.pic = pic;
   }
 
   if (Object.keys(update).length === 0)
     return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
 
-  // Check email uniqueness if changed
-  const Model = type === "admin" ? Staff : User;
+  // Email must be unique across both user and staff accounts
   if (update.email) {
-    const existing = await Model.findOne({
-      email: update.email,
-      _id: { $ne: id },
-    }).collation(EMAIL_COLLATION);
+    const existing =
+      (await User.exists({ email: update.email, _id: { $ne: id } }).collation(
+        EMAIL_COLLATION,
+      )) ||
+      (await Staff.exists({ email: update.email }).collation(EMAIL_COLLATION));
     if (existing)
       return NextResponse.json(
         { error: "Email already in use" },
@@ -76,7 +96,7 @@ export async function PATCH(req: Request) {
       );
   }
 
-  const account = await Model.findByIdAndUpdate(id, update, {
+  const account = await User.findByIdAndUpdate(id, update, {
     new: true,
   }).select("-password -resetPasswordToken -resetPasswordExpires");
 

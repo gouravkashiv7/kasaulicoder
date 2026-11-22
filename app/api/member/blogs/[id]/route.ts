@@ -106,6 +106,8 @@ export async function PATCH(
       // Auto-generate if slug is empty or missing
       finalSlug = createSlug(blog.title);
     }
+    // Titles with no latin letters or digits slugify to ""
+    if (!finalSlug) finalSlug = `blog-${blog._id.toString().slice(-6)}`;
 
     // Only check for duplicates if the slug has actually changed
     if (finalSlug !== blog.slug) {

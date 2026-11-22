@@ -103,6 +103,14 @@ export async function POST(req: Request) {
 
     // A client has one policy in force and at most one proposal waiting for
     // votes; a new one replaces the old only once it is approved.
+    const alreadyProposed = () =>
+      NextResponse.json(
+        {
+          error:
+            "This client already has a proposal waiting for votes. Decide it before proposing another.",
+        },
+        { status: 409 },
+      );
     if (
       await Policy.exists({
         client: client._id,
@@ -110,13 +118,7 @@ export async function POST(req: Request) {
         ...NOT_DELETED,
       })
     ) {
-      return NextResponse.json(
-        {
-          error:
-            "This client already has a proposal waiting for votes. Decide it before proposing another.",
-        },
-        { status: 409 },
-      );
+      return alreadyProposed();
     }
 
     const companyBps = toBps(body.split?.companyPercent);
@@ -175,15 +177,22 @@ export async function POST(req: Request) {
       outsourced,
     };
 
-    const policy = await Policy.create({
-      title,
-      body: text,
-      type: "finance",
-      client: client._id,
-      split,
-      proposedBy: auth.session.id,
-      votes: [{ staff: auth.session.id, vote: "yes", at: new Date() }],
-    });
+    let policy: { _id: unknown };
+    try {
+      policy = await Policy.create({
+        title,
+        body: text,
+        type: "finance",
+        client: client._id,
+        split,
+        proposedBy: auth.session.id,
+        votes: [{ staff: auth.session.id, vote: "yes", at: new Date() }],
+      });
+    } catch (e) {
+      // A simultaneous proposal for this client won the unique index
+      if ((e as { code?: number }).code === 11000) return alreadyProposed();
+      throw e;
+    }
 
     // With a single director the proposer's vote alone can decide it
     const outcome = evaluatePolicy([{ vote: "yes" }], directors.length);

@@ -3,15 +3,21 @@ import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
 import "@/backend/models/Staff";
 import { getServerSession } from "@/backend/lib/auth";
-import { pickProjectFields } from "@/backend/lib/projectFields";
+import { pickProjectFields, slugifyProject } from "@/backend/lib/projectFields";
+import { getShowcaseProjects } from "@/backend/lib/showcase";
 
 export async function GET() {
   try {
     await connectDB();
     const session = await getServerSession();
 
+    // Visitors and customers only get what the public showcase shows
+    if (!session || session.type !== "admin") {
+      return NextResponse.json(await getShowcaseProjects(), { status: 200 });
+    }
+
     let query = {};
-    if (session && session.type === "admin" && session.role !== "superadmin") {
+    if (session.role !== "superadmin") {
       query = { members: session.id };
     }
 
@@ -44,18 +50,22 @@ export async function POST(req: Request) {
     const body = pickProjectFields(await req.json());
     const { title, desc } = body as { title?: string; desc?: string };
 
-    // Optional slug generation block for custom creations
-    const baseSlug = `${title}-${desc?.substring(0, 20) || ""}`
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)+/g, "");
+    const requested =
+      typeof body.slug === "string" ? slugifyProject(body.slug) : "";
+    const baseSlug =
+      requested ||
+      slugifyProject(`${title}-${desc?.substring(0, 20) || ""}`) ||
+      `project-${Date.now()}`;
 
-    const slug = `${baseSlug}-${Math.floor(Math.random() * 1000)}`;
+    // Append a counter until the slug is free, as blogs do
+    let slug = baseSlug;
+    let counter = 1;
+    while (await Project.exists({ slug })) {
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
 
-    const newProject = await Project.create({
-      ...body,
-      slug: (body.slug as string | undefined) || slug,
-    });
+    const newProject = await Project.create({ ...body, slug });
 
     return NextResponse.json(newProject, { status: 201 });
   } catch (error) {

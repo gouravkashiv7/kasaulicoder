@@ -47,8 +47,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    const { name, tagline, description, image, features, isActive, sortOrder } =
-      await req.json();
+    const {
+      name,
+      tagline,
+      description,
+      image,
+      features,
+      isActive,
+      isVisible,
+      sortOrder,
+    } = await req.json();
 
     if (!name || !tagline || !description || !image) {
       return NextResponse.json(
@@ -79,6 +87,7 @@ export async function POST(req: Request) {
       image,
       features,
       isActive,
+      isVisible,
       sortOrder,
     });
 
@@ -92,6 +101,18 @@ export async function POST(req: Request) {
   }
 }
 
+// Fields an admin may change on an existing program
+const UPDATABLE_PROGRAM_FIELDS = [
+  "name",
+  "tagline",
+  "description",
+  "image",
+  "features",
+  "isActive",
+  "isVisible",
+  "sortOrder",
+] as const;
+
 export async function PUT(req: Request) {
   try {
     const auth = await checkAuth();
@@ -99,7 +120,12 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    const { _id, ...updateData } = await req.json();
+    const body = await req.json();
+    const { _id } = body;
+    const updateData: Record<string, unknown> = {};
+    for (const key of UPDATABLE_PROGRAM_FIELDS) {
+      if (body[key] !== undefined) updateData[key] = body[key];
+    }
 
     if (!_id) {
       return NextResponse.json(
@@ -109,8 +135,9 @@ export async function PUT(req: Request) {
     }
 
     // Validate image size (max 500KB) if it's base64
-    if (updateData.image?.startsWith("data:image")) {
-      const base64Data = updateData.image.split(",")[1];
+    const image = updateData.image;
+    if (typeof image === "string" && image.startsWith("data:image")) {
+      const base64Data = image.split(",")[1];
       if (base64Data) {
         const buffer = Buffer.from(base64Data, "base64");
         if (buffer.length > 500 * 1024) {
@@ -125,6 +152,7 @@ export async function PUT(req: Request) {
     await connectDB();
     const updatedProgram = await Program.findByIdAndUpdate(_id, updateData, {
       new: true,
+      runValidators: true,
     });
 
     if (!updatedProgram) {
@@ -133,6 +161,9 @@ export async function PUT(req: Request) {
 
     return NextResponse.json(updatedProgram);
   } catch (error) {
+    if (error instanceof Error && error.name === "ValidationError") {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

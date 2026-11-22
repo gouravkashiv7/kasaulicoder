@@ -72,6 +72,13 @@ const PolicySchema: Schema = new Schema(
   { timestamps: true },
 );
 
+// At most one open proposal per client. Deleted proposals carry a deletedAt
+// date so they never collide; live ones all index deletedAt as null.
+PolicySchema.index(
+  { client: 1, deletedAt: 1 },
+  { unique: true, partialFilterExpression: { status: "proposed" } },
+);
+
 // Prevent model recompilation in Next.js
 export default mongoose.models.Policy ||
   mongoose.model<IPolicy>("Policy", PolicySchema);

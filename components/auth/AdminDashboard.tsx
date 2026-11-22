@@ -131,9 +131,14 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
     // Staff (admin role) restricted tabs
     return allTabs.filter(
       (t) =>
-        !["management", "requests", "pricing", "cohort", "programs"].includes(
-          t,
-        ),
+        ![
+          "management",
+          "requests",
+          "pricing",
+          "cohort",
+          "programs",
+          "blogs",
+        ].includes(t),
     );
   }, [isSuperAdmin, isDirector]);
 

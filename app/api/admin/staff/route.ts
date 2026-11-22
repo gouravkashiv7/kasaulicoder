@@ -10,6 +10,17 @@ import {
 } from "@/backend/lib/email";
 import Staff from "@/backend/models/Staff";
 
+// Guards against locking every superadmin out of the panel.
+async function hasOtherActiveSuperadmin(staffId: unknown): Promise<boolean> {
+  return Boolean(
+    await Staff.exists({
+      role: "superadmin",
+      isActive: { $ne: false },
+      _id: { $ne: staffId },
+    }),
+  );
+}
+
 export async function GET() {
   try {
     const session = await getServerSession();
@@ -178,6 +189,23 @@ export async function PATCH(req: Request) {
 
     // Toggle logic: Explicitly check for false, everything else toggles to false.
     const currentStatus = staff.isActive !== false;
+    if (currentStatus) {
+      if (staff._id.toString() === session.id) {
+        return NextResponse.json(
+          { error: "You cannot deactivate your own account" },
+          { status: 400 },
+        );
+      }
+      if (
+        staff.role === "superadmin" &&
+        !(await hasOtherActiveSuperadmin(staff._id))
+      ) {
+        return NextResponse.json(
+          { error: "Cannot deactivate the last active superadmin" },
+          { status: 400 },
+        );
+      }
+    }
     staff.isActive = !currentStatus;
     await staff.save();
 
@@ -299,6 +327,20 @@ export async function PUT(req: Request) {
     if (designation !== undefined) staff.designation = designation;
     if (roleDescription !== undefined) staff.roleDescription = roleDescription;
     if (typeof image === "string") staff.image = image;
+    if (
+      isSuper &&
+      role &&
+      role !== "superadmin" &&
+      staff.role === "superadmin" &&
+      staff.isActive !== false &&
+      !(await hasOtherActiveSuperadmin(staff._id))
+    ) {
+      return NextResponse.json(
+        { error: "Cannot demote the last active superadmin" },
+        { status: 400 },
+      );
+    }
+
     if (isSuper) {
       if (role) staff.role = role;
       if (typeof isDirector === "boolean") staff.isDirector = isDirector;

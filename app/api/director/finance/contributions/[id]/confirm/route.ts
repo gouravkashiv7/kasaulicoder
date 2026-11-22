@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import { linkAttachment } from "@/backend/lib/attachments";
+import { linkAttachment, unlinkAttachment } from "@/backend/lib/attachments";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
@@ -108,6 +108,8 @@ export async function POST(
       },
     );
     if (changed.modifiedCount === 0) {
+      // Not saved: put the proof back so it can be used again
+      await unlinkAttachment(attachmentId, id);
       return NextResponse.json(
         { error: "This contribution is no longer open" },
         { status: 409 },

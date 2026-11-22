@@ -4,6 +4,7 @@ import { parseImageDataUrl } from "@/backend/lib/attachments";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import Staff from "@/backend/models/Staff";
+import User from "@/backend/models/User";
 
 export async function GET() {
   try {
@@ -51,6 +52,24 @@ export async function PATCH(req: Request) {
     const { name, email, password, designation, roleDescription, image } =
       await req.json();
 
+    if (password && (typeof password !== "string" || password.length < 8)) {
+      return NextResponse.json(
+        { error: "Password must be at least 8 characters" },
+        { status: 400 },
+      );
+    }
+
+    let nextEmail: string | undefined;
+    if (email) {
+      nextEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nextEmail)) {
+        return NextResponse.json(
+          { error: "Enter a valid email address" },
+          { status: 400 },
+        );
+      }
+    }
+
     // Validate the photo before changing anything. "" removes it.
     const canEditProfileText =
       session.role === "admin" || session.role === "superadmin";
@@ -81,19 +100,21 @@ export async function PATCH(req: Request) {
     }
 
     if (name) staff.name = name;
-    if (email) {
-      // Check if email is already taken by another person
-      const emailUsed = await Staff.findOne({
-        email,
-        _id: { $ne: staff._id },
-      }).collation(EMAIL_COLLATION);
+    if (nextEmail && nextEmail !== staff.email) {
+      // Check if email is already taken by another person or a user account
+      const emailUsed =
+        (await Staff.exists({
+          email: nextEmail,
+          _id: { $ne: staff._id },
+        }).collation(EMAIL_COLLATION)) ||
+        (await User.exists({ email: nextEmail }).collation(EMAIL_COLLATION));
       if (emailUsed) {
         return NextResponse.json(
           { error: "Email already in use" },
           { status: 400 },
         );
       }
-      staff.email = email;
+      staff.email = nextEmail;
     }
 
     // Admins maintain their own title and bio; other roles keep them read-only
@@ -109,6 +130,8 @@ export async function PATCH(req: Request) {
 
     if (password) {
       staff.password = await bcrypt.hash(password, 12);
+      // Ends every existing session, this one included: the member logs in again
+      staff.passwordChangedAt = new Date();
     }
 
     await staff.save();

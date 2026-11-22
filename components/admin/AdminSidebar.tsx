@@ -80,6 +80,7 @@ const Sidebar = ({
       id: "blogs" as SidebarView,
       label: "Blogs",
       icon: "article",
+      superOnly: true,
     },
     {
       id: "projects" as SidebarView,

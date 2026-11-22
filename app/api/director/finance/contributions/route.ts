@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import { linkAttachment } from "@/backend/lib/attachments";
+import { linkAttachment, unlinkAttachment } from "@/backend/lib/attachments";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { getActiveDirectors, isDirectorMohit } from "@/backend/lib/directors";
@@ -8,7 +8,6 @@ import { sendFundRequestEmail } from "@/backend/lib/email";
 import { formatINR, toPaise } from "@/backend/lib/money";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Contribution from "@/backend/models/Contribution";
-import Staff from "@/backend/models/Staff";
 
 // GET — all contributions, newest first
 export async function GET() {
@@ -79,12 +78,17 @@ export async function POST(req: Request) {
     let fundedByStaffId: string | null = null;
     let displayFundedByName = auth.session.name;
 
-    if (body.fundedBy && mongoose.isValidObjectId(body.fundedBy)) {
-      const funderStaff = await Staff.findById(body.fundedBy).select("name");
-      if (funderStaff) {
-        fundedByStaffId = funderStaff._id.toString();
-        displayFundedByName = funderStaff.name;
+    if (body.fundedBy) {
+      // Only an active director can be named as the funder
+      const funder = directors.find((d) => d.id === String(body.fundedBy));
+      if (!funder) {
+        return NextResponse.json(
+          { error: "Funded by must be an active director" },
+          { status: 400 },
+        );
       }
+      fundedByStaffId = funder.id;
+      displayFundedByName = funder.name;
     } else if (body.fundedByName && typeof body.fundedByName === "string") {
       displayFundedByName = body.fundedByName.trim();
     } else {
@@ -108,16 +112,24 @@ export async function POST(req: Request) {
       }
     }
 
-    const contribution = await Contribution.create({
-      _id: contributionId,
-      totalPaise: amountPaise,
-      note: note.slice(0, 500),
-      createdBy: auth.session.id,
-      fundedBy: fundedByStaffId,
-      fundedByName: displayFundedByName,
-      proof: body.attachmentId || undefined,
-      status: "pending",
-    });
+    try {
+      await Contribution.create({
+        _id: contributionId,
+        totalPaise: amountPaise,
+        note: note.slice(0, 500),
+        createdBy: auth.session.id,
+        fundedBy: fundedByStaffId,
+        fundedByName: displayFundedByName,
+        proof: body.attachmentId || undefined,
+        status: "pending",
+      });
+    } catch (error) {
+      // Not saved: put the proof back so it can be used again
+      if (body.attachmentId) {
+        await unlinkAttachment(body.attachmentId, contributionId.toString());
+      }
+      throw error;
+    }
 
     // Notify all active directors (all 3) via email
     try {
@@ -142,7 +154,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { id: contribution._id, status: "pending" },
+      { id: contributionId, status: "pending" },
       { status: 201 },
     );
   } catch (error) {

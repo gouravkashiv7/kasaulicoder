@@ -4,7 +4,7 @@ import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import { getActiveDirectors } from "@/backend/lib/directors";
 import { evaluatePolicy } from "@/backend/lib/governance";
-import { applyOutcome } from "@/backend/lib/policies";
+import { applyOutcome, splitCoversDirectors } from "@/backend/lib/policies";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Policy from "@/backend/models/Policy";
 
@@ -40,6 +40,43 @@ export async function POST(
       at: new Date(),
     };
 
+    const directors = await getActiveDirectors();
+    const directorIds = new Set(directors.map((d) => d.id));
+    const outdated = () =>
+      NextResponse.json(
+        {
+          error:
+            "This split no longer matches the active directors, so it can't pass. Propose a new finance policy for this client.",
+        },
+        { status: 409 },
+      );
+
+    // Refuse a yes that would pass a split made for a different set of
+    // directors, before recording it
+    if (vote === "yes") {
+      const open = await Policy.findOne({
+        _id: id,
+        status: "proposed",
+        ...NOT_DELETED,
+      }).select("votes split");
+      if (open) {
+        const votes = [
+          ...open.votes.filter(
+            (v: { staff: { toString(): string } }) => v.staff.toString() !== me,
+          ),
+          { staff: me, vote },
+        ].filter((v: { staff: { toString(): string } }) =>
+          directorIds.has(v.staff.toString()),
+        );
+        if (
+          evaluatePolicy(votes, directors.length) === "approved" &&
+          !splitCoversDirectors(open.split.directors, [...directorIds])
+        ) {
+          return outdated();
+        }
+      }
+    }
+
     // Change an existing vote, or add one if this director hasn't voted. Both
     // updates only match while the policy is open, so a decided policy is final.
     const changed = await Policy.updateOne(
@@ -73,13 +110,17 @@ export async function POST(
       return NextResponse.json({ status: policy.status });
     }
 
-    const directors = await getActiveDirectors();
-    const directorIds = new Set(directors.map((d) => d.id));
     const countable = policy.votes.filter(
       (v: { staff: { toString(): string } }) =>
         directorIds.has(v.staff.toString()),
     );
     const outcome = evaluatePolicy(countable, directors.length);
+    if (
+      outcome === "approved" &&
+      !splitCoversDirectors(policy.split.directors, [...directorIds])
+    ) {
+      return outdated();
+    }
     if (outcome !== "proposed") {
       await applyOutcome(id, String(policy.client ?? ""), outcome);
     }

@@ -11,6 +11,7 @@ export interface IStaff extends Document {
   isActive: boolean;
   isDirector: boolean;
   lastLogin?: Date;
+  passwordChangedAt?: Date;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   createdAt: Date;
@@ -39,6 +40,8 @@ const StaffSchema: Schema = new Schema(
     isActive: { type: Boolean, default: true },
     isDirector: { type: Boolean, default: false },
     lastLogin: { type: Date },
+    // Sessions issued before this moment are rejected
+    passwordChangedAt: { type: Date },
     resetPasswordToken: { type: String, select: false },
     resetPasswordExpires: { type: Date, select: false },
   },

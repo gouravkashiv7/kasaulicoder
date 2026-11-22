@@ -61,13 +61,18 @@ export async function linkAttachment(
     uploadedBy: staffId,
     linked: false,
   });
-  if (!doc?.data) {
+  // A proof put back by unlinkAttachment is already in Cloudinary
+  const uploaded =
+    doc?.storage === "cloudinary" && doc.publicId && doc.format
+      ? { publicId: doc.publicId, version: doc.version, format: doc.format }
+      : null;
+  if (!doc || (!doc.data && !uploaded)) {
     return { error: "Proof not found or already used", status: 400 };
   }
 
   let stored: { publicId: string; version: number; format: string };
   try {
-    stored = await putProof(doc.data, String(doc._id));
+    stored = uploaded ?? (await putProof(doc.data, String(doc._id)));
   } catch (error) {
     console.error("Could not store proof in Cloudinary:", error);
     return { error: "Could not store the proof, try again", status: 502 };
@@ -91,6 +96,16 @@ export async function linkAttachment(
     return { error: "Proof already used", status: 409 };
   }
   return { ok: true };
+}
+
+// Puts a proof back to staged when the record it was linked for could not be
+// saved, so the director can use it again. The file stays in Cloudinary.
+export async function unlinkAttachment(id: unknown, recordId: string) {
+  if (typeof id !== "string" || !mongoose.isValidObjectId(id)) return;
+  await Attachment.updateOne(
+    { _id: id, linked: true, "linkedTo.id": recordId },
+    { $set: { linked: false }, $unset: { linkedTo: 1 } },
+  );
 }
 
 // The bytes of a proof, wherever they are stored.

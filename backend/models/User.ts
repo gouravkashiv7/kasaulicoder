@@ -9,6 +9,7 @@ export interface IUser extends Document {
   pic?: string;
   emailVerified: boolean;
   isActive: boolean;
+  passwordChangedAt?: Date;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   createdAt: Date;
@@ -35,6 +36,8 @@ const UserSchema: Schema = new Schema(
     pic: { type: String },
     emailVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
+    // Sessions issued before this moment are rejected
+    passwordChangedAt: { type: Date },
     resetPasswordToken: { type: String, select: false },
     resetPasswordExpires: { type: Date, select: false },
   },

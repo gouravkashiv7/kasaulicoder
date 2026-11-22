@@ -24,3 +24,11 @@ export function pickProjectFields(body: unknown): Record<string, unknown> {
   }
   return out;
 }
+
+// URL-safe slug used for project pages.
+export function slugifyProject(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+}
