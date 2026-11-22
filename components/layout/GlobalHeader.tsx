@@ -23,7 +23,7 @@ interface HeaderUser {
 const LogoGif = ({ size }: { size: number }) => {
   const [loaded, setLoaded] = useState(false);
   const [isLight, setIsLight] = useState(false);
-  // The 400 KB animated GIF is decoration; fetch it once the page has loaded.
+  // The animated GIF (~75 KB) is decoration; fetch it once the page has loaded.
   const [gifSrc, setGifSrc] = useState<string>();
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const GlobalHeader = ({
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 

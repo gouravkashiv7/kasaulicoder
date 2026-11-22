@@ -9,8 +9,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
-// Read projects on each request so the technology list stays current.
-export const dynamic = "force-dynamic";
+// Cached and re-read from the database at most once a minute, so new or
+// edited projects appear within a minute without hitting the DB per visit.
+export const revalidate = 60;
 
 export default async function About() {
   const projects = await getShowcaseProjectsSafe();

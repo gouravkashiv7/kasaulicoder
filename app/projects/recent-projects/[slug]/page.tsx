@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import { getProjectDetail } from "@/backend/lib/showcase";
 import ProjectDetail from "@/components/projects/ProjectDetail";
 
-export const dynamic = "force-dynamic";
+// Cached and re-read from the database at most once a minute, so new or
+// edited projects appear within a minute without hitting the DB per visit.
+export const revalidate = 60;
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;

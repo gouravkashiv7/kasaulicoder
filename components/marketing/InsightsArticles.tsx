@@ -3,13 +3,13 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import GlobalHeader from "@/components/layout/GlobalHeader";
 
 type ViewType = "grid" | "list";
 
-interface Article {
+export interface Article {
   _id: string;
   slug: string;
   title: string;
@@ -21,28 +21,9 @@ interface Article {
   createdAt: string;
 }
 
-const InsightsArticles = () => {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
+const InsightsArticles = ({ articles }: { articles: Article[] }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewType, setViewType] = useState<ViewType>("grid");
-
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const res = await fetch("/api/public/blogs");
-        if (res.ok) {
-          const data = await res.json();
-          setArticles(data.blogs);
-        }
-      } catch (err) {
-        console.error("Failed to fetch blogs:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlogs();
-  }, []);
 
   const filteredArticles = useMemo(() => {
     return articles.filter((article) => {
@@ -139,19 +120,7 @@ const InsightsArticles = () => {
         </section>
 
         <div className="max-w-7xl mx-auto px-6">
-          {loading ? (
-            <div
-              aria-busy="true"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="h-96 rounded-3xl glass-panel animate-pulse"
-                />
-              ))}
-            </div>
-          ) : filteredArticles.length > 0 ? (
+          {filteredArticles.length > 0 ? (
             <>
               {/* Featured Hero (Visible when not searching and in grid mode) */}
               {viewType === "grid" && featuredArticle && searchQuery === "" && (

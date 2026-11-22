@@ -8,8 +8,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/projects/active-projects" },
 };
 
-// Read projects on each request so newly added projects appear without a redeploy.
-export const dynamic = "force-dynamic";
+// Cached and re-read from the database at most once a minute, so new or
+// edited projects appear within a minute without hitting the DB per visit.
+export const revalidate = 60;
 
 export default async function ActiveProjects() {
   const projects = await getShowcaseProjects({ status: "active" });
