@@ -1,13 +1,11 @@
 import Link from "next/link";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import { primaryButton, secondaryButton } from "@/components/ui/marketing";
 import UniqueLoading from "@/components/ui/morph-loading";
 
 export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground font-sans overflow-x-hidden">
-      <GlobalHeader />
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-36 pb-24 text-center">
         <div className="mb-10">
           <UniqueLoading variant="morph" size="lg" className="mx-auto" />

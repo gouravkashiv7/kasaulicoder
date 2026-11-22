@@ -2,14 +2,11 @@
 
 import { motion } from "framer-motion";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 
 const TermsOfService = () => {
   return (
     <div className="bg-background text-foreground min-h-screen font-display selection:bg-primary selection:text-primary-content overflow-hidden relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,var(--primary)_0.05,transparent_50%)] opacity-20"></div>
-
-      <GlobalHeader />
 
       <main className="relative z-10 flex-1 pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">

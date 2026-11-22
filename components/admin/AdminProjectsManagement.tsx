@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { CurrentUser, Project } from "@/components/admin/types";
+import { canOptimizeImage } from "@/lib/imageHosts";
 import { projectPath } from "@/lib/projects";
 
 export default function AdminProjectsManagement() {
@@ -283,6 +284,7 @@ export default function AdminProjectsManagement() {
                         {thumbnail ? (
                           <Image
                             src={thumbnail}
+                            unoptimized={!canOptimizeImage(thumbnail)}
                             fill
                             alt=""
                             className="object-cover group-hover:scale-110 transition-transform duration-500"

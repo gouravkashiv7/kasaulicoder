@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@/components/ui/marketing";
+import { canOptimizeImage } from "@/lib/imageHosts";
 import { displayHost, projectPath, type ShowcaseProject } from "@/lib/projects";
 
 interface Props {
@@ -51,6 +52,7 @@ export default function ProjectShowcaseCard({
         <div className="relative aspect-16/10 overflow-hidden">
           <Image
             src={project.image}
+            unoptimized={!canOptimizeImage(project.image)}
             alt={`Screenshot of ${project.title}`}
             fill
             priority={priority}

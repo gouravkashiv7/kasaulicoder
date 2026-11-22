@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import React, { useCallback } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 
 // Lazy load the heavy globe component for performance
 const InteractiveGlobe = dynamic(
@@ -110,8 +109,6 @@ const LoginPage = () => {
         ></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary),0.05)_0%,transparent_70%)] opacity-50"></div>
       </div>
-
-      <GlobalHeader />
 
       <main className="flex-1 flex items-center justify-center pt-24 pb-12 px-4 relative z-10">
         <motion.div

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import AuroraBackground from "@/components/ui/aurora-background";
 import {
   Icon,
@@ -29,7 +28,6 @@ export default function ServicesPage() {
   return (
     <div className="font-sans text-foreground antialiased overflow-x-hidden relative">
       <AuroraBackground />
-      <GlobalHeader />
 
       <main className="relative z-10">
         {/* Intro */}

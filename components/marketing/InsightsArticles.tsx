@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
+import { canOptimizeImage } from "@/lib/imageHosts";
 
 type ViewType = "grid" | "list";
 
@@ -45,8 +45,6 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
 
   return (
     <div className="font-display text-foreground min-h-screen selection:bg-primary selection:text-background">
-      <GlobalHeader />
-
       <main className="pt-32 pb-24">
         {/* Hero Section */}
         <section className="px-6 mb-20">
@@ -137,6 +135,9 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
                     <div className="relative aspect-auto md:aspect-auto overflow-hidden">
                       <Image
                         src={featuredArticle.mainImageUrl}
+                        unoptimized={
+                          !canOptimizeImage(featuredArticle.mainImageUrl)
+                        }
                         alt={featuredArticle.title}
                         fill
                         priority
@@ -166,6 +167,11 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
                           {featuredArticle.authorId?.image ? (
                             <Image
                               src={featuredArticle.authorId.image}
+                              unoptimized={
+                                !canOptimizeImage(
+                                  featuredArticle.authorId.image,
+                                )
+                              }
                               alt={featuredArticle.authorId.name}
                               fill
                               className="object-cover"
@@ -235,6 +241,9 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
                           >
                             <Image
                               src={article.mainImageUrl}
+                              unoptimized={
+                                !canOptimizeImage(article.mainImageUrl)
+                              }
                               alt={article.title}
                               fill
                               sizes="(min-width: 768px) 33vw, 100vw"
@@ -273,6 +282,9 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
                                 {article.authorId?.image ? (
                                   <Image
                                     src={article.authorId.image}
+                                    unoptimized={
+                                      !canOptimizeImage(article.authorId.image)
+                                    }
                                     alt={article.authorId.name}
                                     fill
                                     className="object-cover"

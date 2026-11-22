@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JetBrains_Mono, Outfit, Plus_Jakarta_Sans } from "next/font/google"; // Updated fonts
 import Script from "next/script";
 import "./globals.css";
+import SiteHeader from "@/components/layout/SiteHeader";
 import MotionProvider from "@/components/ui/motion-provider";
 import { serviceGroups } from "@/lib/services";
 
@@ -313,7 +314,10 @@ export default function RootLayout({
             __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
           }}
         />
-        <MotionProvider>{children}</MotionProvider>
+        <MotionProvider>
+          <SiteHeader />
+          {children}
+        </MotionProvider>
       </body>
     </html>
   );

@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import type React from "react";
 import { useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import { Icon } from "@/components/ui/marketing";
 import { serviceGroups } from "@/lib/services";
 
@@ -94,8 +93,6 @@ const ContactForm = ({ initialService }: { initialService?: string }) => {
 
   return (
     <div className="font-sans bg-background text-foreground min-h-screen overflow-x-hidden selection:bg-primary selection:text-background">
-      <GlobalHeader />
-
       <main className="pt-32 sm:pt-40 pb-20 sm:pb-28 px-4 sm:px-6 relative">
         <div
           className="absolute inset-x-0 top-0 h-[70vh] pointer-events-none bg-[radial-gradient(ellipse_60%_60%_at_20%_20%,color-mix(in_oklab,var(--primary)_9%,transparent)_0%,transparent_100%)]"

@@ -178,9 +178,22 @@ const AnoAI = () => {
     };
     window.addEventListener("resize", handleResize);
 
+    // Stop the render loop outright while the tab is hidden, rather than
+    // relying on the browser to throttle it, and resume when it's visible.
+    const handleVisibility = () => {
+      if (reduceMotion) return;
+      cancelAnimationFrame(frameId);
+      if (!document.hidden) {
+        lastTime = 0;
+        frameId = requestAnimationFrame(animate);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
+      document.removeEventListener("visibilitychange", handleVisibility);
       observer.disconnect();
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);

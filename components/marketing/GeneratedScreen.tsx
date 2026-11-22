@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import ProjectShowcaseCard from "@/components/projects/ProjectShowcaseCard";
 import {
   primaryButton,
@@ -74,8 +73,6 @@ const GeneratedScreen = ({ projects }: { projects: ShowcaseProject[] }) => {
       </div>
 
       <div className="relative z-10">
-        <GlobalHeader />
-
         <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 pb-12">
           {/* Hero Section */}
           <header className="mb-12 sm:mb-20 text-center lg:text-left grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import ASMRStaticBackground from "@/components/ui/asmr-background";
 import {
   Icon,
@@ -39,7 +38,6 @@ const ProposalRequest = () => {
   return (
     <div className="bg-transparent text-foreground min-h-screen selection:bg-primary/30 font-sans overflow-x-hidden">
       <ASMRStaticBackground />
-      <GlobalHeader />
 
       <main className="relative z-10 px-4 sm:px-6 pt-36 sm:pt-44 pb-20 sm:pb-28">
         <div className="max-w-7xl mx-auto">

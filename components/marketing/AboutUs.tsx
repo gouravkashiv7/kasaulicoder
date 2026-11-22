@@ -1,7 +1,6 @@
 import Link from "next/link";
 import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import AuroraBackground from "@/components/ui/aurora-background";
 import {
   Icon,
@@ -35,7 +34,6 @@ const AboutUs = ({ technologies }: { technologies: string[] }) => {
   return (
     <div className="font-sans text-foreground antialiased overflow-x-hidden relative">
       <AuroraBackground />
-      <GlobalHeader />
 
       <main className="relative z-10">
         {/* Intro */}

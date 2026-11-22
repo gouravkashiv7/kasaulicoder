@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { ProjectDetailData } from "@/backend/lib/showcase";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import {
   Icon,
   primaryButton,
@@ -11,6 +10,7 @@ import {
   textLink,
 } from "@/components/ui/marketing";
 import { ProjectMediaDisplay } from "@/components/ui/ProjectMediaDisplay";
+import { canOptimizeImage } from "@/lib/imageHosts";
 import { displayHost } from "@/lib/projects";
 
 // Renders the plain-text case study stored on a project. Blank lines separate
@@ -98,8 +98,6 @@ export default function ProjectDetail({
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans flex flex-col overflow-x-hidden">
-      <GlobalHeader />
-
       <main className="grow px-4 sm:px-6 pt-32 sm:pt-40 pb-20 sm:pb-28">
         <div className="max-w-7xl mx-auto">
           <Link href="/projects" className={`${textLink} mb-10 text-sm`}>
@@ -210,6 +208,7 @@ export default function ProjectDetail({
                           {member.image ? (
                             <Image
                               src={member.image}
+                              unoptimized={!canOptimizeImage(member.image)}
                               alt=""
                               fill
                               sizes="48px"

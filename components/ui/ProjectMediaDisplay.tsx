@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import type React from "react";
 import { useState } from "react";
+import { canOptimizeImage } from "@/lib/imageHosts";
 
 interface MediaItem {
   type: "image" | "video";
@@ -123,6 +124,7 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
             {currentMedia.type === "image" ? (
               <Image
                 src={currentMedia.url}
+                unoptimized={!canOptimizeImage(currentMedia.url)}
                 alt={`${title} - Media ${currentIndex + 1}`}
                 fill
                 className="object-cover"

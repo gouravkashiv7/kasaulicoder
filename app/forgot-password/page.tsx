@@ -5,7 +5,6 @@ import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -50,8 +49,6 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-display relative overflow-hidden">
-      <GlobalHeader />
-
       <main className="flex-1 flex items-center justify-center pt-24 pb-12 px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}

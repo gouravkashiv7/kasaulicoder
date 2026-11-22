@@ -1,6 +1,5 @@
 import Link from "next/link";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import ProjectShowcaseCard from "@/components/projects/ProjectShowcaseCard";
 import { Icon, primaryButton, textLink } from "@/components/ui/marketing";
 import type { ShowcaseProject } from "@/lib/projects";
@@ -21,8 +20,6 @@ export default function ProjectListPage({
 }) {
   return (
     <div className="relative bg-background text-foreground font-sans min-h-screen flex flex-col overflow-x-hidden">
-      <GlobalHeader />
-
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-32 sm:pt-40 pb-20 sm:pb-28">
         <Link href="/projects" className={`${textLink} mb-10 text-sm`}>
           <Icon name="arrow_back" className="text-lg" />

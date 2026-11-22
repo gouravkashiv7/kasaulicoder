@@ -34,6 +34,7 @@ type SidebarView =
 // Adding imports for the new views
 import AdminProjectsManagement from "@/components/admin/AdminProjectsManagement";
 import SocialMediaManagement from "@/components/admin/SocialMediaManagement";
+import { canOptimizeImage } from "@/lib/imageHosts";
 
 interface MemberUser {
   _id?: string;
@@ -88,6 +89,7 @@ const SafeImage = ({
           alt={alt || "Blog image"}
           title={title}
           src={src}
+          unoptimized={!canOptimizeImage(src)}
         />
       </div>
     );
@@ -98,6 +100,7 @@ const SafeImage = ({
       alt={alt || "Blog image"}
       title={title}
       src={src}
+      unoptimized={!canOptimizeImage(src)}
       width={Number(width)}
       height={Number(height)}
     />
@@ -1513,6 +1516,7 @@ const MemberDashboard = () => {
               {user?.image ? (
                 <Image
                   src={user.image}
+                  unoptimized={!canOptimizeImage(user.image)}
                   alt={user.name}
                   width={40}
                   height={40}
@@ -1838,6 +1842,7 @@ const MemberDashboard = () => {
                         <div className="w-full md:w-48 aspect-16/10 rounded-2xl overflow-hidden shrink-0 border border-foreground/5 relative">
                           <Image
                             src={blog.mainImageUrl}
+                            unoptimized={!canOptimizeImage(blog.mainImageUrl)}
                             alt={blog.title}
                             fill
                             className="object-cover group-hover:scale-110 transition-transform duration-700"

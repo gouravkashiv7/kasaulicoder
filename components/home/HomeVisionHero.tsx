@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Suspense, useEffect, useRef, useState } from "react";
 import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import ProjectShowcaseCard from "@/components/projects/ProjectShowcaseCard";
 import {
   Icon,
@@ -133,7 +132,6 @@ const HomeVisionHero = ({
           <AnoAI />
         </Suspense>
       )}
-      <GlobalHeader />
 
       <main className="relative z-10">
         {/* Hero */}
@@ -290,6 +288,7 @@ const HomeVisionHero = ({
                   <video
                     ref={videoRef}
                     src={afterLoad ? "/kasaulicoder.mp4" : undefined}
+                    poster="/kasaulicoder-poster.webp"
                     autoPlay
                     muted={isMuted}
                     loop

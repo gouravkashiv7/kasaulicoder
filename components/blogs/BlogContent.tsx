@@ -8,9 +8,9 @@ import type { ComponentProps } from "react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import GlobalFooter from "@/components/layout/GlobalFooter";
-import GlobalHeader from "@/components/layout/GlobalHeader";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import UniqueLoading from "@/components/ui/morph-loading";
+import { canOptimizeImage } from "@/lib/imageHosts";
 
 type CommentType = {
   _id: string;
@@ -119,6 +119,7 @@ const BlogContent = ({ slug }: { slug: string }) => {
             alt={alt || "Blog image"}
             title={title}
             src={src}
+            unoptimized={!canOptimizeImage(src)}
           />
         </div>
       );
@@ -129,6 +130,7 @@ const BlogContent = ({ slug }: { slug: string }) => {
         alt={alt || "Blog image"}
         title={title}
         src={src}
+        unoptimized={!canOptimizeImage(src)}
         width={Number(width)}
         height={Number(height)}
       />
@@ -138,7 +140,6 @@ const BlogContent = ({ slug }: { slug: string }) => {
   if (loading) {
     return (
       <div className="font-display text-foreground min-h-screen">
-        <GlobalHeader />
         <div className="flex flex-col items-center justify-center min-h-[80vh] gap-6">
           <UniqueLoading variant="morph" size="lg" />
           <p className="text-primary font-black text-sm tracking-[0.3em] uppercase animate-pulse">
@@ -152,7 +153,6 @@ const BlogContent = ({ slug }: { slug: string }) => {
   if (error || !blog) {
     return (
       <div className="font-display bg-background text-foreground min-h-screen flex flex-col items-center justify-center">
-        <GlobalHeader />
         <h1 className="text-4xl font-black mb-4">Oops!</h1>
         <p className="text-foreground/60 mb-8">{error || "Blog not found"}</p>
         <Link
@@ -167,8 +167,6 @@ const BlogContent = ({ slug }: { slug: string }) => {
 
   return (
     <div className="font-display text-foreground min-h-screen selection:bg-primary selection:text-primary-content relative">
-      <GlobalHeader />
-
       <BackgroundPaths />
       <main className="pt-32 pb-24 px-6 relative">
         <article className="max-w-7xl mx-auto relative z-10 px-4 md:px-6">
@@ -201,6 +199,7 @@ const BlogContent = ({ slug }: { slug: string }) => {
                   {blog.authorId?.image ? (
                     <Image
                       src={blog.authorId.image}
+                      unoptimized={!canOptimizeImage(blog.authorId.image)}
                       alt={blog.authorId.name}
                       width={48}
                       height={48}

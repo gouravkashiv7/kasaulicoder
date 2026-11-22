@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
+import { canOptimizeImage } from "@/lib/imageHosts";
 import type { Blog } from "./types";
 
 const AdminBlogManagement = () => {
@@ -108,6 +109,7 @@ const AdminBlogManagement = () => {
                           {blog.mainImageUrl ? (
                             <Image
                               src={blog.mainImageUrl}
+                              unoptimized={!canOptimizeImage(blog.mainImageUrl)}
                               alt={blog.title}
                               width={40}
                               height={40}
