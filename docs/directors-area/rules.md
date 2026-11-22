@@ -59,6 +59,8 @@
   reason) ends it as rejected; the requester can **resubmit**, which creates a
   new request.
 - A requester can't decide on their own expense.
+- A **superadmin** can approve or reject an expense alone (one decision settles
+  it), and can release an approved one, but never an expense they requested.
 - Once approved, a director **other than the requester** marks it **released**
   (optional transfer reference and screenshot). Releasing deducts it from the
   company balance. It can only happen once.
@@ -96,17 +98,17 @@
 - Any director adds and edits. Only a superadmin deletes (soft).
 
 ## Fund the company
-- A director enters a total; it is split **equally** between all active
-  directors at that moment, each paying the floor of an even share. The
-  credited total is what they pay together (odd paise are dropped, shown
-  before starting).
-- Each director confirms **only their own share**, with a proof (PNG, JPG or
-  PDF). The contribution counts toward the company balance **only when every
-  director has confirmed** (it completes exactly once, even with simultaneous
-  last confirmations). Until then it is shown as "awaiting confirmation".
-- The split is a snapshot. If a director in it is deactivated the contribution
-  can't complete: cancel it (any director, with a reason; one-way, stays
-  visible) and start a new one.
+- A director raises a **fund request**: amount, a note (required), who funded
+  it, and an optional proof. All active directors are emailed about it.
+- It stays **pending** until **Director Mohit** decides. Mohit is identified
+  by his account email only (`isDirectorMohit` in `backend/lib/directors.ts`),
+  never by name. A proof is **not** required for him to approve.
+- Mohit's approval completes it and the full amount counts toward the company
+  balance at once. Mohit can reject it with a reason (stored as `cancelled`).
+- The director who raised a pending request can withdraw it (with a reason).
+  No other director can.
+- Older contributions made under the earlier equal-share flow keep their
+  shares and stay visible.
 - Company balance = company share earned + completed contributions - released
   expenses.
 
@@ -132,8 +134,9 @@
 
 ## Superadmin deletes
 - A superadmin sees **Finance**, **Policies**, **Assets** and **Discussions** in the sidebar
-  even when not a director. Without being a director they can only view and
-  delete: no voting, recording payments or posting.
+  even when not a director. Without being a director they can view, delete and
+  decide or release expenses (see Expenses), but not vote, record payments or
+  post.
 - A superadmin who is also a director keeps the normal view and gets a
   **Manage records** switch for the delete view.
 - Deleting is a **soft delete**: the record gets `deletedAt` and `deletedBy` and

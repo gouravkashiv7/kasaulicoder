@@ -44,7 +44,7 @@ export async function POST(
     if (!existing) {
       return NextResponse.json({ error: "Expense not found" }, { status: 404 });
     }
-    if (String(existing.requestedBy) === me && !isSuperAdmin) {
+    if (String(existing.requestedBy) === me) {
       return NextResponse.json(
         { error: "You can't decide on your own expense" },
         { status: 403 },

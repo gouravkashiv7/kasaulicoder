@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { requireDirector } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
+import { isDirectorMohit } from "@/backend/lib/directors";
 import { NOT_DELETED } from "@/backend/lib/softDelete";
 import Contribution from "@/backend/models/Contribution";
 
@@ -32,8 +33,13 @@ export async function POST(
     }
 
     await connectDB();
+    // Only the director who raised the request (or Mohit, who decides it)
+    // may withdraw it; otherwise any director could veto another's request.
+    const owner = isDirectorMohit(auth.session)
+      ? {}
+      : { createdBy: auth.session.id };
     const res = await Contribution.updateOne(
-      { _id: id, status: "pending", ...NOT_DELETED },
+      { _id: id, status: "pending", ...owner, ...NOT_DELETED },
       {
         $set: {
           status: "cancelled",

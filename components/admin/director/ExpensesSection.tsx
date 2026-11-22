@@ -234,7 +234,7 @@ const ExpensesSection = ({
                   >
                     View screenshot
                   </a>
-                  {x.status === "pending" && (!mine || isSuperAdmin) && (
+                  {x.status === "pending" && !mine && (
                     <>
                       <button
                         type="button"
@@ -265,7 +265,7 @@ const ExpensesSection = ({
                       </button>
                     </>
                   )}
-                  {x.status === "approved" && (!mine || isSuperAdmin) && (
+                  {x.status === "approved" && !mine && (
                     <button
                       type="button"
                       onClick={() => {

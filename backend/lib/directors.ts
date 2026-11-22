@@ -21,12 +21,12 @@ export async function getActiveDirectors(): Promise<DirectorSummary[]> {
   }));
 }
 
-// Check if a staff/user/session represents Director Mohit (Mohit Thakur)
+// Check if a staff/user/session represents Director Mohit (Mohit Thakur).
+// Matched on email only: emails are unique across staff, while anyone can
+// edit their own display name.
 export function isDirectorMohit(
-  user: { email?: string; name?: string } | null | undefined,
+  user: { email?: string } | null | undefined,
 ): boolean {
   if (!user) return false;
-  const email = (user.email || "").toLowerCase().trim();
-  const name = (user.name || "").toLowerCase().trim();
-  return email === "mt4488857@gmail.com" || name.includes("mohit");
+  return (user.email || "").toLowerCase().trim() === "mt4488857@gmail.com";
 }

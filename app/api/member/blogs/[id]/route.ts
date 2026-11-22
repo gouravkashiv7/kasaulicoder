@@ -120,6 +120,13 @@ export async function PATCH(
       blog.slug = finalSlug;
     }
 
+    // An approved post goes back for review when its author edits it, so
+    // edits can't publish unreviewed content. Superadmins approve blogs
+    // themselves, so their edits stay live.
+    if (staff.role !== "superadmin") {
+      blog.status = "inactive";
+    }
+
     // Always use the official name from DB
     blog.writtenBy = staff.name;
 

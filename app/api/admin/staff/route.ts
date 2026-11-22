@@ -248,6 +248,14 @@ export async function PUT(req: Request) {
         { status: 403 },
       );
     }
+    // Directors control company finances; only a superadmin may change their
+    // account (an email change would let an admin reset their password).
+    if (!isSuper && staff.isDirector) {
+      return NextResponse.json(
+        { error: "Only a superadmin can edit a board director" },
+        { status: 403 },
+      );
+    }
 
     // Validate a changed photo before saving anything. "" removes it, and a
     // photo sent back unchanged is left alone.

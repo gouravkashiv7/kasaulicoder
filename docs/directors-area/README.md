@@ -8,9 +8,9 @@ A private part of the admin dashboard for the company's board of directors
 - **Assets**: domains and other company assets, with expiry reminders.
 - **Discussions**: threaded chat with an "email this message" action.
 
-Finance also has a **Funds** section: directors add money to the company in
-equal shares, each confirmed with a proof. Proofs are stored privately in
-Cloudinary.
+Finance also has a **Funds** section: a director raises a fund request and it
+counts toward the company balance once Director Mohit approves it. Proofs are
+stored privately in Cloudinary.
 
 Only staff with the **Board director** flag can see or call any of it.
 

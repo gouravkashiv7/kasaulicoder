@@ -28,8 +28,6 @@ export async function POST(
         : "";
 
     await connectDB();
-    const isSuperAdmin = auth.session.role === "superadmin";
-
     if (
       body.attachmentId &&
       !(await ownsAttachment(body.attachmentId, auth.session.id))
@@ -58,11 +56,9 @@ export async function POST(
     const matchQuery: Record<string, unknown> = {
       _id: id,
       status: "approved",
+      requestedBy: { $ne: auth.session.id },
       ...NOT_DELETED,
     };
-    if (!isSuperAdmin) {
-      matchQuery.requestedBy = { $ne: auth.session.id };
-    }
 
     const res = await Expense.updateOne(matchQuery, {
       $set: {
