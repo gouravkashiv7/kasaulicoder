@@ -108,6 +108,13 @@ export async function POST(req: Request) {
 
     return response;
   } catch (error) {
+    // Two sign-ups with the same email at once
+    if ((error as { code?: number })?.code === 11000) {
+      return NextResponse.json(
+        { error: "Email already registered" },
+        { status: 400 },
+      );
+    }
     console.error(error);
     return NextResponse.json(
       { error: "Internal server error" },

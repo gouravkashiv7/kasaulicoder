@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
@@ -127,7 +128,7 @@ export async function PUT(req: Request) {
       if (body[key] !== undefined) updateData[key] = body[key];
     }
 
-    if (!_id) {
+    if (!isValidObjectId(_id)) {
       return NextResponse.json(
         { error: "Program ID is required" },
         { status: 400 },
@@ -182,7 +183,7 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json(
         { error: "Program ID is required" },
         { status: 400 },

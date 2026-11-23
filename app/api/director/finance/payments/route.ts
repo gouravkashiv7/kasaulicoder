@@ -79,6 +79,8 @@ export async function POST(req: Request) {
     if (
       !/^\d{4}-\d{2}-\d{2}$/.test(String(body.receivedOn)) ||
       Number.isNaN(receivedOn.getTime()) ||
+      // Rejects impossible days like 2026-02-31, which Date rolls over
+      receivedOn.toISOString().slice(0, 10) !== body.receivedOn ||
       String(body.receivedOn) > todayIST
     ) {
       return NextResponse.json(

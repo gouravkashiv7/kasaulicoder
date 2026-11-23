@@ -1,9 +1,10 @@
+import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
 import NextCohortInterest from "@/backend/models/NextCohortInterest";
 
-// GET all cohort-interest signups (admin only)
+// GET all cohort-interest signups (superadmin only)
 export async function GET() {
   try {
     const session = await getServerSession();
@@ -12,7 +13,8 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.type !== "admin") {
+    // Signups are personal data: superadmins only, like contact requests
+    if (session.type !== "admin" || session.role !== "superadmin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
@@ -43,12 +45,13 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.type !== "admin") {
+    // Signups are personal data: superadmins only, like contact requests
+    if (session.type !== "admin" || session.role !== "superadmin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     const { id } = await req.json();
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
@@ -83,19 +86,23 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.type !== "admin") {
+    // Signups are personal data: superadmins only, like contact requests
+    if (session.type !== "admin" || session.role !== "superadmin") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
     await connectDB();
-    await NextCohortInterest.findByIdAndDelete(id);
+    const deleted = await NextCohortInterest.findByIdAndDelete(id);
+    if (!deleted) {
+      return NextResponse.json({ error: "Entry not found" }, { status: 404 });
+    }
 
     return NextResponse.json({ message: "Entry removed" });
   } catch (error) {

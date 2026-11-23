@@ -93,7 +93,7 @@ const PlanModal = ({
                     onChange={(e) =>
                       setPlanForm({
                         ...planForm,
-                        sortOrder: parseInt(e.target.value, 10),
+                        sortOrder: parseInt(e.target.value, 10) || 0,
                       })
                     }
                     className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors"

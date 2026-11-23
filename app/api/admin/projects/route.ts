@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
 import Project from "@/backend/models/Project";
@@ -17,7 +18,7 @@ export async function PUT(req: Request) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json({ error: "No ID provided" }, { status: 400 });
     }
 
@@ -86,14 +87,17 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json(
         { error: "Project ID is required" },
         { status: 400 },
       );
     }
 
-    await Project.findByIdAndDelete(id);
+    const deleted = await Project.findByIdAndDelete(id);
+    if (!deleted) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
 
     return NextResponse.json(
       { message: "Project deleted successfully" },

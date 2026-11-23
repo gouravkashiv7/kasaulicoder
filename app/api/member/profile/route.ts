@@ -49,8 +49,19 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    const { name, email, password, designation, roleDescription, image } =
-      await req.json();
+    const {
+      name,
+      email,
+      password,
+      currentPassword,
+      designation,
+      roleDescription,
+      image,
+    } = await req.json();
+
+    if (name !== undefined && typeof name !== "string") {
+      return NextResponse.json({ error: "Name must be text" }, { status: 400 });
+    }
 
     if (password && (typeof password !== "string" || password.length < 8)) {
       return NextResponse.json(
@@ -93,13 +104,32 @@ export async function PATCH(req: Request) {
     }
 
     await connectDB();
-    const staff = await Staff.findById(session.id);
+    const staff = await Staff.findById(session.id).select("+password");
 
     if (!staff) {
       return NextResponse.json({ error: "Staff not found" }, { status: 404 });
     }
 
-    if (name) staff.name = name;
+    // Changing the sign-in email or password needs the current password, so a
+    // borrowed or hijacked session can't lock the owner out
+    const changingEmail =
+      nextEmail !== undefined && nextEmail !== staff.email.toLowerCase();
+    if (
+      (changingEmail || password) &&
+      !(
+        typeof currentPassword === "string" &&
+        (await bcrypt.compare(currentPassword, staff.password))
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error: "Enter your current password to change your email or password",
+        },
+        { status: 403 },
+      );
+    }
+
+    if (name?.trim()) staff.name = name.trim();
     if (nextEmail && nextEmail !== staff.email) {
       // Check if email is already taken by another person or a user account
       const emailUsed =

@@ -98,6 +98,17 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
+    if (
+      [title, mainImageUrl, tagline, description, content].some(
+        (v) => typeof v !== "string",
+      ) ||
+      (userSlug !== undefined && typeof userSlug !== "string")
+    ) {
+      return NextResponse.json(
+        { error: "Blog fields must be text" },
+        { status: 400 },
+      );
+    }
 
     // Sanitize MDX content
 

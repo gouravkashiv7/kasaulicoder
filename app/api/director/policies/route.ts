@@ -15,10 +15,14 @@ const MAX_NAME = 80;
 
 // Converts "26.67" style percentages to basis points; null when malformed.
 function toBps(value: unknown): number | null {
-  const n = typeof value === "string" ? value.trim() : value;
-  if (typeof n === "string" && !/^\d+(\.\d{1,2})?$/.test(n)) return null;
-  const num = Number(n);
-  if (!Number.isFinite(num) || num < 0 || num > 100) return null;
+  // Only numbers or numeric strings, with at most 2 decimal places
+  const text =
+    typeof value === "number" ? String(value) : (value as string)?.trim?.();
+  if (typeof text !== "string" || !/^\d+(\.\d{1,2})?$/.test(text)) {
+    return null;
+  }
+  const num = Number(text);
+  if (!Number.isFinite(num) || num > 100) return null;
   return Math.round(num * 100);
 }
 

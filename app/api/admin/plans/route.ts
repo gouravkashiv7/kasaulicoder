@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
@@ -123,7 +124,7 @@ export async function PUT(req: Request) {
     const body = await req.json();
     const { id } = body;
 
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json(
         { error: "Plan ID is required" },
         { status: 400 },
@@ -146,7 +147,10 @@ export async function PUT(req: Request) {
       updates.billingCycle = null;
     } else if (
       billingType === "recurring" &&
-      !(updates.billingCycle ?? existing.billingCycle)
+      // An explicit null/"" clears the cycle, which recurring plans need
+      !("billingCycle" in updates
+        ? updates.billingCycle
+        : existing.billingCycle)
     ) {
       return NextResponse.json(
         { error: "billingCycle is required for recurring plans" },
@@ -191,7 +195,7 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json(
         { error: "Plan ID is required" },
         { status: 400 },

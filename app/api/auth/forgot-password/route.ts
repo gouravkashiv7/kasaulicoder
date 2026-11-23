@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import { sendPasswordResetEmail } from "@/backend/lib/email";
 import { issuePasswordResetLink } from "@/backend/lib/passwordReset";
@@ -62,15 +62,18 @@ export async function POST(req: Request) {
       });
     }
 
-    const resetUrl = await issuePasswordResetLink(account, accountType);
-    if (!resetUrl) {
-      return NextResponse.json(
-        { error: "Internal server error" },
-        { status: 500 },
-      );
-    }
-
-    await sendPasswordResetEmail(account.email, account.name, resetUrl);
+    // Sent after the response, so the reply takes the same time whether or
+    // not the account exists
+    after(async () => {
+      try {
+        const resetUrl = await issuePasswordResetLink(account, accountType);
+        if (resetUrl) {
+          await sendPasswordResetEmail(account.email, account.name, resetUrl);
+        }
+      } catch (error) {
+        console.error("Forgot password email error:", error);
+      }
+    });
 
     return NextResponse.json({
       message:

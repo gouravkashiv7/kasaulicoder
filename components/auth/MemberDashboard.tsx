@@ -1005,6 +1005,7 @@ const MemberDashboard = () => {
     name: "",
     email: "",
     password: "",
+    currentPassword: "",
     designation: "",
     roleDescription: "",
     image: "",
@@ -1061,6 +1062,7 @@ const MemberDashboard = () => {
           name: data.name,
           email: data.email,
           password: "",
+          currentPassword: "",
           designation: data.designation || "",
           roleDescription: data.roleDescription || "",
           image: data.image || "",
@@ -1120,6 +1122,7 @@ const MemberDashboard = () => {
         name: field("name"),
         email: field("email"),
         password: field("password"),
+        currentPassword: field("currentPassword"),
         designation: field("designation"),
         roleDescription: field("roleDescription"),
         image: profileData.image,
@@ -1147,7 +1150,7 @@ const MemberDashboard = () => {
           roleDescription: data.user.roleDescription ?? user?.roleDescription,
           image: data.user.image ?? user?.image,
         });
-        setProfileData({ ...submitted, password: "" });
+        setProfileData({ ...submitted, password: "", currentPassword: "" });
 
         // Update local storage too
         const stored = localStorage.getItem("user");
@@ -1180,12 +1183,17 @@ const MemberDashboard = () => {
   // Settings
   const [editingSelf, setEditingSelf] = useState(false);
 
-  const saveSelf = async (values: ProfileValues, imageChanged: boolean) => {
+  const saveSelf = async (
+    values: ProfileValues,
+    imageChanged: boolean,
+    currentPassword?: string,
+  ) => {
     const { image, ...text } = values;
+    const payload = { ...text, currentPassword };
     const res = await fetch("/api/member/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(imageChanged ? { ...text, image } : text),
+      body: JSON.stringify(imageChanged ? { ...payload, image } : payload),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) return data.error || "Update failed";
@@ -1700,6 +1708,7 @@ const MemberDashboard = () => {
                       image: user.image ?? "",
                     }}
                     showProfileText={canEditProfileText}
+                    askCurrentPassword
                     onClose={() => setEditingSelf(false)}
                     onSave={saveSelf}
                   />
@@ -2106,6 +2115,35 @@ const MemberDashboard = () => {
                         className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold"
                       />
                     </div>
+
+                    {(profileData.password ||
+                      profileData.email.trim().toLowerCase() !==
+                        (user?.email ?? "").toLowerCase()) && (
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="member-current-password"
+                          className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1"
+                        >
+                          Current Password (needed to change your email or
+                          password)
+                        </label>
+                        <input
+                          id="member-current-password"
+                          type="password"
+                          name="currentPassword"
+                          autoComplete="current-password"
+                          value={profileData.currentPassword}
+                          onChange={(e) =>
+                            setProfileData({
+                              ...profileData,
+                              currentPassword: e.target.value,
+                            })
+                          }
+                          className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 focus:border-primary outline-none transition-all text-sm font-semibold"
+                          required
+                        />
+                      </div>
+                    )}
 
                     {canEditProfileText && (
                       <>

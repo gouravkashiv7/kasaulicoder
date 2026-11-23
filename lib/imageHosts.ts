@@ -10,7 +10,11 @@ export const optimizedImageHosts = [
 ];
 
 export function canOptimizeImage(src: string | undefined | null): boolean {
-  if (!src || !/^https?:\/\//i.test(src)) return true; // local, data: or blob:
+  if (!src) return true;
+  // Site-relative paths ("/logo.png") go through the optimizer; relative
+  // ("img.png") or protocol-relative ("//host/x.png") URLs would be
+  // rejected by it, so they and data:/blob: URLs render unoptimized.
+  if (src.startsWith("/") && !src.startsWith("//")) return true;
   try {
     const url = new URL(src);
     return (

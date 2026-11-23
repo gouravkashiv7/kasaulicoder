@@ -18,11 +18,10 @@ export default async function UserDashboardPage({
     );
   }
 
-  // Validate the role param matches a known user type
+  // Each user sees only the dashboard for their own account type
   const { role } = await params;
-  if (role !== "student" && role !== "professional") {
-    redirect(`/user/${session.userType || "student"}/dashboard`);
-  }
+  const ownType = session.userType || "student";
+  if (role !== ownType) redirect(`/user/${ownType}/dashboard`);
 
   return <UserDashboard userType={role} />;
 }

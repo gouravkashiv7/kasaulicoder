@@ -27,7 +27,12 @@ const TeamSection = ({ viewerRole }: TeamSectionProps) => {
           : ["editor", "support"];
       setMembers(
         (data as DirectoryRecord[])
-          .filter((m) => editable.includes(m.role ?? ""))
+          // Only a superadmin can edit a board director
+          .filter(
+            (m) =>
+              editable.includes(m.role ?? "") &&
+              (viewerRole === "superadmin" || !m.isDirector),
+          )
           .sort((a, b) => a.name.localeCompare(b.name)),
       );
       setError("");

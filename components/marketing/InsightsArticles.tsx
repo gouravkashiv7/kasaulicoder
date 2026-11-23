@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import { canOptimizeImage } from "@/lib/imageHosts";
+import { formatDate } from "@/lib/utils";
 
 type ViewType = "grid" | "list";
 
@@ -181,13 +182,7 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
                               featuredArticle.writtenBy}
                           </p>
                           <p className="text-[10px] text-foreground/60 uppercase font-black tracking-widest">
-                            {new Date(
-                              featuredArticle.createdAt,
-                            ).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
+                            {formatDate(featuredArticle.createdAt)}
                           </p>
                         </div>
                       </div>
@@ -292,9 +287,7 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
                                   {article.authorId?.name || article.writtenBy}
                                 </p>
                                 <p className="text-[9px] text-foreground/60 uppercase font-black">
-                                  {new Date(
-                                    article.createdAt,
-                                  ).toLocaleDateString()}
+                                  {formatDate(article.createdAt)}
                                 </p>
                               </div>
                               {viewType === "list" && (

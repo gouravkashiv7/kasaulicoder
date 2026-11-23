@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
@@ -119,7 +120,7 @@ export async function PUT(req: Request) {
     const id = body?.id;
     const updateData = pickFields(body);
 
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json(
         { error: "Account id required" },
         { status: 400 },
@@ -127,6 +128,9 @@ export async function PUT(req: Request) {
     }
 
     const oldAccount = await SocialMedia.findById(id);
+    if (!oldAccount) {
+      return NextResponse.json({ error: "Account not found" }, { status: 404 });
+    }
     const updatedAccount = await SocialMedia.findByIdAndUpdate(
       id,
       { $set: updateData },
@@ -174,7 +178,16 @@ export async function DELETE(req: Request) {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    await SocialMedia.findByIdAndDelete(id);
+    if (!isValidObjectId(id)) {
+      return NextResponse.json(
+        { error: "Account id required" },
+        { status: 400 },
+      );
+    }
+    const deleted = await SocialMedia.findByIdAndDelete(id);
+    if (!deleted) {
+      return NextResponse.json({ error: "Account not found" }, { status: 404 });
+    }
     return NextResponse.json({ message: "Account deleted successfully" });
   } catch (error) {
     console.error(error);

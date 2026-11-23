@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
@@ -30,6 +31,20 @@ export async function PATCH(
       content,
       slug: userSlug,
     } = body;
+
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+    }
+    const textFields = [title, mainImageUrl, tagline, description, content];
+    if (
+      textFields.some((v) => v !== undefined && typeof v !== "string") ||
+      (userSlug !== undefined && typeof userSlug !== "string")
+    ) {
+      return NextResponse.json(
+        { error: "Blog fields must be text" },
+        { status: 400 },
+      );
+    }
 
     await connectDB();
 

@@ -31,17 +31,40 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
     media.length > 0 ? "media" : "iframe",
   );
 
-  // Helper to get embed URL for YouTube/Vimeo
+  // Turns a YouTube or Vimeo page link into its embeddable player URL
   const getEmbedUrl = (url: string) => {
-    if (url.includes("youtube.com") || url.includes("youtu.be")) {
-      const id = url.includes("v=")
-        ? url.split("v=")[1].split("&")[0]
-        : url.split("/").pop();
-      return `https://www.youtube.com/embed/${id}`;
+    let parsed: URL;
+    try {
+      parsed = new URL(url);
+    } catch {
+      return url;
     }
-    if (url.includes("vimeo.com")) {
-      const id = url.split("/").pop();
-      return `https://player.vimeo.com/video/${id}`;
+    const host = parsed.hostname.replace(/^(www\.|m\.)/, "");
+    const segments = parsed.pathname.split("/").filter(Boolean);
+
+    if (host === "youtu.be" && segments[0]) {
+      return `https://www.youtube.com/embed/${segments[0]}`;
+    }
+    if (host === "youtube.com" || host === "youtube-nocookie.com") {
+      // watch?v=ID, or /embed/ID, /shorts/ID, /live/ID
+      const id =
+        parsed.searchParams.get("v") ||
+        (["embed", "shorts", "live"].includes(segments[0])
+          ? segments[1]
+          : undefined);
+      if (id) return `https://www.youtube.com/embed/${id}`;
+    }
+    if (host === "vimeo.com" || host === "player.vimeo.com") {
+      // vimeo.com/ID, vimeo.com/ID/HASH (unlisted) or player.vimeo.com/video/ID
+      const index = segments.findIndex((s) => /^\d+$/.test(s));
+      if (index !== -1) {
+        const hash =
+          parsed.searchParams.get("h") ||
+          (/^[0-9a-f]+$/i.test(segments[index + 1] ?? "")
+            ? segments[index + 1]
+            : "");
+        return `https://player.vimeo.com/video/${segments[index]}${hash ? `?h=${hash}` : ""}`;
+      }
     }
     return url;
   };

@@ -10,6 +10,7 @@ import ReactMarkdown from "react-markdown";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import { canOptimizeImage } from "@/lib/imageHosts";
+import { formatDate } from "@/lib/utils";
 
 export type CommentType = {
   _id: string;
@@ -182,7 +183,7 @@ const BlogContent = ({
                     Published On
                   </span>
                   <span className="font-bold text-foreground/80 font-mono">
-                    {new Date(blog.createdAt).toLocaleDateString()}
+                    {formatDate(blog.createdAt)}
                   </span>
                 </div>
               </div>
@@ -272,7 +273,7 @@ const BlogContent = ({
                         </span>
                       </div>
                       <span className="text-xs text-foreground/30 font-mono">
-                        {new Date(comment.createdAt).toLocaleDateString()}
+                        {formatDate(comment.createdAt)}
                       </span>
                     </div>
                     <p className="text-foreground/60 leading-relaxed whitespace-pre-wrap">

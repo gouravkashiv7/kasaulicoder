@@ -20,11 +20,14 @@ interface ProfileEditModalProps {
   initial: ProfileValues;
   // Photo, designation and role description; not every role may edit these
   showProfileText: boolean;
+  // Editing your own profile: a new email needs your current password
+  askCurrentPassword?: boolean;
   onClose: () => void;
   // Resolves to an error message, or null when saved
   onSave: (
     values: ProfileValues,
     imageChanged: boolean,
+    currentPassword?: string,
   ) => Promise<string | null>;
 }
 
@@ -34,10 +37,15 @@ const ProfileEditModal = ({
   title,
   initial,
   showProfileText,
+  askCurrentPassword = false,
   onClose,
   onSave,
 }: ProfileEditModalProps) => {
   const [values, setValues] = useState(initial);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const needsPassword =
+    askCurrentPassword &&
+    values.email.trim().toLowerCase() !== initial.email.toLowerCase();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -57,7 +65,11 @@ const ProfileEditModal = ({
   const submit = async () => {
     setSaving(true);
     setError("");
-    const message = await onSave(values, values.image !== initial.image);
+    const message = await onSave(
+      values,
+      values.image !== initial.image,
+      needsPassword ? currentPassword : undefined,
+    );
     setSaving(false);
     if (message) setError(message);
     else onClose();
@@ -70,7 +82,11 @@ const ProfileEditModal = ({
       submitLabel="Save changes"
       saving={saving}
       error={error}
-      disabled={!values.name.trim() || !values.email.trim()}
+      disabled={
+        !values.name.trim() ||
+        !values.email.trim() ||
+        (needsPassword && !currentPassword)
+      }
       onClose={onClose}
       onSubmit={submit}
     >
@@ -145,6 +161,22 @@ const ProfileEditModal = ({
           required
         />
       </div>
+      {needsPassword && (
+        <div className="space-y-1.5">
+          <label htmlFor="profile-edit-current-password" className={labelClass}>
+            Current password (needed to change your email)
+          </label>
+          <input
+            id="profile-edit-current-password"
+            type="password"
+            autoComplete="current-password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className={fieldClass}
+            required
+          />
+        </div>
+      )}
       {showProfileText && (
         <>
           <div className="space-y-1.5">

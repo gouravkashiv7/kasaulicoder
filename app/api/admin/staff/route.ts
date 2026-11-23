@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import { parseImageDataUrl } from "@/backend/lib/attachments";
 import { getServerSession } from "@/backend/lib/auth";
@@ -84,22 +85,37 @@ export async function POST(req: Request) {
       );
     }
 
-    // Validate image size (max 200KB)
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string"
+    ) {
+      return NextResponse.json(
+        { error: "Name, email and password must be text" },
+        { status: 400 },
+      );
+    }
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: "Password must be at least 8 characters" },
+        { status: 400 },
+      );
+    }
+
+    // Same image check as editing: a real image, at most 200KB
     if (image) {
-      // image is expected to be a data URL: data:image/png;base64,iVBORw0KGgo...
-      const base64Data = image.split(",")[1];
-      if (base64Data) {
-        const buffer = Buffer.from(base64Data, "base64");
-        // 200KB limit
-        if (buffer.length > 200 * 1024) {
-          return NextResponse.json(
-            {
-              error:
-                "Image size exceeds the 200KB limit. Please try a smaller image.",
-            },
-            { status: 400 },
-          );
-        }
+      const parsed = parseImageDataUrl(image);
+      if ("error" in parsed) {
+        return NextResponse.json({ error: parsed.error }, { status: 400 });
+      }
+      if (parsed.data.length > 200 * 1024) {
+        return NextResponse.json(
+          {
+            error:
+              "Image size exceeds the 200KB limit. Please try a smaller image.",
+          },
+          { status: 400 },
+        );
       }
     }
 
@@ -179,7 +195,7 @@ export async function PATCH(req: Request) {
     }
 
     const { id, sendEmail } = await req.json();
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json({ error: "Staff id required" }, { status: 400 });
     }
 
@@ -262,7 +278,7 @@ export async function PUT(req: Request) {
       isDirector,
     } = await req.json();
 
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json({ error: "Staff id required" }, { status: 400 });
     }
 

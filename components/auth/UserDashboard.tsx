@@ -54,6 +54,8 @@ const UserDashboard = ({ userType }: { userType: string }) => {
 
   // Settings state
   const [settingsForm, setSettingsForm] = useState({ name: "", email: "" });
+  // Needed only when the email changes
+  const [currentPassword, setCurrentPassword] = useState("");
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [settingsMsg, setSettingsMsg] = useState<{
     text: string;
@@ -205,6 +207,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
           name: settingsForm.name,
           email: settingsForm.email,
           pic: croppedPic || undefined,
+          currentPassword: currentPassword || undefined,
         }),
       });
       const data = await res.json();
@@ -213,6 +216,7 @@ const UserDashboard = ({ userType }: { userType: string }) => {
         const updated = { ...user, ...data.user };
         localStorage.setItem("user", JSON.stringify(updated));
         setUser(updated as UserData);
+        setCurrentPassword("");
         setSettingsMsg({ text: "Profile updated successfully!", ok: true });
       } else {
         setSettingsMsg({ text: data.error || "Failed to save.", ok: false });
@@ -1118,6 +1122,26 @@ const UserDashboard = ({ userType }: { userType: string }) => {
                           placeholder="your@email.com"
                         />
                       </div>
+                      {settingsForm.email.trim().toLowerCase() !==
+                        (user?.email ?? "").toLowerCase() && (
+                        <div>
+                          <label
+                            htmlFor="profile-current-password"
+                            className="block text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2"
+                          >
+                            Current Password (needed to change your email)
+                          </label>
+                          <input
+                            id="profile-current-password"
+                            type="password"
+                            autoComplete="current-password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            className={`w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 outline-none text-foreground placeholder:text-foreground/25 transition-all focus:border-${isStudent ? "secondary" : "primary"}/40 focus:ring-2 focus:ring-${isStudent ? "secondary" : "primary"}/10`}
+                            required
+                          />
+                        </div>
+                      )}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                         <div>
                           <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/30 mb-2">

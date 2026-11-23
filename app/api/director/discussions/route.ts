@@ -96,7 +96,17 @@ export async function POST(req: Request) {
       lastMessageAt: now,
       readBy: { [me]: now },
     });
-    await ThreadMessage.create({ thread: thread._id, author: me, body: text });
+    try {
+      await ThreadMessage.create({
+        thread: thread._id,
+        author: me,
+        body: text,
+      });
+    } catch (error) {
+      // Don't leave a discussion with no opening message
+      await Thread.deleteOne({ _id: thread._id });
+      throw error;
+    }
     return NextResponse.json({ id: thread._id }, { status: 201 });
   } catch (error) {
     console.error(error);

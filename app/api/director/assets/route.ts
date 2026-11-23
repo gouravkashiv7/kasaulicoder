@@ -20,7 +20,10 @@ function parseDay(value: unknown): Date | null | false {
     return false;
   }
   const day = new Date(`${value}T00:00:00.000Z`);
-  return Number.isNaN(day.getTime()) ? false : day;
+  // Rejects impossible days like 2026-02-31, which Date rolls over
+  return Number.isNaN(day.getTime()) || day.toISOString().slice(0, 10) !== value
+    ? false
+    : day;
 }
 
 type Fields = {

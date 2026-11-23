@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import type { SidebarView } from "@/components/admin/types";
+import type { DirectorBadges, SidebarView } from "@/components/admin/types";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -26,6 +26,16 @@ export default function AdminLayout({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [cohortNotNotified, setCohortNotNotified] = useState(0);
+  // The director badge endpoint answers only for directors, so a successful
+  // response also tells us to show the director items in the sidebar
+  const [directorBadges, setDirectorBadges] = useState<DirectorBadges>();
+
+  useEffect(() => {
+    fetch("/api/director/badges")
+      .then((res) => (res.ok ? res.json() : undefined))
+      .then(setDirectorBadges)
+      .catch(() => {});
+  }, []);
 
   // Auth Check
   useEffect(() => {
@@ -134,6 +144,8 @@ export default function AdminLayout({
 
       <AdminSidebar
         role={role}
+        isDirector={Boolean(directorBadges)}
+        directorBadges={directorBadges}
         sidebarView={activeTab}
         setSidebarView={handleSetSidebarView}
         sidebarCollapsed={sidebarCollapsed}

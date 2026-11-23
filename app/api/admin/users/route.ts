@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
@@ -46,7 +47,7 @@ export async function PATCH(req: Request) {
     }
 
     const { id, sendEmail } = await req.json();
-    if (!id) {
+    if (!isValidObjectId(id)) {
       return NextResponse.json({ error: "User id required" }, { status: 400 });
     }
 
