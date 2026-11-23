@@ -18,6 +18,13 @@ const nextConfig: NextConfig = {
       protocol: "https" as const,
       hostname,
     })),
+    localPatterns: [
+      // Local images without query strings (public/ files)
+      { pathname: "/**", search: "" },
+      // Staff photos carry a ?v=<hash> that changes with the photo
+      // (backend/lib/staffImage.ts)
+      { pathname: "/api/public/staff/**" },
+    ],
   },
 };
 

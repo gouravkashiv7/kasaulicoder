@@ -1,17 +1,27 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { getServerSession } from "@/backend/lib/auth";
 import connectDB from "@/backend/lib/db";
+import { staffImageUrl } from "@/backend/lib/staffImage";
 import Blog from "@/backend/models/Blog";
-import BlogContent from "@/components/blogs/BlogContent";
+import Comment from "@/backend/models/Comment";
+import "@/backend/models/Staff";
+import BlogContent, {
+  type BlogType,
+  type CommentType,
+} from "@/components/blogs/BlogContent";
 
 // Live posts are public; superadmins can also preview inactive ones.
-async function findViewableBlog(slug: string) {
+// cache() lets generateMetadata and the page share one database query.
+const findViewableBlog = cache(async (slug: string) => {
   await connectDB();
   const session = await getServerSession();
   const canPreview = session?.type === "admin" && session.role === "superadmin";
-  return Blog.findOne(canPreview ? { slug } : { slug, status: "active" });
-}
+  return Blog.findOne(canPreview ? { slug } : { slug, status: "active" })
+    .populate("authorId", "name image designation roleDescription")
+    .lean();
+});
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
@@ -40,6 +50,29 @@ export default async function BlogPostPage(props: {
   params: Promise<{ slug: string }>;
 }) {
   const params = await props.params;
-  if (!(await findViewableBlog(params.slug))) notFound();
-  return <BlogContent slug={params.slug} />;
+  const blog = await findViewableBlog(params.slug);
+  if (!blog) notFound();
+
+  const comments = await Comment.find({
+    blogId: blog._id,
+    status: "approved",
+  })
+    .select("userName content createdAt")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  // Plain JSON so ObjectIds and Dates can cross into the client component.
+  const plainBlog: BlogType = JSON.parse(JSON.stringify(blog));
+  if (plainBlog.authorId) {
+    const author = blog.authorId as unknown as { _id: unknown; image?: string };
+    plainBlog.authorId.image = staffImageUrl(author._id, author.image);
+  }
+
+  return (
+    <BlogContent
+      slug={params.slug}
+      blog={plainBlog}
+      initialComments={JSON.parse(JSON.stringify(comments)) as CommentType[]}
+    />
+  );
 }

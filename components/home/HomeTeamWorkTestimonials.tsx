@@ -1,41 +1,15 @@
-"use client";
-
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { SectionIntro } from "@/components/ui/marketing";
+import type { PublicTeamMember } from "@/backend/lib/team";
 import { canOptimizeImage } from "@/lib/imageHosts";
 
-interface TeamMember {
-  _id?: string;
-  name: string;
-  designation?: string;
-  roleDescription?: string;
-  image?: string;
-}
-
-const HomeTeamWorkTestimonials = () => {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [loadingTeam, setLoadingTeam] = useState(true);
-
-  useEffect(() => {
-    const fetchTeam = async () => {
-      try {
-        const res = await fetch("/api/public/team");
-        if (res.ok) {
-          const data = await res.json();
-          setTeamMembers(data);
-        }
-      } catch {
-        console.error("Failed to fetch team members");
-      } finally {
-        setLoadingTeam(false);
-      }
-    };
-    fetchTeam();
-  }, []);
-
+const HomeTeamWorkTestimonials = ({
+  teamMembers,
+}: {
+  teamMembers: PublicTeamMember[];
+}) => {
   // Shown only when real team members exist; no placeholder state.
-  if (loadingTeam || teamMembers.length === 0) return null;
+  if (teamMembers.length === 0) return null;
 
   return (
     <section
@@ -51,7 +25,7 @@ const HomeTeamWorkTestimonials = () => {
         <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {teamMembers.map((member) => (
             <li
-              key={member._id || member.name}
+              key={member._id}
               className="flex flex-col rounded-3xl border border-foreground/10 bg-background/70 backdrop-blur-md p-3"
             >
               <div className="relative aspect-square rounded-2xl overflow-hidden bg-foreground/5 flex items-center justify-center">

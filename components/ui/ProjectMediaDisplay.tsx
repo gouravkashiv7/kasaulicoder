@@ -113,7 +113,9 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
       <div
         className={`relative group overflow-hidden bg-foreground/5 border border-foreground/10 rounded-2xl ${aspectRatio} ${className}`}
       >
-        <AnimatePresence mode="wait">
+        {/* initial={false}: the first image shows at once (it's the page's
+            largest content); only switching images animates. */}
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentIndex}
             initial={{ opacity: 0, x: 20 }}
@@ -127,6 +129,8 @@ export const ProjectMediaDisplay: React.FC<ProjectMediaDisplayProps> = ({
                 unoptimized={!canOptimizeImage(currentMedia.url)}
                 alt={`${title} - Media ${currentIndex + 1}`}
                 fill
+                priority={currentIndex === 0}
+                sizes="(min-width: 1280px) 1280px, 100vw"
                 className="object-cover"
               />
             ) : (

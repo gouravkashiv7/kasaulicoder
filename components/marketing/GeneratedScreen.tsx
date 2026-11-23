@@ -76,8 +76,10 @@ const GeneratedScreen = ({ projects }: { projects: ShowcaseProject[] }) => {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 pb-12">
           {/* Hero Section */}
           <header className="mb-12 sm:mb-20 text-center lg:text-left grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Starts fully visible so the hero text isn't held back as the
+                page's largest content; it only slides into place. */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 1, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >

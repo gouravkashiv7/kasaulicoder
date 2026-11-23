@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getShowcaseProjectsSafe } from "@/backend/lib/showcase";
+import { getPublicTeamSafe } from "@/backend/lib/team";
 import HomeVisionHero from "@/components/home/HomeVisionHero";
 
 export const metadata: Metadata = {
@@ -16,6 +17,9 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function Home() {
-  const projects = await getShowcaseProjectsSafe({ limit: 3 });
-  return <HomeVisionHero projects={projects} />;
+  const [projects, team] = await Promise.all([
+    getShowcaseProjectsSafe({ limit: 3 }),
+    getPublicTeamSafe(),
+  ]);
+  return <HomeVisionHero projects={projects} team={team} />;
 }

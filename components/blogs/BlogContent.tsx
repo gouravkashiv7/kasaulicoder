@@ -5,21 +5,20 @@ import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
 import type { ComponentProps } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import { BackgroundPaths } from "@/components/ui/background-paths";
-import UniqueLoading from "@/components/ui/morph-loading";
 import { canOptimizeImage } from "@/lib/imageHosts";
 
-type CommentType = {
+export type CommentType = {
   _id: string;
   userName: string;
   content: string;
   createdAt: string;
 };
 
-type BlogType = {
+export type BlogType = {
   _id: string;
   title: string;
   slug: string;
@@ -36,43 +35,22 @@ type BlogType = {
   createdAt: string;
 };
 
-const BlogContent = ({ slug }: { slug: string }) => {
-  const [blog, setBlog] = useState<BlogType | null>(null);
-  const [jsxSource, setJsxSource] = useState<string | null>(null);
-  const [comments, setComments] = useState<CommentType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+const BlogContent = ({
+  slug,
+  blog,
+  initialComments,
+}: {
+  slug: string;
+  blog: BlogType;
+  initialComments: CommentType[];
+}) => {
+  const [comments, setComments] = useState<CommentType[]>(initialComments);
+  // Rendered with react-markdown: raw HTML/JSX is never executed
+  const jsxSource = blog.content ? String(blog.content) : null;
 
   const [newComment, setNewComment] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
   const [commentError, setCommentError] = useState("");
-
-  useEffect(() => {
-    const fetchBlog = async () => {
-      if (!slug) return;
-      try {
-        const res = await fetch(`/api/public/blogs/${slug}?t=${Date.now()}`);
-        if (res.ok) {
-          const data = await res.json();
-          setBlog(data.blog);
-          setComments(data.comments);
-
-          // Rendered with react-markdown: raw HTML/JSX is never executed
-          if (data.blog?.content) {
-            setJsxSource(String(data.blog.content));
-          }
-        } else {
-          setError("Blog not found.");
-        }
-      } catch (err) {
-        console.error("Failed to fetch blog:", err);
-        setError("An error occurred while loading the blog.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlog();
-  }, [slug]);
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,34 +114,6 @@ const BlogContent = ({ slug }: { slug: string }) => {
       />
     );
   };
-
-  if (loading) {
-    return (
-      <div className="font-display text-foreground min-h-screen">
-        <div className="flex flex-col items-center justify-center min-h-[80vh] gap-6">
-          <UniqueLoading variant="morph" size="lg" />
-          <p className="text-primary font-black text-sm tracking-[0.3em] uppercase animate-pulse">
-            Loading Article
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !blog) {
-    return (
-      <div className="font-display bg-background text-foreground min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-black mb-4">Oops!</h1>
-        <p className="text-foreground/60 mb-8">{error || "Blog not found"}</p>
-        <Link
-          href="/blogs"
-          className="bg-primary/10 text-primary border border-primary/20 px-6 py-2 rounded-xl font-bold hover:bg-primary/20 transition-colors"
-        >
-          Back to Blogs
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="font-display text-foreground min-h-screen selection:bg-primary selection:text-primary-content relative">

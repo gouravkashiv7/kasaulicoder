@@ -1,4 +1,5 @@
 import connectDB from "@/backend/lib/db";
+import { staffImageUrl } from "@/backend/lib/staffImage";
 import Project from "@/backend/models/Project";
 import { cleanUrl, type ShowcaseProject } from "@/lib/projects";
 
@@ -95,7 +96,12 @@ export async function getProjectDetail(
     ...project,
     tags: project.tags ?? [],
     media: project.media ?? [],
-    members: project.members ?? [],
+    members: (project.members ?? []).map(
+      (m: { _id: string; image?: string }) => ({
+        ...m,
+        image: staffImageUrl(m._id, m.image),
+      }),
+    ),
     liveUrl: cleanUrl(project.liveUrl),
     githubUrl: cleanUrl(project.githubUrl),
     videoUrl: cleanUrl(project.videoUrl),

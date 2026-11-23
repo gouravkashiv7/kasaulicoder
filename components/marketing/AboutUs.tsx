@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { PublicTeamMember } from "@/backend/lib/team";
 import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import AuroraBackground from "@/components/ui/aurora-background";
@@ -30,7 +31,13 @@ const approach = [
   },
 ];
 
-const AboutUs = ({ technologies }: { technologies: string[] }) => {
+const AboutUs = ({
+  technologies,
+  team,
+}: {
+  technologies: string[];
+  team: PublicTeamMember[];
+}) => {
   return (
     <div className="font-sans text-foreground antialiased overflow-x-hidden relative">
       <AuroraBackground />
@@ -166,7 +173,7 @@ const AboutUs = ({ technologies }: { technologies: string[] }) => {
           </section>
         )}
 
-        <HomeTeamWorkTestimonials />
+        <HomeTeamWorkTestimonials teamMembers={team} />
 
         {/* Working with us */}
         <section

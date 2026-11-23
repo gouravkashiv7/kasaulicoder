@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getShowcaseProjectsSafe } from "@/backend/lib/showcase";
+import { getPublicTeamSafe } from "@/backend/lib/team";
 import AboutUs from "@/components/marketing/AboutUs";
 
 export const metadata: Metadata = {
@@ -14,7 +15,10 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function About() {
-  const projects = await getShowcaseProjectsSafe();
+  const [projects, team] = await Promise.all([
+    getShowcaseProjectsSafe(),
+    getPublicTeamSafe(),
+  ]);
 
   // Unique technologies across published projects, most used first.
   // Version suffixes are dropped so "React 19" counts as "React".
@@ -29,5 +33,5 @@ export default async function About() {
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .map(([name]) => name);
 
-  return <AboutUs technologies={technologies} />;
+  return <AboutUs technologies={technologies} team={team} />;
 }

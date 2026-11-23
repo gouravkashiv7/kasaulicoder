@@ -15,6 +15,7 @@ import {
   textLink,
 } from "@/components/ui/marketing";
 import { useAfterLoad } from "@/components/ui/use-after-load";
+import type { PublicTeamMember } from "@/backend/lib/team";
 import type { ShowcaseProject } from "@/lib/projects";
 import { serviceGroups } from "@/lib/services";
 
@@ -90,8 +91,10 @@ const heroItem = {
 
 const HomeVisionHero = ({
   projects = [],
+  team = [],
 }: {
   projects?: ShowcaseProject[];
+  team?: PublicTeamMember[];
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const afterLoad = useAfterLoad();
@@ -424,7 +427,7 @@ const HomeVisionHero = ({
           </div>
         </section>
 
-        <HomeTeamWorkTestimonials />
+        <HomeTeamWorkTestimonials teamMembers={team} />
 
         {/* Final CTA */}
         <section
