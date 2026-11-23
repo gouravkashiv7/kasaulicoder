@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
-import { linkAttachment, ownsAttachment } from "@/backend/lib/attachments";
+import {
+  linkAttachment,
+  ownsAttachment,
+  unlinkAttachment,
+} from "@/backend/lib/attachments";
 import {
   requireDirector,
   requireDirectorOrSuperAdmin,
@@ -87,14 +91,20 @@ export async function POST(req: Request) {
       );
     }
 
-    const expense = await Expense.create({
-      _id: expenseId,
-      purpose,
-      amountPaise,
-      attachment: body.attachmentId,
-      requestedBy: auth.session.id,
-    });
-    return NextResponse.json({ id: expense._id }, { status: 201 });
+    try {
+      await Expense.create({
+        _id: expenseId,
+        purpose,
+        amountPaise,
+        attachment: body.attachmentId,
+        requestedBy: auth.session.id,
+      });
+    } catch (error) {
+      // Not saved: put the proof back so it can be used again
+      await unlinkAttachment(body.attachmentId, String(expenseId));
+      throw error;
+    }
+    return NextResponse.json({ id: expenseId }, { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

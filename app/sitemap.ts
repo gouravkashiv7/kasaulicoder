@@ -3,6 +3,10 @@ import connectDB from "@/backend/lib/db";
 import Blog from "@/backend/models/Blog";
 import Project from "@/backend/models/Project";
 
+// Rebuilt at most once an hour so new and removed posts and projects show up
+// without a redeploy.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://kasaulicoder.com";
   const lastModified = new Date();
@@ -15,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/services",
     "/projects",
     "/projects/recent-projects",
+    "/projects/active-projects",
     "/about",
     "/pricing",
     "/contact",

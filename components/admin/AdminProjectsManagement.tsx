@@ -150,15 +150,18 @@ export default function AdminProjectsManagement() {
               Manage the projects shown on the website.
             </p>
           </div>
-          <Link
-            href="/admin/projects/new"
-            className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-primary text-background font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 group"
-          >
-            <span className="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform">
-              add
-            </span>
-            New Project
-          </Link>
+          {/* Only superadmins can create projects */}
+          {currentUser?.role === "superadmin" && (
+            <Link
+              href="/admin/projects/new"
+              className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-primary text-background font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 group"
+            >
+              <span className="material-symbols-outlined text-[20px] group-hover:rotate-90 transition-transform">
+                add
+              </span>
+              New Project
+            </Link>
+          )}
         </div>
 
         {/* Stats Row */}

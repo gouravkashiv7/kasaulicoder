@@ -16,7 +16,7 @@ export interface PublicTeamMember {
 export async function getPublicTeam(): Promise<PublicTeamMember[]> {
   await connectDB();
   const members = await Staff.find({
-    isActive: true,
+    isActive: { $ne: false },
     role: { $in: ["admin", "superadmin"] },
     image: { $exists: true, $ne: null },
   })

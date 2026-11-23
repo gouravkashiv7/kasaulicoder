@@ -39,8 +39,19 @@ export default function ProjectForm({
   const mediaRows = useRowKeys(formData.media.length);
 
   const [staffList, setStaffList] = useState<DirectoryRecord[]>([]);
+  // Only superadmins can set project members; the API ignores them otherwise
+  const [canEditMembers, setCanEditMembers] = useState(false);
+  // Tags are typed as free text and split into a list on save
+  const [tagsText, setTagsText] = useState("");
 
   useEffect(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+      if (user?.role !== "superadmin") return;
+    } catch {
+      return;
+    }
+    setCanEditMembers(true);
     const fetchStaff = async () => {
       try {
         const res = await fetch("/api/admin/staff");
@@ -76,6 +87,7 @@ export default function ProjectForm({
             typeof m === "string" ? m : m._id,
           ) || [],
       });
+      setTagsText((project.tags || []).join(", "));
     }
   }, [project]);
 
@@ -94,7 +106,13 @@ export default function ProjectForm({
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          tags: tagsText
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean),
+        }),
       });
 
       if (res.ok) {
@@ -262,66 +280,68 @@ export default function ProjectForm({
         </div>
 
         {/* Member Assignment */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
-          <div>
-            <h3 className="text-sm font-black uppercase tracking-widest">
-              Project Team Members
-            </h3>
-            <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-[0.2em] mt-1">
-              Select the team members who worked on this project
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {staffList.map((staff) => (
-              <button
-                key={staff._id}
-                type="button"
-                onClick={() => toggleMember(staff._id)}
-                className={`flex items-center gap-2 pl-2 pr-4 py-2 rounded-xl border transition-all ${
-                  formData.members.includes(staff._id)
-                    ? "bg-primary/10 border-primary/50 text-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
-                    : "bg-white/5 border-white/10 text-foreground/50 hover:border-white/20"
-                }`}
-              >
-                <div className="size-6 rounded-lg bg-foreground/10 overflow-hidden relative shrink-0">
-                  {staff.image ? (
-                    <Image
-                      src={staff.image}
-                      alt={staff.name}
-                      fill
-                      sizes="24px"
-                      unoptimized
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="size-full flex items-center justify-center text-[10px] font-black uppercase tracking-tighter">
-                      {staff.name.charAt(0)}
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-xs font-bold leading-tight">
-                    {staff.name}
-                  </span>
-                  <span className="text-[9px] uppercase tracking-widest opacity-50">
-                    {staff.role}
-                  </span>
-                </div>
-                {formData.members.includes(staff._id) && (
-                  <span className="material-symbols-outlined text-sm ml-1 animate-in zoom-in duration-300">
-                    check_circle
-                  </span>
-                )}
-              </button>
-            ))}
-            {staffList.length === 0 && (
-              <p className="text-xs text-foreground/30 italic">
-                Loading team members…
+        {canEditMembers && (
+          <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div>
+              <h3 className="text-sm font-black uppercase tracking-widest">
+                Project Team Members
+              </h3>
+              <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-[0.2em] mt-1">
+                Select the team members who worked on this project
               </p>
-            )}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {staffList.map((staff) => (
+                <button
+                  key={staff._id}
+                  type="button"
+                  onClick={() => toggleMember(staff._id)}
+                  className={`flex items-center gap-2 pl-2 pr-4 py-2 rounded-xl border transition-all ${
+                    formData.members.includes(staff._id)
+                      ? "bg-primary/10 border-primary/50 text-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
+                      : "bg-white/5 border-white/10 text-foreground/50 hover:border-white/20"
+                  }`}
+                >
+                  <div className="size-6 rounded-lg bg-foreground/10 overflow-hidden relative shrink-0">
+                    {staff.image ? (
+                      <Image
+                        src={staff.image}
+                        alt={staff.name}
+                        fill
+                        sizes="24px"
+                        unoptimized
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="size-full flex items-center justify-center text-[10px] font-black uppercase tracking-tighter">
+                        {staff.name.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-xs font-bold leading-tight">
+                      {staff.name}
+                    </span>
+                    <span className="text-[9px] uppercase tracking-widest opacity-50">
+                      {staff.role}
+                    </span>
+                  </div>
+                  {formData.members.includes(staff._id) && (
+                    <span className="material-symbols-outlined text-sm ml-1 animate-in zoom-in duration-300">
+                      check_circle
+                    </span>
+                  )}
+                </button>
+              ))}
+              {staffList.length === 0 && (
+                <p className="text-xs text-foreground/30 italic">
+                  Loading team members…
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Media Manager */}
         <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
@@ -528,16 +548,8 @@ export default function ProjectForm({
             <input
               id="project-tags-comma-separated"
               type="text"
-              value={formData.tags.join(", ")}
-              onChange={(e) =>
-                setFormData((p) => ({
-                  ...p,
-                  tags: e.target.value
-                    .split(",")
-                    .map((t) => t.trim())
-                    .filter(Boolean),
-                }))
-              }
+              value={tagsText}
+              onChange={(e) => setTagsText(e.target.value)}
               placeholder="NEXT.JS, TAILWIND, MONGO"
               className="w-full bg-background border border-white/10 rounded-2xl px-5 py-3 text-sm outline-none focus:border-primary/50 transition-all shadow-inner"
             />

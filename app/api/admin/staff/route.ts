@@ -9,6 +9,7 @@ import {
   sendStaffWelcomeEmail,
 } from "@/backend/lib/email";
 import Staff from "@/backend/models/Staff";
+import User from "@/backend/models/User";
 
 // Guards against locking every superadmin out of the panel.
 async function hasOtherActiveSuperadmin(staffId: unknown): Promise<boolean> {
@@ -104,9 +105,11 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    const existingStaff = await Staff.findOne({ email }).collation(
-      EMAIL_COLLATION,
-    );
+    // Emails are unique across staff and user accounts, so password
+    // reset always finds the right one
+    const existingStaff =
+      (await Staff.exists({ email }).collation(EMAIL_COLLATION)) ||
+      (await User.exists({ email }).collation(EMAIL_COLLATION));
 
     if (existingStaff) {
       return NextResponse.json(
@@ -309,10 +312,12 @@ export async function PUT(req: Request) {
         );
       }
       if (nextEmail !== staff.email) {
-        const emailUsed = await Staff.findOne({
-          email: nextEmail,
-          _id: { $ne: staff._id },
-        }).collation(EMAIL_COLLATION);
+        const emailUsed =
+          (await Staff.exists({
+            email: nextEmail,
+            _id: { $ne: staff._id },
+          }).collation(EMAIL_COLLATION)) ||
+          (await User.exists({ email: nextEmail }).collation(EMAIL_COLLATION));
         if (emailUsed) {
           return NextResponse.json(
             { error: "Email already in use" },
@@ -320,6 +325,9 @@ export async function PUT(req: Request) {
           );
         }
         staff.email = nextEmail;
+        // A reset link sent to the old address must stop working
+        staff.resetPasswordToken = undefined;
+        staff.resetPasswordExpires = undefined;
       }
     }
 

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import { sendPasswordResetEmail } from "@/backend/lib/email";
 import { issuePasswordResetLink } from "@/backend/lib/passwordReset";
-import { rateLimit } from "@/backend/lib/rateLimit";
+import { rateLimit, rateLimitKey } from "@/backend/lib/rateLimit";
 import Staff from "@/backend/models/Staff";
 import User from "@/backend/models/User";
 
@@ -19,6 +19,15 @@ export async function POST(req: Request) {
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    }
+
+    // Caps reset emails per address; answers as if sent so the limit
+    // doesn't reveal whether the account exists.
+    if (!rateLimitKey("forgot-email", email.toLowerCase(), 3, 3600000)) {
+      return NextResponse.json({
+        message:
+          "If an account exists with this email, you will receive a reset link shortly.",
+      });
     }
 
     await connectDB();

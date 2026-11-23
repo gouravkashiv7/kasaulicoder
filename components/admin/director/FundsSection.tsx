@@ -343,7 +343,12 @@ const FundsSection = ({
         submitLabel="Submit Fund Request"
         saving={saving}
         error={error}
-        disabled={!amount || Number(amount) <= 0 || !note.trim()}
+        disabled={
+          !amount ||
+          Number(amount) <= 0 ||
+          !note.trim() ||
+          (fundedBy === "other" && !customFunder.trim())
+        }
         onClose={close}
         onSubmit={() =>
           send("/api/director/finance/contributions", {

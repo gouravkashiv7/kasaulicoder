@@ -14,7 +14,7 @@ export interface Article {
   slug: string;
   title: string;
   tagline: string;
-  content?: string;
+  readMinutes: number;
   mainImageUrl: string;
   writtenBy?: string;
   authorId?: { name: string; image?: string };
@@ -36,12 +36,6 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
 
   const featuredArticle = filteredArticles[0];
   const remainingArticles = filteredArticles.slice(1);
-
-  const calculateReadingTime = (text: string) => {
-    const wordsPerMinute = 200;
-    const words = text ? text.split(/\s+/).length : 0;
-    return Math.ceil(words / wordsPerMinute) + 2;
-  };
 
   return (
     <div className="font-display text-foreground min-h-screen selection:bg-primary selection:text-background">
@@ -152,8 +146,7 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
                           Featured
                         </span>
                         <span className="text-foreground/60 text-[10px] font-bold uppercase tracking-widest">
-                          {calculateReadingTime(featuredArticle.content || "")}{" "}
-                          Min Read
+                          {featuredArticle.readMinutes} Min Read
                         </span>
                       </div>
                       <h2 className="text-3xl md:text-5xl font-black mb-6 group-hover:text-primary transition-colors leading-[1.1]">
@@ -261,8 +254,7 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
                                 {article.tagline.split(" ")[0] || "Tech"}
                               </span>
                               <span className="text-[10px] font-bold text-foreground/60 uppercase">
-                                {calculateReadingTime(article.content || "")}{" "}
-                                MIN READ
+                                {article.readMinutes} MIN READ
                               </span>
                             </div>
                             <h3

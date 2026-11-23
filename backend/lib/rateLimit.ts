@@ -16,11 +16,22 @@ export function rateLimit(
   limit: number,
   windowMs: number,
 ): boolean {
+  return rateLimitKey(name, clientIp(req), limit, windowMs);
+}
+
+// Limits by any key, e.g. the email being signed in to, so attempts are
+// capped even when the client IP can't be trusted.
+export function rateLimitKey(
+  name: string,
+  id: string,
+  limit: number,
+  windowMs: number,
+): boolean {
   const now = Date.now();
   if (hits.size > 10000) {
     for (const [k, v] of hits) if (v.resetAt < now) hits.delete(k);
   }
-  const key = `${name}:${clientIp(req)}`;
+  const key = `${name}:${id}`;
   const entry = hits.get(key);
   if (!entry || entry.resetAt < now) {
     hits.set(key, { count: 1, resetAt: now + windowMs });

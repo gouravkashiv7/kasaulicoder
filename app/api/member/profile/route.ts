@@ -115,6 +115,9 @@ export async function PATCH(req: Request) {
         );
       }
       staff.email = nextEmail;
+      // A reset link sent to the old address must stop working
+      staff.resetPasswordToken = undefined;
+      staff.resetPasswordExpires = undefined;
     }
 
     // Admins maintain their own title and bio; other roles keep them read-only
@@ -132,6 +135,8 @@ export async function PATCH(req: Request) {
       staff.password = await bcrypt.hash(password, 12);
       // Ends every existing session, this one included: the member logs in again
       staff.passwordChangedAt = new Date();
+      staff.resetPasswordToken = undefined;
+      staff.resetPasswordExpires = undefined;
     }
 
     await staff.save();

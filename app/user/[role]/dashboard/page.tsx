@@ -10,7 +10,13 @@ export default async function UserDashboardPage({
   const session = await getServerSession();
   if (!session) redirect("/login");
 
-  if (session.type === "admin") redirect("/admin/dashboard");
+  // Same split as login: superadmins use the admin dashboard, other staff
+  // the member dashboard
+  if (session.type === "admin") {
+    redirect(
+      session.role === "superadmin" ? "/admin/dashboard" : "/member/dashboard",
+    );
+  }
 
   // Validate the role param matches a known user type
   const { role } = await params;

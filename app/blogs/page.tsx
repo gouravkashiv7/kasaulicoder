@@ -16,16 +16,26 @@ export const metadata: Metadata = {
 // re-read from the database at most once a minute.
 export const revalidate = 60;
 
+// About 200 words a minute, plus two minutes for code and images
+function readingMinutes(text?: string) {
+  const words = text ? text.split(/\s+/).length : 0;
+  return Math.ceil(words / 200) + 2;
+}
+
 async function getPublicBlogs(): Promise<Article[]> {
   try {
     await connectDB();
     const blogs = await Blog.find({ status: "active" })
       .sort({ createdAt: -1 })
-      .select("-content")
       .populate("authorId", "name image")
       .lean();
+    // The list only shows the read time, so the article body isn't sent.
+    const list = blogs.map(({ content, ...blog }) => ({
+      ...blog,
+      readMinutes: readingMinutes(content),
+    }));
     // Plain JSON so ObjectIds and Dates can cross into the client component.
-    return JSON.parse(JSON.stringify(blogs));
+    return JSON.parse(JSON.stringify(list));
   } catch (error) {
     console.error("Error fetching public blogs:", error);
     return [];

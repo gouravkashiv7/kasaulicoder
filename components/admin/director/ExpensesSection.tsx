@@ -271,6 +271,8 @@ const ExpensesSection = ({
                       onClick={() => {
                         setAction({ kind: "release", expense: x });
                         setText("");
+                        // A screenshot from a cancelled form must not carry over
+                        setReleaseShot(null);
                         setError("");
                       }}
                       className="px-4 py-1.5 rounded-lg bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 transition-colors"

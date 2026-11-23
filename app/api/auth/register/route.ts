@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { getJwtSecret } from "@/backend/lib/auth";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
 import { rateLimit } from "@/backend/lib/rateLimit";
+import Staff from "@/backend/models/Staff";
 import User from "@/backend/models/User";
 
 export async function POST(req: Request) {
@@ -45,9 +46,11 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    const existingUser = await User.findOne({ email }).collation(
-      EMAIL_COLLATION,
-    );
+    // Emails are unique across user and staff accounts, so password reset
+    // always finds the right one
+    const existingUser =
+      (await User.exists({ email }).collation(EMAIL_COLLATION)) ||
+      (await Staff.exists({ email }).collation(EMAIL_COLLATION));
 
     if (existingUser) {
       return NextResponse.json(
@@ -97,6 +100,7 @@ export async function POST(req: Request) {
     // Set auth cookie
     response.cookies.set("token", token, {
       httpOnly: true,
+      sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24, // 24h
       path: "/",

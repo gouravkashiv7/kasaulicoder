@@ -23,26 +23,47 @@ function pickFields(body: unknown) {
   return out;
 }
 
-// Social media credentials are visible to active staff only
+// Any staff member can see the list; only the account's manager and
+// superadmins see its login, and only superadmins can change accounts.
 async function requireStaff() {
   const session = await getServerSession();
   if (!session || session.type !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return {
+      error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
+    };
+  }
+  return { session };
+}
+
+async function requireSuperadmin() {
+  const auth = await requireStaff();
+  if ("error" in auth) return auth.error;
+  if (auth.session.role !== "superadmin") {
+    return NextResponse.json({ error: "Access denied" }, { status: 403 });
   }
   return null;
 }
 
 export async function GET() {
-  const denied = await requireStaff();
-  if (denied) return denied;
+  const auth = await requireStaff();
+  if ("error" in auth) return auth.error;
+  const { session } = auth;
 
   try {
     await connectDB();
-    const accounts = await SocialMedia.find().populate(
-      "managedBy",
-      "name email image",
+    const accounts = await SocialMedia.find()
+      .populate("managedBy", "name email image")
+      .lean();
+    const canSeeLogin = (managedBy: unknown) =>
+      session.role === "superadmin" ||
+      String((managedBy as { _id?: unknown } | null)?._id) === session.id;
+    return NextResponse.json(
+      accounts.map((a) =>
+        canSeeLogin(a.managedBy)
+          ? a
+          : { ...a, username: undefined, password: undefined },
+      ),
     );
-    return NextResponse.json(accounts);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -53,7 +74,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const denied = await requireStaff();
+  const denied = await requireSuperadmin();
   if (denied) return denied;
 
   try {
@@ -89,7 +110,7 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  const denied = await requireStaff();
+  const denied = await requireSuperadmin();
   if (denied) return denied;
 
   try {
@@ -146,7 +167,7 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const denied = await requireStaff();
+  const denied = await requireSuperadmin();
   if (denied) return denied;
 
   try {

@@ -115,6 +115,8 @@ const PaymentsSection = ({
           onClick={() => {
             setError("");
             setForm((f) => ({ ...f, receivedOn: today() }));
+            // A screenshot from a cancelled form must not carry over
+            setAttachmentId(null);
             setAdding(true);
           }}
           className="ml-auto px-5 py-2.5 bg-primary text-primary-content font-black rounded-xl hover:brightness-110 disabled:opacity-40"

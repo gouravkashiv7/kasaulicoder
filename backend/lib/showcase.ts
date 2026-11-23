@@ -88,7 +88,12 @@ export async function getProjectDetail(
   await connectDB();
   await import("@/backend/models/Staff"); // register schema for populate
   const raw = await Project.findOne({ slug, status })
-    .populate("members", "name image designation")
+    // Deactivated staff are no longer shown as part of the team
+    .populate({
+      path: "members",
+      select: "name image designation",
+      match: { isActive: { $ne: false } },
+    })
     .lean();
   if (!raw) return null;
   const project = JSON.parse(JSON.stringify(raw));
@@ -96,12 +101,12 @@ export async function getProjectDetail(
     ...project,
     tags: project.tags ?? [],
     media: project.media ?? [],
-    members: (project.members ?? []).map(
-      (m: { _id: string; image?: string }) => ({
+    members: (project.members ?? [])
+      .filter(Boolean)
+      .map((m: { _id: string; image?: string }) => ({
         ...m,
         image: staffImageUrl(m._id, m.image),
-      }),
-    ),
+      })),
     liveUrl: cleanUrl(project.liveUrl),
     githubUrl: cleanUrl(project.githubUrl),
     videoUrl: cleanUrl(project.videoUrl),

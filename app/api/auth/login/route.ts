@@ -3,7 +3,7 @@ import { SignJWT } from "jose";
 import { NextResponse } from "next/server";
 import { getJwtSecret } from "@/backend/lib/auth";
 import connectDB, { EMAIL_COLLATION } from "@/backend/lib/db";
-import { rateLimit } from "@/backend/lib/rateLimit";
+import { rateLimit, rateLimitKey } from "@/backend/lib/rateLimit";
 import Staff from "@/backend/models/Staff";
 import User from "@/backend/models/User";
 
@@ -27,6 +27,13 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "Email, password, and loginType are required" },
         { status: 400 },
+      );
+    }
+
+    if (!rateLimitKey("login-email", email.trim().toLowerCase(), 10, 900000)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
       );
     }
 
@@ -120,6 +127,7 @@ export async function POST(req: Request) {
     // Set cookie
     response.cookies.set("token", token, {
       httpOnly: true,
+      sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24, // 24h
       path: "/",

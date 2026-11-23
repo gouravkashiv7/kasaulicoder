@@ -89,8 +89,16 @@ export async function POST(req: Request) {
       }
       fundedByStaffId = funder.id;
       displayFundedByName = funder.name;
-    } else if (body.fundedByName && typeof body.fundedByName === "string") {
+    } else if (typeof body.fundedByName === "string") {
+      // An outside contributor needs a name, or the request would be
+      // recorded as funded by the submitter
       displayFundedByName = body.fundedByName.trim();
+      if (!displayFundedByName) {
+        return NextResponse.json(
+          { error: "Enter the contributor's name" },
+          { status: 400 },
+        );
+      }
     } else {
       fundedByStaffId = auth.session.id;
     }

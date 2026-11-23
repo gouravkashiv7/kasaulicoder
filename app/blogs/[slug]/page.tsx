@@ -19,7 +19,7 @@ const findViewableBlog = cache(async (slug: string) => {
   const session = await getServerSession();
   const canPreview = session?.type === "admin" && session.role === "superadmin";
   return Blog.findOne(canPreview ? { slug } : { slug, status: "active" })
-    .populate("authorId", "name image designation roleDescription")
+    .populate("authorId", "name image designation roleDescription isActive")
     .lean();
 });
 
@@ -64,8 +64,16 @@ export default async function BlogPostPage(props: {
   // Plain JSON so ObjectIds and Dates can cross into the client component.
   const plainBlog: BlogType = JSON.parse(JSON.stringify(blog));
   if (plainBlog.authorId) {
-    const author = blog.authorId as unknown as { _id: unknown; image?: string };
-    plainBlog.authorId.image = staffImageUrl(author._id, author.image);
+    const author = blog.authorId as unknown as {
+      _id: unknown;
+      image?: string;
+      isActive?: boolean;
+    };
+    // Keep a former member's byline, but their photo is no longer served
+    plainBlog.authorId.image =
+      author.isActive === false
+        ? undefined
+        : staffImageUrl(author._id, author.image);
   }
 
   return (

@@ -96,9 +96,19 @@ export async function PATCH(req: Request) {
       );
   }
 
-  const account = await User.findByIdAndUpdate(id, update, {
-    new: true,
-  }).select("-password -resetPasswordToken -resetPasswordExpires");
+  // A reset link sent to the old address must stop working
+  const account = await User.findByIdAndUpdate(
+    id,
+    update.email
+      ? {
+          ...update,
+          $unset: { resetPasswordToken: 1, resetPasswordExpires: 1 },
+        }
+      : update,
+    {
+      new: true,
+    },
+  ).select("-password -resetPasswordToken -resetPasswordExpires");
 
   if (!account) {
     return NextResponse.json({ error: "Account not found" }, { status: 404 });

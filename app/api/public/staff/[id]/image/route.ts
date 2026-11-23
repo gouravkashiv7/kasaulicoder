@@ -14,7 +14,7 @@ export async function GET(
   if (!isValidObjectId(id)) return new Response(null, { status: 404 });
 
   await connectDB();
-  const staff = await Staff.findOne({ _id: id, isActive: true })
+  const staff = await Staff.findOne({ _id: id, isActive: { $ne: false } })
     .select("image")
     .lean();
   const decoded = staff?.image ? decodeImageDataUrl(staff.image) : null;
