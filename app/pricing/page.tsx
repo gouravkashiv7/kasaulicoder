@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
-import ProposalRequest from "@/components/marketing/ProposalRequest";
+import { headers } from "next/headers";
+import PricingView from "@/components/pricing/PricingView";
+import { currencyForCountry } from "@/lib/pricing";
 
 export const metadata: Metadata = {
-  title: "Request a Proposal",
+  title: "Pricing",
   description:
-    "KasauliCoder scopes every project to your requirements instead of selling fixed packages. Tell us about your project and request a proposal.",
+    "Starting prices for websites, CRM-based sites and SaaS builds, plus monthly managed plans for hosting, SEO and support. Priced in INR for India and USD elsewhere.",
   alternates: { canonical: "/pricing" },
 };
 
-export default function PricingPage() {
-  return <ProposalRequest />;
+export default async function PricingPage() {
+  const h = await headers();
+  const country = h.get("x-vercel-ip-country") ?? h.get("cf-ipcountry");
+  return <PricingView initialCurrency={currencyForCountry(country)} />;
 }
