@@ -173,8 +173,24 @@ export const faqs = [
     a: "Paying a managed plan annually gives you two months free. Taking a build together with a Care or Grow plan gives 10% off the build. Referrals earn a 5% credit on the referred client's first invoice.",
   },
   {
-    q: "What about revisions, ownership and payment terms?",
-    a: "These are set out in your proposal so they match the size of your project.",
+    q: "How does payment work?",
+    a: "Builds are paid 50% upfront and 50% on delivery. Managed plans are billed in advance, monthly or annually.",
+  },
+  {
+    q: "How many revisions are included?",
+    a: "Every build includes 2 rounds of revisions. Further changes are quoted separately.",
+  },
+  {
+    q: "Who owns the code and content?",
+    a: "You do, once the final payment clears. We keep the right to show the work in our portfolio.",
+  },
+  {
+    q: "What is your refund and cancellation policy?",
+    a: "The upfront payment is not refundable once work has started. Managed plans can be cancelled with 30 days' notice.",
+  },
+  {
+    q: "Do the prices include tax?",
+    a: "Prices in rupees exclude 18% GST. Prices in dollars exclude any taxes in your country.",
   },
   {
     q: "Why are prices shown in rupees or dollars?",
