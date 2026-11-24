@@ -7,6 +7,7 @@ export interface IStaff extends Document {
   role: "superadmin" | "admin" | "editor" | "support";
   designation?: string;
   roleDescription?: string;
+  website?: string;
   image?: string;
   isActive: boolean;
   isDirector: boolean;
@@ -36,6 +37,8 @@ const StaffSchema: Schema = new Schema(
     },
     designation: { type: String },
     roleDescription: { type: String },
+    // Personal site, linked from the public team card
+    website: { type: String },
     image: { type: String },
     isActive: { type: Boolean, default: true },
     isDirector: { type: Boolean, default: false },

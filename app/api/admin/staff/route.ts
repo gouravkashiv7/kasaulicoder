@@ -23,6 +23,19 @@ async function hasOtherActiveSuperadmin(staffId: unknown): Promise<boolean> {
   );
 }
 
+// Only http(s) links are stored; anything else clears the field.
+function cleanWebsite(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "https:" || url.protocol === "http:"
+      ? url.href
+      : "";
+  } catch {
+    return "";
+  }
+}
+
 export async function GET() {
   try {
     const session = await getServerSession();
@@ -41,7 +54,7 @@ export async function GET() {
     // For now, allow all admin types to see the staff list names/ids.
     const staffMembers = await Staff.find({})
       .select(
-        "name email role designation roleDescription image isActive isDirector createdAt",
+        "name email role designation roleDescription website image isActive isDirector createdAt",
       )
       .sort({ createdAt: -1 });
 
@@ -74,6 +87,7 @@ export async function POST(req: Request) {
       role,
       designation,
       roleDescription,
+      website,
       image,
       isDirector,
     } = await req.json();
@@ -143,6 +157,7 @@ export async function POST(req: Request) {
       role,
       designation,
       roleDescription,
+      website: cleanWebsite(website),
       image,
       isActive: true,
       isDirector: isDirector === true,
@@ -274,6 +289,7 @@ export async function PUT(req: Request) {
       role,
       designation,
       roleDescription,
+      website,
       image,
       isDirector,
     } = await req.json();
@@ -350,6 +366,7 @@ export async function PUT(req: Request) {
     if (name) staff.name = name;
     if (designation !== undefined) staff.designation = designation;
     if (roleDescription !== undefined) staff.roleDescription = roleDescription;
+    if (website !== undefined) staff.website = cleanWebsite(website);
     if (typeof image === "string") staff.image = image;
     if (
       isSuper &&

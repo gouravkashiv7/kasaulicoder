@@ -58,6 +58,18 @@ const HomeTeamWorkTestimonials = ({
                     {member.roleDescription}
                   </p>
                 )}
+                {member.website && (
+                  <a
+                    href={member.website}
+                    target="_blank"
+                    rel="noopener"
+                    className="inline-block text-sm font-semibold text-primary hover:underline mt-3"
+                  >
+                    {member.website
+                      .replace(/^https?:\/\/(www\.)?/, "")
+                      .replace(/\/$/, "")}
+                  </a>
+                )}
               </div>
             </li>
           ))}

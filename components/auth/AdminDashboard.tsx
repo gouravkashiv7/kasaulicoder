@@ -57,6 +57,7 @@ const EMPTY_STAFF: StaffForm = {
   role: "admin",
   designation: "",
   roleDescription: "",
+  website: "",
   image: "",
   isDirector: false,
 };
@@ -752,6 +753,7 @@ const AdminDashboard = ({ role, isDirector }: AdminDashboardProps) => {
       role: staff.role ?? "admin",
       designation: staff.designation || "",
       roleDescription: staff.roleDescription || "",
+      website: staff.website || "",
       image: staff.image || "",
       isDirector: staff.isDirector === true,
     });

@@ -7,6 +7,7 @@ export interface PublicTeamMember {
   name: string;
   designation?: string;
   roleDescription?: string;
+  website?: string;
   image?: string;
   role: string;
 }
@@ -20,7 +21,7 @@ export async function getPublicTeam(): Promise<PublicTeamMember[]> {
     role: { $in: ["admin", "superadmin"] },
     image: { $exists: true, $ne: null },
   })
-    .select("name designation roleDescription image role")
+    .select("name designation roleDescription website image role")
     .sort({ role: -1 })
     .lean();
 
@@ -29,6 +30,7 @@ export async function getPublicTeam(): Promise<PublicTeamMember[]> {
     name: m.name,
     designation: m.designation,
     roleDescription: m.roleDescription,
+    website: m.website,
     image: staffImageUrl(m._id, m.image),
     role: m.role,
   }));

@@ -149,6 +149,7 @@ export interface DirectoryRecord {
   userType?: "student" | "professional";
   designation?: string;
   roleDescription?: string;
+  website?: string;
   image?: string;
   isActive?: boolean;
   isDirector?: boolean;
@@ -171,6 +172,7 @@ export interface StaffForm {
   role: string;
   designation: string;
   roleDescription: string;
+  website: string;
   image: string;
   isDirector: boolean;
 }

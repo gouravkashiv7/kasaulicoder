@@ -407,6 +407,25 @@ const StaffModal = ({
 
                 <div className="space-y-1.5">
                   <label
+                    htmlFor="staff-website"
+                    className="text-[10px] font-black uppercase text-foreground/40 ml-1"
+                  >
+                    Personal website
+                  </label>
+                  <input
+                    id="staff-website"
+                    type="url"
+                    value={newStaff.website}
+                    onChange={(e) =>
+                      setNewStaff({ ...newStaff, website: e.target.value })
+                    }
+                    className="w-full bg-foreground/5 border border-foreground/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/40 transition-colors"
+                    placeholder="https://example.com"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label
                     htmlFor="staff-bio-role-description"
                     className="text-[10px] font-black uppercase text-foreground/40 ml-1"
                   >
