@@ -8,7 +8,7 @@ import Project from "@/backend/models/Project";
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://kasaulicoder.com";
+  const baseUrl = "https://www.kasaulicoder.com";
   const lastModified = new Date();
 
   await connectDB();

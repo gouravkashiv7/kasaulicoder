@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: ["/", "/api/public/staff/"],
       disallow: ["/admin/", "/user/", "/member/", "/api/"],
     },
-    sitemap: "https://kasaulicoder.com/sitemap.xml",
+    sitemap: "https://www.kasaulicoder.com/sitemap.xml",
   };
 }

@@ -24,7 +24,7 @@ const jetBrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const baseUrl = "https://kasaulicoder.com";
+const baseUrl = "https://www.kasaulicoder.com";
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
