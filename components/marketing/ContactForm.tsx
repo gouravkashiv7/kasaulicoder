@@ -31,12 +31,19 @@ const fieldClass =
 const labelClass = "block text-sm font-semibold mb-2 text-foreground/85";
 const optionalClass = "font-normal text-foreground/70";
 
-const ContactForm = ({ initialService }: { initialService?: string }) => {
+const ContactForm = ({
+  initialService,
+  initialPlan,
+}: {
+  initialService?: string;
+  initialPlan?: string;
+}) => {
   const initialServiceTitle =
     serviceGroups.find((group) => group.id === initialService)?.title ?? "";
   const [formData, setFormData] = useState({
     ...emptyForm,
     service: initialServiceTitle,
+    query: initialPlan ? `Interested in: ${initialPlan}\n\n` : "",
   });
   const update =
     (field: keyof typeof emptyForm) =>

@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 export default async function PricingPage() {
   const h = await headers();
   const country = h.get("x-vercel-ip-country") ?? h.get("cf-ipcountry");
-  return <PricingView initialCurrency={currencyForCountry(country)} />;
+  return <PricingView currency={currencyForCountry(country)} />;
 }

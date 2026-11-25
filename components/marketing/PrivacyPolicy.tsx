@@ -20,7 +20,8 @@ const PrivacyPolicy = () => {
               Privacy <span className="text-primary italic">Policy</span>
             </h1>
             <p className="text-foreground opacity-70 text-lg">
-              How we collect, use and protect your information.
+              How we collect, use and protect your information. Last updated:
+              November 2026.
             </p>
           </motion.div>
 
@@ -38,8 +39,15 @@ const PrivacyPolicy = () => {
                 <p>
                   We collect information you provide directly to us when you
                   contact us or use an account on this website. This may include
-                  your name, your email address, and the details of your
-                  enquiry.
+                  your name, your email address, your company name, your budget
+                  and timeline, and the details of your enquiry.
+                </p>
+                <p>
+                  When you send an enquiry we also record your IP address and
+                  browser details, which helps us prevent spam and abuse. The
+                  site saves your chosen theme in your browser; it is not sent
+                  to us. The pricing page uses your approximate country to
+                  choose which currency to show.
                 </p>
                 <div className="glass-card p-6 rounded-xl">
                   <p className="text-sm font-bold text-primary mb-2 uppercase tracking-widest">

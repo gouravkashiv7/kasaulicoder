@@ -891,3 +891,68 @@ export const sendFundRequestEmail = async (
     html,
   });
 };
+
+export interface ContactEnquiryEmailOptions {
+  toEmails: string[];
+  name: string;
+  email: string;
+  query: string;
+  company?: string;
+  service?: string;
+  budget?: string;
+  timeline?: string;
+}
+
+// Tells the directors about a new enquiry from the public contact form.
+// Replies go straight to the person who sent the enquiry.
+export const sendContactEnquiryEmail = async (
+  options: ContactEnquiryEmailOptions,
+): Promise<void> => {
+  const safeName = options.name.replace(/["\r\n]/g, "");
+  const rows = [
+    ["Name", options.name],
+    ["Email", options.email],
+    ["Company", options.company],
+    ["Service", options.service],
+    ["Budget", options.budget],
+    ["Timeline", options.timeline],
+  ]
+    .filter(([, value]) => value)
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 0;font-size:13px;color:#6b7280;width:110px;font-weight:600;">${label}:</td><td style="padding:6px 0;font-size:14px;color:#111827;">${esc(value)}</td></tr>`,
+    )
+    .join("");
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>New enquiry</title></head>
+<body style="margin:0;padding:0;background-color:#f4f6f9;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f9;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <tr><td style="background:#1a1a2e;padding:24px 40px;">
+          <p style="margin:0;color:#9ca3af;font-size:12px;letter-spacing:0.5px;text-transform:uppercase;">Website enquiry</p>
+          <h1 style="margin:6px 0 0;color:#ffffff;font-size:20px;font-weight:800;">New enquiry from ${esc(options.name)}</h1>
+        </td></tr>
+        <tr><td style="padding:32px 40px;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">${rows}</table>
+          <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;">
+            <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;white-space:pre-wrap;">${esc(options.query)}</p>
+          </div>
+          <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;">Reply to this email to answer ${esc(options.name)} directly, or open the Requests tab in the <a href="https://www.kasaulicoder.com/admin/dashboard?tab=requests" style="color:#2563eb;">admin dashboard</a>.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  await transporter.sendMail({
+    from: `"Kasaulicoder Website" <${process.env.ADMIN_FROM || "admin@kasaulicoder.com"}>`,
+    replyTo: `"${safeName}" <${options.email}>`,
+    to: options.toEmails,
+    subject: `New enquiry from ${safeName}`,
+    html,
+  });
+};

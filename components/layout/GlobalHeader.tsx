@@ -105,6 +105,7 @@ const GlobalHeader = ({
     { title: "Home", href: "/" },
     { title: "Services", href: "/services" },
     { title: "Projects", href: "/projects" },
+    { title: "Pricing", href: "/pricing" },
     { title: "About", href: "/about" },
     { title: "Blog", href: "/blogs" },
     { title: "Contact", href: "/contact" },
@@ -326,7 +327,7 @@ const GlobalHeader = ({
           </motion.div>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-8 text-foreground/80">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-8 text-foreground/80">
             {navLinks.map((item, i) => {
               const active = isActive(item.href);
               return (

@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import ASMRStaticBackground from "@/components/ui/asmr-background";
 import { primaryButton, secondaryButton } from "@/components/ui/marketing";
@@ -12,25 +9,8 @@ import ManagedPlans from "./ManagedPlans";
 import PricingFaq from "./PricingFaq";
 import TeamProof from "./TeamProof";
 
-const STORAGE_KEY = "kc-currency";
-
-const PricingView = ({ initialCurrency }: { initialCurrency: Currency }) => {
-  const [currency, setCurrency] = useState<Currency>(initialCurrency);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved === "INR" || saved === "USD") setCurrency(saved);
-    } catch {}
-  }, []);
-
-  const choose = (next: Currency) => {
-    setCurrency(next);
-    try {
-      localStorage.setItem(STORAGE_KEY, next);
-    } catch {}
-  };
-
+// The currency comes from the visitor's location and cannot be switched.
+const PricingView = ({ currency }: { currency: Currency }) => {
   return (
     <div className="bg-transparent text-foreground min-h-screen selection:bg-primary/30 font-sans overflow-x-hidden">
       <ASMRStaticBackground />
@@ -49,24 +29,6 @@ const PricingView = ({ initialCurrency }: { initialCurrency: Currency }) => {
               maintenance managed for you. Every project gets a written quote
               before work begins.
             </p>
-            <fieldset className="inline-flex rounded-xl border border-foreground/20 p-1 mb-8">
-              <legend className="sr-only">Currency</legend>
-              {(["INR", "USD"] as const).map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  aria-pressed={currency === c}
-                  onClick={() => choose(c)}
-                  className={`px-5 py-2 rounded-lg font-bold text-sm transition-colors ${
-                    currency === c
-                      ? "bg-primary text-primary-content"
-                      : "text-foreground/70 hover:text-foreground"
-                  }`}
-                >
-                  {c === "INR" ? "₹ INR" : "$ USD"}
-                </button>
-              ))}
-            </fieldset>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-sm sm:max-w-none">
               <Link href="/contact" className={primaryButton}>
                 Get a scoped quote

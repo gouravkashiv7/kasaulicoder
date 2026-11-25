@@ -39,3 +39,17 @@ Server reads `x-vercel-ip-country` (fallback `cf-ipcountry`); `IN` = INR else US
 
 ## Left to the builder
 Exact component split, copy wording within the above facts, FAQ answers (ownership, revisions, payment terms: flag any term not stated here as a question for the owner), SEO metadata, mobile layout.
+
+## Changes after the site audit (2026-11-25)
+These override the sections above where they differ.
+- **Tax:** the company is not GST-registered yet, so no "+ 18% GST" line is shown and the FAQ says no tax is added.
+- **Currency:** chosen from the visitor's location only. The ₹/$ toggle and the `localStorage` preference were removed; the FAQ says India and international prices are set separately.
+- **Tiers:** Business is labelled "Recommended", not "Most popular". No "+" suffix on SaaS; every tier already says "Starting from".
+- **Managed plans:** optional, Care is the entry plan. Hosting and domain fees are not included. Scale includes 8 development hours a month, no carry-over (`SCALE_DEV_HOURS` in `lib/pricing.ts`).
+- **Discounts:** the 10% bundle discount applies with any managed plan, Scale included.
+- **Cancellation:** monthly plans cancel with 30 days' notice; annual plans cannot be cancelled or refunded part-way.
+- **Team block:** no experience figure and no client or CRM claims; it points to the live portfolio instead.
+- **Contact:** tier and plan buttons pass `?plan=<id>` so the form opens with the choice filled in. Each enquiry is emailed to all active directors.
+
+## Pending: company identity
+The site, Terms of Service and Privacy Policy do not yet show the legal entity name, registered address or governing law. These will be added soon. When they are, also add the GSTIN and restore the tax lines if the company has registered for GST by then.

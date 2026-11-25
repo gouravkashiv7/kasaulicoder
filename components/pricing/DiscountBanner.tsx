@@ -18,7 +18,7 @@ const DiscountBanner = ({ currency }: { currency: Currency }) => {
     },
     {
       icon: "inventory_2",
-      title: `Bundle a build with Care or Grow: ${discounts.bundlePercent}% off the build`,
+      title: `Bundle a build with any managed plan: ${discounts.bundlePercent}% off the build`,
       desc: business
         ? `Business drops from ${formatPrice(business.price[currency], currency)} to ${formatPrice(bundleBuildPrice(business.price[currency]), currency)}.`
         : "",

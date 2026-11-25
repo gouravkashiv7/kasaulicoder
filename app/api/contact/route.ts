@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/backend/lib/db";
+import { getActiveDirectors } from "@/backend/lib/directors";
+import { sendContactEnquiryEmail } from "@/backend/lib/email";
 import { rateLimit } from "@/backend/lib/rateLimit";
 import ContactRequest from "@/backend/models/ContactRequest";
 
@@ -85,6 +87,25 @@ export async function POST(req: Request) {
       ipAddress: ipAddress.split(",")[0].trim(),
       device,
     });
+
+    // Tell every active director. The enquiry is already saved, so a mail
+    // failure is logged and does not fail the request.
+    try {
+      const toEmails = (await getActiveDirectors())
+        .map((d) => d.email?.trim())
+        .filter((e): e is string => Boolean(e));
+      if (toEmails.length > 0) {
+        await sendContactEnquiryEmail({
+          toEmails,
+          name,
+          email,
+          query,
+          ...optional,
+        });
+      }
+    } catch (emailErr) {
+      console.error("Failed to email directors about enquiry:", emailErr);
+    }
 
     return NextResponse.json(
       { message: "Inquiry received successfully.", data: newRequest },

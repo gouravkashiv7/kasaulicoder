@@ -455,7 +455,7 @@ const HomeVisionHero = ({
                 Discuss Your Project
               </Link>
               <Link href="/pricing" className={secondaryButton}>
-                Request a Proposal
+                View Pricing
               </Link>
             </div>
           </div>

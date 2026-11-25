@@ -18,7 +18,7 @@ const ManagedPlans = ({ currency }: { currency: Currency }) => {
       <SectionIntro
         id="managed-heading"
         title="We manage it for you"
-        lead="Hosting, deployment, SEO work and support, handled monthly. Care is the minimum plan."
+        lead="Deployment, updates, SEO work and support, handled monthly. Managed plans are optional; Care is the entry plan."
       />
       <fieldset className="inline-flex rounded-xl border border-foreground/20 p-1 mb-8">
         <legend className="sr-only">Billing period</legend>
@@ -70,11 +70,6 @@ const ManagedPlans = ({ currency }: { currency: Currency }) => {
                   </span>
                 </p>
               )}
-              {currency === "INR" && (
-                <p className="text-xs text-foreground/50 -mt-4 mb-5">
-                  + 18% GST
-                </p>
-              )}
               <ul className="space-y-2 text-sm mb-7 flex-1">
                 {plan.features.map((f) => (
                   <li key={f} className="flex gap-2">
@@ -84,7 +79,7 @@ const ManagedPlans = ({ currency }: { currency: Currency }) => {
                 ))}
               </ul>
               <Link
-                href={`/contact?service=${plan.serviceId}`}
+                href={`/contact?service=${plan.serviceId}&plan=${plan.id}`}
                 className={secondaryButton}
               >
                 Choose {plan.name}

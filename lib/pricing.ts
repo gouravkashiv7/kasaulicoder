@@ -95,13 +95,16 @@ export const buildTiers: BuildTier[] = [
   },
 ];
 
+// Development hours included in the Scale plan each month.
+const SCALE_DEV_HOURS = 8;
+
 export const managedPlans: ManagedPlan[] = [
   {
     id: "care",
     name: "Care",
-    summary: "The minimum: we keep it online, updated and fixed.",
+    summary: "The essentials: we keep it online, updated and fixed.",
     features: [
-      "Hosting and deployment",
+      "Hosting setup and deployment",
       "Domain and SSL management",
       "Updates and security patches",
       "Uptime monitoring",
@@ -131,7 +134,7 @@ export const managedPlans: ManagedPlan[] = [
       "Everything in Grow",
       "Priority support",
       "CRM and SaaS maintenance",
-      "Monthly bank of development hours",
+      `${SCALE_DEV_HOURS} development hours each month`,
     ],
     monthly: { INR: 24999, USD: 499 },
     serviceId: "cloud-support",
@@ -162,7 +165,7 @@ export const faqs = [
   },
   {
     q: "What does the monthly plan cover?",
-    a: "Care keeps your site hosted, updated, monitored and fixed. Grow adds managed SEO work and a monthly report. Scale adds priority support and development hours for CRM and SaaS products.",
+    a: `Care keeps your site deployed, updated, monitored and fixed. Grow adds managed SEO work and a monthly report. Scale adds priority support and ${SCALE_DEV_HOURS} development hours a month for CRM and SaaS products; unused hours do not carry over. Hosting and domain fees charged by your provider are not included in any plan.`,
   },
   {
     q: "Do you guarantee search rankings?",
@@ -170,7 +173,7 @@ export const faqs = [
   },
   {
     q: "How do the discounts work?",
-    a: "Paying a managed plan annually gives you two months free. Taking a build together with a Care or Grow plan gives 10% off the build. Referrals earn a 5% credit on the referred client's first invoice.",
+    a: "Paying a managed plan annually gives you two months free. Taking a build together with any managed plan gives 10% off the build. Referrals earn a 5% credit on the referred client's first invoice.",
   },
   {
     q: "How does payment work?",
@@ -186,15 +189,15 @@ export const faqs = [
   },
   {
     q: "What is your refund and cancellation policy?",
-    a: "The upfront payment is not refundable once work has started. Managed plans can be cancelled with 30 days' notice.",
+    a: "The upfront payment is not refundable once work has started. Monthly managed plans can be cancelled with 30 days' notice. Annual plans are paid for the full year and cannot be cancelled or refunded part-way through.",
   },
   {
     q: "Do the prices include tax?",
-    a: "Prices in rupees exclude 18% GST. Prices in dollars exclude any taxes in your country.",
+    a: "We do not add GST or any other tax to these prices at present. Any taxes or duties that apply in your own country are your responsibility.",
   },
   {
     q: "Why are prices shown in rupees or dollars?",
-    a: "Clients in India see rupees (plus 18% GST). Everyone else sees US dollars. You can switch currency at any time.",
+    a: "Prices are set separately for India and for international clients. You see rupees if you are in India and US dollars everywhere else, based on your location.",
   },
 ];
 

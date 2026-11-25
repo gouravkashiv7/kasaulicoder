@@ -19,7 +19,7 @@ const TermsOfService = () => {
               Terms of <span className="text-primary italic">Service</span>
             </h1>
             <p className="text-foreground opacity-70">
-              Last updated: October 2026
+              Last updated: November 2026
             </p>
           </motion.div>
 
@@ -68,8 +68,10 @@ const TermsOfService = () => {
                 4. Payment and Refunds
               </h2>
               <p className="leading-relaxed">
-                Fees and payment terms for a project are set out in the
-                agreement or proposal for that project.
+                Our standard payment, revision, refund and cancellation terms
+                are published on our pricing page. Where the agreement or
+                proposal for a project says something different, that agreement
+                applies.
               </p>
             </section>
 

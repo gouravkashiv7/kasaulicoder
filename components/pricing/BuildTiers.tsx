@@ -26,7 +26,7 @@ const BuildTiers = ({ currency }: { currency: Currency }) => (
         >
           {tier.popular && (
             <span className="absolute -top-3 left-7 rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-content">
-              Most popular
+              Recommended
             </span>
           )}
           <h3 className="font-display text-xl font-bold mb-2">{tier.name}</h3>
@@ -34,13 +34,9 @@ const BuildTiers = ({ currency }: { currency: Currency }) => (
           <p className="text-xs uppercase tracking-wide text-foreground/50">
             Starting from
           </p>
-          <p className="font-display text-3xl font-black mb-1">
-            {formatPrice(tier.price[currency], currency, tier.id === "saas")}
+          <p className="font-display text-3xl font-black mb-5">
+            {formatPrice(tier.price[currency], currency)}
           </p>
-          {currency === "INR" && (
-            <p className="text-xs text-foreground/50 mb-5">+ 18% GST</p>
-          )}
-          {currency === "USD" && <div className="mb-5" />}
           <ul className="space-y-2 text-sm mb-7 flex-1">
             {tier.features.map((f) => (
               <li key={f} className="flex gap-2">
@@ -50,7 +46,7 @@ const BuildTiers = ({ currency }: { currency: Currency }) => (
             ))}
           </ul>
           <Link
-            href={`/contact?service=${tier.serviceId}`}
+            href={`/contact?service=${tier.serviceId}&plan=${tier.id}`}
             className={tier.popular ? primaryButton : secondaryButton}
           >
             Get a quote
@@ -71,12 +67,6 @@ const BuildTiers = ({ currency }: { currency: Currency }) => (
           </div>
           <p className="font-display text-xl font-black">
             {formatPrice(a.price[currency], currency)}
-            {currency === "INR" && (
-              <span className="text-xs font-normal text-foreground/50">
-                {" "}
-                + 18% GST
-              </span>
-            )}
           </p>
         </li>
       ))}

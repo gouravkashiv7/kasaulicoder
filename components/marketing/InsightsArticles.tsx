@@ -55,8 +55,8 @@ const InsightsArticles = ({ articles }: { articles: Article[] }) => {
                 <span className="text-primary italic">FROM THE EDGE</span>
               </h1>
               <p className="text-foreground/60 text-xl max-w-2xl mx-auto mb-10">
-                Deep dives into engineering, AI integration, and the future of
-                web architecture.
+                Articles on software development, SaaS, SEO and digital products
+                from the KasauliCoder team.
               </p>
 
               {/* Search and Layout Toggle */}

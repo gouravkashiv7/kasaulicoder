@@ -163,7 +163,7 @@ export default function ServicesPage() {
             <SectionIntro
               id="enquire-heading"
               title="How to start a project with us"
-              lead="There are no fixed packages. Every project is scoped to what you actually need."
+              lead="Our published prices are starting points. Every project is scoped to what you actually need."
             />
             <ol className="grid md:grid-cols-3 gap-x-10 gap-y-2 mb-14">
               {enquirySteps.map((step, i) => (
