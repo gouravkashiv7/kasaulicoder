@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { SectionIntro } from "@/components/ui/marketing";
 import type { PublicTeamMember } from "@/backend/lib/team";
+import { SectionIntro } from "@/components/ui/marketing";
 import { canOptimizeImage } from "@/lib/imageHosts";
 
 const HomeTeamWorkTestimonials = ({

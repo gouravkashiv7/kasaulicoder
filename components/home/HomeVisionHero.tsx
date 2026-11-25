@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Suspense, useEffect, useRef, useState } from "react";
+import type { PublicTeamMember } from "@/backend/lib/team";
 import HomeTeamWorkTestimonials from "@/components/home/HomeTeamWorkTestimonials";
 import GlobalFooter from "@/components/layout/GlobalFooter";
 import ProjectShowcaseCard from "@/components/projects/ProjectShowcaseCard";
@@ -15,7 +16,6 @@ import {
   textLink,
 } from "@/components/ui/marketing";
 import { useAfterLoad } from "@/components/ui/use-after-load";
-import type { PublicTeamMember } from "@/backend/lib/team";
 import type { ShowcaseProject } from "@/lib/projects";
 import { serviceGroups } from "@/lib/services";
 

@@ -147,6 +147,25 @@ Slugs are suggestions. Each post needs: `title`, `slug`, `tagline`, `description
 - Outline: honest retrospective from real work; what changed in our approach; what is next. Use only real projects from /projects.
 - CTA: /projects, /contact
 
+### Added 25 Nov 2026: trending SEO series
+
+Three extra posts on what is being searched for now: AI answers in Google, llms.txt, and "GEO". They are not tied to a Monday slot and are best published together, because they link to each other. Drafts and covers are ready for review in `docs/blog-drafts/` and `public/blog-covers/`.
+
+**17. How to Show Up in Google's AI Answers: What Google Itself Says**
+- Slug: `how-to-show-up-in-google-ai-answers`
+- Pillar: Practical. Source: Google Search Central's guide to generative AI features.
+- CTA: /services#seo-digital-growth, /contact
+
+**18. Do You Need an llms.txt File? What the Evidence Says**
+- Slug: `do-you-need-llms-txt`
+- Pillar: Ethics + Practical. Sources: Ahrefs study of 137,210 sites, Google's guide.
+- CTA: /services#seo-digital-growth, /contact
+
+**19. GEO, AEO and SEO: Do You Need to Pay for "AI Optimization"?**
+- Slug: `geo-aeo-seo-what-to-pay-for`
+- Pillar: Ethics. Source: Google's guide. Red flags and seven questions to ask an agency.
+- CTA: /services#seo-digital-growth, /pricing, /contact
+
 ## 6. Per-post workflow
 
 1. Gourav picks or edits the topic and supplies any real examples, numbers or project names.
@@ -161,3 +180,5 @@ Slugs are suggestions. Each post needs: `title`, `slug`, `tagline`, `description
 - Any real price ranges to share in post 4? If not, the post stays qualitative.
 - Target search keywords above are not researched yet. Each post gets a keyword and top-result check at drafting time, so treat the titles as working titles.
 - The blog page's hero text ("Insights from the edge", "AI integration, and the future of web architecture") reads more developer-focused than this plan. Worth aligning with the SaaS positioning later; not changed here.
+- Added 25 Nov 2026: the site now publishes starting prices on /pricing. Section 1 above and the draft of post 4 still say we do not sell fixed packages and give no price numbers. Update post 4 before it is published.
+- Added 25 Nov 2026: the blog page does not render Markdown tables (`react-markdown` is used without the GFM plugin). The draft of post 4 uses tables; either convert them to lists or add table support before publishing.
